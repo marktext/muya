@@ -1,0 +1,25 @@
+{
+  "name": "muya",
+  "version": "0.0.1",
+  "description": "Future markdown editor for web and desktop application development",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marktext/muya.git"
+  },
+  "keywords": [
+    "markdown",
+    "editor",
+    "web",
+    "destop"
+  ],
+  "author": "ransixi@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marktext/muya/issues"
+  },
+  "homepage": "https://github.com/marktext/muya#readme"
+}

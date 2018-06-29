@@ -1,0 +1,1 @@
+console.log('hello world\n I\'m muya')
