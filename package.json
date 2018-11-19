@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/marktext/muya/issues"
   },
-  "homepage": "https://github.com/marktext/muya#readme"
+  "homepage": "https://github.com/marktext/muya#readme",
+  "dependencies": {
+    "ot-json0": "^1.1.0"
+  }
 }
