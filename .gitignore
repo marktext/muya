@@ -1,1 +1,10 @@
+.DS_Store
+dist
+coverage
+.vscode
 node_modules/
+npm-debug.log
+npm-debug.log.*
+thumbs.db
+!.gitkeep
+.idea
