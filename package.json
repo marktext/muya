@@ -4,7 +4,7 @@
   "description": "Future markdown editor for web and desktop application development",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --env=jsdom",
     "build": "NODE_ENV=production webpack --config scripts/webpack.config.js"
   },
   "repository": {

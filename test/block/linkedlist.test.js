@@ -1,6 +1,5 @@
 import LinkedNode from '../../lib/block/linkedNode'
 import LinkedList from '../../lib/block/linkedList'
-import { link } from 'fs';
 
 let linkedList = null
 
