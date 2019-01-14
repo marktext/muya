@@ -8,7 +8,7 @@ const bannerPack = new webpack.BannerPlugin({
   banner: [
     `Muya Editor v${pkg.version}`,
     'https://github.com/marktext/muya',
-    'Copyright (c) 2018, Jocs ransixi@gmail.com'
+    'Copyright (c) 2018-present, Jocs ransixi@gmail.com'
   ].join('\n'),
   entryOnly: true
 })
