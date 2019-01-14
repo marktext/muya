@@ -24,7 +24,9 @@
   },
   "homepage": "https://github.com/marktext/muya#readme",
   "dependencies": {
-    "ot-json0": "^1.1.0"
+    "katex": "^0.10.0",
+    "ot-json0": "^1.1.0",
+    "snabbdom": "^0.7.3"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
