@@ -23,7 +23,7 @@ const muya = new Muya(container)
 
 ## Documents
 
-Coming soom!!!
+Coming soon!!!
 
 ## Development
 
