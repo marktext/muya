@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --config ./example/webpack.config.js --open",
     "test": "jest --env=jsdom",
-    "build": "NODE_ENV=production webpack --config scripts/webpack.config.js",
-    "lint:fix": "eslint --fix"
+    "build": "NODE_ENV=production webpack --config scripts/webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +37,7 @@
     "babel-eslint": "^10.0.1",
     "babel-jest": "^26.0.1",
     "babel-loader": "^8.0.4",
+    "commitlint": "^8.3.5",
     "cross-env": "^7.0.2",
     "css-loader": "^3.5.3",
     "eslint": "^7.1.0",
@@ -50,11 +50,14 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "html-webpack-plugin": "^4.3.0",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
+    "lint-staged": "^10.2.9",
     "mini-css-extract-plugin": "^0.9.0",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.4.0",
     "style-loader": "^1.2.1",
+    "stylelint": "^13.6.0",
     "svg-sprite-loader": "^5.0.0",
     "svgo": "^1.1.1",
     "svgo-loader": "^2.2.0",
