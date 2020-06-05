@@ -1,8 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const postcssPresetEnv = require('postcss-preset-env')
 const pkg = require('../package.json')
+const commonConfig = require('./webpack.common')
 
 const bannerPack = new webpack.BannerPlugin({
   banner: [
@@ -12,6 +12,7 @@ const bannerPack = new webpack.BannerPlugin({
   ].join('\n'),
   entryOnly: true
 })
+
 const constantPack = new webpack.DefinePlugin({
   MUYA_VERSION: JSON.stringify(pkg.version)
 })
@@ -19,88 +20,17 @@ const constantPack = new webpack.DefinePlugin({
 const proMode = process.env.NODE_ENV === 'production'
 
 module.exports = {
+  ...commonConfig,
+
   mode: proMode ? 'production': 'development',
+
   entry: './lib/index.js',
+
   output: {
-    filename: 'main.js',
+    filename: 'muya.js',
     path: path.resolve(__dirname, '../dist')
   },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        enforce: 'pre',
-        exclude: /node_modules/,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            formatter: require('eslint-friendly-formatter')
-          }
-        }
-      },
-      {
-        test: /\.css$/,
-        use: [
-          proMode ? MiniCssExtractPlugin.loader : 'style-loader',
-          { loader: 'css-loader', options: { importLoader: 1 } },
-          { loader: 'postcss-loader', options: {
-            ident: 'postcss',
-            plugins: () => [
-              postcssPresetEnv({
-                stage: 0
-              })
-            ]
-          } }
-        ]
-      },
-      {
-        test: /\.js$/,
-        use: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.svg$/,
-        use: [
-          {
-            loader: 'svg-sprite-loader',
-            options: {
-              extract: true,
-              publicPath: '/static/'
-            }
-          },
-          'svgo-loader'
-        ]
-      },
-      {
-        test: /\.(png|jpe?g|gif)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          query: {
-            limit: 10000,
-            name: 'imgs/[name]--[folder].[ext]'
-          }
-        }
-      },
-      {
-        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'media/[name]--[folder].[ext]'
-        }
-      },
-      {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          query: {
-            limit: 10000,
-            name: 'fonts/[name]--[folder].[ext]'
-          }
-        }
-      }
-    ]
-  },
+
   plugins: [
     bannerPack,
     constantPack,
