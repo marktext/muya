@@ -1,6 +1,7 @@
 const path = require('path')
 const postcssPresetEnv = require('postcss-preset-env')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+
 const proMode = process.env.NODE_ENV === 'production'
 
 exports.default = {

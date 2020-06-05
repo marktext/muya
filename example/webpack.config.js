@@ -1,18 +1,18 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const commonConfig = require('./scripts/webpack.common')
+const commonConfig = require('../scripts/webpack.common')
 
 module.exports = {
   ...commonConfig.default,
   mode: 'development',
-  entry: './src/index.js',
+  entry: './example/index.js',
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Development',
+      template: './example/index.html'
     }),
   ],
   output: {

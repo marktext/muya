@@ -4,7 +4,7 @@
   "description": "Future markdown editor for web and desktop application development",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --open",
+    "dev": "webpack-dev-server --config ./example/webpack.config.js --open",
     "test": "jest --env=jsdom",
     "build": "NODE_ENV=production webpack --config scripts/webpack.config.js",
     "lint:fix": "eslint --fix"
