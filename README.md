@@ -8,9 +8,7 @@
 
 ## Installing
 
-```sh
-$ npm install muya --save
-```
+Still in development process, and can not install by npm.
 
 ## Usage
 
@@ -27,7 +25,18 @@ Coming soon!!!
 
 ## Development
 
-The code for muya is not in this repository, but is still managed in the [Mark Text](https://github.com/marktext/marktext) repository. Any issue that uses muya alone can be raised in this repository. If it is PR, please submit it to the Mark Text repository.
+```sh
+# step1: install dependences
+yarn
+# step2: run the development codes
+yarn dev
+```
+
+## Build
+
+```sh
+yarn build
+```
 
 ## FAQ
 
