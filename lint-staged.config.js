@@ -1,4 +1,4 @@
 module.exports = {
-  '*.{js,vue}': ['eslint --fix'],
-  '*.{html,vue,css,sass,scss}': ['stylelint --allow-empty-input --fix']
+  '*.{js}': ['eslint --fix'],
+  '*.{html,css,sass,scss}': ['stylelint --allow-empty-input --fix']
 }
