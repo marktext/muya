@@ -26,6 +26,8 @@
   },
   "homepage": "https://github.com/marktext/muya#readme",
   "dependencies": {
+    "axios": "^0.19.2",
+    "dompurify": "^2.0.11",
     "katex": "^0.11.1",
     "ot-json1": "^0.2.4",
     "snabbdom": "^0.7.3"
@@ -59,6 +61,10 @@
     "postcss-preset-env": "^6.4.0",
     "style-loader": "^1.2.1",
     "stylelint": "^13.6.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-standard": "^20.0.0",
+    "stylelint-order": "^4.1.0",
     "svg-sprite-loader": "^5.0.0",
     "svgo": "^1.1.1",
     "svgo-loader": "^2.2.0",
