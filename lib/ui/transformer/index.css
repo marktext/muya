@@ -1,0 +1,23 @@
+.mu-transformer .circle {
+  position: absolute;
+
+  display: inline-block;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+
+  background: var(--themeColor);
+  border: 2px solid var(--editorBgColor);
+  border-radius: 50%;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.mu-transformer .top-left,
+.mu-transformer .bottom-right {
+  cursor: nwse-resize
+}
+
+.mu-transformer .top-right,
+.mu-transformer .bottom-left {
+  cursor: nesw-resize
+}

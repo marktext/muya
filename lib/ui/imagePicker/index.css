@@ -1,0 +1,7 @@
+.mu-image-picker-wrapper {
+  z-index: 100000;
+}
+
+.mu-image-picker-wrapper .mu-list-picker {
+  width: 450px;
+}

@@ -1,0 +1,119 @@
+.mu-quick-insert {
+  width: 360px;
+  max-height: 307px;
+  padding: 0 0 20px 0;
+  overflow-y: auto;
+}
+
+.mu-quick-insert .title {
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+
+  display: flex;
+  padding: 10px 14px 10px 14px;
+
+  color: var(--editorColor);
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  background: var(--floatBgColor);
+}
+
+.mu-quick-insert .item {
+  display: flex;
+  flex-direction: row;
+  padding: 6px 0;
+
+  cursor: pointer;
+
+  user-select: none;
+}
+
+.mu-quick-insert .active,
+.mu-quick-insert div.item:hover {
+ background-color: var(--floatHoverColor);
+}
+
+.mu-quick-insert:hover .active {
+  background: transparent;
+}
+
+.mu-quick-insert .no-result {
+  margin-top: 20px;
+  padding: 0 20px;
+
+  color: var(--themeColor);
+  font-size: 14px;
+  text-align: center;
+}
+
+.mu-quick-insert .icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 40px;
+  height: 40px;
+  margin-left: 14px;
+
+  border: 1px solid var(--floatBorderColor);
+  border-radius: 6px;
+}
+
+.mu-quick-insert .icon-container > i.icon {
+  position: relative;
+
+  display: inline-block;
+  width: 20px;
+  height:20px;
+  overflow: hidden;
+
+  color: var(--iconColor);
+
+  opacity: .5;
+
+  transition: all .25s ease-in-out;
+}
+
+.mu-quick-insert .icon-container > i.icon > i[class^="icon-"] {
+  position: relative;
+  left: -20px;
+
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+
+  filter: drop-shadow(20px 0 currentColor);
+}
+
+.mu-quick-insert .description {
+  flex: 1;
+  margin-left: 8px;
+}
+
+.mu-quick-insert .short-cut {
+  flex-shrink: 1;
+  width: 70px;
+  margin-right: 20px;
+
+  color: var(--editorColor50);
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+.mu-quick-insert .big-title {
+  color: var(--editorColor);
+  font-size: 14px;
+}
+
+.mu-quick-insert .sub-title {
+  color: var(--editorColor50);
+  font-size: 12px;
+}
+
+.mu-quick-insert .hide {
+  display: none;
+}

@@ -1,0 +1,80 @@
+.mu-table-picker {
+  box-sizing: border-box;
+  width: 153px;
+  padding: 10px;
+
+  font-size: 12px;
+}
+
+.mu-table-picker .checker {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+.mu-table-picker-row {
+  display: flex;
+}
+.mu-table-picker-cell {
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  margin-right: 1px;
+  margin-bottom: 1px;
+
+  border: 1px solid var(--editorColor10);
+  cursor: pointer;
+}
+.mu-table-picker-header span {
+  background: var(--editorColor10);
+}
+.mu-table-picker-cell.current {
+  background: var(--editorColor30);
+}
+.mu-table-picker-header .current {
+  background: var(--editorColor50);
+}
+.mu-table-picker-cell.selected {
+  background: var(--selectionColor);
+}
+.mu-table-picker-header .selected {
+  background: var(--selectionColor);
+}
+.mu-table-picker-cell:last-of-type {
+  margin-right: 0;
+}
+.mu-table-picker .footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0 0 0;
+
+  color: var(--editorColor);
+  text-align: center;
+
+  border-top: 1px solid var(--floatBorderColor);
+}
+.mu-table-picker .footer input {
+  box-sizing: border-box;
+  width: 30px;
+  height: 20px;
+  padding: 0;
+
+  color: var(--editorColor);
+  text-align: center;
+
+  background: var(--floatBorderColor);
+  border: none;
+  border-radius: 3px;
+  outline: none;
+}
+.mu-table-picker .footer button {
+  height: 20px;
+
+  color: #fff;
+  line-height: 20px;
+
+  background: var(--themeColor);
+  border: none;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}

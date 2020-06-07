@@ -29,9 +29,11 @@
     "axios": "^0.19.2",
     "dompurify": "^2.0.11",
     "fast-diff": "^1.2.0",
+    "fuzzaldrin": "^2.1.0",
     "katex": "^0.11.1",
     "ot-json1": "^0.2.4",
-    "snabbdom": "^0.7.3"
+    "snabbdom": "^0.7.3",
+    "snabbdom-to-html": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
@@ -53,6 +55,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
