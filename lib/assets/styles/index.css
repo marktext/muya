@@ -1,0 +1,200 @@
+:root {
+  /* editor */
+
+  /* Theme color cluster */
+  --themeColor: rgba(33, 181, 111, 1);
+  --themeColor90: rgba(33, 181, 111, .9);
+  --themeColor80: rgba(33, 181, 111, .8);
+  --themeColor70: rgba(33, 181, 111, .7);
+  --themeColor60: rgba(33, 181, 111, .6);
+  --themeColor50: rgba(33, 181, 111, .5);
+  --themeColor40: rgba(33, 181, 111, .4);
+  --themeColor30: rgba(33, 181, 111, .3);
+  --themeColor20: rgba(33, 181, 111, .2);
+  --themeColor10: rgba(33, 181, 111, .1);
+  --highlightThemeColor: var(--themeColor);
+  --highlightColor: rgba(33, 181, 111, .4);
+  --selectionColor: rgba(0, 0, 0, .1);
+  --editorColor: rgba(0, 0, 0, .7);
+  --editorColor80: rgba(0, 0, 0, .8);
+  --editorColor60: rgba(0, 0, 0, .6);
+  --editorColor50: rgba(0, 0, 0, .5);
+  --editorColor40: rgba(0, 0, 0, .4);
+  --editorColor30: rgba(0, 0, 0, .3);
+  --editorColor10: rgba(0, 0, 0, .1);
+  --editorColor04: rgba(0, 0, 0, .03);
+  --editorBgColor: rgba(255, 255, 255, 1);
+  --deleteColor: #ff6969;
+  --iconColor: #6B737B;
+  --codeBgColor: #d8d8d869;
+  --codeBlockBgColor: rgba(0, 0, 0, 0.03);
+  --footnoteBgColor: rgba(0, 0, 0, .03);
+  --inputBgColor: rgba(0, 0, 0, .06);
+  --focusColor: var(--themeColor);
+  --buttonFontColor: var(--editorColor);
+  --buttonBgColor: #fff;
+  --buttonBorder: 1px solid #dcdfe6;
+  --buttonShadow: none;
+  --buttonFontColorHover: var(--buttonFontColor);
+  --buttonBgColorHover: linear-gradient(#f9f9f9, #f2f2f2);
+  --buttonBorderHover: var(--buttonBorder);
+  --buttonFontColorActive: var(--buttonFontColor);
+  --buttonBgColorActive: #f0f0f0;
+  --buttonBorderActive: var(--buttonBorder);
+  --buttonFocusBorder: 1px solid var(--themeColor);
+  --buttonPrimaryFontColor: #fff;
+  --buttonPrimaryBgColor: var(--themeColor);
+  --buttonPrimaryBorder: none;
+  --buttonPrimaryShadow: 0 0 8px 0 rgba(0, 0, 0, .1);
+  --buttonPrimaryFontColorHover: var(--buttonPrimaryFontColor);
+  --buttonPrimaryBgColorHover: var(--buttonPrimaryBgColor);
+  --buttonPrimaryBorderHover: var(--buttonPrimaryBorder);
+  --buttonPrimaryFontColorActive: var(--buttonPrimaryFontColor);
+  --buttonPrimaryBgColorActive: var(--buttonPrimaryBgColor);
+  --buttonPrimaryBorderActive: var(--buttonPrimaryBorder);
+  --buttonPrimaryFocusBorder: none;
+  --buttonPrimaryFocusShadow: inset 0 0 0 1px rgba(13, 91, 55, 0.5), 0 0 0 1px var(--themeColor);
+  --tableBorderColor: #e5e5e5;
+  --floatFontColor: rgba(0, 0, 0, .6);
+  --floatBgColor: #fff;
+  --floatHoverColor: rgba(0, 0, 0, .04);
+  --floatBorderColor: rgba(0, 0, 0, .1);
+  --floatShadow: rgba(15, 15, 15, 0.03) 0 0 0 1px, rgba(15, 15, 15, 0.04) 0 3px 6px, rgba(15, 15, 15, 0.05) 0 9px 24px;
+  --maskColor: rgba(232, 232, 232, .8);
+
+  /* Notification colors */
+  --notificationPrimaryColor: #fff;
+  --notificationPrimaryBg: var(--themeColor);
+  --notificationInfoColor: #fff;
+  --notificationInfoBg: #909399;
+  --notificationWarningColor: #fff;
+  --notificationWarningBg: #f80;
+  --notificationErrorColor: #fff;
+  --notificationErrorBg: #ff6969;
+}
+
+/*
+ * Open Sans
+ * https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i&amp;subset=latin-ext
+ */
+ @font-face {
+  font-weight: 300;
+  font-family: 'Open Sans';
+  font-style: normal;
+  src: local('Open Sans Light'), local('OpenSans-Light'),
+       url('./fonts/open-sans-v15-latin_latin-ext-300.woff') format('woff');
+}
+@font-face {
+  font-weight: 300;
+  font-family: 'Open Sans';
+  font-style: italic;
+  src: local('Open Sans Light Italic'), local('OpenSans-LightItalic'),
+       url('./fonts/open-sans-v15-latin_latin-ext-300italic.woff') format('woff');
+}
+@font-face {
+  font-weight: 400;
+  font-family: 'Open Sans';
+  font-style: normal;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'),
+       url('./fonts/open-sans-v15-latin_latin-ext-regular.woff') format('woff');
+}
+@font-face {
+  font-weight: 400;
+  font-family: 'Open Sans';
+  font-style: italic;
+  src: local('Open Sans Italic'), local('OpenSans-Italic'),
+       url('./fonts/open-sans-v15-latin_latin-ext-italic.woff') format('woff');
+}
+@font-face {
+  font-weight: 600;
+  font-family: 'Open Sans';
+  font-style: normal;
+  src: local('Open Sans SemiBold'), local('OpenSans-SemiBold'),
+       url('./fonts/open-sans-v15-latin_latin-ext-600.woff') format('woff');
+}
+@font-face {
+  font-weight: 600;
+  font-family: 'Open Sans';
+  font-style: italic;
+  src: local('Open Sans SemiBold Italic'), local('OpenSans-SemiBoldItalic'),
+       url('./fonts/open-sans-v15-latin_latin-ext-600italic.woff') format('woff');
+}
+@font-face {
+  font-weight: 700;
+  font-family: 'Open Sans';
+  font-style: normal;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'),
+       url('./fonts/open-sans-v15-latin_latin-ext-700.woff') format('woff');
+}
+@font-face {
+  font-weight: 700;
+  font-family: 'Open Sans';
+  font-style: italic;
+  src: local('Open Sans Bold Italic'), local('OpenSans-BoldItalic'),
+       url('./fonts/open-sans-v15-latin_latin-ext-700italic.woff') format('woff');
+}
+
+/*
+ * DejaVu Sans Mono
+ */
+@font-face {
+  font-family: "DejaVu Sans Mono";
+  src: local('DejaVu Sans Mono'), url('./fonts/DejaVuSansMono.ttf');
+}
+@font-face {
+  font-weight: bold;
+  font-family: "DejaVu Sans Mono";
+  src: url('./fonts/DejaVuSansMono-Bold.ttf');
+}
+@font-face {
+  font-weight: bold;
+  font-family: "DejaVu Sans Mono";
+  font-style: oblique;
+  src: url('./fonts/DejaVuSansMono-BoldOblique.ttf');
+}
+@font-face {
+  font-weight: bold;
+  font-family: "DejaVu Sans Mono";
+  font-style: italic;
+  src: url('./fonts/DejaVuSansMono-BoldOblique.ttf');
+}
+@font-face {
+  font-family: "DejaVu Sans Mono";
+  font-style: italic;
+  src: url('./fonts/DejaVuSansMono-Oblique.ttf');
+}
+@font-face {
+  font-family: "DejaVu Sans Mono";
+  font-style: oblique;
+  src: url('./fonts/DejaVuSansMono-Oblique.ttf');
+}
+
+@keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes highlight {
+  from {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  } /* ignored */
+  to {
+    transform: scale(1);
+  }
+}
+
+html, body {
+  font-size: 16px;
+  font-family: "Open Sans", "Clear Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}

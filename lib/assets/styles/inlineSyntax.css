@@ -1,0 +1,13 @@
+.mu-gray {
+  color: var(--editorColor30);
+  text-decoration: none;
+}
+
+.mu-hide, .mu-hide .mu-highlight, .mu-hide .mu-selection {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+
+  vertical-align: middle;
+}
