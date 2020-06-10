@@ -20,7 +20,7 @@ const constantPack = new webpack.DefinePlugin({
 const proMode = process.env.NODE_ENV === 'production'
 
 module.exports = {
-  ...commonConfig,
+  ...commonConfig.default,
 
   mode: proMode ? 'production': 'development',
 

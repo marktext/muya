@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --config ./example/webpack.config.js --open",
-    "build": "NODE_ENV=production webpack --config scripts/webpack.config.js",
+    "build": "NODE_ENV=production webpack --config ./scripts/webpack.config.js",
     "test": "jest --env=jsdom",
     "lint:fix": "eslint --fix lib"
   },
