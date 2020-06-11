@@ -11,3 +11,224 @@
 
   vertical-align: middle;
 }
+
+/* link and auto-link and reference link */
+a.mu-inline-rule {
+  color: var(--editorColor80);
+
+  pointer-events: none;
+}
+
+.mu-link-in-bracket {
+  color: var(--editorColor50);
+}
+
+/* inline code */
+code.mu-inline-rule {
+  margin: 0;
+  padding: 0.2em 0.4em;
+
+  color: var(--editorColor);
+  font-size: .8em;
+  font-family: "DejaVu Sans Mono", "Source Code Pro", "Droid Sans Mono", Consolas, monospace;
+
+  background-color: var(--codeBlockBgColor);
+  border-radius: 3px;
+}
+
+/* emoji */
+.mu-emoji-marked-text {
+  position: relative;
+
+  color: var(--themeColor);
+}
+
+.mu-emoji-marked-text[data-emoji] {
+  margin-left: 1.1em;
+}
+
+.mu-hide.mu-emoji-marked-text[data-emoji],
+.mu-hide.mu-html-escape[data-character] {
+  overflow: visible;
+
+  color: transparent;
+  white-space: nowrap;
+}
+
+.mu-emoji-marked-text::before {
+  position: absolute;
+  top: 0;
+  left: -1em;
+
+  color: #000;
+  font-size: 1em;
+
+  content: attr(data-emoji);
+}
+
+.mu-hide.mu-emoji-marked-text::before {
+  top: -.8em;
+}
+
+.mu-warn.mu-emoji-marked-text {
+  color: var(--deleteColor);
+  text-decoration: none;
+}
+
+/* html escape */
+.mu-html-escape {
+  position: relative;
+
+  margin-left: 1em;
+}
+
+.mu-html-escape::before {
+  position: absolute;
+  top: 0;
+  left: -1em;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 1em;
+  height: 100%;
+
+  color: var(--editorColor);
+
+  content: attr(data-character);
+}
+
+/* hard line break */
+.mu-hard-line-break-space::after {
+  font-family: monospace;
+
+  opacity: .5;
+
+  content: '↩';
+}
+
+/* ruby and inline math */
+.mu-ruby {
+  position: relative;
+
+  vertical-align: bottom;
+}
+.mu-math {
+  position: relative;
+
+  display: inline-block;
+
+  color: var(--editorColor);
+  font-family: monospace;
+  vertical-align: bottom;
+}
+
+.mu-math > .mu-math-render,
+.mu-ruby > .mu-ruby-render {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1;
+
+  display: inline-block;
+  padding: .3em .5em;
+
+  color: var(--editorColor);
+
+  background: var(--floatBgColor);
+  border-radius: 4px;
+  box-shadow: var(--floatShadow);
+
+  user-select: none;
+}
+
+.mu-ruby > .mu-ruby-render {
+  left: 50%;
+
+  padding-bottom: 0;
+
+  transform: translateX(-50%);
+}
+
+.mu-math > .mu-math-render.mu-math-error {
+  color: var(--deleteColor);
+  font-size: 14px;
+  font-family: monospace;
+  font-style: italic;
+}
+
+.mu-math > .mu-math-render .katex-display {
+  margin: 0;
+}
+
+/* Inline math */
+.mu-math > .mu-math-render .katex {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.mu-hide.mu-ruby,
+.mu-hide.mu-math {
+  width: auto;
+  height: auto;
+}
+.mu-hide.mu-ruby > .mu-ruby-text,
+.mu-hide.mu-math > .mu-math-text {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.mu-hide.mu-ruby > .mu-ruby-render,
+.mu-hide.mu-math > .mu-math-render {
+  position: relative;
+  top: 0;
+
+  padding: 0;
+
+  color: var(--editorColor);
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  user-select: auto;
+}
+
+.mu-ruby:not(.mu-hide) > .mu-ruby-render,
+.mu-math:not(.mu-hide) > .mu-math-render {
+  z-index: 100;
+
+  box-shadow: var(--floatShadow);
+}
+
+.mu-ruby > .mu-ruby-render::before,
+.mu-math > .mu-math-render::before {
+  border-bottom-color: var(--floatBgColor);
+}
+
+.mu-gray.mu-ruby > .mu-ruby-render::before
+.mu-gray.mu-math > .mu-math-render::before {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+
+  margin-left: -5px;
+
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px;
+
+  content: "";
+}
+
+.mu-hide.mu-ruby > .mu-ruby-render::before
+.mu-hide.mu-math > .mu-math-render::before {
+  content: none;
+}
+
+blockquote .mu-hide.mu-ruby > .mu-ruby-render,
+blockquote .mu-hide.mu-math > .mu-math-render {
+  color: var(--editorColor50);
+}
