@@ -1,0 +1,94 @@
+.mu-container {
+  color: var(--editorColor);
+}
+
+.mu-container p,
+.mu-container blockquote,
+.mu-container ul,
+.mu-container ol,
+.mu-container dl,
+.mu-container table {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
+
+.mu-container h1,
+.mu-container h2,
+.mu-container h3,
+.mu-container h4,
+.mu-container h5,
+.mu-container h6 {
+  position: relative;
+
+  margin-top: .5em;
+  margin-bottom: 0;
+
+  color: var(--editorColor80);
+  font-weight: bold;
+  line-height: 1.4;
+
+  cursor: text;
+}
+
+.mu-container h1 {
+  font-size: 1.875em;
+}
+
+.mu-container h2 {
+  font-size: 1.5em;
+}
+
+.mu-container h3 {
+  font-size: 1.375em;
+}
+
+.mu-container h4 {
+  font-size: 1.25em;
+}
+
+.mu-container h5 {
+  font-size: 1.125em;
+}
+
+.mu-container h6 {
+  font-size: 1em;
+}
+
+.mu-container  blockquote {
+  position: relative;
+
+  margin-right: 0;
+  margin-left: 0;
+  padding: 0 1em;
+
+  font-size: 1.1em;
+}
+
+.mu-container  blockquote::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: block;
+  width: 3px;
+  height: 100%;
+
+  background: var(--editorColor80);
+
+  content: '';
+}
+
+.mu-container blockquote blockquote {
+  padding-right: 0;
+}
+
+/* content */
+.mu-content {
+  display: block;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  outline: none;
+}
+
