@@ -98,7 +98,11 @@ code.mu-inline-rule {
   content: attr(data-character);
 }
 
-/* hard line break */
+/* hard line break and soft line end */
+.mu-line-end {
+  display: block;
+}
+
 .mu-hard-line-break-space::after {
   font-family: monospace;
 
