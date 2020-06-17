@@ -130,7 +130,7 @@ code.mu-inline-rule {
 .mu-math > .mu-math-render,
 .mu-ruby > .mu-ruby-render {
   position: absolute;
-  top: 100%;
+  top: calc(100% + .5em);
   left: 0;
   z-index: 1;
 

@@ -14,7 +14,7 @@
   --themeColor10: rgba(33, 181, 111, .1);
   --highlightThemeColor: var(--themeColor);
   --highlightColor: rgba(33, 181, 111, .4);
-  --selectionColor: rgba(0, 0, 0, .1);
+  --selectionColor: rgba(45, 170, 219, 0.3);
   --editorColor: rgba(0, 0, 0, .7);
   --editorColor80: rgba(0, 0, 0, .8);
   --editorColor60: rgba(0, 0, 0, .6);
@@ -197,4 +197,19 @@ html, body {
   font-family: "Open Sans", "Clear Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+*:not(.mu-hide)::selection, .mu-selection {
+  padding: 0 .2em;
+
+  color: var(--editorColor);
+
+  background: var(--selectionColor);
+  border-radius: 2px;
+}
+
+.mu-hide::selection {
+  color: transparent;
+
+  background: none;
 }
