@@ -1,7 +1,9 @@
 import Muya from '../lib'
 import EmojiPicker from '../lib/ui/emojiPicker'
+import FormatPicker from '../lib/ui/formatPicker'
 
 Muya.use(EmojiPicker)
+Muya.use(FormatPicker)
 
 const container = document.querySelector('#editor')
 const muya = new Muya(container)
