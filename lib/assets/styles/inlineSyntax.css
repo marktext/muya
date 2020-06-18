@@ -236,3 +236,8 @@ blockquote .mu-hide.mu-ruby > .mu-ruby-render,
 blockquote .mu-hide.mu-math > .mu-math-render {
   color: var(--editorColor50);
 }
+
+/* header space */
+.mu-header-tight-space {
+  margin-left: -.3em;
+}
