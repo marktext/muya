@@ -1,4 +1,6 @@
 .mu-container {
+  padding: 50px 50px 100px 50px;
+
   color: var(--editorColor);
 }
 
@@ -54,6 +56,7 @@
   font-size: 1em;
 }
 
+/* block quote */
 .mu-container  blockquote {
   position: relative;
 
@@ -73,13 +76,40 @@
   width: 3px;
   height: 100%;
 
-  background: var(--editorColor80);
+  background: var(--editorColor50);
 
   content: '';
 }
 
 .mu-container blockquote blockquote {
   padding-right: 0;
+}
+
+/* thematic break */
+.mu-thematic-break {
+  position: relative;
+}
+
+.mu-thematic-break:not(.mu-active)::before {
+  position: absolute;
+  top: .8em;
+  left: 0;
+
+  display: block;
+  width: 100%;
+  height: 1px;
+
+  background: var(--editorColor10);
+
+  content: '';
+}
+
+.mu-thematic-break.mu-active::before {
+  content: none;
+}
+
+.mu-thematic-break:not(.mu-active) > .mu-thematic-break-content {
+  opacity: 0;
 }
 
 /* content */
