@@ -4,7 +4,7 @@
  */
 
 code[class*="language-"],
-pre.ag-paragraph {
+pre.mu-paragraph {
   color: black;
   white-space: pre;
 
@@ -24,7 +24,7 @@ pre.ag-paragraph {
 }
 
 /* Code Fence */
-pre.ag-paragraph {
+pre.mu-paragraph {
   margin: 1em 0;
   padding: 1em;
 }
