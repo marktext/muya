@@ -213,3 +213,35 @@ html, body {
 
   background: none;
 }
+
+.mu-button {
+  padding: 7px 14px;
+
+  color: var(--buttonFontColor);
+  text-decoration: none;
+
+  background: var(--buttonBgColor);
+  border: var(--buttonBorder);
+  border-radius: 5px;
+  box-shadow: var(--buttonShadow);
+  cursor: pointer;
+}
+
+.mu-button:hover {
+  color: var(--buttonFontColorHover);
+
+  background: var(--buttonBgColorHover);
+  border: var(--buttonBorderHover);
+}
+
+.mu-button:active {
+  color: var(--buttonFontColorActive);
+
+  background: var(--buttonBgColorActive);
+  border: var(--buttonBorderActive);
+}
+
+.mu-button:focus {
+  border: var(--buttonFocusBorder);
+  outline: none;
+}
