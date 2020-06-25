@@ -135,14 +135,25 @@ span.mu-language-input {
   left: 0;
   z-index: -1;
 
+  min-width: 20em;
+
+  font-weight: 600;
+  font-size: .8em;
+
   opacity: 0;
 }
 
 .mu-code-block.mu-active .mu-language-input {
-  top: -1.6em;
+  top: -1.8em;
   z-index: initial;
 
   opacity: 1;
+}
+
+.mu-code-block.mu-active .mu-language-input:empty::after {
+  color: var(--editorColor10);
+
+  content: 'Input Language Identifier...';
 }
 
 /* content */
