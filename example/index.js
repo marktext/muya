@@ -5,6 +5,7 @@ import FormatPicker from '../lib/ui/formatPicker'
 import ImageSelector from '../lib/ui/imageSelector'
 import ImageToolBar from '../lib/ui/imageToolbar'
 import ImageTransformer from '../lib/ui/transformer'
+import CodePicker from '../lib/ui/codePicker'
 
 Muya.use(EmojiPicker)
 Muya.use(FormatPicker)
@@ -12,6 +13,7 @@ Muya.use(FormatPicker)
 Muya.use(ImageSelector)
 Muya.use(ImageToolBar)
 Muya.use(ImageTransformer)
+Muya.use(CodePicker)
 
 const container = document.querySelector('#editor')
 const muya = new Muya(container)

@@ -112,6 +112,39 @@
   opacity: 0;
 }
 
+/* code block */
+.mu-code-block {
+  position: relative;
+
+  margin-top: 1em;
+  padding: 1em;
+
+  color: var(--editorColor50);
+  font-size: 90%;
+  font-family: "DejaVu Sans Mono", "Source Code Pro", "Droid Sans Mono", Consolas, monospace;
+  line-height: 1.6;
+
+  background: var(--codeBlockBgColor);
+  border: 1px solid var(--editorColor10);
+  border-radius: 3px;
+}
+
+span.mu-language-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+
+  opacity: 0;
+}
+
+.mu-code-block.mu-active .mu-language-input {
+  top: -1.6em;
+  z-index: initial;
+
+  opacity: 1;
+}
+
 /* content */
 .mu-content {
   display: block;

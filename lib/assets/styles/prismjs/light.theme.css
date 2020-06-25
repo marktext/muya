@@ -3,9 +3,17 @@
  * Prism.js light theme
  */
 
-code[class*="language-"],
-pre.mu-paragraph {
-  color: black;
+/* Inline Code */
+:not(pre) > code {
+  padding: .1em;
+
+  white-space: normal;
+
+  border-radius: .3em;
+}
+
+pre.mu-code-block code,
+pre.mu-code-block {
   white-space: pre;
 
   /* font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; */
@@ -21,21 +29,6 @@ pre.mu-paragraph {
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
-}
-
-/* Code Fence */
-pre.mu-paragraph {
-  margin: 1em 0;
-  padding: 1em;
-}
-
-/* Inline Code */
-:not(pre) > code[class*="language-"] {
-  padding: .1em;
-
-  white-space: normal;
-
-  border-radius: .3em;
 }
 
 .token.comment,
