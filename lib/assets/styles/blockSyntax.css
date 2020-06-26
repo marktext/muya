@@ -156,6 +156,12 @@ span.mu-language-input {
   content: 'Input Language Identifier...';
 }
 
+/* loose tight list */
+.mu-tight-list > li > p {
+  margin: 0;
+  padding: 0;
+}
+
 /* order list and bullet list */
 ol.mu-order-list,
 ul.mu-bullet-list {
