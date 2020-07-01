@@ -1,4 +1,7 @@
 .mu-container {
+  box-sizing: border-box;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 50px 50px 100px 50px;
 
   color: var(--editorColor);

@@ -1,0 +1,53 @@
+.mu-front-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 30px;
+  height: 30px;
+}
+
+.mu-icon-wrapper {
+  width: 18px;
+  height: 18px;
+
+  cursor: pointer;
+  opacity: .8;
+}
+
+.mu-icon-wrapper i.icon {
+  position: relative;
+
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  color: var(--iconColor);
+
+  transition: all .25s ease-in-out;
+}
+
+.mu-icon-wrapper i.icon > i[class^="icon-"] { 
+  position: relative;
+  left: -18px;
+
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+
+  background-size: 100% !important;
+
+  filter: drop-shadow(18px 0 currentColor);
+}
+
+.mu-icon-wrapper:hover {
+  opacity: 1;
+}
+
+.mu-line-ghost {
+  position: absolute;
+
+  height: 3px;
+
+  background: var(--editorColor10);
+}
