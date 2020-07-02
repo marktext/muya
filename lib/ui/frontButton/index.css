@@ -10,7 +10,7 @@
   width: 18px;
   height: 18px;
 
-  cursor: pointer;
+  cursor: grab;
   opacity: .8;
 }
 
@@ -49,5 +49,18 @@
 
   height: 3px;
 
-  background: var(--editorColor10);
+  background: var(--editorColor30);
+}
+
+.mu-shadow {
+  position: absolute;
+
+  background: #fff;
+  box-shadow: var(--floatShadow);
+  transform: translateX(-20px);
+  opacity: .5;
+}
+
+.mu-shadow > * {
+  margin: 10px 0;
 }

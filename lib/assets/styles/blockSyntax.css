@@ -13,8 +13,9 @@
 .mu-container ol,
 .mu-container dl,
 .mu-container table {
-  margin-top: 0.5em;
+  margin-top: 0;
   margin-bottom: 0;
+  padding-bottom: 0.5em;
 }
 
 .mu-container h1,
@@ -25,8 +26,9 @@
 .mu-container h6 {
   position: relative;
 
-  margin-top: .5em;
+  margin-top: 0;
   margin-bottom: 0;
+  padding-bottom: .5em;
 
   color: var(--editorColor80);
   font-weight: bold;
