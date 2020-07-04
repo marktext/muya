@@ -12,10 +12,11 @@
 .mu-container ul,
 .mu-container ol,
 .mu-container dl,
-.mu-container table {
+.mu-container table,
+.mu-container figure {
   margin-top: 0;
   margin-bottom: 0;
-  padding-bottom: 0.5em;
+  padding-bottom: 1em;
 }
 
 .mu-container h1,
@@ -259,6 +260,71 @@ li.mu-task-list-item > input.mu-checkbox-checked::before {
   background: var(--themeColor);
   border-color: var(--themeColor);
   box-shadow: 0 3px 12px 0 var(--selectionColor);
+}
+
+/* table */
+.mu-table {
+  margin: 0;
+}
+
+.mu-table-inner {
+  padding: 0;
+
+  word-break: initial;
+
+  border-collapse: collapse;
+}
+
+.mu-table-inner tr {
+  margin: 0;
+  padding: 0;
+}
+
+.mu-table-inner tr th {
+  position: relative;
+
+  margin: 0;
+  padding: 6px 13px;
+
+  font-weight: bold;
+  text-align: left;
+}
+
+.mu-table-inner tr td {
+  position: relative;
+
+  margin: 0;
+  padding: 6px 13px;
+
+  text-align: left;
+}
+
+.mu-table-inner tr th::before,
+.mu-table-inner tr td::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  box-sizing: border-box;
+  width: calc(100% + 1px);
+  height: calc(100% + 1px);
+
+  border: 1px solid var(--tableBorderColor);
+
+  content: '';
+  pointer-events: none;
+}
+
+.mu-table-inner tr th:first-child,
+.mu-table-inner tr td:first-child {
+  margin-top: 0;
+}
+
+.mu-table-inner tr th:last-child,
+.mu-table-inner tr td:last-child {
+  margin-bottom: 0;
 }
 
 /* content */
