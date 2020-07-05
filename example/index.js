@@ -8,6 +8,7 @@ import ImageTransformer from '../lib/ui/transformer'
 import CodePicker from '../lib/ui/codePicker'
 import TableColumnTools from '../lib/ui/tableColumnTools'
 import TableDragBar from '../lib/ui/tableDragBar'
+import TableTools from '../lib/ui/tableTools'
 
 import FrontButton from '../lib/ui/frontButton'
 
@@ -22,6 +23,7 @@ Muya.use(CodePicker)
 Muya.use(FrontButton)
 Muya.use(TableColumnTools)
 Muya.use(TableDragBar)
+Muya.use(TableTools)
 
 const container = document.querySelector('#editor')
 const muya = new Muya(container)
