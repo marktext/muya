@@ -337,3 +337,7 @@ li.mu-task-list-item > input.mu-checkbox-checked::before {
   outline: none;
 }
 
+.mu-table-cell-content {
+  min-width: 10em;
+}
+
