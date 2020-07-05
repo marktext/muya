@@ -1,0 +1,58 @@
+.mu-table-drag-container {
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.mu-table-drag-bar[data-drag="bottom"] {
+  box-sizing: border-box;
+  width: 24px;
+  height: 10px;
+
+  border: 1px solid var(--editorColor30);
+  border-radius: 5px;
+}
+
+.mu-table-drag-bar[data-drag="left"] {
+  box-sizing: border-box;
+  width: 10px;
+  height: 24px;
+
+  border: 1px solid var(--editorColor30);
+  border-radius: 5px;
+}
+
+.mu-table-drag-bar::before,
+.mu-table-drag-bar::after {
+  position: absolute;
+
+  display: block;
+  width: 4px;
+  height: 4px;
+
+  background: var(--iconColor);
+  border-radius: 2px;
+
+  content: '';
+}
+
+.mu-table-drag-bar[data-drag="bottom"]::before {
+  top: 2px;
+  left: 4px;
+}
+
+.mu-table-drag-bar[data-drag="bottom"]::after {
+  top: 2px;
+  right: 4px;
+}
+
+.mu-table-drag-bar[data-drag="left"]::before {
+  top: 4px;
+  right: 2px;
+}
+
+.mu-table-drag-bar[data-drag="left"]::after {
+  right: 2px;
+  bottom: 4px;
+}
+
