@@ -6,6 +6,7 @@ import ImageSelector from '../lib/ui/imageSelector'
 import ImageToolBar from '../lib/ui/imageToolbar'
 import ImageTransformer from '../lib/ui/transformer'
 import CodePicker from '../lib/ui/codePicker'
+import TableColumnTools from '../lib/ui/tableColumnTools'
 
 import FrontButton from '../lib/ui/frontButton'
 
@@ -18,6 +19,7 @@ Muya.use(ImageTransformer)
 Muya.use(CodePicker)
 
 Muya.use(FrontButton)
+Muya.use(TableColumnTools)
 
 const container = document.querySelector('#editor')
 const muya = new Muya(container)

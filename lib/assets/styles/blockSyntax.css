@@ -327,6 +327,18 @@ li.mu-task-list-item > input.mu-checkbox-checked::before {
   margin-bottom: 0;
 }
 
+.mu-table-inner td[data-align="left"] {
+  text-align: left;
+}
+
+.mu-table-inner td[data-align="center"] {
+  text-align: center;
+}
+
+.mu-table-inner td[data-align="right"] {
+  text-align: right;
+}
+
 /* content */
 .mu-content {
   display: block;
