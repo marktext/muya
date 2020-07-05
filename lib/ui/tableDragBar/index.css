@@ -56,3 +56,24 @@
   bottom: 4px;
 }
 
+.mu-cell-transform {
+  transition: transform .3s ease-in-out;
+}
+
+.mu-drag-cell {
+  z-index: 1;
+
+  background: var(--floatBgColor);
+  opacity: .7;
+
+  transition: left .3s ease-in-out, bottom .3s ease-in-out;
+}
+
+.mu-drag-cell.ag-drag-left {
+  left: -6px;
+}
+
+.mu-drag-cell.ag-drag-bottom {
+  bottom: -6px;
+}
+
