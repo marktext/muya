@@ -14,8 +14,7 @@
 .mu-container dl,
 .mu-container table,
 .mu-container figure {
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0;
   padding-bottom: 1em;
 }
 
@@ -119,7 +118,8 @@
 }
 
 /* code block */
-.mu-code-block {
+.mu-code-block,
+.mu-html-container {
   position: relative;
 
   margin-top: 1.5em;
@@ -337,6 +337,55 @@ li.mu-task-list-item > input.mu-checkbox-checked::before {
 
 .mu-table-inner td[data-align="right"] {
   text-align: right;
+}
+
+/* html block */
+figure.mu-html-block > .mu-html-container {
+  position: absolute;
+  z-index: -1;
+
+  width: 0;
+  height: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: visible;
+
+  opacity: 0;
+}
+
+figure:not(.mu-active).mu-html-block .mu-html-container {
+  overflow: hidden;
+}
+
+figure.mu-active.mu-html-block .mu-html-container {
+  position: static;
+  z-index: 1;
+
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+
+  opacity: 1;
+}
+
+figure.mu-html-block .mu-html-preview {
+  display: block;
+  width: 100%;
+}
+
+figure.mu-html-block .mu-html-preview > pre {
+  padding: 0 1rem;
+
+  white-space: pre-wrap;
+
+  background: inherit;
+  border: 0;
+  border-radius: 0.3em;
+}
+
+figure.mu-html-block.mu-active .mu-html-preview {
+  display: none;
 }
 
 /* content */
