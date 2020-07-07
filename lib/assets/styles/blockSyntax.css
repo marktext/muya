@@ -388,6 +388,10 @@ figure.mu-html-block.mu-active .mu-html-preview {
   display: none;
 }
 
+figure.mu-html-block:not(.mu-active):hover {
+  background: var(--editorColor04);
+}
+
 /* content */
 .mu-content {
   display: block;
