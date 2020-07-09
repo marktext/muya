@@ -117,10 +117,10 @@ const doc = [
   name: 'table',
   children: [
     {
-      name: 'row',
+      name: 'table.row',
       children: [
         {
-          name: 'cell',
+          name: 'table.cell',
           meta: {
             align: 'none' // none left center right, cells in the same column has the same alignment.
           },
