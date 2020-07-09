@@ -37,6 +37,7 @@ muya.init()
 muya.on('json-change', changes => {
   console.log(JSON.stringify(muya.getState(), null, 2))
   console.log(JSON.stringify(changes, null, 2))
+  console.log(muya.getMarkdown())
 })
 
 muya.on('selection-change', changes => {

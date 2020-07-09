@@ -134,7 +134,8 @@ const doc = [
 {
   name: 'task-list',
   meta: {
-    marker: '-' // - + *
+    marker: '-', // - + *
+    loose: false
   },
   children: [
     {
