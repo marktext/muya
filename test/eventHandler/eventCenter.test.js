@@ -1,4 +1,4 @@
-import EventCenter from '../../lib/eventHandler/eventCenter'
+import EventCenter from '../../lib/event'
 
 let eventCenter = null
 let button1 = null

@@ -1,5 +1,5 @@
-import LinkedNode from '../../lib/block/linkedNode'
-import LinkedList from '../../lib/block/linkedList'
+import LinkedNode from '../../lib/block/base/linkedList/linkedNode'
+import LinkedList from '../../lib/block/base/linkedList/linkedList'
 
 let linkedList = null
 
