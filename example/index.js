@@ -274,12 +274,12 @@ redoBtn.addEventListener('click', () => {
 })
 
 muya.on('json-change', changes => {
-  console.log(JSON.stringify(muya.getState(), null, 2))
-  console.log(JSON.stringify(changes, null, 2))
-  console.log(muya.getMarkdown())
+  // console.log(JSON.stringify(muya.getState(), null, 2))
+  // console.log(JSON.stringify(changes, null, 2))
+  // console.log(muya.getMarkdown())
 })
 
-muya.on('selection-change', changes => {
-  const { anchor, focus, path } = changes
-  console.log(JSON.stringify([anchor.offset, focus.offset, path]))
-})
+// muya.on('selection-change', changes => {
+//   const { anchor, focus, path } = changes
+//   console.log(JSON.stringify([anchor.offset, focus.offset, path]))
+// })
