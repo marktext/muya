@@ -29,6 +29,7 @@
     "axios": "^0.19.2",
     "dompurify": "^2.0.12",
     "element-resize-detector": "^1.2.1",
+    "execall": "^2.0.0",
     "fast-diff": "^1.2.0",
     "file-icons-js": "^1.0.3",
     "fuzzaldrin": "^2.1.0",

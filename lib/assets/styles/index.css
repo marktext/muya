@@ -199,6 +199,21 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+.mu-highlight {
+  display: inline-block;
+  height: 1.3em;
+  padding: 0 2px;
+
+  color: var(--editorColor80);
+  line-height: 1.3em;
+
+  background: var(--highlightColor);
+  border-radius: 1px;
+
+  animation-name: highlight;
+  animation-duration: .25s;
+}
+
 *:not(.mu-hide)::selection, .mu-selection {
   padding: 0 .2em;
 
