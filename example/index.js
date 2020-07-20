@@ -261,6 +261,9 @@ const redoBtn = document.querySelector('#redo')
 const searchInput = document.querySelector('#search')
 const previousBtn = document.querySelector('#previous')
 const nextBtn = document.querySelector('#next')
+const replaceInput = document.querySelector('#replace')
+const singleBtn = document.querySelector('#single')
+const allBtn = document.querySelector('#all')
 const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN })
 
 window.muya = muya
@@ -287,6 +290,14 @@ previousBtn.addEventListener('click', () => {
 
 nextBtn.addEventListener('click', () => {
   muya.editor.search.find('next')
+})
+
+singleBtn.addEventListener('click', () => {
+  muya.editor.search.replace(replaceInput.value, { isSingle: true })
+})
+
+allBtn.addEventListener('click', () => {
+  muya.editor.search.replace(replaceInput.value, { isSingle: false })
 })
 
 muya.on('json-change', changes => {
