@@ -271,33 +271,33 @@ window.muya = muya
 muya.init()
 
 undoBtn.addEventListener('click', () => {
-  muya.editor.history.undo()
+  muya.undo()
 })
 
 redoBtn.addEventListener('click', () => {
-  muya.editor.history.redo()
+  muya.redo()
 })
 
 searchInput.addEventListener('input', (event) => {
   const value = event.target.value
 
-  muya.editor.search.search(value)
+  muya.search(value)
 })
 
 previousBtn.addEventListener('click', () => {
-  muya.editor.search.find('previous')
+  muya.find('previous')
 })
 
 nextBtn.addEventListener('click', () => {
-  muya.editor.search.find('next')
+  muya.find('next')
 })
 
 singleBtn.addEventListener('click', () => {
-  muya.editor.search.replace(replaceInput.value, { isSingle: true })
+  muya.replace(replaceInput.value, { isSingle: true })
 })
 
 allBtn.addEventListener('click', () => {
-  muya.editor.search.replace(replaceInput.value, { isSingle: false })
+  muya.replace(replaceInput.value, { isSingle: false })
 })
 
 muya.on('json-change', changes => {
