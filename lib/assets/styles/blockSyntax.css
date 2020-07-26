@@ -15,7 +15,7 @@
 .mu-container table,
 .mu-container figure {
   margin: 0;
-  padding-bottom: 1em;
+  padding: .5em 0;
 }
 
 .mu-container h1,
@@ -28,7 +28,7 @@
 
   margin-top: 0;
   margin-bottom: 0;
-  padding-bottom: .5em;
+  padding: .5em 0;
 
   color: var(--editorColor80);
   font-weight: bold;
