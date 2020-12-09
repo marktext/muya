@@ -197,7 +197,7 @@ li.mu-task-list-item {
 
 li.mu-task-list-item > input[type="checkbox"] {
   position: absolute;
-  top: .8em;
+  top: .2em;
   left: -23px;
 
   width: 12px;
