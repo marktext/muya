@@ -27,6 +27,7 @@ module.exports = {
     'no-fallthrough': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+    'no-useless-backreference': 0,
     'padding-line-between-statements': [
       'error',
       { blankLine: 'always', prev: '*', next: 'return' },
