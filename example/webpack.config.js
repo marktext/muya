@@ -1,4 +1,5 @@
 const path = require('path')
+const Dotenv = require('dotenv-webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const commonConfig = require('../scripts/webpack.common')
 
@@ -11,6 +12,7 @@ module.exports = {
     contentBase: './dist',
   },
   plugins: [
+    new Dotenv(),
     new HtmlWebpackPlugin({
       template: './example/index.html'
     }),

@@ -242,7 +242,9 @@ const DEFAULT_STATE = [
 Muya.use(EmojiPicker)
 Muya.use(FormatPicker)
 // Muya.use(ImagePicker)
-Muya.use(ImageSelector)
+Muya.use(ImageSelector, {
+  unsplashAccessKey: process.env.UNSPLASH_ACCESS_KEY
+})
 Muya.use(ImageToolBar)
 Muya.use(ImageTransformer)
 Muya.use(CodePicker)
