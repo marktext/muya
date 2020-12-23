@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/marktext/muya#readme",
   "dependencies": {
-    "axios": "^0.21.0",
-    "dompurify": "^2.2.4",
+    "axios": "^0.21.1",
+    "dompurify": "^2.2.6",
     "element-resize-detector": "^1.2.1",
     "execall": "^2.0.0",
     "fast-diff": "^1.2.0",
@@ -43,7 +43,7 @@
     "snabbdom": "^2.1.0",
     "snabbdom-to-html": "^6.0.0",
     "turndown": "^7.0.0",
-    "unsplash-js": "^7.0.1"
+    "unsplash-js": "^7.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -59,7 +59,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^5.0.1",
     "dotenv-webpack": "^6.0.0",
-    "eslint": "^7.15.0",
+    "eslint": "^7.16.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^4.0.2",
