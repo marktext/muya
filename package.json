@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/marktext/muya#readme",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "dompurify": "^2.0.11",
     "element-resize-detector": "^1.2.1",
     "fast-diff": "^1.2.0",
