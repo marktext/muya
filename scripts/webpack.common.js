@@ -7,7 +7,8 @@ exports.default = {
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '../lib'),
-    }
+    },
+    fallback: { 'path': false, },
   },
 
   module: {
