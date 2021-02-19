@@ -27,7 +27,12 @@ exports.default = {
       {
         test: /\.css$/,
         use: [
-          proMode ? MiniCssExtractPlugin.loader : 'style-loader',
+          proMode ? {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '/',
+            },
+          } : 'style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
           {
             loader: 'postcss-loader',
