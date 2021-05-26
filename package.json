@@ -29,13 +29,14 @@
   },
   "homepage": "https://github.com/marktext/muya#readme",
   "dependencies": {
+    "add": "^2.0.6",
     "axios": "^0.21.1",
     "dompurify": "^2.2.8",
     "element-resize-detector": "^1.2.2",
     "execall": "^3.0.0",
     "fast-diff": "^1.2.0",
     "file-icons-js": "^1.1.0",
-    "fuzzaldrin-plus": "^0.6.0",
+    "fuse.js": "^6.4.6",
     "html-tags": "^3.1.0",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.13.0",
@@ -46,7 +47,8 @@
     "snabbdom": "^3.0.1",
     "snabbdom-to-html": "^6.0.0",
     "turndown": "^7.0.0",
-    "unsplash-js": "^7.0.11"
+    "unsplash-js": "^7.0.11",
+    "yarn": "^1.22.10"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
