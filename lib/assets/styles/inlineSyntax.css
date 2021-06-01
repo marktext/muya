@@ -154,6 +154,7 @@ code.mu-inline-rule {
   transform: translateX(-50%);
 }
 
+div .mu-math-error,
 .mu-math > .mu-math-render.mu-math-error {
   color: var(--deleteColor);
   font-size: 14px;

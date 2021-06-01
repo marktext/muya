@@ -149,5 +149,19 @@ const doc = [
       }]
     }
   ]
-}
+},
+/**
+ * Extra Markdown Spec 
+ */
+/**
+ * Leaf Blocks
+ */
+// Math Block
+ {
+  name: 'math-block',
+  text: 'a \ne b',
+  meta: {
+    mathStyle: '', // '' for `$$` and 'gitlab' for ```math
+  }
+},
 ]
