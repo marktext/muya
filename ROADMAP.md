@@ -4,15 +4,15 @@
 
 **Goal: Support the basic version of three blocks**
 
-- [ ] Inline styles supported by GFM and Commonmark Spec
-- [ ] Inline pictures (local pictures are not supported) and picture editing menu
-- [ ] atx and setext headers
-- [ ] Quote block
-- [ ] Horizontal dividing line
-- [ ] Support inline style format method and toolbox
-- [ ] Various event processing backspace, delete, arrow, tab, enter, input, etc.
-- [ ] Selection and deletion of multiple paragraphs
-- [ ] Paragraph drag and drop
+- [x] Inline styles supported by GFM and Commonmark Spec
+- [x] Inline pictures (local pictures are not supported) and picture editing menu
+- [x] atx and setext headers
+- [x] Quote block
+- [x] Horizontal dividing line
+- [x] Support inline style format method and toolbox
+- [x] Various event processing backspace, delete, arrow, tab, enter, input, etc.
+- [x] Selection and deletion of multiple paragraphs
+- [x] Paragraph drag and drop
 - [x] Ordinary paragraph
 
 **July 2020**

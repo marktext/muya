@@ -208,17 +208,7 @@ import FrontButton from '../lib/ui/frontButton'
 // ]
 
 const DEFAULT_MARKDOWN = `
-foo bar
-
-$$
-a \\ne b
-$$
-
-\`\`\`math
-a \\ne contain
-\`\`\`
-
-bar zar
+foo bar^hello^~world~
 `
 
 // <div>
