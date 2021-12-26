@@ -29,12 +29,12 @@
   },
   "homepage": "https://github.com/marktext/muya#readme",
   "dependencies": {
+    "@marktext/file-icons": "^1.0.4",
     "axios": "^0.24.0",
     "dompurify": "^2.3.4",
     "element-resize-detector": "^1.2.4",
     "execall": "^3.0.0",
     "fast-diff": "^1.2.0",
-    "file-icons-js": "^1.1.0",
     "fuse.js": "^6.5.3",
     "html-tags": "^3.1.0",
     "joplin-turndown-plugin-gfm": "^1.0.12",

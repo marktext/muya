@@ -36,6 +36,7 @@
   justify-content: space-around;
   width: 28px;
   height: 28px;
+  padding-top: 2px;
 }
 
 .mu-list-picker .item .icon-wrapper span::before {
