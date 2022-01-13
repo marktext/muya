@@ -24,11 +24,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Install yarn
-      run: npm install yarn -g
+    - name: Install pnpm
+      run: npm install -g pnpm
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: pnpm install --frozen-lockfile
     - name: test
-      run: yarn test
+      run: pnpm test
     - name: build
-      run: yarn build
+      run: pnpm build
