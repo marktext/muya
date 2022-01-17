@@ -1,6 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const pkg = require('../package.json')
 const commonConfig = require('./webpack.common')
 
@@ -22,7 +22,7 @@ const proMode = process.env.NODE_ENV === 'production'
 module.exports = {
   ...commonConfig.default,
 
-  mode: proMode ? 'production': 'development',
+  mode: proMode ? 'production' : 'development',
 
   entry: './lib/index.js',
 

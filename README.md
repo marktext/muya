@@ -29,15 +29,15 @@ Coming soon!!!
 
 ```sh
 # step1: install dependences
-pnpm install
+yarn
 # step2: run the development codes
-pnpm dev
+yarn dev
 ```
 
 ## Build
 
 ```sh
-pnpm build
+yarn build
 ```
 
 ## FAQ

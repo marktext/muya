@@ -13,17 +13,25 @@ module.exports = {
   devtool: 'inline-source-map',
 
   devServer: {
-    contentBase: './dist',
+    // contentBase
+    static: {
+      directory: path.join(__dirname, 'dist/')
+    },
+    port: 3000,
+    // publicPath
+    devMiddleware: {
+      publicPath: 'https://localhost:3000/'
+    }
   },
 
   plugins: [
     new Dotenv(),
     new HtmlWebpackPlugin({
       template: './example/index.html'
-    }),
+    })
   ],
 
   output: {
-    filename: '[name].bundle.js',
-  },
+    filename: '[name].bundle.js'
+  }
 }

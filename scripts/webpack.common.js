@@ -1,14 +1,14 @@
 const path = require('path')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const proMode = process.env.NODE_ENV === 'production'
 
 exports.default = {
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '../lib'),
+      '@': path.resolve(__dirname, '../lib')
     },
-    fallback: { 'path': false, },
+    fallback: { path: false }
   },
 
   module: {
@@ -27,12 +27,14 @@ exports.default = {
       {
         test: /\.css$/,
         use: [
-          proMode ? {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: '/',
-            },
-          } : 'style-loader',
+          proMode
+            ? {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                  publicPath: '/'
+                }
+              }
+            : 'style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
           {
             loader: 'postcss-loader',
@@ -40,9 +42,9 @@ exports.default = {
               postcssOptions: {
                 plugins: [
                   ['postcss-preset-env',
-                  {
-                    stage: 0
-                  }]
+                    {
+                      stage: 0
+                    }]
                 ]
               }
             }
@@ -96,5 +98,5 @@ exports.default = {
         }
       }
     ]
-  },
+  }
 }
