@@ -291,7 +291,7 @@ redoBtn.addEventListener('click', () => {
 searchInput.addEventListener('input', (event) => {
   const value = event.target.value
 
-  muya.search(value)
+  muya.search(value, { isRegexp: true })
 })
 
 previousBtn.addEventListener('click', () => {
@@ -303,7 +303,7 @@ nextBtn.addEventListener('click', () => {
 })
 
 singleBtn.addEventListener('click', () => {
-  muya.replace(replaceInput.value, { isSingle: true })
+  muya.replace(replaceInput.value, { isSingle: true, isRegexp: true })
 })
 
 allBtn.addEventListener('click', () => {
