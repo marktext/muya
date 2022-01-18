@@ -52,7 +52,7 @@ None!
 
 ## Built with muya
 
-- [Mark Text](https://github.com/marktext/marktext) - Next generation markdown editor, running on platforms of MacOS Windows and Linux.
+- [MarkText](https://github.com/marktext/marktext) - Next generation markdown editor, running on platforms of MacOS Windows and Linux.
 
 ## License
 
