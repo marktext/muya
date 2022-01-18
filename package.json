@@ -1,5 +1,5 @@
 {
-  "name": "muya",
+  "name": "@marktext/muya",
   "version": "0.0.1",
   "description": "Future markdown editor for web and desktop application development",
   "main": "index.js",
