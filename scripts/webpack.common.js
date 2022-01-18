@@ -1,5 +1,6 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const ESLintPlugin = require('eslint-webpack-plugin')
 
 const proMode = process.env.NODE_ENV === 'production'
 
@@ -13,17 +14,6 @@ exports.default = {
 
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        enforce: 'pre',
-        exclude: /node_modules/,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            formatter: require('eslint-friendly-formatter')
-          }
-        }
-      },
       {
         test: /\.css$/,
         use: [
@@ -44,7 +34,8 @@ exports.default = {
                   ['postcss-preset-env',
                     {
                       stage: 0
-                    }]
+                    }
+                  ]
                 ]
               }
             }
@@ -98,5 +89,10 @@ exports.default = {
         }
       }
     ]
-  }
+  },
+  plugins: [
+    new ESLintPlugin({
+      formatter: require('eslint-friendly-formatter')
+    })
+  ]
 }
