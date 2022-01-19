@@ -2,7 +2,7 @@
   box-sizing: border-box;
   max-width: 800px;
   margin: 0 auto;
-  padding: 50px 50px 100px 50px;
+  padding: 50px 50px 100px;
 
   color: var(--editorColor);
 }
@@ -119,6 +119,7 @@
 
 /* code block */
 .mu-code-block,
+.mu-frontmatter,
 .mu-html-container,
 .mu-math-container {
   position: relative;
@@ -430,7 +431,7 @@ figure.mu-active.mu-math-block > div.mu-math-preview {
   background: var(--floatBgColor);
   border: 1px solid var(--floatBorderColor);
   border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
   transform: translateX(-50%);
 }
 
