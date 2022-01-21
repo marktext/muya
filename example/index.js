@@ -13,16 +13,28 @@ import PreviewTools from '../lib/ui/previewTools'
 
 import FrontButton from '../lib/ui/frontButton'
 
-// const DEFAULT_STATE = [
-//   {
-//     name: 'frontmatter',
-//     text: 'title: marktext\nname: ransixi',
-//     meta: {
-//       lang: 'yaml', // yaml | toml | json
-//       style: '-' // `-` for yaml | `+` for toml | `;;;` and `{}` for json
-//     }
-//   }
-// Indented code blocks and Fenced code blocks
+const DEFAULT_STATE = [
+  {
+    name: 'frontmatter',
+    text: 'title: marktext\nname: ransixi',
+    meta: {
+      lang: 'yaml', // yaml | toml | json
+      style: '-' // `-` for yaml | `+` for toml | `;;;` and `{}` for json
+    }
+  },
+  {
+    name: 'diagram',
+    text: `flowchart TD
+    A[Hard] -->|Text| B(Round)
+    B --> C{Decision}
+    C -->|One| D[Result 1]
+    C -->|Two| E[Result 2]`,
+    meta: {
+      lang: 'yaml',
+      type: 'mermaid'
+    }
+  }
+// // Indented code blocks and Fenced code blocks
 // {
 //   name: 'code-block',
 //   meta: {
@@ -222,17 +234,17 @@ import FrontButton from '../lib/ui/frontButton'
 //   name: 'paragraph',
 //   text: '图片![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592848169049&di=1bf848686f738f8697ec90a2d484a29c&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_pic%2F01%2F54%2F05%2F625746fd5b60878.jpg) bar &gt; *zar* <ruby>北京<rt>Beijing</rt></ruby> foo bar $a \\ne b$ 和自己'
 // }
-// ]
+]
 
-const DEFAULT_MARKDOWN = `---
-title: name
-book: for
----
+// const DEFAULT_MARKDOWN = `---
+// title: name
+// book: for
+// ---
 
-wowow
+// wowow
 
-foo bar^hello^~world~
-`
+// foo bar^hello^~world~
+// `
 
 // <div>
 // foo bar
@@ -295,7 +307,7 @@ const nextBtn = document.querySelector('#next')
 const replaceInput = document.querySelector('#replace')
 const singleBtn = document.querySelector('#single')
 const allBtn = document.querySelector('#all')
-const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN })
+const muya = new Muya(container, { json: DEFAULT_STATE })
 
 window.muya = muya
 

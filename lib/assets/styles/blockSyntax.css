@@ -121,7 +121,8 @@
 .mu-code-block,
 .mu-frontmatter,
 .mu-html-container,
-.mu-math-container {
+.mu-math-container,
+.mu-diagram-container {
   position: relative;
 
   margin-top: 1.5em;
@@ -345,9 +346,10 @@ li.mu-task-list-item > input.mu-checkbox-checked::before {
   text-align: right;
 }
 
-/* html block and math block */
+/* html block and math block, diagram block */
 figure.mu-html-block > .mu-html-container,
-figure.mu-math-block > .mu-math-container {
+figure.mu-math-block > .mu-math-container,
+figure.mu-diagram-block > .mu-diagram-container {
   position: absolute;
   z-index: -1;
 
@@ -361,12 +363,14 @@ figure.mu-math-block > .mu-math-container {
 }
 
 figure:not(.mu-active).mu-html-block .mu-html-container,
-figure:not(.mu-active).mu-math-block .mu-math-container {
+figure:not(.mu-active).mu-math-block .mu-math-container,
+figure:not(.mu-active).mu-diagram-block .mu-diagram-container {
   overflow: hidden;
 }
 
 figure.mu-active.mu-html-block .mu-html-container,
-figure.mu-active.mu-math-block .mu-math-container {
+figure.mu-active.mu-math-block .mu-math-container,
+figure.mu-active.mu-diagram-block .mu-diagram-container {
   position: static;
   z-index: 1;
 
@@ -379,7 +383,8 @@ figure.mu-active.mu-math-block .mu-math-container {
 }
 
 figure.mu-html-block .mu-html-preview,
-figure.mu-math-block .mu-math-preview {
+figure.mu-math-block .mu-math-preview,
+figure.mu-diagram-block .mu-diagram-preview {
   display: block;
   width: 100%;
 }
@@ -398,8 +403,9 @@ figure.mu-html-block.mu-active .mu-html-preview {
   display: none;
 }
 
-/* math block */
-figure.mu-math-block {
+/* math block and diagram */
+figure.mu-math-block,
+figure.mu-diagram-block {
   position: relative;
 }
 
@@ -408,7 +414,8 @@ figure.mu-math-block:not(.mu-active):hover {
   background: var(--editorColor04);
 }
 
-figure.mu-math-block div.mu-math-preview {
+figure.mu-math-block div.mu-math-preview,
+figure.mu-diagram-block div.mu-diagram-preview {
   width: 100%;
 
   text-align: center;
@@ -418,7 +425,8 @@ figure.mu-math-block div.mu-math-preview > svg {
   width: 100%;
 }
 
-figure.mu-active.mu-math-block > div.mu-math-preview {
+figure.mu-active.mu-math-block > div.mu-math-preview,
+figure.mu-active.mu-diagram-block > div.mu-diagram-preview {
   position: absolute;
   top: calc(100% + 20px);
   left: 50%;

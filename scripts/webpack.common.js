@@ -7,13 +7,26 @@ const proMode = process.env.NODE_ENV === 'production'
 exports.default = {
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '../lib')
+      '@': path.resolve(__dirname, '../lib'),
+      snapsvg: path.join(
+        __dirname,
+        '../lib/block/extra/diagram/renderer/sequence/snap.svg-min.js'
+      )
     },
     fallback: { path: false }
   },
 
   module: {
     rules: [
+      {
+        test: require.resolve(
+          path.join(
+            __dirname,
+            '../lib/block/extra/diagram/renderer/sequence/snap.svg-min.js'
+          )
+        ),
+        use: 'imports-loader?this=>window,fix=>module.exports=0'
+      },
       {
         test: /\.css$/,
         use: [
@@ -31,7 +44,8 @@ exports.default = {
             options: {
               postcssOptions: {
                 plugins: [
-                  ['postcss-preset-env',
+                  [
+                    'postcss-preset-env',
                     {
                       stage: 0
                     }
