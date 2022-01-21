@@ -295,7 +295,7 @@ const nextBtn = document.querySelector('#next')
 const replaceInput = document.querySelector('#replace')
 const singleBtn = document.querySelector('#single')
 const allBtn = document.querySelector('#all')
-const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN })
+const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, frontMatter: false })
 
 window.muya = muya
 
