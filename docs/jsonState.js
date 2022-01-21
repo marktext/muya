@@ -164,4 +164,12 @@ const doc = [
     mathStyle: '', // '' for `$$` and 'gitlab' for ```math
   }
 },
+{
+  name: 'frontmatter',
+  text: 'title: marktext\nname: ransixi',
+  meta: {
+    lang: 'yaml', // yaml | toml | json
+    style: '-', // `-` for yaml | `+` for toml | `;;;` and `{}` for json
+  }
+}
 ]
