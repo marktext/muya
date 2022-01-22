@@ -389,6 +389,11 @@ figure.mu-diagram-block .mu-diagram-preview {
   width: 100%;
 }
 
+/* to prevent plantuml img overflow */
+figure.mu-diagram-block .mu-diagram-preview img {
+  max-width: 100%;
+}
+
 figure.mu-html-block .mu-html-preview > pre {
   padding: 0 1rem;
 
