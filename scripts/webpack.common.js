@@ -8,11 +8,7 @@ const proMode = process.env.NODE_ENV === 'production'
 exports.default = {
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '../lib'),
-      snapsvg: path.join(
-        __dirname,
-        '../lib/assets/libs/sequence/snap.svg-min.js'
-      )
+      '@': path.resolve(__dirname, '../lib')
     },
     fallback: {
       path: false,
@@ -23,15 +19,6 @@ exports.default = {
 
   module: {
     rules: [
-      {
-        test: require.resolve(
-          path.join(
-            __dirname,
-            '../lib/assets/libs/sequence/snap.svg-min.js'
-          )
-        ),
-        use: 'imports-loader?this=>window,fix=>module.exports=0'
-      },
       {
         test: /\.css$/,
         use: [

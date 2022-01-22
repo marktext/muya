@@ -16,17 +16,10 @@ import FrontButton from '../lib/ui/frontButton'
 const DEFAULT_STATE = [
   {
     name: 'diagram',
-    text: `
-@startuml
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-    
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: Another authentication Response
-@enduml`,
+    text: 'A->B: Does something',
     meta: {
       lang: 'yaml',
-      type: 'plantuml'
+      type: 'sequence'
     }
   },
   {

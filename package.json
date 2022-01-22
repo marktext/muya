@@ -48,6 +48,7 @@
     "prismjs": "^1.25.0",
     "snabbdom": "^3.2.0",
     "snabbdom-to-html": "^7.0.0",
+    "snapsvg-cjs": "^0.0.6",
     "turndown": "^7.1.1",
     "underscore": "^1.13.2",
     "unsplash-js": "^7.0.15",
