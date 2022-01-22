@@ -31,6 +31,7 @@
   "dependencies": {
     "@marktext/file-icons": "^1.0.4",
     "axios": "^0.25.0",
+    "browserify-zlib": "^0.2.0",
     "dompurify": "^2.3.4",
     "element-resize-detector": "^1.2.4",
     "execall": "^3.0.0",
@@ -41,7 +42,6 @@
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.15.2",
     "mermaid": "8.8.4",
-    "minizlib": "^2.1.2",
     "ot-json1": "^1.0.2",
     "ot-text-unicode": "^4.0.0",
     "popper.js": "^1.16.1",
@@ -85,6 +85,7 @@
     "jest": "^27.0.3",
     "lint-staged": "^12.2.2",
     "mini-css-extract-plugin": "^2.5.1",
+    "node-polyfill-webpack-plugin": "^1.1.4",
     "pinst": "^2.1.6",
     "postcss": "^8.4.5",
     "postcss-loader": "^6.2.1",

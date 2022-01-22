@@ -1,6 +1,7 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 
 const proMode = process.env.NODE_ENV === 'production'
 
@@ -10,10 +11,14 @@ exports.default = {
       '@': path.resolve(__dirname, '../lib'),
       snapsvg: path.join(
         __dirname,
-        '../lib/block/extra/diagram/renderer/sequence/snap.svg-min.js'
+        '../lib/assets/libs/sequence/snap.svg-min.js'
       )
     },
-    fallback: { path: false }
+    fallback: {
+      path: false,
+      zlib: require.resolve('browserify-zlib'),
+      stream: require.resolve('stream-browserify')
+    }
   },
 
   module: {
@@ -22,7 +27,7 @@ exports.default = {
         test: require.resolve(
           path.join(
             __dirname,
-            '../lib/block/extra/diagram/renderer/sequence/snap.svg-min.js'
+            '../lib/assets/libs/sequence/snap.svg-min.js'
           )
         ),
         use: 'imports-loader?this=>window,fix=>module.exports=0'
@@ -105,6 +110,7 @@ exports.default = {
     ]
   },
   plugins: [
+    new NodePolyfillPlugin(),
     new ESLintPlugin({
       formatter: require('eslint-friendly-formatter')
     })
