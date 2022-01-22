@@ -164,12 +164,26 @@ const doc = [
     mathStyle: '', // '' for `$$` and 'gitlab' for ```math
   }
 },
+// Front Matter
 {
   name: 'frontmatter',
   text: 'title: marktext\nname: ransixi',
   meta: {
     lang: 'yaml', // yaml | toml | json
     style: '-', // `-` for yaml | `+` for toml | `;;;` and `{}` for json
+  }
+},
+// Diagram: flowchart | sequence | mermaid | plantuml | vega-lite
+{
+  name: 'diagram',
+  text: `flowchart TD
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]`,
+  meta: {
+    lang: 'yaml',
+    type: 'mermaid'
   }
 }
 ]

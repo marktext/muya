@@ -1,6 +1,7 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 
 const proMode = process.env.NODE_ENV === 'production'
 
@@ -9,7 +10,11 @@ exports.default = {
     alias: {
       '@': path.resolve(__dirname, '../lib')
     },
-    fallback: { path: false }
+    fallback: {
+      path: false,
+      zlib: require.resolve('browserify-zlib'),
+      stream: require.resolve('stream-browserify')
+    }
   },
 
   module: {
@@ -31,7 +36,8 @@ exports.default = {
             options: {
               postcssOptions: {
                 plugins: [
-                  ['postcss-preset-env',
+                  [
+                    'postcss-preset-env',
                     {
                       stage: 0
                     }
@@ -91,6 +97,7 @@ exports.default = {
     ]
   },
   plugins: [
+    new NodePolyfillPlugin(),
     new ESLintPlugin({
       formatter: require('eslint-friendly-formatter')
     })
