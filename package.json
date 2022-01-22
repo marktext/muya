@@ -41,7 +41,7 @@
     "html-tags": "^3.1.0",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.15.2",
-    "mermaid": "8.8.4",
+    "mermaid": "8.13.8",
     "ot-json1": "^1.0.2",
     "ot-text-unicode": "^4.0.0",
     "popper.js": "^1.16.1",
