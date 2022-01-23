@@ -7,6 +7,7 @@ import ImageToolBar from '../lib/ui/imageToolbar'
 import ImageTransformer from '../lib/ui/transformer'
 import CodePicker from '../lib/ui/codePicker'
 import TableColumnTools from '../lib/ui/tableColumnTools'
+import QuickInsert from '../lib/ui/quickInsert'
 import TableDragBar from '../lib/ui/tableDragBar'
 import TableTools from '../lib/ui/tableTools'
 import PreviewTools from '../lib/ui/previewTools'
@@ -236,25 +237,7 @@ import FrontButton from '../lib/ui/frontButton'
 // }
 // ]
 
-const DEFAULT_MARKDOWN = `\`\`\`mermaid
-stateDiagram-v2
-        State1: The state with a note
-        note right of State1
-            Important information! You can write
-            notes.
-        end note
-        State1 --> State2
-        note left of State2 : This is the note to the left.
-The state with a
-\`\`\`
-
-\`\`\`python
-a, b = 0, 1
-while b < 10:
-    print(b)
-    a, b = b, a+b
-\`\`\`
-
+const DEFAULT_MARKDOWN = `
 foo bar^hello^~world~`
 
 // <div>
@@ -305,6 +288,7 @@ Muya.use(CodePicker)
 
 Muya.use(FrontButton)
 Muya.use(TableColumnTools)
+Muya.use(QuickInsert)
 Muya.use(TableDragBar)
 Muya.use(TableTools)
 Muya.use(PreviewTools)
@@ -355,9 +339,9 @@ allBtn.addEventListener('click', () => {
 })
 
 muya.on('json-change', changes => {
-  console.log(JSON.stringify(muya.getState(), null, 2))
-  console.log(muya.getMarkdown())
-  console.log(JSON.stringify(changes, null, 2))
+  // console.log(JSON.stringify(muya.getState(), null, 2))
+  // console.log(muya.getMarkdown())
+  // console.log(JSON.stringify(changes, null, 2))
 })
 
 // muya.on('selection-change', changes => {
