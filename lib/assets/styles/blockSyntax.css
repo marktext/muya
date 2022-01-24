@@ -97,7 +97,7 @@
 
 .mu-thematic-break:not(.mu-active)::before {
   position: absolute;
-  top: .8em;
+  top: 1.3em;
   left: 0;
 
   display: block;
