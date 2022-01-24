@@ -21,27 +21,26 @@
 
 - [ ] Copy and paste in lines and paragraphs
 - [ ] Select multiple paragraphs to copy and paste
-- [ ] Ordered list
-- [ ] Bullet list
-- [ ] Task list
-- [ ] Drag and drop the list and put finished item to the end automatically.
-- [ ] Code block
-- [ ] html block
-- [ ] table block
-- [ ] Handle history function
-- [ ] Conversion between paragraphs
-- [ ] Input and output to other file type(markdown and html)
+- [x] Ordered list
+- [x] Bullet list
+- [x] Task list
+- [x] Drag and drop the list and put finished item to the end automatically.
+- [x] Code block
+- [x] html block
+- [x] table block
+- [x] Handle history function
+- [x] Input and output to other file type(markdown and html)
 
 **August 2020**
 
 **Goal: Full-featured version, the plugin supports more functions**
 
-- [ ] Math formula block
-- [ ] mermaid
-- [ ] flowchart
-- [ ] sequence
+- [x] Math formula block
+- [x] mermaid
+- [x] flowchart
+- [x] sequence
 - [ ] footnote
-- [ ] front matter
+- [x] front matter
 - [ ] Superscripts, subscripts, mathematical formulas, etc.
 - [ ] Pre-paragraph menu
-- [ ] Quick insert menu
+- [x] Quick insert menu
