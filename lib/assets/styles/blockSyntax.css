@@ -454,6 +454,12 @@ figure.mu-math-block span.mu-codeblock-content:first-of-type:empty::after {
   content: 'Input Mathematical Formula...';
 }
 
+pre.mu-frontmatter span.mu-codeblock-content:first-of-type:empty::after {
+  color: var(--editorColor10);
+
+  content: 'Input Front Matter...';
+}
+
 /* code html math ...code block style */
 pre.mu-active.mu-front-matter::before,
 pre.mu-active.mu-front-matter::after {
@@ -549,6 +555,12 @@ pre.mu-active.mu-fenced-code::after {
   word-break: break-word;
 
   outline: none;
+}
+
+#editor.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
+  color: var(--editorColor10);
+
+  content: 'Type / and search';
 }
 
 .mu-table-cell-content {
