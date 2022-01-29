@@ -67,31 +67,24 @@ exports.default = {
         ]
       },
       {
-        test: /\.(png|jpe?g|gif)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            name: 'imgs/[name]--[folder].[ext]'
-          }
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        type: 'asset',
+        generator: {
+          filename: 'images/[name].[contenthash:8][ext]'
         }
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'media/[name]--[folder].[ext]'
+        type: 'asset/resource',
+        generator: {
+          filename: 'media/[name].[contenthash:8][ext]'
         }
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            name: 'fonts/[name]--[folder].[ext]'
-          }
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name].[contenthash:8][ext]'
         }
       }
     ]
