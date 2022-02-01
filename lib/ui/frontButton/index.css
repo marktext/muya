@@ -64,11 +64,12 @@
 
 .mu-shadow {
   position: absolute;
+  z-index: 1;
 
-  background: #fff;
+  background: var(--editorBgColor);
   box-shadow: var(--floatShadow);
-  transform: translateX(-20px);
-  opacity: .5;
+  transform: translateX(-30px);
+  opacity: .8;
 }
 
 .mu-shadow > * {

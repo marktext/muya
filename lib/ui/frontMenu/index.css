@@ -33,10 +33,6 @@
   user-select: none;
 }
 
-.mu-front-menu > ul li.item:hover {
-  background: var(--floatHoverColor);
-}
-
 .mu-front-menu li .icon-wrapper {
   display: flex;
   align-items: center;
@@ -62,12 +58,6 @@
   overflow: hidden;
 
   color: var(--iconColor);
-
-  transition: all .25s ease-in-out;
-}
-
-.mu-front-menu li.item.delete .icon-wrapper i.icon {
-  color: var(--deleteColor);
 }
 
 .mu-front-menu li .icon-wrapper i.icon > i[class^="icon-"] { 
@@ -88,13 +78,17 @@
   color: var(--editorColor);
 }
 
-.mu-front-menu ul > li.delete > span {
-  color: var(--deleteColor);
-}
-
 .mu-front-menu > ul li > .short-cut {
   color: var(--editorColor);
   font-size: 13px;
+}
+
+.mu-front-menu > ul li.item:hover {
+  background: var(--floatHoverColor);
+}
+
+.mu-front-menu > ul li.item.delete:hover span {
+  color: var(--notificationWarningBg);
 }
 
 .mu-front-menu > ul li.divider {
@@ -121,6 +115,10 @@
 
 .mu-front-menu li.turn-into-menu .turn-into-item.active i.icon {
   color: var(--themeColor);
+}
+
+.mu-front-menu > ul li.item.delete:hover .icon-wrapper i.icon {
+  color: var(--notificationWarningBg);
 }
 
 .mu-front-menu li.turn-into-menu .turn-into-item .icon-wrapper:hover {
