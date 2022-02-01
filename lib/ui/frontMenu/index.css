@@ -1,8 +1,10 @@
 .mu-front-menu {
-  width: 190px;
+  width: 230px;
 
+  font-weight: 600;
   font-size: 14px;
 }
+
 .mu-front-menu ul,
 .mu-front-menu li {
   margin: 0;
@@ -17,39 +19,46 @@
   padding: 10px 0;
 }
 
-.mu-front-menu > ul li {
+.mu-front-menu > ul li.item {
   position: relative;
 
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 28px;
+  height: 32px;
+  padding: 0 15px;
 
   cursor: pointer;
 
   user-select: none;
 }
 
-.mu-front-menu > ul li:hover {
+.mu-front-menu > ul li.item:hover {
   background: var(--floatHoverColor);
 }
 
-.mu-front-menu li.item .icon-wrapper {
+.mu-front-menu li .icon-wrapper {
   display: flex;
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
-  margin-left: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
 
   color: var(--iconColor);
+
+  border-radius: 4px;
 }
 
-.mu-front-menu li.item .icon-wrapper i.icon {
+.mu-front-menu li.item .text {
+  margin-left: 10px;
+}
+
+.mu-front-menu li .icon-wrapper i.icon {
   position: relative;
 
   display: flex;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   overflow: hidden;
 
   color: var(--iconColor);
@@ -57,18 +66,22 @@
   transition: all .25s ease-in-out;
 }
 
-.mu-front-menu li.item .icon-wrapper i.icon > i[class^="icon-"] { 
+.mu-front-menu li.item.delete .icon-wrapper i.icon {
+  color: var(--deleteColor);
+}
+
+.mu-front-menu li .icon-wrapper i.icon > i[class^="icon-"] { 
   position: relative;
-  left: -16px;
+  left: -18px;
 
   display: inline-block;
   width: 100%;
   height: 100%;
 
-  filter: drop-shadow(16px 0 currentColor);
+  filter: drop-shadow(18px 0 currentcolor);
 }
 
-.mu-front-menu > ul li > span {
+.mu-front-menu > ul li.item > span {
   display: inline-block;
   flex: 1;
 
@@ -80,101 +93,36 @@
 }
 
 .mu-front-menu > ul li > .short-cut {
-  margin-right: 10px;
-
-  color: var(--editorColor50);
-
-  transform: scale(.8);
+  color: var(--editorColor);
+  font-size: 13px;
 }
 
-.mu-front-menu .submenu {
-  position: absolute;
-  top: -38px;
-  left: calc(100% + 3px);
+.mu-front-menu > ul li.divider {
+  width: 200px;
+  height: 1px;
+  margin: 4px 15px;
 
-  box-sizing: border-box;
-  width: 190px;
-  max-height: 300px;
-  overflow-x: hidden;
-  overflow-y: auto;
-
-  background-color: var(--floatBgColor);
-  border-radius: 2px;
-  box-shadow: var(--floatShadow);
-  transform: scale(0);
-  transform-origin: left;
-  opacity: 0;
-
-  transition: all .25s ease-in-out;
+  background: var(--editorColor10);
 }
 
-.mu-front-menu .submenu.align-bottom {
-  top: unset;
-  bottom: -66px;
+.mu-front-menu li.turn-into-menu {
+  padding: 0 15px;
 }
 
-.mu-front-menu li.turnInto > .short-cut {
-  position: relative;
-
+.mu-front-menu li.turn-into-menu .turn-into-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 40px;
-  height: 20px;
+  height: 40px;
+
+  cursor: pointer;
 }
 
-.mu-front-menu li.turnInto > .short-cut::before {
-  position: absolute;
-  top: 5px;
-  right: 0;
-
-  display: block;
-  width: 0;
-  height: 0;
-
-  border: 5px solid var(--editorColor30);
-  border-top-color: transparent;
-  border-top-width: 4px;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-bottom-width: 4px;
-
-  content: '';
-}
-
-.mu-front-menu ul li.item.disabled {
-  color: var(--editorColor30);
-
-  cursor: not-allowed;
-}
-
-.mu-front-menu li.turnInto > .short-cut > span {
-  position: absolute;
-  top: 0;
-  left: 50px;
-
-  display: inline-block;
-  width: 20px;
-  height: 28px;
-}
-
-.mu-front-menu ul li.item.active > span,
-.mu-front-menu ul li.item.active > .short-cut > span {
+.mu-front-menu li.turn-into-menu .turn-into-item.active i.icon {
   color: var(--themeColor);
 }
 
-.mu-front-menu ul li.item.active > .icon-wrapper i.icon {
-  color: var(--themeColor);
-
-  opacity: 1;
-}
-
-.mu-front-menu .submenu::-webkit-scrollbar:vertical {
-  width: 0;
-}
-
-.mu-front-menu li.turnInto:hover .submenu {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.mu-front-menu .submenu ul {
-  padding: 10px 0;
+.mu-front-menu li.turn-into-menu .turn-into-item .icon-wrapper:hover {
+  background: var(--floatHoverColor);
 }
