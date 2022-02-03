@@ -138,6 +138,54 @@
   border-radius: 3px;
 }
 
+.mu-code-copy {
+  position: absolute;
+  top: .5em;
+  right: .5em;
+  z-index: 1;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+
+  transition: opacity .2s ease-in-out;
+}
+
+.mu-code.mu-active .mu-code-copy {
+  opacity: .5;
+}
+
+code.mu-code .mu-code-copy:hover {
+  opacity: 1 !important;
+}
+
+.mu-code:not(.mu-active):hover .mu-code-copy {
+  opacity: .5;
+}
+
+.mu-code-copy i.icon {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+
+.mu-code-copy i.icon > i[class^=icon-] {
+  position: absolute;
+  left: -16px;
+
+  width: 100%;
+  height: 100%;
+
+  filter: drop-shadow(16px 0 var(--iconColor));
+}
+
 span.mu-language-input {
   position: absolute;
   top: 0;
@@ -371,7 +419,7 @@ figure:not(.mu-active).mu-diagram-block .mu-diagram-container {
 figure.mu-active.mu-html-block .mu-html-container,
 figure.mu-active.mu-math-block .mu-math-container,
 figure.mu-active.mu-diagram-block .mu-diagram-container {
-  position: static;
+  position: relative;
   z-index: 1;
 
   display: block;
