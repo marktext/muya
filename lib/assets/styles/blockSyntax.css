@@ -186,6 +186,24 @@ code.mu-code .mu-code-copy:hover {
   filter: drop-shadow(16px 0 var(--iconColor));
 }
 
+.mu-fenced-code.mu-active .mu-code::after {
+  content: 'fenced';
+}
+
+.mu-indented-code.mu-active .mu-code::after {
+  content: 'indented';
+}
+
+.mu-fenced-code.mu-active .mu-code::after,
+.mu-indented-code.mu-active .mu-code::after {
+  position: absolute;
+  right: .5em;
+  bottom: 0;
+  z-index: 1;
+
+  color: var(--editorColor30);
+}
+
 span.mu-language-input {
   position: absolute;
   top: 0;
