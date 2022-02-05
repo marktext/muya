@@ -7,6 +7,7 @@
     "dev": "webpack serve --config ./example/webpack.config.js --open",
     "build": "NODE_ENV=production webpack --config ./scripts/webpack.config.js",
     "test": "jest --env=jsdom",
+    "lint": "eslint lib",
     "lint:fix": "eslint --fix lib",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
