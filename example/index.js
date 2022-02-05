@@ -315,7 +315,7 @@ const nextBtn = document.querySelector('#next')
 const replaceInput = document.querySelector('#replace')
 const singleBtn = document.querySelector('#single')
 const allBtn = document.querySelector('#all')
-const muya = new Muya(container, { json: DEFAULT_STATE })
+const muya = new Muya(container, { json: DEFAULT_STATE, disableHtml: false })
 
 window.muya = muya
 
