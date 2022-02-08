@@ -428,13 +428,8 @@ figure.mu-diagram-block > .mu-diagram-container {
   opacity: 0;
 }
 
-figure:not(.mu-active).mu-html-block .mu-html-container,
-figure:not(.mu-active).mu-math-block .mu-math-container,
-figure:not(.mu-active).mu-diagram-block .mu-diagram-container {
-  overflow: hidden;
-}
-
 figure.mu-active.mu-html-block .mu-html-container,
+figure.mu-disable-html-render.mu-html-block .mu-html-container,
 figure.mu-active.mu-math-block .mu-math-container,
 figure.mu-active.mu-diagram-block .mu-diagram-container {
   position: relative;
@@ -446,6 +441,12 @@ figure.mu-active.mu-diagram-block .mu-diagram-container {
   height: auto;
 
   opacity: 1;
+}
+
+figure:not(.mu-active):not(.mu-disable-html-render).mu-html-block .mu-html-container,
+figure:not(.mu-active).mu-math-block .mu-math-container,
+figure:not(.mu-active).mu-diagram-block .mu-diagram-container {
+  overflow: hidden;
 }
 
 figure.mu-html-block .mu-html-preview,
@@ -470,7 +471,8 @@ figure.mu-html-block .mu-html-preview > pre {
   border-radius: 0.3em;
 }
 
-figure.mu-html-block.mu-active .mu-html-preview {
+figure.mu-html-block.mu-active .mu-html-preview,
+figure.mu-html-block.mu-disable-html-render .mu-html-preview {
   display: none;
 }
 
@@ -480,7 +482,7 @@ figure.mu-diagram-block {
   position: relative;
 }
 
-figure.mu-html-block:not(.mu-active):hover,
+figure.mu-html-block:not(.mu-active):not(.mu-disable-html-render):hover,
 figure.mu-math-block:not(.mu-active):hover {
   background: var(--editorColor04);
 }
