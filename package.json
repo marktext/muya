@@ -59,7 +59,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
-    "@babel/core": "7.17.4",
+    "@babel/core": "7.17.5",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-proposal-class-properties": "^7.16.5",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.16.5",
@@ -91,7 +91,7 @@
     "pinst": "^2.1.6",
     "postcss": "^8.4.6",
     "postcss-loader": "^6.2.1",
-    "postcss-preset-env": "^7.4.0",
+    "postcss-preset-env": "^7.4.1",
     "style-loader": "^3.3.1",
     "stylelint": "^14.5.1",
     "stylelint-config-prettier": "^9.0.3",
@@ -101,7 +101,7 @@
     "svg-sprite-loader": "^6.0.7",
     "svgo": "^2.3.0",
     "svgo-loader": "^3.0.0",
-    "webpack": "^5.69.0",
+    "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"
   }
