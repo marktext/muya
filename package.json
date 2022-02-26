@@ -46,7 +46,7 @@
     "ot-json1": "^1.0.2",
     "ot-text-unicode": "^4.0.0",
     "popper.js": "^1.16.1",
-    "prismjs": "^1.25.0",
+    "prismjs": "^1.27.0",
     "snabbdom": "^3.2.0",
     "snabbdom-to-html": "^7.0.0",
     "snapsvg-cjs": "^0.0.6",
