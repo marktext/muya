@@ -53,7 +53,7 @@
     "turndown": "^7.1.1",
     "underscore": "^1.13.2",
     "unsplash-js": "^7.0.15",
-    "vega": "^5.22.0",
+    "vega": "^5.23.0",
     "vega-embed": "^6.20.8",
     "vega-lite": "^5.2.0",
     "webfontloader": "^1.6.28"
