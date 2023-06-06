@@ -16,26 +16,26 @@ import FrontButton from '../lib/ui/frontButton'
 import FrontMenu from '../lib/ui/frontMenu'
 
 const DEFAULT_STATE = [
-  // {
-  //   name: 'diagram',
-  //   text: 'A->B: Does something',
-  //   meta: {
-  //     lang: 'yaml',
-  //     type: 'sequence'
-  //   }
-  // },
-  // {
-  //   name: 'diagram',
-  //   text: `flowchart TD
-  //   A[Hard] -->|Text| B(Round)
-  //   B --> C{Decision}
-  //   C -->|One| D[Result 1]
-  //   C -->|Two| E[Result 2]`,
-  //   meta: {
-  //     lang: 'yaml',
-  //     type: 'mermaid'
-  //   }
-  // },
+  {
+    name: 'diagram',
+    text: 'A->B: Does something',
+    meta: {
+      lang: 'yaml',
+      type: 'sequence'
+    }
+  },
+  {
+    name: 'diagram',
+    text: `flowchart TD
+    A[Hard] -->|Text| B(Round)
+    B --> C{Decision}
+    C -->|One| D[Result 1]
+    C -->|Two| E[Result 2]`,
+    meta: {
+      lang: 'yaml',
+      type: 'mermaid'
+    }
+  },
   // Indented code blocks and Fenced code blocks
   {
     name: 'code-block',
