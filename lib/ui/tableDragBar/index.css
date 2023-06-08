@@ -4,7 +4,7 @@
   cursor: pointer;
 }
 
-.mu-table-drag-bar[data-drag="bottom"] {
+.mu-table-drag-bar[data-drag="top"] {
   box-sizing: border-box;
   width: 24px;
   height: 10px;
@@ -13,7 +13,7 @@
   border-radius: 5px;
 }
 
-.mu-table-drag-bar[data-drag="left"] {
+.mu-table-drag-bar[data-drag="right"] {
   box-sizing: border-box;
   width: 10px;
   height: 24px;
@@ -36,22 +36,22 @@
   content: '';
 }
 
-.mu-table-drag-bar[data-drag="bottom"]::before {
+.mu-table-drag-bar[data-drag="top"]::before {
   top: 2px;
   left: 4px;
 }
 
-.mu-table-drag-bar[data-drag="bottom"]::after {
+.mu-table-drag-bar[data-drag="top"]::after {
   top: 2px;
   right: 4px;
 }
 
-.mu-table-drag-bar[data-drag="left"]::before {
+.mu-table-drag-bar[data-drag="right"]::before {
   top: 4px;
   right: 2px;
 }
 
-.mu-table-drag-bar[data-drag="left"]::after {
+.mu-table-drag-bar[data-drag="right"]::after {
   right: 2px;
   bottom: 4px;
 }
@@ -69,7 +69,7 @@
   transition: left .3s ease-in-out, bottom .3s ease-in-out;
 }
 
-.mu-drag-cell.ag-drag-left {
+.mu-drag-cell.ag-drag-right {
   left: -6px;
 }
 
