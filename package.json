@@ -41,7 +41,7 @@
     "fuse.js": "^6.6.2",
     "html-tags": "^3.3.1",
     "joplin-turndown-plugin-gfm": "^1.0.12",
-    "katex": "0.15.3",
+    "katex": "0.16.7",
     "mermaid": "8.14.0",
     "ot-json1": "^1.0.2",
     "ot-text-unicode": "^4.0.0",
