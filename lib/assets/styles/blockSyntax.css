@@ -2,7 +2,7 @@
   box-sizing: border-box;
   max-width: 800px;
   margin: 0 auto;
-  padding: 50px 50px 100px;
+  padding: 0 50px 100px;
 
   color: var(--editorColor);
 }

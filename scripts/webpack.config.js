@@ -28,7 +28,11 @@ module.exports = {
 
   output: {
     filename: 'muya.js',
-    path: path.resolve(__dirname, '../dist')
+    path: path.resolve(__dirname, '../dist'),
+    library: {
+      name: 'Muya',
+      type: 'umd'
+    }
   },
 
   plugins: [
