@@ -8,12 +8,14 @@
 
 ## Installing
 
-Still in development process, and can not install by npm.
+```sh
+yarn add @marktext/muya
+```
 
 ## Usage
 
 ```javascript
-import Muya from 'muya'
+import Muya from '@marktext/muya'
 
 const container = document.querySelector('#editor')
 const muya = new Muya(container)
