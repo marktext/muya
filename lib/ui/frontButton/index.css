@@ -3,18 +3,17 @@
   align-items: center;
   justify-content: center;
   width: 40px;
-  height: 26px;
+  height: 24px;
 }
 
 .mu-icon-wrapper {
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 24px;
-  padding-bottom: 2px;
-  padding-left: 2px;
+  width: 34px;
+  height: 20px;
 
   border: var(--buttonBorder);
   border-radius: 4px;
@@ -27,8 +26,8 @@
   position: relative;
 
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   overflow: hidden;
 
   color: var(--iconColor);
@@ -38,7 +37,7 @@
 
 .mu-icon-wrapper i.icon > i[class^="icon-"] { 
   position: relative;
-  left: -16px;
+  left: -14px;
 
   display: block;
   width: 100%;
@@ -46,7 +45,7 @@
 
   background-size: 100% !important;
 
-  filter: drop-shadow(16px 0 currentcolor);
+  filter: drop-shadow(14px 0 currentcolor);
 }
 
 .mu-icon-wrapper:hover {
