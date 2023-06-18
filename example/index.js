@@ -288,7 +288,6 @@ bar
 图片![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592848169049&di=1bf848686f738f8697ec90a2d484a29c&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_pic%2F01%2F54%2F05%2F625746fd5b60878.jpg) bar &gt; *zar* <ruby>北京<rt>Beijing</rt></ruby> foo bar $a \ne b$ 和自己
 `
 
-
 Muya.use(EmojiPicker)
 Muya.use(FormatPicker)
 // Muya.use(ImagePicker)
@@ -316,6 +315,7 @@ const nextBtn = document.querySelector('#next')
 const replaceInput = document.querySelector('#replace')
 const singleBtn = document.querySelector('#single')
 const allBtn = document.querySelector('#all')
+const setContentBtn = document.querySelector('#set-content')
 const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, disableHtml: true })
 
 window.muya = muya
@@ -350,6 +350,17 @@ singleBtn.addEventListener('click', () => {
 
 allBtn.addEventListener('click', () => {
   muya.replace(replaceInput.value, { isSingle: false })
+})
+
+const content = [
+  {
+    name: 'paragraph',
+    text: 'foo bar'
+  }
+]
+
+setContentBtn.addEventListener('click', () => {
+  muya.setContent(content, true)
 })
 
 muya.on('json-change', (changes) => {
