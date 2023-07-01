@@ -1,11 +1,11 @@
 .mu-float-wrapper.mu-table-column-tools-container {
   overflow: visible;
 
-  border-radius: 5px;
+  border-radius: 2px;
 }
 .mu-table-column-tools {
-  width: 128px;
-  height: 20px;
+  width: 160px;
+  height: 24px;
 }
 
 .mu-table-column-tools ul,
@@ -25,8 +25,8 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 28px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 
   list-style: none;
   cursor: pointer;
@@ -42,7 +42,7 @@
 
 .mu-table-column-tools li.item:last-of-type::before {
   position: absolute;
-  top: 3px;
+  top: 5px;
   left: -3px;
 
   width: 1px;

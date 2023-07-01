@@ -4,7 +4,7 @@
   cursor: pointer;
 }
 
-.mu-table-drag-bar[data-drag="top"] {
+.mu-table-drag-bar[data-drag="bottom"] {
   box-sizing: border-box;
   width: 24px;
   height: 10px;
@@ -36,12 +36,12 @@
   content: '';
 }
 
-.mu-table-drag-bar[data-drag="top"]::before {
+.mu-table-drag-bar[data-drag="bottom"]::before {
   top: 2px;
   left: 4px;
 }
 
-.mu-table-drag-bar[data-drag="top"]::after {
+.mu-table-drag-bar[data-drag="bottom"]::after {
   top: 2px;
   right: 4px;
 }
