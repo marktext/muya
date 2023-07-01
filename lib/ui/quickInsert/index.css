@@ -1,6 +1,6 @@
 .mu-quick-insert {
-  width: 360px;
-  max-height: 307px;
+  width: 230px;
+  max-height: 260px;
   padding: 0 0 20px 0;
   overflow-y: auto;
 }
@@ -14,9 +14,10 @@
   padding: 10px 14px 10px 14px;
 
   color: var(--editorColor);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 120%;
   letter-spacing: 1px;
+  font-weight: 500;
   text-transform: uppercase;
 
   background: var(--floatBgColor);
@@ -25,7 +26,8 @@
 .mu-quick-insert .item {
   display: flex;
   flex-direction: row;
-  padding: 6px 0;
+  align-items: center;
+  height: 34px;
 
   cursor: pointer;
 
@@ -45,7 +47,7 @@
   margin-top: 20px;
   padding: 0 20px;
 
-  color: var(--themeColor);
+  color: var(--editorColor50);
   font-size: 14px;
   text-align: center;
 }
@@ -54,25 +56,24 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   margin-left: 14px;
-
-  border: 1px solid var(--floatBorderColor);
-  border-radius: 6px;
+  margin-right: 5px;
+  box-sizing: border-box;
 }
 
 .mu-quick-insert .icon-container > i.icon {
   position: relative;
 
   display: inline-block;
-  width: 20px;
-  height:20px;
+  width: 16px;
+  height: 16px;
   overflow: hidden;
 
   color: var(--iconColor);
 
-  opacity: .5;
+  opacity: .8;
 
   transition: all .25s ease-in-out;
 }
@@ -90,7 +91,6 @@
 
 .mu-quick-insert .description {
   flex: 1;
-  margin-left: 8px;
 }
 
 .mu-quick-insert .short-cut {
@@ -99,19 +99,16 @@
   margin-right: 20px;
 
   color: var(--editorColor50);
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 1px;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
 }
 
 .mu-quick-insert .big-title {
   color: var(--editorColor);
-  font-size: 14px;
-}
-
-.mu-quick-insert .sub-title {
-  color: var(--editorColor50);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .mu-quick-insert .hide {
