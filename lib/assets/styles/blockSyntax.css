@@ -612,7 +612,8 @@ pre.mu-active.mu-fenced-code::after {
 
 /* empty */
 
-.mu-empty {
+.mu-empty,
+.mu-diagram-error {
   color: var(--editorColor50);
   font-size: 14px;
   font-family: monospace;
