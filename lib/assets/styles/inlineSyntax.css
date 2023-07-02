@@ -365,13 +365,13 @@ blockquote .mu-hide.mu-math > .mu-math-render {
 .mu-inline-image.mu-empty-image::before {
   font-weight: 600;
 
-  content: 'Click to add an image';
+  content: attr(empty-text);
 }
 
 .mu-inline-image.mu-image-fail::before {
   font-weight: 600;
 
-  content: 'Load image failed';
+  content: attr(fail-text);
 }
 
 .mu-inline-image.mu-image-loading a.mu-image-icon-success,
