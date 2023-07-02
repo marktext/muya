@@ -630,7 +630,7 @@ pre.mu-active.mu-fenced-code::after {
   outline: none;
 }
 
-#editor.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type::after {
+.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type::after {
   padding-left: 8px;
 
   color: var(--editorColor10);
@@ -638,7 +638,7 @@ pre.mu-active.mu-fenced-code::after {
   content: attr(placeholder);
 }
 
-#editor.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
+.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
   color: var(--editorColor10);
 
   content: attr(empty-hint);
