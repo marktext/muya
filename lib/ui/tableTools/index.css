@@ -1,5 +1,5 @@
 .mu-table-bar-tools {
-  width: 150px;
+  min-width: 120px;
 }
 .mu-table-bar-tools ul,
 .mu-table-bar-tools li {

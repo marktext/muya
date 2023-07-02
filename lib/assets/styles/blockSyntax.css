@@ -229,7 +229,7 @@ span.mu-language-input {
 .mu-code-block.mu-active .mu-language-input:empty::after {
   color: var(--editorColor10);
 
-  content: 'Input Language Identifier...';
+  content: attr(hint);
 }
 
 .mu-code-block.mu-fenced-code.mu-active .mu-language-input {
@@ -641,7 +641,7 @@ pre.mu-active.mu-fenced-code::after {
 #editor.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
   color: var(--editorColor10);
 
-  content: 'Type / to insert...';
+  content: attr(empty-hint);
 }
 
 .mu-table-cell-content {

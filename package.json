@@ -1,6 +1,6 @@
 {
   "name": "@marktext/muya",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Future markdown editor for web and desktop application development",
   "main": "dist/muya.js",
   "module": "lib/index.js",
@@ -10,7 +10,7 @@
     "test": "jest --env=jsdom",
     "lint": "eslint lib",
     "lint:fix": "eslint --fix lib",
-    "_postinstall": "husky install",
+    "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
     "pub": "npm publish --access public"

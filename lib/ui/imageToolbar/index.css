@@ -32,46 +32,8 @@
   cursor: pointer;
 }
 
-.mu-image-toolbar li.item div.tooltip {
-  position: absolute;
-  top: -38px;
-
-  display: block;
-  display: none;
-  box-sizing: border-box;
-  min-width: 100px;
-  height: 30px;
-
-  color: var(--editorColor);
-  line-height: 30px;
-  text-align: center;
-
-  background: var(--floatBgColor);
-  border-radius: 2px;
-  box-shadow: var(--floatShadow);
-}
-
-.mu-image-toolbar li.item div.tooltip::before {
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-
-  display: block;
-  width: 7px;
-  height: 7px;
-
-  background: var(--floatBgColor);
-  transform: rotate(-45deg) translateX(-50%);
-
-  content: '';
-}
-
 .mu-image-toolbar li.item:hover {
   background: var(--floatHoverColor);
-}
-
-.mu-image-toolbar li.item:hover div.tooltip {
-  display: block;
 }
 
 .mu-image-toolbar li.item.edit {

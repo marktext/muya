@@ -15,6 +15,8 @@ import PreviewTools from '../lib/ui/previewTools'
 import FrontButton from '../lib/ui/frontButton'
 import FrontMenu from '../lib/ui/frontMenu'
 
+import zh from '../lib/locales/zh'
+
 const DEFAULT_STATE = [
   {
     name: 'diagram',
@@ -319,6 +321,10 @@ const setContentBtn = document.querySelector('#set-content')
 const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, disableHtml: true })
 
 window.muya = muya
+
+console.log(muya)
+
+muya.locale(zh)
 
 muya.init()
 
