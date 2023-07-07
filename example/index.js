@@ -286,7 +286,7 @@ const DEFAULT_STATE = [
 
 // > foo
 // > bar
-const DEFAULT_MARKDOWN = `图片`
+const DEFAULT_MARKDOWN = 'foo'
 
 Muya.use(EmojiPicker)
 Muya.use(FormatPicker)
