@@ -522,15 +522,15 @@ figure.mu-active.mu-diagram-block > div.mu-diagram-preview {
 }
 
 figure.mu-math-block span.mu-codeblock-content:first-of-type:empty::after {
-  color: var(--editorColor10);
+  color: var(--editorColor30);
 
-  content: 'Input Mathematical Formula...';
+  content: attr(math);
 }
 
 pre.mu-frontmatter span.mu-codeblock-content:first-of-type:empty::after {
-  color: var(--editorColor10);
+  color: var(--editorColor30);
 
-  content: 'Input Front Matter...';
+  content: attr(frontMatter);
 }
 
 /* code html math ...code block style */
@@ -634,13 +634,13 @@ pre.mu-active.mu-fenced-code::after {
 .mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type::after {
   padding-left: 8px;
 
-  color: var(--editorColor10);
+  color: var(--editorColor30);
 
   content: attr(placeholder);
 }
 
 .mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
-  color: var(--editorColor10);
+  color: var(--editorColor30);
 
   content: attr(empty-hint);
 }
