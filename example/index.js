@@ -286,9 +286,7 @@ const DEFAULT_STATE = [
 
 // > foo
 // > bar
-const DEFAULT_MARKDOWN = `
-图片![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592848169049&di=1bf848686f738f8697ec90a2d484a29c&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_pic%2F01%2F54%2F05%2F625746fd5b60878.jpg) bar &gt; *zar* <ruby>北京<rt>Beijing</rt></ruby> foo bar $a \ne b$ 和自己
-`
+const DEFAULT_MARKDOWN = `图片`
 
 Muya.use(EmojiPicker)
 Muya.use(FormatPicker)
