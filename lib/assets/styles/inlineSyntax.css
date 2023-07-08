@@ -283,6 +283,11 @@ blockquote .mu-hide.mu-math > .mu-math-render {
 
   display: inline-block;
   overflow: visible;
+  max-width: 100%;
+}
+
+.mu-inline-image .mu-image-container img {
+  max-width: 100%;
 }
 
 .mu-inline-image.mu-image-success {

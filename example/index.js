@@ -286,7 +286,7 @@ const DEFAULT_STATE = [
 
 // > foo
 // > bar
-const DEFAULT_MARKDOWN = 'foo'
+const DEFAULT_MARKDOWN = '![](/Users/ransixi/Downloads/table-column-plus-left.png)'
 
 Muya.use(EmojiPicker)
 Muya.use(FormatPicker)
@@ -316,7 +316,16 @@ const replaceInput = document.querySelector('#replace')
 const singleBtn = document.querySelector('#single')
 const allBtn = document.querySelector('#all')
 const setContentBtn = document.querySelector('#set-content')
-const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, disableHtml: true })
+
+const imagePathPicker = async () => {
+  return 'https://pics.ettoday.net/images/2253/d2253152.jpg'
+}
+
+const imageAction = async () => {
+  return 'https://pics.ettoday.net/images/2469/d2469498.jpg'
+}
+
+const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, disableHtml: true, imagePathPicker, imageAction })
 
 window.muya = muya
 
