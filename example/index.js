@@ -286,7 +286,7 @@ const DEFAULT_STATE = [
 
 // > foo
 // > bar
-const DEFAULT_MARKDOWN = '![](/Users/ransixi/Downloads/table-column-plus-left.png)'
+const DEFAULT_MARKDOWN = 'hello'
 
 Muya.use(EmojiPicker)
 Muya.use(FormatPicker)
