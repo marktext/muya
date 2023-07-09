@@ -329,6 +329,7 @@ const replaceInput = document.querySelector('#replace')
 const singleBtn = document.querySelector('#single')
 const allBtn = document.querySelector('#all')
 const setContentBtn = document.querySelector('#set-content')
+const selectAllBtn = document.querySelector('#select-all')
 
 const imagePathPicker = async () => {
   return 'https://pics.ettoday.net/images/2253/d2253152.jpg'
@@ -374,6 +375,10 @@ singleBtn.addEventListener('click', () => {
 
 allBtn.addEventListener('click', () => {
   muya.replace(replaceInput.value, { isSingle: false })
+})
+
+selectAllBtn.addEventListener('click', () => {
+  muya.selectAll()
 })
 
 const content = [
