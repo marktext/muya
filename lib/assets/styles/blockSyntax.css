@@ -14,7 +14,7 @@
 .mu-container ol,
 .mu-container dl,
 .mu-container table,
-.mu-container figure {
+.mu-container figure:not(.mu-table) {
   margin: 0;
   padding: .5em 0;
 }
@@ -343,7 +343,8 @@ li.mu-task-list-item > input.mu-checkbox-checked::before {
 
 /* table */
 .mu-table {
-  margin: 0;
+  margin: .5em 0 0 0;
+  padding: .5em 0;
 }
 
 .mu-table-inner {
@@ -630,6 +631,10 @@ pre.mu-active.mu-fenced-code::after {
   word-break: break-word;
 
   outline: none;
+}
+
+.mu-content:empty::after {
+  content: '\200B';
 }
 
 .mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type::after {
