@@ -70,19 +70,20 @@
   margin-left: 0;
   padding: 0 1em;
 
-  font-size: 1.1em;
+  font-size: 1em;
+  color: var(--editorColor60);
 }
 
 .mu-container  blockquote::before {
   position: absolute;
-  top: 0;
+  top: .5em;
   left: 0;
 
   display: block;
   width: 3px;
-  height: 100%;
+  height: calc(100% - 1em);
 
-  background: var(--editorColor50);
+  background: var(--editorColor30);
 
   content: '';
 }
