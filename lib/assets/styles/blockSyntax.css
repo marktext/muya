@@ -1,3 +1,7 @@
+.mu-editor {
+  outline: none;
+}
+
 .mu-container {
   box-sizing: border-box;
   max-width: 800px;
