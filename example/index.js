@@ -287,14 +287,7 @@ const DEFAULT_STATE = [
 // > foo
 // > bar
 const DEFAULT_MARKDOWN = `
-\`\`\`javascript
-const a = 'e'
-\`\`\`
-
-- foo
-- bar
-
-颓唐！他触目伤怀，自然情不能
+foo bar
 `
 
 Muya.use(EmojiPicker)
