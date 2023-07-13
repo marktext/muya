@@ -463,6 +463,11 @@ figure.mu-diagram-block .mu-diagram-preview {
   width: 100%;
 }
 
+figure.mu-math-block .mu-math-preview .katex-display {
+  margin: 0;
+  padding: 1em 0;
+}
+
 /* to prevent plantuml img overflow */
 figure.mu-diagram-block .mu-diagram-preview img {
   max-width: 100%;
