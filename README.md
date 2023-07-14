@@ -40,6 +40,14 @@ yarn dev
 
 ```sh
 yarn build
+yarn copyfiles
+```
+
+## publish
+
+```sh
+# update version numbers
+npm run pub
 ```
 
 ## FAQ

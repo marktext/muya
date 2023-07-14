@@ -24,7 +24,7 @@ module.exports = {
 
   mode: proMode ? 'production' : 'development',
 
-  entry: './lib/index.js',
+  entry: './lib/index.ts',
 
   output: {
     filename: 'muya.js',

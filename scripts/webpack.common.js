@@ -10,6 +10,7 @@ exports.default = {
     alias: {
       '@': path.resolve(__dirname, '../lib')
     },
+    extensions: ['', '.webpack.js', '.web.js', '.ts', '.js'],
     fallback: {
       path: false,
       zlib: require.resolve('browserify-zlib'),
@@ -48,6 +49,7 @@ exports.default = {
           }
         ]
       },
+      { test: /\.tsx?$/, loader: 'ts-loader' },
       {
         test: /\.js$/,
         use: 'babel-loader',
