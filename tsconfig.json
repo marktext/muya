@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "moduleResolution": "Node",
     "baseUrl": ".",
     "outDir": "./built",
     "allowJs": true,
