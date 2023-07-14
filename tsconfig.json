@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./built",
+    "allowJs": true,
+    "checkJs": false,
+    "target": "ES2016",
+    "paths": {
+      "@/*": ["./lib/*"],
+      "@types/*": ["./types/*"]
+    }
+  },
+  "include": ["./lib/**/*", "./types/**/*"]
+}
