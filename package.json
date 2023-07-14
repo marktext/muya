@@ -1,6 +1,6 @@
 {
   "name": "@marktext/muya",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "Future markdown editor for web and desktop application development",
   "main": "built/index.js",
   "module": "built/index.js",

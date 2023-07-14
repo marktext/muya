@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "moduleResolution": "Node",
+    "declaration": true,
     "baseUrl": ".",
     "outDir": "./built",
     "allowJs": true,
