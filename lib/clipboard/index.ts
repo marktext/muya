@@ -48,9 +48,34 @@ class Clipboard {
       }
     };
 
+    const keydownHandler = (event) => {
+      const { key, metaKey } = event;
+
+      const { isSelectionInSameBlock } = this.selection.getSelection();
+      if (isSelectionInSameBlock) {
+        return;
+      }
+
+      // TODO: Is there any way to identify these key bellow?
+      if (/Alt|Option|Meta|Shift|CapsLock|ArrowUp|ArrowDown|ArrowLeft|ArrowRight/.test(key)) {
+        return;
+      }
+
+      if (metaKey) {
+        return;
+      }
+
+      if (key === "Backspace" || key === "Delete") {
+        event.preventDefault();
+      }
+
+      this.cutHandler(event);
+    };
+
     eventCenter.attachDOMEvent(domNode, "copy", copyCutHandler);
     eventCenter.attachDOMEvent(domNode, "cut", copyCutHandler);
     eventCenter.attachDOMEvent(domNode, "paste", this.pasteHandler.bind(this));
+    eventCenter.attachDOMEvent(domNode, "keydown", keydownHandler);
   }
 
   getTargetBlock(event) {
