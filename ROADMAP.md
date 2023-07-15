@@ -19,8 +19,8 @@
 
 **Goal: more blocks, support input and output**
 
-- [ ] Copy and paste in lines and paragraphs
-- [ ] Select multiple paragraphs to copy and paste
+- [x] Copy and paste in lines and paragraphs
+- [x] Select multiple paragraphs to copy and paste
 - [x] Ordered list
 - [x] Bullet list
 - [x] Task list
@@ -41,6 +41,6 @@
 - [x] sequence
 - [ ] footnote
 - [x] front matter
-- [ ] Superscripts, subscripts, mathematical formulas, etc.
-- [ ] Pre-paragraph menu
+- [x] Superscripts, subscripts, mathematical formulas, etc.
+- [x] Pre-paragraph menu
 - [x] Quick insert menu
