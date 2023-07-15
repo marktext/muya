@@ -4,6 +4,7 @@ import { deepCopy } from "@/utils";
 
 export default {
   cutHandler() {
+    console.log('cut')
     const {
       isSelectionInSameBlock,
       anchor,
@@ -122,6 +123,18 @@ export default {
         );
         anchorOutMostBlock.replaceWith(newQuoteBlock);
         cursorBlock = newQuoteBlock.firstContentInDescendant();
+        cursorOffset = 0;
+      } else if (anchorOutMostBlock.blockName === "table") {
+        const state = {
+          name: "paragraph",
+          text: "",
+        }
+        const newBlock = ScrollPage.loadBlock(state.name).create(
+          this.muya,
+          state
+        );
+        anchorOutMostBlock.replaceWith(newBlock);
+        cursorBlock = newBlock.firstContentInDescendant();
         cursorOffset = 0;
       } else {
         const listItemBlockName =

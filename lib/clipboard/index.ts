@@ -50,7 +50,6 @@ class Clipboard {
 
     const keydownHandler = (event) => {
       const { key, metaKey } = event;
-      console.log(key);
 
       const { isSelectionInSameBlock } = this.selection.getSelection();
       if (isSelectionInSameBlock) {

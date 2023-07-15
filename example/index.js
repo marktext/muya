@@ -288,6 +288,10 @@ const DEFAULT_STATE = [
 // > bar
 const DEFAULT_MARKDOWN = `
 foo bar
+
+| ww  | ww  |
+| --- | --- |
+| ww  | ww  |
 `
 
 Muya.use(EmojiPicker)
