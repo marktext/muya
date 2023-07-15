@@ -45,6 +45,7 @@ export default {
     const { start, end } = anchorBlock.getCursor();
     const { text: content } = anchorBlock;
     let wraperBlock = anchorBlock.getAnchor();
+    const originWraperBlock = wraperBlock;
 
     if (/html|text/.test(copyType)) {
       let markdown =
@@ -74,6 +75,11 @@ export default {
           const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
           wraperBlock.parent.insertAfter(newBlock, wraperBlock);
           wraperBlock = newBlock;
+        }
+
+        // Remove empty paragraph when paste.
+        if (originWraperBlock.blockName === 'paragraph' && originWraperBlock.getState().text === "") {
+          originWraperBlock.remove();
         }
 
         const cursorBlock = wraperBlock.firstContentInDescendant();

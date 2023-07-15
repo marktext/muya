@@ -1,40 +1,45 @@
 import ScrollPage from "@/block";
+import emptyStates from "@/config/emptyStates";
+import { deepCopy } from "@/utils";
 
 export default {
-  cutHandler(event) {
-    const { isSelectionInSameBlock, anchor, anchorBlock, focus, focusBlock } =
-      this.selection.getSelection();
+  cutHandler() {
+    const {
+      isSelectionInSameBlock,
+      anchor,
+      anchorBlock,
+      focus,
+      focusBlock,
+      direction,
+    } = this.selection.getSelection();
+
+    if (!anchorBlock) {
+      return;
+    }
+
+    // Handler `cut` event in the same block.
     if (isSelectionInSameBlock) {
-      const contentBlock = this.getTargetBlock(event);
+      const { text } = anchorBlock;
+      const startOffset =
+        direction === "forward" ? anchor.offset : focus.offset;
+      const endOffset = direction === "forward" ? focus.offset : anchor.offset;
 
-      if (!contentBlock) {
-        return;
-      }
+      anchorBlock.text =
+        text.substring(0, startOffset) + text.substring(endOffset);
 
-      const { start, end } = contentBlock.getCursor();
-      const { text } = contentBlock;
-
-      contentBlock.text =
-        text.substring(0, start.offset) + text.substring(end.offset);
-      return contentBlock.setCursor(start.offset, start.offset, true);
+      return anchorBlock.setCursor(startOffset, startOffset, true);
     }
 
     const anchorOutMostBlock = anchorBlock.outMostBlock;
     const focusOutMostBlock = focusBlock.outMostBlock;
-    const anchorOutMostBlockOffset = this.scrollPage.offset(anchorOutMostBlock);
-    const focusOutMostBlockOffset = this.scrollPage.offset(focusOutMostBlock);
-    const isPositiveSequence =
-      anchorOutMostBlockOffset <= focusOutMostBlockOffset;
-    const startOutBlock = isPositiveSequence
-      ? anchorOutMostBlock
-      : focusOutMostBlock;
-    const endOutBlock = isPositiveSequence
-      ? focusOutMostBlock
-      : anchorOutMostBlock;
-    const startBlock = isPositiveSequence ? anchorBlock : focusBlock;
-    const endBlock = isPositiveSequence ? focusBlock : anchorBlock;
-    const startOffset = isPositiveSequence ? anchor.offset : focus.offset;
-    const endOffset = isPositiveSequence ? focus.offset : anchor.offset;
+    const startOutBlock =
+      direction === "forward" ? anchorOutMostBlock : focusOutMostBlock;
+    const endOutBlock =
+      direction === "forward" ? focusOutMostBlock : anchorOutMostBlock;
+    const startBlock = direction === "forward" ? anchorBlock : focusBlock;
+    const endBlock = direction === "forward" ? focusBlock : anchorBlock;
+    const startOffset = direction === "forward" ? anchor.offset : focus.offset;
+    const endOffset = direction === "forward" ? focus.offset : anchor.offset;
     let cursorBlock;
     let cursorOffset;
 
@@ -43,19 +48,47 @@ export default {
       const block = position === "start" ? startBlock : endBlock;
       // Handle anchor and focus in different blocks
       if (
-        /block-qoute|code-block|html-block|table|math-block|frontmatter|diagram/.test(
+        /block-quote|code-block|html-block|table|math-block|frontmatter|diagram/.test(
           outBlock.blockName
         )
       ) {
-        outBlock.remove();
+        if (position === "start") {
+          const state = outBlock.blockName === "block-quote" ? deepCopy(emptyStates["block-quote"]) : deepCopy(emptyStates.paragraph);
+          const newBlock = ScrollPage.loadBlock(state.name).create(
+            this.muya,
+            state
+          );
+          outBlock.replaceWith(newBlock);
+          cursorBlock = newBlock.firstContentInDescendant();
+          cursorOffset = 0;
+        } else {
+          outBlock.remove();
+        }
       } else if (/bullet-list|order-list|task-list/.test(outBlock.blockName)) {
         const listItemBlockName =
           outBlock.blockName === "task-list" ? "task-list-item" : "list-item";
         const listItem = block.farthestBlock(listItemBlockName);
         const offset = outBlock.offset(listItem);
         outBlock.forEach((item, index) => {
-          if (
-            (position === "start" && index >= offset) ||
+          if (position === "start" && index === offset) {
+            const state = {
+              name: listItemBlockName,
+              children: [
+                {
+                  name: "paragraph",
+                  text: "",
+                },
+              ],
+            };
+            const newListItem = ScrollPage.loadBlock(state.name).create(
+              this.muya,
+              state
+            );
+            item.replaceWith(newListItem);
+            cursorBlock = newListItem.firstContentInDescendant();
+            cursorOffset = 0;
+          } else if (
+            (position === "start" && index > offset) ||
             (position === "end" && index <= offset)
           ) {
             if (item.isOnlyChild()) {
@@ -66,18 +99,14 @@ export default {
           }
         });
       } else {
-        if (position === "start" && startOffset < startBlock.text.length) {
+        if (position === "start") {
           startBlock.text = startBlock.text.substring(0, startOffset);
           cursorBlock = startBlock;
           cursorOffset = startOffset;
         } else if (position === "end") {
-          if (this.scrollPage.children.contains(startOutBlock)) {
-            startBlock.text += endBlock.text.substring(endOffset);
+          if (cursorBlock) {
+            cursorBlock.text += endBlock.text.substring(endOffset);
             endOutBlock.remove();
-          } else {
-            endBlock.text = endBlock.text.substring(endOffset);
-            cursorBlock = endBlock;
-            cursorOffset = 0;
           }
         }
       }
@@ -86,7 +115,14 @@ export default {
     if (anchorOutMostBlock === focusOutMostBlock) {
       // Handle anchor and focus in same list\quote block
       if (anchorOutMostBlock.blockName === "block-quote") {
-        anchorOutMostBlock.remove();
+        const state = deepCopy(emptyStates["block-quote"]);
+        const newQuoteBlock = ScrollPage.loadBlock(state.name).create(
+          this.muya,
+          state
+        );
+        anchorOutMostBlock.replaceWith(newQuoteBlock);
+        cursorBlock = newQuoteBlock.firstContentInDescendant();
+        cursorOffset = 0;
       } else {
         const listItemBlockName =
           anchorOutMostBlock.blockName === "task-list"
@@ -101,12 +137,25 @@ export default {
         const minOffset = Math.min(anchorOffset, focusOffset);
         const maxOffset = Math.max(anchorOffset, focusOffset);
         anchorOutMostBlock.forEach((item, index) => {
-          if (index >= minOffset && index <= maxOffset) {
-            if (item.isOnlyChild()) {
-              anchorOutMostBlock.remove();
-            } else {
-              item.remove();
-            }
+          if (index === minOffset) {
+            const state = {
+              name: listItemBlockName,
+              children: [
+                {
+                  name: "paragraph",
+                  text: "",
+                },
+              ],
+            };
+            const newListItem = ScrollPage.loadBlock(state.name).create(
+              this.muya,
+              state
+            );
+            item.replaceWith(newListItem);
+            cursorBlock = newListItem.firstContentInDescendant();
+            cursorOffset = 0;
+          } else if (index > minOffset && index <= maxOffset) {
+            item.remove();
           }
         });
       }
@@ -120,9 +169,10 @@ export default {
         node = temp;
       }
       removePartial("end");
-      if (cursorBlock) {
-        cursorBlock.setCursor(cursorOffset, cursorOffset, true);
-      }
+    }
+
+    if (cursorBlock) {
+      cursorBlock.setCursor(cursorOffset, cursorOffset, true);
     }
 
     if (this.scrollPage.length() === 0) {

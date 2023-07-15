@@ -2,7 +2,7 @@ import marked from "@/utils/marked";
 import StateToMarkdown from "../jsonState/stateToMarkdown";
 
 export default {
-  getClipboardData(event) {
+  getClipboardData() {
     const { copyType, copyInfo } = this;
     if (copyType === "copyCodeContent") {
       return {
@@ -16,17 +16,18 @@ export default {
 
     const { isSelectionInSameBlock, anchor, anchorBlock, focus, focusBlock } =
       this.selection.getSelection();
+
+    if (!anchorBlock) {
+      return { html, text };
+    }
+
     const { frontMatter = true } = this.muya.options;
     // Handler copy/cut in one block.
     if (isSelectionInSameBlock) {
-      const contentBlock = this.getTargetBlock(event);
+      const begin = Math.min(anchor.offset, focus.offset);
+      const end = Math.max(anchor.offset, focus.offset);
 
-      if (!contentBlock) {
-        return { html, text };
-      }
-
-      const { start, end } = contentBlock.getCursor();
-      text = contentBlock.text.substring(start.offset, end.offset);
+      text = anchorBlock.text.substring(begin, end);
       html = marked(text, { frontMatter });
 
       return { html, text };
