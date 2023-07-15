@@ -18,9 +18,15 @@ export default {
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
     } = muya.options;
+    const { isSelectionInSameBlock, anchorBlock } = this.selection.getSelection();
 
-    const contentBlock = this.getTargetBlock(event);
-    if (!contentBlock) {
+    if (!isSelectionInSameBlock) {
+      this.cutHandler(event);
+
+      return this.pasteHandler(event);
+    }
+
+    if (!anchorBlock) {
       return;
     }
 
@@ -36,24 +42,24 @@ export default {
     html = await normalizePastedHTML(html);
     const copyType = checkCopyType(html, text, this.pasteType);
 
-    const { start, end } = contentBlock.getCursor();
-    const { text: content } = contentBlock;
-    let anchorBlock = contentBlock.getAnchor();
+    const { start, end } = anchorBlock.getCursor();
+    const { text: content } = anchorBlock;
+    let wraperBlock = anchorBlock.getAnchor();
 
     if (/html|text/.test(copyType)) {
       let markdown =
-        copyType === "html" && contentBlock.blockName !== "codeblock.content"
+        copyType === "html" && anchorBlock.blockName !== "codeblock.content"
           ? new HtmlToMarkdown({ bulletListMarker }).generate(html)
           : text;
 
       if (
         /\n\n/.test(markdown) &&
-        contentBlock.blockName !== "codeblock.content"
+        anchorBlock.blockName !== "codeblock.content"
       ) {
         if (start.offset !== end.offset) {
-          contentBlock.text =
+          anchorBlock.text =
             content.substring(0, start.offset) + content.substring(end.offset);
-          contentBlock.update();
+          anchorBlock.update();
         }
         // Has multiple paragraphs.
         const states = new MarkdownToState({
@@ -66,33 +72,34 @@ export default {
 
         for (const state of states) {
           const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
-          anchorBlock.parent.insertAfter(newBlock, anchorBlock);
-          anchorBlock = newBlock;
+          wraperBlock.parent.insertAfter(newBlock, wraperBlock);
+          wraperBlock = newBlock;
         }
 
-        const cursorBlock = anchorBlock.firstContentInDescendant();
+        const cursorBlock = wraperBlock.firstContentInDescendant();
         const offset = cursorBlock.text.length;
         cursorBlock.setCursor(offset, offset, true);
       } else {
-        if (contentBlock.blockName === "language-input") {
+        if (anchorBlock.blockName === "language-input") {
           markdown = markdown.replace(/\n/g, "");
-        } else if (contentBlock.blockName === "table.cell.content") {
+        } else if (anchorBlock.blockName === "table.cell.content") {
           markdown = markdown.replace(/\n/g, "<br/>");
         }
 
-        contentBlock.text =
+        anchorBlock.text =
           content.substring(0, start.offset) +
           markdown +
           content.substring(end.offset);
         const offset = start.offset + markdown.length;
-        contentBlock.setCursor(offset, offset, true);
+        anchorBlock.setCursor(offset, offset, true);
         // Update html preview if the out container is `html-block`
         if (
+          anchorBlock.outContainer &&
           /html-block|math-block|diagram/.test(
-            contentBlock.outContainer.blockName
+            anchorBlock.outContainer.blockName
           )
         ) {
-          contentBlock.outContainer.attachments.head.update(contentBlock.text);
+          anchorBlock.outContainer.attachments.head.update(anchorBlock.text);
         }
       }
     } else {
@@ -105,7 +112,7 @@ export default {
         text,
       };
       const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
-      anchorBlock.parent.insertAfter(newBlock, anchorBlock);
+      wraperBlock.parent.insertAfter(newBlock, wraperBlock);
       const offset = text.length;
 
       newBlock.lastContentInDescendant().setCursor(offset, offset, true);
