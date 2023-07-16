@@ -5,11 +5,11 @@
 .mu-container {
   box-sizing: border-box;
   max-width: 800px;
+  min-height: 100%;
   margin: 0 auto;
   padding: 0 50px 100px;
-  min-height: 100%;
 
-  color: var(--editorColor);
+  color: var(--editor-color);
 }
 
 .mu-container p,
@@ -35,7 +35,7 @@
   margin-bottom: 0;
   padding: .5em 0;
 
-  color: var(--editorColor80);
+  color: var(--editor-color-80);
   font-weight: bold;
   line-height: 1.4;
 
@@ -74,8 +74,9 @@
   margin-left: 0;
   padding: 0 1em;
 
+  color: var(--editor-color-50);
+
   font-size: 1em;
-  color: var(--editorColor60);
 }
 
 .mu-container  blockquote::before {
@@ -87,7 +88,7 @@
   width: 3px;
   height: calc(100% - 1em);
 
-  background: var(--editorColor30);
+  background: var(--editor-color-30);
 
   content: '';
 }
@@ -110,7 +111,7 @@
   width: 100%;
   height: 1px;
 
-  background: var(--editorColor10);
+  background: var(--editor-color-10);
 
   content: '';
 }
@@ -134,13 +135,13 @@
   margin-top: 1.5em;
   padding: 1em;
 
-  color: var(--editorColor50);
+  color: var(--editor-color-50);
   font-size: 90%;
   font-family: "DejaVu Sans Mono", "Source Code Pro", "Droid Sans Mono", Consolas, monospace;
   line-height: 1.6;
 
-  background: var(--codeBlockBgColor);
-  border: 1px solid var(--editorColor10);
+  background: var(--code-block-bg-color);
+  border: 1px solid var(--editor-color-10);
   border-radius: 3px;
 }
 
@@ -189,7 +190,7 @@ code.mu-code .mu-code-copy:hover {
   width: 100%;
   height: 100%;
 
-  filter: drop-shadow(16px 0 var(--iconColor));
+  filter: drop-shadow(16px 0 var(--icon-color));
 }
 
 .mu-fenced-code.mu-active .mu-code::after {
@@ -207,7 +208,7 @@ code.mu-code .mu-code-copy:hover {
   bottom: 0;
   z-index: 1;
 
-  color: var(--editorColor30);
+  color: var(--editor-color-30);
 }
 
 span.mu-language-input {
@@ -232,7 +233,7 @@ span.mu-language-input {
 }
 
 .mu-code-block.mu-active .mu-language-input:empty::after {
-  color: var(--editorColor10);
+  color: var(--editor-color-10);
 
   content: attr(hint);
 }
@@ -293,7 +294,7 @@ ul.mu-tight-list > li.mu-task-list-item > input[type="checkbox"] {
 }
 
 li.mu-task-list-item > input.mu-checkbox-checked ~ * {
-  color: var(--editorColor50);
+  color: var(--editor-color-50);
 }
 
 li.mu-task-list-item > input[type="checkbox"]::before {
@@ -306,8 +307,8 @@ li.mu-task-list-item > input[type="checkbox"]::before {
   width: 18px;
   height: 18px;
 
-  background-color: var(--editorBgColor);
-  border: 2px solid var(--editorColor50);
+  background-color: var(--editor-bg-color);
+  border: 2px solid var(--editor-color-50);
   border-radius: 50%;
 
   transition: all .2s ease;
@@ -324,7 +325,7 @@ li.mu-task-list-item > input::after {
   width: 8px;
   height: 4px;
 
-  border: 2px solid var(--editorBgColor);
+  border: 2px solid var(--editor-bg-color);
   border-top: none;
   border-right: none;
   transform: rotate(-45deg) scale(0);
@@ -340,14 +341,14 @@ li.mu-task-list-item > input.mu-checkbox-checked::after {
 }
 
 li.mu-task-list-item > input.mu-checkbox-checked::before {
-  background: var(--themeColor);
-  border-color: var(--themeColor);
-  box-shadow: 0 3px 12px 0 var(--selectionColor);
+  background: var(--theme-color);
+  border-color: var(--theme-color);
+  box-shadow: 0 3px 12px 0 var(--selection-color);
 }
 
 /* table */
 .mu-table {
-  margin: .5em 0 0 0;
+  margin: .5em 0 0;
   padding: .5em 0;
 }
 
@@ -386,16 +387,13 @@ li.mu-task-list-item > input.mu-checkbox-checked::before {
 .mu-table-inner tr th::before,
 .mu-table-inner tr td::before {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
 
   box-sizing: border-box;
   width: calc(100% + 1px);
   height: calc(100% + 1px);
 
-  border: 1px solid var(--tableBorderColor);
+  border: 1px solid var(--table-border-color);
 
   content: '';
   pointer-events: none;
@@ -454,7 +452,7 @@ figure.mu-active.mu-diagram-block .mu-diagram-container {
   opacity: 1;
 }
 
-figure:not(.mu-active):not(.mu-disable-html-render).mu-html-block .mu-html-container,
+figure:not(.mu-active, .mu-disable-html-render).mu-html-block .mu-html-container,
 figure:not(.mu-active).mu-math-block .mu-math-container,
 figure:not(.mu-active).mu-diagram-block .mu-diagram-container {
   overflow: hidden;
@@ -498,9 +496,9 @@ figure.mu-diagram-block {
   position: relative;
 }
 
-figure.mu-html-block:not(.mu-active):not(.mu-disable-html-render):hover,
+figure.mu-html-block:not(.mu-active, .mu-disable-html-render):hover,
 figure.mu-math-block:not(.mu-active):hover {
-  background: var(--editorColor04);
+  background: var(--editor-color-04);
 }
 
 figure.mu-math-block div.mu-math-preview,
@@ -525,21 +523,21 @@ figure.mu-active.mu-diagram-block > div.mu-diagram-preview {
   width: 100%;
   padding: .5rem;
 
-  background: var(--floatBgColor);
-  border: 1px solid var(--floatBorderColor);
+  background: var(--float-bg-color);
+  border: 1px solid var(--float-border-color);
   border-radius: 4px;
   box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
   transform: translateX(-50%);
 }
 
 figure.mu-math-block span.mu-codeblock-content:first-of-type:empty::after {
-  color: var(--editorColor30);
+  color: var(--editor-color-30);
 
   content: attr(math);
 }
 
 pre.mu-frontmatter span.mu-codeblock-content:first-of-type:empty::after {
-  color: var(--editorColor30);
+  color: var(--editor-color-30);
 
   content: attr(frontMatter);
 }
@@ -597,7 +595,7 @@ pre.mu-active.mu-math-container::after {
   position: absolute;
   left: 0;
 
-  color: var(--editorColor30);
+  color: var(--editor-color-30);
   font-weight: 100;
 }
 
@@ -625,7 +623,7 @@ pre.mu-active.mu-fenced-code::after {
 
 .mu-empty,
 .mu-diagram-error {
-  color: var(--editorColor50);
+  color: var(--editor-color-50);
   font-size: 14px;
   font-family: monospace;
   font-style: italic;
@@ -649,13 +647,13 @@ pre.mu-active.mu-fenced-code::after {
 .mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type::after {
   padding-left: 8px;
 
-  color: var(--editorColor30);
+  color: var(--editor-color-30);
 
   content: attr(placeholder);
 }
 
 .mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
-  color: var(--editorColor30);
+  color: var(--editor-color-30);
 
   content: attr(empty-hint);
 }

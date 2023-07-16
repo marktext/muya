@@ -40,7 +40,7 @@
   width: 30px;
   height: 30px;
 
-  color: var(--iconColor);
+  color: var(--icon-color);
 
   border-radius: 4px;
 }
@@ -57,7 +57,7 @@
   height: 18px;
   overflow: hidden;
 
-  color: var(--iconColor);
+  color: var(--icon-color);
 }
 
 .mu-front-menu li .icon-wrapper i.icon > i[class^="icon-"] { 
@@ -75,20 +75,20 @@
   display: inline-block;
   flex: 1;
 
-  color: var(--editorColor);
+  color: var(--editor-color);
 }
 
 .mu-front-menu > ul li > .short-cut {
-  color: var(--editorColor);
+  color: var(--editor-color);
   font-size: 13px;
 }
 
 .mu-front-menu > ul li.item:hover {
-  background: var(--floatHoverColor);
+  background: var(--float-hover-color);
 }
 
 .mu-front-menu > ul li.item.delete:hover span {
-  color: var(--notificationWarningBg);
+  color: var(--delete-color);
 }
 
 .mu-front-menu > ul li.divider {
@@ -96,7 +96,7 @@
   height: 1px;
   margin: 4px 15px;
 
-  background: var(--editorColor10);
+  background: var(--editor-color-10);
 }
 
 .mu-front-menu li.turn-into-menu {
@@ -114,13 +114,13 @@
 }
 
 .mu-front-menu li.turn-into-menu .turn-into-item.active i.icon {
-  color: var(--themeColor);
+  color: var(--theme-color);
 }
 
 .mu-front-menu > ul li.item.delete:hover .icon-wrapper i.icon {
-  color: var(--notificationWarningBg);
+  color: var(--delete-color);
 }
 
 .mu-front-menu li.turn-into-menu .turn-into-item .icon-wrapper:hover {
-  background: var(--floatHoverColor);
+  background: var(--float-hover-color);
 }

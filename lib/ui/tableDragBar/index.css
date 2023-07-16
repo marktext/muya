@@ -9,7 +9,7 @@
   width: 24px;
   height: 10px;
 
-  border: 1px solid var(--editorColor30);
+  border: 1px solid var(--editor-color-30);
   border-radius: 5px;
 }
 
@@ -18,7 +18,7 @@
   width: 10px;
   height: 24px;
 
-  border: 1px solid var(--editorColor30);
+  border: 1px solid var(--editor-color-30);
   border-radius: 5px;
 }
 
@@ -30,7 +30,7 @@
   width: 4px;
   height: 4px;
 
-  background: var(--iconColor);
+  background: var(--icon-color);
   border-radius: 2px;
 
   content: '';
@@ -63,7 +63,7 @@
 .mu-drag-cell {
   z-index: 1;
 
-  background: var(--floatBgColor);
+  background: var(--float-bg-color);
   opacity: .7;
 
   transition: left .3s ease-in-out, bottom .3s ease-in-out;

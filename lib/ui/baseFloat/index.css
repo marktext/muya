@@ -11,9 +11,9 @@
 
   font-size: 12px;
 
-  background-color: var(--floatBgColor);
+  background-color: var(--float-bg-color);
   border-radius: 2px;
-  box-shadow: var(--floatShadow);
+  box-shadow: var(--float-shadow);
   transform-origin: top;
   opacity: 0;
 

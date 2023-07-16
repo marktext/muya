@@ -3,6 +3,7 @@
 
   border-radius: 2px;
 }
+
 .mu-format-picker {
   width: 265px;
   height: 28px;
@@ -33,7 +34,7 @@
 }
 
 .mu-format-picker li.item:hover {
-  background: var(--floatHoverColor);
+  background: var(--float-hover-color);
 }
 
 .mu-format-picker li.item:last-of-type {
@@ -48,7 +49,7 @@
   width: 1px;
   height: 18px;
 
-  background: var(--editorColor10);
+  background: var(--editor-color-10);
 
   content: '';
 }
@@ -67,7 +68,7 @@
   height: 100%;
   overflow: hidden;
 
-  color: var(--iconColor);
+  color: var(--icon-color);
 
   transition: all .25s ease-in-out;
 }
@@ -80,9 +81,9 @@
   width: 100%;
   height: 100%;
 
-  filter: drop-shadow(16px 0 currentColor);
+  filter: drop-shadow(16px 0 currentcolor);
 }
 
 .mu-format-picker li.item.active .icon-wrapper i.icon {
-  color: var(--themeColor);
+  color: var(--theme-color);
 }

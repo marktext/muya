@@ -10,27 +10,24 @@
   z-index: 1001;
 
   display: flex;
-  padding: 10px 12px 12px 12px;
+  padding: 10px 12px 12px;
 
-  color: var(--editorColor80);
+  color: var(--editor-color-80);
   font-weight: 600;
   font-size: 12px;
   line-height: 1.15;
   letter-spacing: 1px;
   text-transform: uppercase;
-
-  background: var(--itemBgColor);
 }
 
 .mu-emoji-picker section .emoji-wrapper {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   padding: 0 12px;
 }
 
 .mu-emoji-picker .active, .mu-emoji-picker .item:hover {
-  background-color: var(--floatHoverColor);
+  background-color: var(--float-hover-color);
  }
 
 .mu-emoji-picker section .emoji-wrapper .item {

@@ -3,6 +3,7 @@
 
   border-radius: 2px;
 }
+
 .mu-image-toolbar {
   width: 240px;
   height: 30px;
@@ -33,7 +34,7 @@
 }
 
 .mu-image-toolbar li.item:hover {
-  background: var(--floatHoverColor);
+  background: var(--float-hover-color);
 }
 
 .mu-image-toolbar li.item.edit {
@@ -53,7 +54,7 @@
   width: 1px;
   height: 16px;
 
-  background: var(--editorColor10);
+  background: var(--editor-color-10);
 
   content: '';
 }
@@ -71,7 +72,7 @@
   width: 1px;
   height: 16px;
 
-  background: var(--editorColor10);
+  background: var(--editor-color-10);
 
   content: '';
 }
@@ -89,7 +90,7 @@
   height: 100%;
   overflow: hidden;
 
-  color: var(--iconColor);
+  color: var(--icon-color);
 
   transition: all .25s ease-in-out;
 }
@@ -102,9 +103,9 @@
   width: 100%;
   height: 100%;
 
-  filter: drop-shadow(16px 0 currentColor);
+  filter: drop-shadow(16px 0 currentcolor);
 }
 
 .mu-image-toolbar li.item.active .icon-wrapper i.icon {
-  color: var(--themeColor);
+  color: var(--theme-color);
 }

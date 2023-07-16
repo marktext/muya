@@ -1,6 +1,7 @@
 .mu-table-bar-tools {
   min-width: 120px;
 }
+
 .mu-table-bar-tools ul,
 .mu-table-bar-tools li {
   margin: 0;
@@ -17,7 +18,7 @@
   height: 25px;
   padding: 0 8px;
 
-  color: var(--editorColor);
+  color: var(--editor-color);
   font-size: 13px;
   line-height: 25px;
 
@@ -37,11 +38,11 @@
   width: calc(100% - 16px);
   height: 1px;
 
-  background: var(--editorColor04);
+  background: var(--editor-color-04);
 
   content: '';
 }
 
 .mu-table-bar-tools li.item:hover {
-  background-color: var(--floatHoverColor);
+  background-color: var(--float-hover-color);
 }

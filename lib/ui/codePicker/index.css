@@ -27,7 +27,7 @@
 
 .mu-list-picker .item:hover,
 .mu-list-picker .item.active {
- background-color: var(--floatHoverColor);
+ background-color: var(--float-hover-color);
 }
 
 .mu-list-picker .item .icon-wrapper {
@@ -47,7 +47,7 @@
   width: 14px;
   height: 14px;
 
-  fill: var(--iconColor);
+  fill: var(--icon-color);
 }
 
 .mu-list-picker .item .icon-wrapper img {
@@ -58,7 +58,7 @@
 .mu-list-picker .item .language {
   margin-left: 5px;
 
-  color: var(--editorColor);
+  color: var(--editor-color);
   font-size: 14px;
   line-height: 28px;
 }

@@ -3,6 +3,7 @@
 
   border-radius: 2px;
 }
+
 .mu-table-column-tools {
   width: 160px;
   height: 24px;
@@ -33,7 +34,7 @@
 }
 
 .mu-table-column-tools li.item:hover {
-  background: var(--floatHoverColor);
+  background: var(--float-hover-color);
 }
 
 .mu-table-column-tools li.item:last-of-type {
@@ -48,7 +49,7 @@
   width: 1px;
   height: 14px;
 
-  background: var(--editorColor10);
+  background: var(--editor-color-10);
 
   content: '';
 }
@@ -67,7 +68,7 @@
   height: 100%;
   overflow: hidden;
 
-  color: var(--iconColor);
+  color: var(--icon-color);
 
   transition: all .25s ease-in-out;
 }
@@ -80,13 +81,13 @@
   width: 100%;
   height: 100%;
 
-  filter: drop-shadow(14px 0 currentColor);
+  filter: drop-shadow(14px 0 currentcolor);
 }
 
 .mu-table-column-tools li.item.active .icon-wrapper i.icon {
-  color: var(--themeColor);
+  color: var(--theme-color);
 }
 
 .mu-table-column-tools li.item.delete .icon-wrapper i.icon {
-  color: var(--deleteColor);
+  color: var(--delete-color);
 }
