@@ -90,6 +90,10 @@ class Muya {
     if (this.domNode.remove) {
       this.domNode.remove();
     }
+    // Hide all float tools.
+    if (this.ui) {
+      this.ui.hideAllFloatTools();
+    }
   }
 }
 

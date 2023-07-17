@@ -287,6 +287,7 @@ li.mu-task-list-item > input[type="checkbox"] {
   cursor: pointer;
 
   transition: all .2s ease;
+  -webkit-appearance: none;
 }
 
 ul.mu-tight-list > li.mu-task-list-item > input[type="checkbox"] {
@@ -341,9 +342,9 @@ li.mu-task-list-item > input.mu-checkbox-checked::after {
 }
 
 li.mu-task-list-item > input.mu-checkbox-checked::before {
-  background: var(--theme-color);
-  border-color: var(--theme-color);
-  box-shadow: 0 3px 12px 0 var(--selection-color);
+  background: var(--icon-color);
+  border-color: var(--icon-color);
+  box-shadow: 0 2px 5px 0 var(--editor-color-30);
 }
 
 /* table */

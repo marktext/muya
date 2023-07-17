@@ -40,7 +40,7 @@ code.mu-inline-rule {
 .mu-emoji-marked-text {
   position: relative;
 
-  color: var(--theme-color);
+  color: var(--editor-color-50);
 }
 
 .mu-emoji-marked-text[data-emoji] {
