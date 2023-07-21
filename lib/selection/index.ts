@@ -351,7 +351,7 @@ class Selection {
     const focusDomNode = findContentDOM(focusNode);
 
     if (!anchorDomNode || !focusDomNode) {
-      return {} as any;
+      return {} as ISelection;
     }
 
     const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY];
