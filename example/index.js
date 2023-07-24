@@ -289,7 +289,7 @@ const DEFAULT_STATE = [
 const DEFAULT_MARKDOWN = `
 foo bar
 
-hello ![](https://img5.sucaisucai.com/02/66/02566175_1.jpg) world
+hello world
 `
 
 Muya.use(EmojiPicker)

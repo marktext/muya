@@ -61,14 +61,18 @@ class History {
     }
     const { operation, selection } = this.stack[source].pop();
     const inverseOperation = json1.type.invert(operation);
+
     this.stack[dest].push({
       operation: inverseOperation,
       selection: this.selection.getSelection(),
     });
+
     this.lastRecorded = 0;
     this.ignoreChange = true;
     this.muya.editor.updateContents(operation, selection, "user");
     this.ignoreChange = false;
+
+    this.getLastSelection();
   }
 
   clear() {
