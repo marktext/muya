@@ -273,6 +273,7 @@ li.mu-task-list-item {
   position: relative;
 
   list-style-type: none;
+  padding-left: .3em;
 }
 
 li.mu-task-list-item > input[type="checkbox"] {
