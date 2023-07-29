@@ -287,7 +287,7 @@ const DEFAULT_STATE = [
 // > foo
 // > bar
 const DEFAULT_MARKDOWN = `
-foo bar
+**foo bar**
 
 hello world
 `
