@@ -324,10 +324,9 @@ class Selection {
     const handleClick = (event) => {
       const { target } = event;
       const imageWrapper = target.closest(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
+      this.selectedImage = null;
       if (imageWrapper) {
         return this.handleClickInlineImage(event, imageWrapper);
-      } else {
-        this.selectedImage = null;
       }
     };
 
@@ -425,13 +424,17 @@ class Selection {
       const rect = imageWrapper.getBoundingClientRect();
       const reference = {
         getBoundingClientRect: () => rect,
+        width: imageWrapper.offsetWidth,
+        height: imageWrapper.offsetHeight,
       };
       const imageInfo = getImageInfo(imageWrapper);
-      eventCenter.emit("muya-image-selector", {
-        block: contentBlock,
-        reference,
-        imageInfo,
-        cb: () => {},
+      requestAnimationFrame(() => {
+        eventCenter.emit("muya-image-selector", {
+          block: contentBlock,
+          reference,
+          imageInfo,
+          cb: () => {},
+        });
       });
     }
   }
