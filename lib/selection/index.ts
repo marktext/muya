@@ -321,6 +321,10 @@ class Selection {
       }
     };
 
+    const docHandlerClick = (event) => {
+      this.selectedImage = null;
+    };
+
     const handleClick = (event) => {
       const { target } = event;
       const imageWrapper = target.closest(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
@@ -346,7 +350,8 @@ class Selection {
     eventCenter.attachDOMEvent(domNode, "mouseup", handleMouseupOrLeave);
     eventCenter.attachDOMEvent(domNode, "mouseleave", handleMouseupOrLeave);
     eventCenter.attachDOMEvent(domNode, "click", handleMousemoveOrClick);
-    eventCenter.attachDOMEvent(document, "click", handleClick);
+    eventCenter.attachDOMEvent(domNode, "click", handleClick);
+    eventCenter.attachDOMEvent(document, "click", docHandlerClick);
     eventCenter.attachDOMEvent(document, "keydown", handleKeydown);
   }
 
@@ -428,13 +433,11 @@ class Selection {
         height: imageWrapper.offsetHeight,
       };
       const imageInfo = getImageInfo(imageWrapper);
-      requestAnimationFrame(() => {
-        eventCenter.emit("muya-image-selector", {
-          block: contentBlock,
-          reference,
-          imageInfo,
-          cb: () => {},
-        });
+      eventCenter.emit("muya-image-selector", {
+        block: contentBlock,
+        reference,
+        imageInfo,
+        cb: () => {},
       });
     }
   }
