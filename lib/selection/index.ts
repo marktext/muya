@@ -8,7 +8,7 @@ import { CLASS_NAMES, BLOCK_DOM_PROPERTY } from "@/config";
 import Muya from "@/index";
 import ContentBlock from "@/block/base/content";
 import { NodeOffset, ICursor, ISelection } from "../../types/selection";
-
+import { getImageInfo } from "@/utils/image";
 
 class Selection {
   /**
@@ -74,11 +74,19 @@ class Selection {
   get isCollapsed() {
     const { anchorBlock, focusBlock, anchor, focus } = this;
 
+    if (anchor.offset === null) {
+      return false;
+    }
+
     return anchorBlock === focusBlock && anchor.offset === focus.offset;
   }
 
   get isSelectionInSameBlock() {
-    const { anchorBlock, focusBlock } = this;
+    const { anchorBlock, focusBlock, anchor } = this;
+
+    if (anchor.offset === null) {
+      return false;
+    }
 
     return anchorBlock === focusBlock;
   }
@@ -92,9 +100,14 @@ class Selection {
       isSelectionInSameBlock,
       isCollapsed,
     } = this;
+    if (anchor.offset === null) {
+      return "none";
+    }
+
     if (isCollapsed) {
       return "none";
     }
+
     if (isSelectionInSameBlock) {
       return anchor.offset < focus.offset ? "forward" : "backward";
     } else {
@@ -119,10 +132,11 @@ class Selection {
   public muya: Muya;
   public anchorPath: Array<string | number>;
   public anchorBlock: ContentBlock;
-  public focusPath:  Array<string | number>;
+  public focusPath: Array<string | number>;
   public focusBlock: ContentBlock;
   public anchor: NodeOffset;
   public focus: NodeOffset;
+  public selectedImage: any;
   private selectInfo: {
     isSelect: boolean;
     selection: any;
@@ -130,7 +144,14 @@ class Selection {
 
   constructor(
     muya,
-    { anchor, focus, anchorBlock, anchorPath, focusBlock, focusPath }: ICursor = {}
+    {
+      anchor,
+      focus,
+      anchorBlock,
+      anchorPath,
+      focusBlock,
+      focusPath,
+    }: ICursor = {}
   ) {
     this.doc = document;
     this.muya = muya;
@@ -141,6 +162,8 @@ class Selection {
     this.anchor = anchor;
     this.focus = focus;
     this.listenSelectActions();
+    // selected image
+    this.selectedImage = null;
     this.selectInfo = {
       isSelect: false,
       selection: null,
@@ -149,6 +172,7 @@ class Selection {
 
   listenSelectActions() {
     const { eventCenter, domNode } = this.muya;
+
     const handleMousedown = () => {
       this.selectInfo = {
         isSelect: true,
@@ -209,8 +233,12 @@ class Selection {
           anchorOutMostBlock.blockName
         )
       ) {
-        const firstContent = (anchorOutMostBlock as any).firstContentInDescendant();
-        const lastContent = (anchorOutMostBlock as any).lastContentInDescendant();
+        const firstContent = (
+          anchorOutMostBlock as any
+        ).firstContentInDescendant();
+        const lastContent = (
+          anchorOutMostBlock as any
+        ).lastContentInDescendant();
         if (direction === "forward") {
           newSelection.anchorBlock = firstContent;
           newSelection.anchorPath = firstContent.path;
@@ -227,8 +255,12 @@ class Selection {
           focusOutMostBlock.blockName
         )
       ) {
-        const firstContent = (focusOutMostBlock as any).firstContentInDescendant();
-        const lastContent = (focusOutMostBlock as any).lastContentInDescendant();
+        const firstContent = (
+          focusOutMostBlock as any
+        ).firstContentInDescendant();
+        const lastContent = (
+          focusOutMostBlock as any
+        ).lastContentInDescendant();
         if (direction === "forward") {
           newSelection.focusBlock = lastContent;
           newSelection.focusPath = lastContent.path;
@@ -289,11 +321,119 @@ class Selection {
       }
     };
 
+    const handleClick = (event) => {
+      const { target } = event;
+      const imageWrapper = target.closest(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
+      if (imageWrapper) {
+        return this.handleClickInlineImage(event, imageWrapper);
+      } else {
+        this.selectedImage = null;
+      }
+    };
+
+    const handleKeydown = (event) => {
+      const { key } = event;
+      const { selectedImage } = this;
+      if (selectedImage && /Backspace|Enter/.test(key)) {
+        event.preventDefault();
+        const { block, ...imageInfo } = selectedImage;
+        block.deleteImage(imageInfo);
+        this.selectedImage = null;
+      }
+    };
+
     eventCenter.attachDOMEvent(domNode, "mousedown", handleMousedown);
     eventCenter.attachDOMEvent(domNode, "mousemove", handleMousemoveOrClick);
     eventCenter.attachDOMEvent(domNode, "mouseup", handleMouseupOrLeave);
     eventCenter.attachDOMEvent(domNode, "mouseleave", handleMouseupOrLeave);
     eventCenter.attachDOMEvent(domNode, "click", handleMousemoveOrClick);
+    eventCenter.attachDOMEvent(document, "click", handleClick);
+    eventCenter.attachDOMEvent(document, "keydown", handleKeydown);
+  }
+
+  // Handle click inline image.
+  handleClickInlineImage(event, imageWrapper) {
+    event.preventDefault();
+    event.stopPropagation();
+    const { eventCenter } = this.muya;
+    const imageInfo = getImageInfo(imageWrapper);
+    const { target } = event;
+    const deleteContainer = target.closest(".mu-image-icon-close");
+    const contentDom = findContentDOM(target);
+
+    if (!contentDom) {
+      return;
+    }
+
+    const contentBlock = contentDom[BLOCK_DOM_PROPERTY];
+
+    if (deleteContainer) {
+      contentBlock.deleteImage(imageInfo);
+
+      return;
+    }
+
+    // Handle image click, to select the current image
+    if (target.tagName === "IMG") {
+      // Handle show image toolbar
+      const rect = imageWrapper
+        .querySelector(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)
+        .getBoundingClientRect();
+      const reference = {
+        getBoundingClientRect: () => rect,
+        width: imageWrapper.offsetWidth,
+        height: imageWrapper.offsetHeight,
+      };
+
+      // Show image edit tool bar.
+      eventCenter.emit("muya-image-toolbar", {
+        block: contentBlock,
+        reference,
+        imageInfo,
+      });
+
+      // Handle show image transformer.
+      const imageSelector = `#${imageInfo.imageId}`;
+
+      const imageContainer = document.querySelector(
+        `${imageSelector} .${CLASS_NAMES.MU_IMAGE_CONTAINER}`
+      );
+
+      eventCenter.emit("muya-transformer", {
+        block: contentBlock,
+        reference: imageContainer,
+        imageInfo,
+      });
+
+      this.selectedImage = Object.assign({}, imageInfo, { block: contentBlock });
+      this.muya.editor.activeContentBlock = null;
+      this.setSelection({
+        anchor: { offset: null },
+        focus: { offset: null },
+        block: contentBlock,
+        path: contentBlock.path,
+      });
+
+      return;
+    }
+
+    // Handle click imagewrapper when it's empty or image load failed.
+    if (
+      imageWrapper.classList.contains(CLASS_NAMES.MU_EMPTY_IMAGE) ||
+      imageWrapper.classList.contains(CLASS_NAMES.MU_IMAGE_FAIL)
+    ) {
+      const rect = imageWrapper.getBoundingClientRect();
+      const reference = {
+        getBoundingClientRect: () => rect,
+      };
+      const imageInfo = getImageInfo(imageWrapper);
+      eventCenter.emit("muya-image-selector", {
+        block: contentBlock,
+        reference,
+        imageInfo,
+        cb: () => {},
+      });
+    }
   }
 
   selectAll() {
@@ -413,7 +553,7 @@ class Selection {
     this.focusPath = focusPath ?? path;
     this.setCursor();
 
-    const { isCollapsed, isSelectionInSameBlock, direction, type } = this;
+    const { isCollapsed, isSelectionInSameBlock, direction, type, selectedImage } = this;
 
     this.muya.eventCenter.emit("selection-change", {
       anchor,
@@ -426,6 +566,7 @@ class Selection {
       isSelectionInSameBlock,
       direction,
       type,
+      selectedImage,
     });
   }
 
@@ -463,7 +604,17 @@ class Selection {
       focusBlock,
       focusPath,
       scrollPage,
+      type,
     } = this;
+
+    // Remove the selection when type is `None`.
+    if (!anchor || anchor.offset === null) {
+      const selection = this.doc.getSelection();
+
+      selection.removeAllRanges();
+      return 
+    }
+    
     const anchorPargraph = anchorBlock
       ? anchorBlock.domNode
       : scrollPage.queryBlock(anchorPath);

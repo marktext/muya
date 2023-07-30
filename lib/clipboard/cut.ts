@@ -4,7 +4,6 @@ import { deepCopy } from "@/utils";
 
 export default {
   cutHandler() {
-    console.log('cut')
     const {
       isSelectionInSameBlock,
       anchor,
