@@ -64,6 +64,8 @@ None!
 
 - [MarkText](https://github.com/marktext/marktext) - Next generation markdown editor, running on platforms of MacOS Windows and Linux.
 
+- [MindBox](https://www.mindbox.cc/) - A note-taking app that perfectly supports markdown syntax.
+
 ## License
 
 MIT © [Jocs](https://github.com/Jocs)
