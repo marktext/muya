@@ -287,9 +287,7 @@ const DEFAULT_STATE = [
 // > foo
 // > bar
 const DEFAULT_MARKDOWN = `
-**foo bar**
-
-hello world![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjpqneIgYn6c_UGHMAGH2JDblCZ3_Oxt-lJg&usqp=CAU)这是一张图片
+foo bar
 `
 
 Muya.use(EmojiPicker)
