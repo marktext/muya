@@ -287,7 +287,11 @@ const DEFAULT_STATE = [
 // > foo
 // > bar
 const DEFAULT_MARKDOWN = `
-foo bar
+**foo bar**
+
+[![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjpqneIgYn6c_UGHMAGH2JDblCZ3_Oxt-lJg&usqp=CAU)](https://www.baidu.com)
+
+![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjpqneIgYn6c_UGHMAGH2JDblCZ3_Oxt-lJg&usqp=CAU)
 `
 
 Muya.use(EmojiPicker)
