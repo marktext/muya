@@ -16,6 +16,7 @@ import FrontButton from '../lib/ui/frontButton'
 import FrontMenu from '../lib/ui/frontMenu'
 
 import zh from '../lib/locales/zh'
+import ja from '../lib/locales/ja'
 
 const DEFAULT_STATE = [
   {
@@ -336,7 +337,7 @@ const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, disableHtml: true
 
 window.muya = muya
 
-muya.locale(zh)
+muya.locale(ja)
 
 muya.init()
 
