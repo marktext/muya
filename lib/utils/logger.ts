@@ -1,5 +1,9 @@
-const levels = ["error", "warn", "log", "info"];
-let level = "log";
+type TLevel = "error" | "warn" | "log" | "info";
+
+const levels: Array<TLevel> = ["error", "warn", "log", "info"];
+let level: TLevel = "log";
+
+type Ilogger = Record<TLevel,  (...args: Array<string>) => void>;
 
 function debug(method, ...args) {
   if (
@@ -10,12 +14,12 @@ function debug(method, ...args) {
   }
 }
 
-function namespace(ns) {
+function namespace(ns: string): Ilogger {
   return levels.reduce((logger, method) => {
     logger[method] = debug.bind(console, method, ns);
 
     return logger;
-  }, {});
+  }, {} as Ilogger);
 }
 
 namespace.level = (newLevel) => {
