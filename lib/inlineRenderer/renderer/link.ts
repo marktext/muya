@@ -91,13 +91,12 @@ export default function link(h, cursor, block, token, outerClass) {
       return [
         h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, firstBracket),
         h(
-          `span.${CLASS_NAMES.MU_INLINE_RULE}`,
+          `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_LINK}`,
           {
             props: {
               href: sanitizeHyperlink(
                 token.href + encodeURI(token.backlash.second)
               ),
-              target: "_blank",
               title: token.title,
             },
             dataset: {
