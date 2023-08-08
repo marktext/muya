@@ -5,6 +5,8 @@ import MarkdownToState from "./markdownToState";
 import { deepCopyArray } from "@/utils";
 import Muya from "@/index";
 
+import { TState } from "../../types/state";
+
 const debug = logger("jsonstate:");
 
 class JSONState {
@@ -23,7 +25,7 @@ class JSONState {
   public muya: Muya;
   public operationCache: Array<any>;
   private isGoing: boolean;
-  public state: any;
+  public state: Array<TState>;
 
   constructor(muya, state) {
     this.muya = muya;
@@ -34,10 +36,10 @@ class JSONState {
   }
 
   apply(op) {
-    this.state = json1.type.apply(this.state, op);
+    this.state = json1.type.apply(this.state as any, op) as unknown as Array<TState>;
   }
 
-  setContent(content) {
+  setContent(content: Array<TState> | string) {
     if (typeof content === "object") {
       this.setState(content);
     } else {
@@ -45,11 +47,11 @@ class JSONState {
     }
   }
 
-  setState(state) {
+  setState(state: Array<TState>) {
     this.state = state;
   }
 
-  setMarkdown(markdown) {
+  setMarkdown(markdown: string) {
     const {
       footnote,
       isGitlabCompatibilityEnabled,

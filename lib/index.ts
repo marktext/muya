@@ -9,6 +9,10 @@ import {
 } from "@/config/index";
 
 import { MuyaOptions } from "../types/muya";
+import Search from "@/search";
+
+import { TState } from "../types/state";
+import { ISearchOption } from "../types/search";
 
 import "./assets/styles/index.css";
 import "./assets/styles/prismjs/light.theme.css";
@@ -34,6 +38,19 @@ class Muya {
   public editor: Editor;
   public ui: Ui;
   public i18n: I18n;
+  public on: (event: string, listener: (...args: Array<any>) => void) => void;
+  public off: (event: string, listener: (...args: Array<any>) => void) => void;
+  public once: (event: string, listener: (...args: Array<any>) => void) => void;
+  public getState: () => Array<TState>;
+  public getMarkdown: () => string;
+  public setContent: (content: string |  Array<TState>) => void;
+  public undo: () => void;
+  public redo: () => void;
+  public search: (value: string, opt: ISearchOption) => Search;
+  public find: (action: "previous" | "next") => Search;
+  public replace: (replaceValue: string, opt: { isSingle: boolean, isRegexp: boolean }) => Search;
+  public focus: () => void;
+  public selectAll: () => void;
 
   constructor(element: HTMLElement, options = {}) {
     this.options = Object.assign({}, MUYA_DEFAULT_OPTIONS, options);
