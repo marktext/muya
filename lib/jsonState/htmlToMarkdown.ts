@@ -1,5 +1,6 @@
 import { DEFAULT_TURNDOWN_CONFIG } from '@/config'
 import TurndownService, { usePluginAddRules } from '@/utils/turndownService'
+import { ITurnoverOptions } from '../../types/state';
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
 const turnSoftBreakToSpan = html => {
@@ -56,8 +57,10 @@ const turnSoftBreakToSpan = html => {
 }
 
 export default class HtmlToMarkdown {
+  private options: ITurnoverOptions;
+
   constructor (options = {}) {
-    this.options = Object.assign({}, DEFAULT_TURNDOWN_CONFIG, options)
+    this.options = Object.assign({}, DEFAULT_TURNDOWN_CONFIG as ITurnoverOptions, options)
   }
 
   generate (html, keeps = []) {

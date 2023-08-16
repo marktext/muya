@@ -140,3 +140,16 @@ export type TLeafState  = IParagraphState | IAtxHeadingState | ISetextHeadingSta
 export type TContainerState = IBlockQuoteState | IOrderListState | IBulletListState | ITableState | ITaskListState
 
 export type TState = TLeafState | TContainerState;
+
+export interface ITurnoverOptions {
+  headingStyle: 'atx' | 'setext'; // setext or atx
+  hr: '---',
+  bulletListMarker: '-' | '+' | '*'; // -, +, or *
+  codeBlockStyle: 'fenced' | 'indented'; // fenced or indented
+  fence: '```' | '~~~'; // ``` or ~~~
+  emDelimiter: '*' | '_'; // _ or *
+  strongDelimiter: '**' | '__'; // ** or __
+  linkStyle: 'inlined';
+  linkReferenceStyle: 'full';
+  blankReplacement: (content: any, node: HTMLElement, options: any) => string;
+}

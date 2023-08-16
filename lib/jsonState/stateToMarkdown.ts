@@ -16,8 +16,19 @@ const escapeText = str => {
   return str.replace(/([^\\])\|/g, '$1\\|')
 }
 
+export interface IExportMarkdownOptions {
+  listIndentation: number | string;
+  isGitlabCompatibilityEnabled: boolean;
+}
+
 export default class ExportMarkdown {
-  constructor ({ listIndentation, isGitlabCompatibilityEnabled } = { listIndentation: 1, isGitlabCompatibilityEnabled: false }) {
+  private listType: Array<any>;
+  private isLooseParentList: boolean;
+  private isGitlabCompatibilityEnabled: boolean;
+  private listIndentation: string;
+  private listIndentationCount: number;
+
+  constructor ({ listIndentation, isGitlabCompatibilityEnabled }: IExportMarkdownOptions = { listIndentation: 1, isGitlabCompatibilityEnabled: false }) {
     this.listType = [] // 'ul' or 'ol'
     // helper to translate the first tight item in a nested list
     this.isLooseParentList = true

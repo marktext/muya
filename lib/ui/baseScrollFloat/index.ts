@@ -2,6 +2,12 @@ import BaseFloat from '@/ui/baseFloat'
 import { EVENT_KEYS } from '@/config'
 
 class BaseScrollFloat extends BaseFloat {
+  public scrollElement: HTMLElement;
+  public reference: any;
+  public activeItem: any;
+  public renderArray: Array<any>;
+  public render: () => void;
+
   constructor (muya, name, options = {}) {
     super(muya, name, options)
     this.scrollElement = null
@@ -96,7 +102,7 @@ class BaseScrollFloat extends BaseFloat {
     requestAnimationFrame(this.hide.bind(this))
   }
 
-  getItemElement () {}
+  getItemElement (item: any) {}
 }
 
 export default BaseScrollFloat
