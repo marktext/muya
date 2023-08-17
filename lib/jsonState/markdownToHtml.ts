@@ -8,13 +8,11 @@ import { sanitize, unescapeHTML } from "../utils";
 import Muya from "../index";
 import loadRenderer from "../utils/diagram";
 
-import githubMarkdownCss from "github-markdown-css/github-markdown.css";
-import highlightCss from "prismjs/themes/prism.css";
-import katexCss from "katex/dist/katex.css";
-import footerHeaderCss from "../assets/styles/headerFooterStyle.css";
-import exportStyle from "../assets/styles/exportStyle.css";
-
-console.log(exportStyle);
+import githubMarkdownCss from "!!raw-loader!github-markdown-css/github-markdown.css";
+import highlightCss from "!!raw-loader!prismjs/themes/prism.css";
+import katexCss from "!!raw-loader!katex/dist/katex.css";
+import footerHeaderCss from "!!raw-loader!../assets/styles/headerFooterStyle.css";
+import exportStyle from "!!raw-loader!../assets/styles/exportStyle.css";
 
 const DIAGRAM_TYPE = [
   "mermaid",
