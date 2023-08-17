@@ -18,6 +18,8 @@ import FrontMenu from '../lib/ui/frontMenu'
 import zh from '../lib/locales/zh'
 import ja from '../lib/locales/ja'
 
+import MD2Html from '../lib/jsonState/markdownToHtml'
+
 const DEFAULT_STATE = [
   {
     name: 'diagram',
@@ -396,3 +398,10 @@ muya.on('json-change', (changes) => {
 //   const { anchor, focus, path } = changes
 //   console.log(JSON.stringify([anchor.offset, focus.offset, path]))
 // })
+
+
+const md2Html = new MD2Html(DEFAULT_MARKDOWN)
+md2Html.generate({ printOptimization: true })
+  .then(html => {
+    console.log('html: ', html)
+  })
