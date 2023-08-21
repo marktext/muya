@@ -3,12 +3,12 @@ export default {
   breaks: false,
   gfm: true,
   headerIds: true,
-  headerPrefix: '',
+  headerPrefix: "",
   highlight: null,
   mathRenderer: null,
   emojiRenderer: null,
   tocRenderer: null,
-  langPrefix: 'language-',
+  langPrefix: "language-",
   mangle: true,
   pedantic: false,
   renderer: null, // new Renderer(),
@@ -33,5 +33,5 @@ export default {
   footnote: false,
   isGitlabCompatibilityEnabled: false,
 
-  isHtmlEnabled: true
-}
+  isHtmlEnabled: true,
+};
