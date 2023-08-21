@@ -7,6 +7,7 @@ import Muya from "../../index";
 import "./index.css";
 
 export interface IBaseFloatOptions {
+  photoCreatorClick?: any;
   placement: string;
   modifiers: {
     offset: {
@@ -31,7 +32,7 @@ const BUTTON_GROUP = ["mu-table-drag-bar", "mu-front-button"];
 class BaseFloat {
   public name: string;
   public muya: Muya;
-  private options: IBaseFloatOptions;
+  public options: IBaseFloatOptions;
   public status: boolean;
   public floatBox: HTMLElement | null;
   public container: HTMLElement | null;

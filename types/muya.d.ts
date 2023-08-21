@@ -33,7 +33,7 @@ export interface MuyaOptions {
       [propName: string]: string;
     }
   },
-  imageAction: () => Promise<string>;
+  imageAction: (...args: Array<any>) => Promise<string>;
   imagePathPicker: () => Promise<string>;
   clipboardFilePath: () => any;
   imagePathAutoComplete: (value: string) => Array<string>;
