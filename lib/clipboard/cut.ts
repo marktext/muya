@@ -1,6 +1,7 @@
 import ScrollPage from "@/block";
 import emptyStates from "@/config/emptyStates";
 import { deepCopy } from "@/utils";
+import { IBlockQuoteState, IParagraphState } from "../../types/state";
 
 export default {
   cutHandler() {
@@ -54,7 +55,7 @@ export default {
       ) {
         if (position === "start") {
           const state = outBlock.blockName === "block-quote" ? deepCopy(emptyStates["block-quote"]) : deepCopy(emptyStates.paragraph);
-          const newBlock = ScrollPage.loadBlock(state.name).create(
+          const newBlock = ScrollPage.loadBlock((state as IBlockQuoteState | IParagraphState).name).create(
             this.muya,
             state
           );
@@ -116,7 +117,7 @@ export default {
       // Handle anchor and focus in same list\quote block
       if (anchorOutMostBlock.blockName === "block-quote") {
         const state = deepCopy(emptyStates["block-quote"]);
-        const newQuoteBlock = ScrollPage.loadBlock(state.name).create(
+        const newQuoteBlock = ScrollPage.loadBlock((state as IBlockQuoteState).name).create(
           this.muya,
           state
         );
