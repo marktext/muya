@@ -1,80 +1,86 @@
-import { DEFAULT_TURNDOWN_CONFIG } from '@/config'
-import TurndownService, { usePluginAddRules } from '@/utils/turndownService'
-import { ITurnoverOptions } from '../../types/state';
+import { DEFAULT_TURNDOWN_CONFIG } from "@/config";
+import TurndownService, { usePluginAddRules } from "@/utils/turndownService";
+import { ITurnoverOptions } from "../../types/state";
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
-const turnSoftBreakToSpan = html => {
-  const parser = new DOMParser()
+const turnSoftBreakToSpan = (html) => {
+  const parser = new DOMParser();
   const doc = parser.parseFromString(
     `<x-mt id="turn-root">${html}</x-mt>`,
-    'text/html'
-  )
-  const root = doc.querySelector('#turn-root')
-  const travel = childNodes => {
+    "text/html"
+  );
+  const root = doc.querySelector("#turn-root");
+  const travel = (childNodes) => {
     for (const node of childNodes) {
-      if (node.nodeType === 3 && node.parentNode.tagName !== 'CODE') {
-        let startLen = 0
-        let endLen = 0
-        const text = node.nodeValue.replace(/^(\n+)/, (_, p) => {
-          startLen = p.length
+      if (node.nodeType === 3 && node.parentNode.tagName !== "CODE") {
+        let startLen = 0;
+        let endLen = 0;
+        const text = node.nodeValue
+          .replace(/^(\n+)/, (_, p) => {
+            startLen = p.length;
 
-          return ''
-        }).replace(/(\n+)$/, (_, p) => {
-          endLen = p.length
+            return "";
+          })
+          .replace(/(\n+)$/, (_, p) => {
+            endLen = p.length;
 
-          return ''
-        })
+            return "";
+          });
         if (/\n/.test(text)) {
-          const tokens = text.split('\n')
-          const params = []
-          let i = 0
-          const len = tokens.length
+          const tokens = text.split("\n");
+          const params = [];
+          let i = 0;
+          const len = tokens.length;
 
           for (; i < len; i++) {
-            let text = tokens[i]
+            let text = tokens[i];
             if (i === 0 && startLen !== 0) {
-              text = '\n'.repeat(startLen) + text
+              text = "\n".repeat(startLen) + text;
             } else if (i === len - 1 && endLen !== 0) {
-              text = text + '\n'.repeat(endLen)
+              text = text + "\n".repeat(endLen);
             }
-            params.push(document.createTextNode(text))
+            params.push(document.createTextNode(text));
             if (i !== len - 1) {
-              const softBreak = document.createElement('span')
-              softBreak.classList.add('mu-soft-line-break')
-              params.push(softBreak)
+              const softBreak = document.createElement("span");
+              softBreak.classList.add("mu-soft-line-break");
+              params.push(softBreak);
             }
           }
-          node.replaceWith(...params)
+          node.replaceWith(...params);
         }
       } else if (node.nodeType === 1) {
-        travel(node.childNodes)
+        travel(node.childNodes);
       }
     }
-  }
-  travel(root.childNodes)
+  };
+  travel(root.childNodes);
 
-  return root.innerHTML.trim()
-}
+  return root.innerHTML.trim();
+};
 
 export default class HtmlToMarkdown {
   private options: ITurnoverOptions;
 
-  constructor (options = {}) {
-    this.options = Object.assign({}, DEFAULT_TURNDOWN_CONFIG as ITurnoverOptions, options)
+  constructor(options = {}) {
+    this.options = Object.assign(
+      {},
+      DEFAULT_TURNDOWN_CONFIG as ITurnoverOptions,
+      options
+    );
   }
 
-  generate (html, keeps = []) {
+  generate(html, keeps = []) {
     // turn html to markdown
-    const { options } = this
-    const turndownService = new TurndownService(options)
-    usePluginAddRules(turndownService, keeps)
+    const { options } = this;
+    const turndownService = new TurndownService(options);
+    usePluginAddRules(turndownService, keeps);
 
     // fix #752, but I don't know why the &nbsp; vanlished.
-    html = html.replace(/<span>&nbsp;<\/span>/g, String.fromCharCode(160))
+    html = html.replace(/<span>&nbsp;<\/span>/g, String.fromCharCode(160));
 
-    html = turnSoftBreakToSpan(html)
-    const markdown = turndownService.turndown(html)
+    html = turnSoftBreakToSpan(html);
+    const markdown = turndownService.turndown(html);
 
-    return markdown
+    return markdown;
   }
 }

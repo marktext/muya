@@ -15,7 +15,7 @@ export const loadedLanguages = new Set([
 
 const { languages } = components;
 
-// Look for the origin languge by alias
+// Look for the origin language by alias
 export const transfromAliasToOrigin = (langs) => {
   const result = [];
 

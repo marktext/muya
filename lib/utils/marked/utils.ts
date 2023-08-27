@@ -55,7 +55,7 @@ export const unescape = function unescape(html) {
   );
 };
 
-export const edit = function edit(regex, opt) {
+export const edit = function edit(regex, opt?) {
   regex = regex.source || regex;
   opt = opt || "";
 
