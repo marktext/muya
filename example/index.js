@@ -277,7 +277,7 @@ const DEFAULT_STATE = [
 // - [ ] c
 // - [ ] d
 
-// **blod** *emphasis* :man: <u>underline</u> <mark>highlight</mark> \`inline code\`~~Delete~~ [Baidu](http://www.baidu.com) http://google.com
+// **bold** *emphasis* :man: <u>underline</u> <mark>highlight</mark> \`inline code\`~~Delete~~ [Baidu](http://www.baidu.com) http://google.com
 
 // ---
 
@@ -291,10 +291,6 @@ const DEFAULT_STATE = [
 // > bar
 const DEFAULT_MARKDOWN = `
 **foo bar**
-
-[![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjpqneIgYn6c_UGHMAGH2JDblCZ3_Oxt-lJg&usqp=CAU)](https://www.baidu.com)
-
-![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjpqneIgYn6c_UGHMAGH2JDblCZ3_Oxt-lJg&usqp=CAU)
 `
 
 Muya.use(EmojiPicker)
@@ -339,7 +335,7 @@ const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, disableHtml: true
 
 window.muya = muya
 
-muya.locale(ja)
+muya.locale(zh)
 
 muya.init()
 
