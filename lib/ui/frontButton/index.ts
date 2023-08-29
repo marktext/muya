@@ -1,5 +1,5 @@
 import Popper from "popper.js/dist/esm/popper";
-import resezeDetector from "element-resize-detector";
+import resizeDetector from "element-resize-detector";
 import { throttle, verticalPositionInRect } from "@/utils";
 import { patch, h } from "@/utils/snabbdom";
 import { BLOCK_DOM_PROPERTY } from "@/config";
@@ -79,12 +79,12 @@ class FrontButton {
     const floatBox = document.createElement("div");
     const container = document.createElement("div");
     const iconWrapper = document.createElement("div");
-    // Use to remember whick float container is shown.
+    // Use to remember which float container is shown.
     container.classList.add(this.name);
     container.appendChild(iconWrapper);
     floatBox.classList.add("mu-front-button-wrapper");
     floatBox.appendChild(container);
-    const erd = resezeDetector({
+    const erd = resizeDetector({
       strategy: "scroll",
     });
 

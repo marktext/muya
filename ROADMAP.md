@@ -7,6 +7,7 @@
 - [ ] Optimization of build process，replace webpack with vite and build using esbuild？
 - [ ] Website(docs, demo)
 - [ ] Compatible with Firefox and Safari
+- [ ] Unit test and e2e test
 
 **June 2020**
 
