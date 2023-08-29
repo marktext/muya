@@ -26,11 +26,8 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots / Screencasts**
-If applicable, add screenshots / screencasts to help explain your problem.
-
-**Sample Markdown File**
-Please attach the sample md file that may reproduce this.
+**Actual behavior**
+The actual result of this bug
 
 **Operation System and Browser version (please complete the following information):**
  - OS: [e.g. macOS 13.5 (22G74)]
@@ -39,5 +36,11 @@ Please attach the sample md file that may reproduce this.
 **Muya Version**
 e.g: 0.10.11
 
-**Additional context**
+**Screenshots / Screencasts（Optional）**
+If applicable, add screenshots / screencasts to help explain your problem.
+
+**Sample Markdown File（（Optional））**
+Please attach the sample md file that may reproduce this.
+
+**Additional context（（Optional））**
 Add any other context about the problem here.
