@@ -269,6 +269,7 @@ export const diffToTextOp = (diffs) => {
       case 1:
         op.push(diff[1]);
         break;
+
       default:
         break;
     }

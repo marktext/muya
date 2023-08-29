@@ -19,6 +19,12 @@ import "./assets/styles/prismjs/light.theme.css";
 import "./assets/styles/inlineSyntax.css";
 import "./assets/styles/blockSyntax.css";
 
+// Fix Intl.Segmenter is not work on firefox.
+if (!(Intl as any).Segmenter) {
+  const polyfill = await import("intl-segmenter-polyfill/dist/bundled");
+  (Intl as any).Segmenter = await polyfill.createIntlSegmenterPolyfill();
+}
+
 class Muya {
   static plugins = [];
 
@@ -43,12 +49,15 @@ class Muya {
   public once: (event: string, listener: (...args: Array<any>) => void) => void;
   public getState: () => Array<TState>;
   public getMarkdown: () => string;
-  public setContent: (content: string |  Array<TState>) => void;
+  public setContent: (content: string | Array<TState>) => void;
   public undo: () => void;
   public redo: () => void;
   public search: (value: string, opt: ISearchOption) => Search;
   public find: (action: "previous" | "next") => Search;
-  public replace: (replaceValue: string, opt: { isSingle: boolean, isRegexp: boolean }) => Search;
+  public replace: (
+    replaceValue: string,
+    opt: { isSingle: boolean; isRegexp: boolean }
+  ) => Search;
   public focus: () => void;
   public selectAll: () => void;
 
@@ -122,7 +131,7 @@ function getContainer(originContainer, options) {
   const newContainer = document.createElement("div");
   const attrs = originContainer.attributes;
   // Copy attrs from origin container to new container
-  Array.from(attrs).forEach((attr: { name: string; value: string; }) => {
+  Array.from(attrs).forEach((attr: { name: string; value: string }) => {
     newContainer.setAttribute(attr.name, attr.value);
   });
 
@@ -135,7 +144,10 @@ function getContainer(originContainer, options) {
   newContainer.setAttribute("contenteditable", "true");
   newContainer.setAttribute("autocorrect", "false");
   newContainer.setAttribute("autocomplete", "off");
-  newContainer.setAttribute("spellcheck", !!spellcheckEnabled ? "true" : "false");
+  newContainer.setAttribute(
+    "spellcheck",
+    !!spellcheckEnabled ? "true" : "false"
+  );
   originContainer.replaceWith(newContainer);
 
   return newContainer;

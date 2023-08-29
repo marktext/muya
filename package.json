@@ -44,6 +44,7 @@
     "fuse.js": "^6.6.2",
     "github-markdown-css": "^5.2.0",
     "html-tags": "^3.3.1",
+    "intl-segmenter-polyfill": "^0.4.4",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.16.8",
     "mermaid": "10.2.4",
