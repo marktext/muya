@@ -1,10 +1,10 @@
-import BaseFloat from "@/ui/baseFloat";
-import { patch, h } from "@/utils/snabbdom";
-import { deepCopy } from "@/utils";
-import emptyStates from "@/config/emptyStates";
-import ScrollPage from "@/block/scrollPage";
+import BaseFloat from "@muya/ui/baseFloat";
+import { patch, h } from "@muya/utils/snabbdom";
+import { deepCopy } from "@muya/utils";
+import emptyStates from "@muya/config/emptyStates";
+import ScrollPage from "@muya/block/scrollPage";
 import { FRONT_MENU, canTurnIntoMenu } from "./config";
-import { replaceBlockByLabel } from "@/ui/quickInsert/config";
+import { replaceBlockByLabel } from "@muya/ui/quickInsert/config";
 
 import "./index.css";
 

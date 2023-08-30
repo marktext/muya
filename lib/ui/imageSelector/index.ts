@@ -1,10 +1,10 @@
 import { createApi } from "unsplash-js";
 import BaseFloat from "../baseFloat";
-import { patch, h } from "@/utils/snabbdom";
-import { EVENT_KEYS, URL_REG, isWin } from "@/config";
-import { getUniqueId } from "@/utils";
-import { getImageInfo, getImageSrc } from "@/utils/image";
-import logger from "@/utils/logger";
+import { patch, h } from "@muya/utils/snabbdom";
+import { EVENT_KEYS, URL_REG, isWin } from "@muya/config";
+import { getUniqueId } from "@muya/utils";
+import { getImageInfo, getImageSrc } from "@muya/utils/image";
+import logger from "@muya/utils/logger";
 
 import "./index.css";
 

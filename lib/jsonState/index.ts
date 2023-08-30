@@ -1,9 +1,9 @@
 import * as json1 from "ot-json1";
-import logger from "@/utils/logger";
+import logger from "@muya/utils/logger";
 import StateToMarkdown from "./stateToMarkdown";
 import MarkdownToState from "./markdownToState";
-import { deepCopyArray } from "@/utils";
-import Muya from "@/index";
+import { deepCopyArray } from "@muya/utils";
+import Muya from "@muya/index";
 
 import { TState } from "../../types/state";
 

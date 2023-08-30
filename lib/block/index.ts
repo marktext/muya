@@ -1,42 +1,42 @@
-import ScrollPage from "@/block/scrollPage";
+import ScrollPage from "@muya/block/scrollPage";
 // leaf block
-import Paragraph from "@/block/commonMark/paragraph";
-import AtxHeading from "@/block/commonMark/atxHeading";
-import SetextHeading from "@/block/commonMark/setextHeading";
-import ThematicBreak from "@/block/commonMark/thematicBreak";
-import CodeBlock from "@/block/commonMark/codeBlock";
-import Code from "@/block/commonMark/codeBlock/code";
-import Table from "@/block/gfm/table";
-import TableInner from "@/block/gfm/table/table";
-import TableRow from "@/block/gfm/table/row";
-import Cell from "@/block/gfm/table/cell";
-import HTMLBlock from "@/block/commonMark/html";
-import HTMLContainer from "@/block/commonMark/html/htmlContainer";
-import MathBlock from "@/block/extra/math";
-import MathContainer from "@/block/extra/math/mathContainer";
-import Frontmatter from "@/block//extra/frontmatter";
-import DiagramBlock from "@/block/extra/diagram";
-import DiagramContainer from "@/block/extra/diagram/diagramContainer";
+import Paragraph from "@muya/block/commonMark/paragraph";
+import AtxHeading from "@muya/block/commonMark/atxHeading";
+import SetextHeading from "@muya/block/commonMark/setextHeading";
+import ThematicBreak from "@muya/block/commonMark/thematicBreak";
+import CodeBlock from "@muya/block/commonMark/codeBlock";
+import Code from "@muya/block/commonMark/codeBlock/code";
+import Table from "@muya/block/gfm/table";
+import TableInner from "@muya/block/gfm/table/table";
+import TableRow from "@muya/block/gfm/table/row";
+import Cell from "@muya/block/gfm/table/cell";
+import HTMLBlock from "@muya/block/commonMark/html";
+import HTMLContainer from "@muya/block/commonMark/html/htmlContainer";
+import MathBlock from "@muya/block/extra/math";
+import MathContainer from "@muya/block/extra/math/mathContainer";
+import Frontmatter from "@muya/block//extra/frontmatter";
+import DiagramBlock from "@muya/block/extra/diagram";
+import DiagramContainer from "@muya/block/extra/diagram/diagramContainer";
 // container block
-import BlockQuote from "@/block/commonMark/blockQuote";
-import OrderList from "@/block/commonMark/orderList";
-import ListItem from "@/block/commonMark/listItem";
-import BulletList from "@/block/commonMark/bulletList";
-import TaskList from "@/block/gfm/taskList";
-import TaskListItem from "@/block/gfm/taskListItem";
+import BlockQuote from "@muya/block/commonMark/blockQuote";
+import OrderList from "@muya/block/commonMark/orderList";
+import ListItem from "@muya/block/commonMark/listItem";
+import BulletList from "@muya/block/commonMark/bulletList";
+import TaskList from "@muya/block/gfm/taskList";
+import TaskListItem from "@muya/block/gfm/taskListItem";
 // content
-import ParagraphContent from "@/block/content/paragraphContent";
-import AtxHeadingContent from "@/block/content/atxHeadingContent";
-import SetextHeadingContent from "@/block/content/setextHeadingContent";
-import ThematicBreakContent from "@/block/content/thematicBreakContent";
-import LangInputContent from "@/block/content/langInputContent";
-import CodeBlockContent from "@/block/content/codeBlockContent";
-import TableCellContent from "@/block/content/tableCell";
+import ParagraphContent from "@muya/block/content/paragraphContent";
+import AtxHeadingContent from "@muya/block/content/atxHeadingContent";
+import SetextHeadingContent from "@muya/block/content/setextHeadingContent";
+import ThematicBreakContent from "@muya/block/content/thematicBreakContent";
+import LangInputContent from "@muya/block/content/langInputContent";
+import CodeBlockContent from "@muya/block/content/codeBlockContent";
+import TableCellContent from "@muya/block/content/tableCell";
 // Attachment Block
-import TaskListCheckbox from "@/block/gfm/taskListCheckbox";
-import HTMLPreview from "@/block/commonMark/html/htmlPreview";
-import MathPreview from "@/block/extra/math/mathPreview";
-import DiagramPreview from "@/block/extra/diagram/diagramPreview";
+import TaskListCheckbox from "@muya/block/gfm/taskListCheckbox";
+import HTMLPreview from "@muya/block/commonMark/html/htmlPreview";
+import MathPreview from "@muya/block/extra/math/mathPreview";
+import DiagramPreview from "@muya/block/extra/diagram/diagramPreview";
 
 // Register itself
 ScrollPage.register(ScrollPage);

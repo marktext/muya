@@ -1,4 +1,4 @@
-import { CLASS_NAMES } from "@/config";
+import { CLASS_NAMES } from "@muya/config";
 
 export default function superSubScript(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor);

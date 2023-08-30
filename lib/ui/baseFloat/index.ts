@@ -1,7 +1,7 @@
 import Popper from "popper.js/dist/esm/popper";
 import resizeDetector from "element-resize-detector";
-import { noop } from "@/utils";
-import { EVENT_KEYS } from "@/config";
+import { noop } from "@muya/utils";
+import { EVENT_KEYS } from "@muya/config";
 import Muya from "../../index";
 
 import "./index.css";

@@ -1,5 +1,5 @@
-import { sanitize } from "@/utils";
-import { PREVIEW_DOMPURIFY_CONFIG, PARAGRAPH_TYPES } from "@/config";
+import { sanitize } from "@muya/utils";
+import { PREVIEW_DOMPURIFY_CONFIG, PARAGRAPH_TYPES } from "@muya/config";
 
 const TIMEOUT = 1500;
 

@@ -8,8 +8,8 @@
  * Pandoc Markdown: https://pandoc.org/MANUAL.html#pandocs-markdown
  * The output markdown needs to obey the standards of these Spec.
  */
-import logger from "@/utils/logger";
-import { deepCopy } from "@/utils";
+import logger from "@muya/utils/logger";
+import { deepCopy } from "@muya/utils";
 
 const debug = logger("export markdown: ");
 const escapeText = (str) => {

@@ -1,8 +1,8 @@
 // TODO@jocs: remove the use of `axios` in muya
 import axios from "axios";
-import { isWin } from "@/config/index";
-import { findContentDOM, getOffsetOfParagraph } from "@/selection/dom";
-import { tokenizer } from "@/inlineRenderer/lexer";
+import { isWin } from "@muya/config/index";
+import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
+import { tokenizer } from "@muya/inlineRenderer/lexer";
 
 export const getImageInfo = (image) => {
   const paragraph = findContentDOM(image);

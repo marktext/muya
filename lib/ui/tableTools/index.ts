@@ -1,5 +1,5 @@
 import BaseFloat from "../baseFloat";
-import { patch, h } from "@/utils/snabbdom";
+import { patch, h } from "@muya/utils/snabbdom";
 import { toolList } from "./config";
 
 import "./index.css";

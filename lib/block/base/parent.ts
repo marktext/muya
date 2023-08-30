@@ -1,8 +1,8 @@
-import TreeNode from "@/block/base/treeNode";
-import LinkedList from "@/block/base/linkedList/linkedList";
-import { operateClassName } from "@/utils/dom";
-import { CLASS_NAMES } from "@/config";
-import logger from "@/utils/logger";
+import TreeNode from "@muya/block/base/treeNode";
+import LinkedList from "@muya/block/base/linkedList/linkedList";
+import { operateClassName } from "@muya/utils/dom";
+import { CLASS_NAMES } from "@muya/config";
+import logger from "@muya/utils/logger";
 
 const debug = logger("parent:");
 

@@ -1,6 +1,6 @@
-import { CLASS_NAMES, BLOCK_TYPE6 } from "@/config";
-import { snakeToCamel } from "@/utils";
-import sanitize, { isValidAttribute } from "@/utils/dompurify";
+import { CLASS_NAMES, BLOCK_TYPE6 } from "@muya/config";
+import { snakeToCamel } from "@muya/utils";
+import sanitize, { isValidAttribute } from "@muya/utils/dompurify";
 
 export default function htmlTag(h, cursor, block, token, outerClass) {
   const { tag, openTag, closeTag, children, attrs } = token;

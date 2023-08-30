@@ -1,8 +1,8 @@
-import { normalizePastedHTML, checkCopyType } from "@/utils/paste";
-import ScrollPage from "@/block/scrollPage";
-import { URL_REG } from "@/config";
-import HtmlToMarkdown from "@/jsonState/htmlToMarkdown";
-import MarkdownToState from "@/jsonState/markdownToState";
+import { normalizePastedHTML, checkCopyType } from "@muya/utils/paste";
+import ScrollPage from "@muya/block/scrollPage";
+import { URL_REG } from "@muya/config";
+import HtmlToMarkdown from "@muya/jsonState/htmlToMarkdown";
+import MarkdownToState from "@muya/jsonState/markdownToState";
 
 export default {
   async pasteHandler(event) {

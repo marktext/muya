@@ -1,5 +1,5 @@
 import Fuse from "fuse.js";
-import emojis from "@/config/emojis.json";
+import emojis from "@muya/config/emojis.json";
 
 const emojisForSearch = {};
 

@@ -1,8 +1,8 @@
-import { CLASS_NAMES } from "@/config";
-import { getImageSrc } from "@/utils/image";
-import ImageIcon from "@/assets/icons/image/2.png";
-import ImageFailIcon from "@/assets/icons/image_fail/2.png";
-import DeleteIcon from "@/assets/icons/delete/2.png";
+import { CLASS_NAMES } from "@muya/config";
+import { getImageSrc } from "@muya/utils/image";
+import ImageIcon from "@muya/assets/icons/image/2.png";
+import ImageFailIcon from "@muya/assets/icons/image_fail/2.png";
+import DeleteIcon from "@muya/assets/icons/delete/2.png";
 
 const renderIcon = (h, className, icon) => {
   const selector = `a.${className}`;

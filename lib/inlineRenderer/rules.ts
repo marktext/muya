@@ -1,4 +1,4 @@
-import { escapeCharacters } from "@/config/escapeCharacter";
+import { escapeCharacters } from "@muya/config/escapeCharacter";
 
 /* eslint-disable no-useless-escape */
 export const beginRules = {

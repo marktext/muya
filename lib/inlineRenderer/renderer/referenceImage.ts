@@ -1,5 +1,5 @@
-import { CLASS_NAMES } from "@/config";
-import { getImageSrc } from "@/utils/image";
+import { CLASS_NAMES } from "@muya/config";
+import { getImageSrc } from "@muya/utils/image";
 
 // reference_image
 export default function referenceImage(h, cursor, block, token, outerClass) {

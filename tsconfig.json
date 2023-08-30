@@ -11,7 +11,7 @@
     "checkJs": false,
     "target": "es2017",
     "paths": {
-      "@/*": ["./lib/*"],
+      "@muya/*": ["./lib/*"],
       "@types/*": ["./types/*"]
     }
   },

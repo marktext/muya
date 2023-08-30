@@ -1,5 +1,5 @@
-import emojis from "@/config/emojis.json";
-import { CLASS_NAMES } from "@/config";
+import emojis from "@muya/config/emojis.json";
+import { CLASS_NAMES } from "@muya/config";
 
 /**
  * check if one emoji code is in emojis, return undefined or found emoji

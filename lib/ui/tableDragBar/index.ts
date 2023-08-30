@@ -1,7 +1,7 @@
 import BaseFloat from "../baseFloat";
-import { throttle } from "@/utils";
-import ScrollPage from "@/block/scrollPage";
-import { BLOCK_DOM_PROPERTY } from "@/config";
+import { throttle } from "@muya/utils";
+import ScrollPage from "@muya/block/scrollPage";
+import { BLOCK_DOM_PROPERTY } from "@muya/config";
 
 import "./index.css";
 

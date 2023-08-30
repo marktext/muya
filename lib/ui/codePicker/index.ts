@@ -1,7 +1,7 @@
 import BaseScrollFloat from "../baseScrollFloat";
-import { patch, h } from "@/utils/snabbdom";
-import { search } from "@/utils/prism";
-import ScrollPage from "@/block/scrollPage";
+import { patch, h } from "@muya/utils/snabbdom";
+import { search } from "@muya/utils/prism";
+import ScrollPage from "@muya/block/scrollPage";
 import fileIcons from "../fileIcons";
 
 import "./index.css";

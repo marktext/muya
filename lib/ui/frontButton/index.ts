@@ -1,10 +1,10 @@
 import Popper from "popper.js/dist/esm/popper";
 import resizeDetector from "element-resize-detector";
-import { throttle, verticalPositionInRect } from "@/utils";
-import { patch, h } from "@/utils/snabbdom";
-import { BLOCK_DOM_PROPERTY } from "@/config";
+import { throttle, verticalPositionInRect } from "@muya/utils";
+import { patch, h } from "@muya/utils/snabbdom";
+import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import { getIcon } from "./config";
-import dragIcon from "@/assets/icons/drag/2.png";
+import dragIcon from "@muya/assets/icons/drag/2.png";
 import Muya from "../../index";
 
 import "./index.css";

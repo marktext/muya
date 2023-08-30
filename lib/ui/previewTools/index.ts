@@ -1,9 +1,9 @@
 import BaseFloat from "../baseFloat";
-import { throttle } from "@/utils";
-import ScrollPage from "@/block";
-import { patch, h } from "@/utils/snabbdom";
+import { throttle } from "@muya/utils";
+import ScrollPage from "@muya/block";
+import { patch, h } from "@muya/utils/snabbdom";
 import ICONS from "./config";
-import { BLOCK_DOM_PROPERTY } from "@/config";
+import { BLOCK_DOM_PROPERTY } from "@muya/config";
 
 import "./index.css";
 

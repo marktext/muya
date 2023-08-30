@@ -1,4 +1,4 @@
-import { findClosingBracket } from "@/utils/marked/utils";
+import { findClosingBracket } from "@muya/utils/marked/utils";
 
 // ASCII PUNCTUATION character
 // export const punctuation = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']

@@ -1,5 +1,5 @@
-import { CLASS_NAMES } from "@/config";
-import { htmlToVNode } from "@/utils/snabbdom";
+import { CLASS_NAMES } from "@muya/config";
+import { htmlToVNode } from "@muya/utils/snabbdom";
 
 export default function htmlRuby(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor);

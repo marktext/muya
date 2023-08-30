@@ -1,5 +1,5 @@
-import { union, isEven } from "@/utils";
-import { CLASS_NAMES } from "@/config";
+import { union, isEven } from "@muya/utils";
+import { CLASS_NAMES } from "@muya/config";
 
 // TODO HIGHLIGHT
 export default function backlashInToken(

@@ -1,4 +1,4 @@
-import { CLASS_NAMES } from "@/config";
+import { CLASS_NAMES } from "@muya/config";
 
 export default function header(h, cursor, block, token, outerClass) {
   const { content } = token;

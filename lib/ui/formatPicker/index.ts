@@ -1,7 +1,7 @@
 import BaseFloat, { IBaseFloatOptions } from "../baseFloat";
-import { patch, h } from "@/utils/snabbdom";
+import { patch, h } from "@muya/utils/snabbdom";
 import icons, { IIcon } from "./config";
-import Format from "@/block/base/format";
+import Format from "@muya/block/base/format";
 
 import "./index.css";
 

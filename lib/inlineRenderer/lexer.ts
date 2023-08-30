@@ -1,12 +1,12 @@
-import { beginRules, inlineRules, validateRules } from "@/inlineRenderer/rules";
-import { isLengthEven, union } from "@/utils";
+import { beginRules, inlineRules, validateRules } from "@muya/inlineRenderer/rules";
+import { isLengthEven, union } from "@muya/utils";
 import {
   getAttributes,
   parseSrcAndTitle,
   validateEmphasize,
   lowerPriority,
   correctUrl,
-} from "@/inlineRenderer/utils";
+} from "@muya/inlineRenderer/utils";
 
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html

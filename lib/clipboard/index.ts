@@ -1,10 +1,10 @@
-import { mixins } from "@/utils";
-import copy from "@/clipboard/copy";
-import cut from "@/clipboard/cut";
-import paste from "@/clipboard/paste";
-import { BLOCK_DOM_PROPERTY } from "@/config";
-import { findContentDOM } from "@/selection/dom";
-import Muya from "@/index";
+import { mixins } from "@muya/utils";
+import copy from "@muya/clipboard/copy";
+import cut from "@muya/clipboard/cut";
+import paste from "@muya/clipboard/paste";
+import { BLOCK_DOM_PROPERTY } from "@muya/config";
+import { findContentDOM } from "@muya/selection/dom";
+import Muya from "@muya/index";
 
 class Clipboard {
   get selection() {

@@ -1,5 +1,5 @@
 import zlib from "zlib";
-import { toHTML, h } from "@/utils/snabbdom";
+import { toHTML, h } from "@muya/utils/snabbdom";
 
 const PLANTUML_URL = "https://www.plantuml.com/plantuml";
 

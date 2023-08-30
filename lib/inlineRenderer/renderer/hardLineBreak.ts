@@ -1,4 +1,4 @@
-import { CLASS_NAMES } from "@/config";
+import { CLASS_NAMES } from "@muya/config";
 
 export default function hardLineBreak(h, cursor, block, token, outerClass) {
   const { spaces, lineBreak, isAtEnd } = token;

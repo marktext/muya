@@ -1,5 +1,5 @@
 import en from "../locales/en";
-import Muya from "@/index";
+import Muya from "@muya/index";
 
 class I18n {
   public muya: Muya;
