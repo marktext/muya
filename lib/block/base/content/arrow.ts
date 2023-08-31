@@ -1,7 +1,7 @@
-import Selection from '@/selection'
-import ScrollPage from '@/block'
-import { EVENT_KEYS } from '@/config'
-import { adjustOffset } from '@/utils'
+import Selection from '@muya/selection'
+import ScrollPage from '@muya/block'
+import { EVENT_KEYS } from '@muya/config'
+import { adjustOffset } from '@muya/utils'
 
 export default {
   arrowHandler (event) {

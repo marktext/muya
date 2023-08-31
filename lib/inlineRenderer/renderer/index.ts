@@ -29,10 +29,10 @@ import referenceLink from "./referenceLink";
 import referenceImage from "./referenceImage";
 import superSubScript from "./superSubScript";
 import footnoteIdentifier from "./footnoteIdentifier";
-import { CLASS_NAMES } from "@/config";
-import { mixins, conflict, snakeToCamel } from "@/utils";
-import { h, toHTML } from "@/utils/snabbdom";
-import Muya from "@/index";
+import { CLASS_NAMES } from "@muya/config";
+import { mixins, conflict, snakeToCamel } from "@muya/utils";
+import { h, toHTML } from "@muya/utils/snabbdom";
+import Muya from "@muya/index";
 
 const inlineSyntaxRenderer = {
   backlashInToken,

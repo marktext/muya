@@ -1,10 +1,10 @@
 import diff from "fast-diff";
-import { BRACKET_HASH, BACK_HASH, EVENT_KEYS } from "@/config";
-import { diffToTextOp, mixins } from "@/utils";
-import TreeNode from "@/block/base/treeNode";
+import { BRACKET_HASH, BACK_HASH, EVENT_KEYS } from "@muya/config";
+import { diffToTextOp, mixins } from "@muya/utils";
+import TreeNode from "@muya/block/base/treeNode";
 import arrowHandler from "./arrow";
 
-// import logger from '@/utils/logger'
+// import logger from '@muya/utils/logger'
 
 // const debug = logger('block.content:')
 

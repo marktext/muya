@@ -1,4 +1,4 @@
-import { union } from "@/utils";
+import { union } from "@muya/utils";
 
 // change text to highlight vdom
 export default function highlight(h, block, rStart, rEnd, token) {

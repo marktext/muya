@@ -1,5 +1,5 @@
-import { Lexer } from "@/utils/marked";
-import logger from "@/utils/logger";
+import { Lexer } from "@muya/utils/marked";
+import logger from "@muya/utils/logger";
 
 const debug = logger("import markdown: ");
 const restoreTableEscapeCharacters = (text) => {

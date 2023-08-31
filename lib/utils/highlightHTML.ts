@@ -1,4 +1,4 @@
-import { getLongUniqueId } from "@/utils";
+import { getLongUniqueId } from "@muya/utils";
 
 // TODO: @jocs any better solutions?
 export const MARKER_HASK = {

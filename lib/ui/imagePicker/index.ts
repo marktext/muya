@@ -1,8 +1,8 @@
 import BaseScrollFloat from "../baseScrollFloat";
-import { patch, h } from "@/utils/snabbdom";
-import FolderIcon from "@/assets/icons/folder.svg";
-import ImageIcon from "@/assets/icons/image.svg";
-import UploadIcon from "@/assets/icons/upload.svg";
+import { patch, h } from "@muya/utils/snabbdom";
+import FolderIcon from "@muya/assets/icons/folder.svg";
+import ImageIcon from "@muya/assets/icons/image.svg";
+import UploadIcon from "@muya/assets/icons/upload.svg";
 
 import "./index.css";
 

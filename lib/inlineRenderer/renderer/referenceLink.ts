@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@/config";
-import { snakeToCamel } from "@/utils";
-import { sanitizeHyperlink } from "@/utils/url";
+import { CLASS_NAMES } from "@muya/config";
+import { snakeToCamel } from "@muya/utils";
+import { sanitizeHyperlink } from "@muya/utils/url";
 
 export default function referenceLink(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor);

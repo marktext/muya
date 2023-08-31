@@ -1,5 +1,5 @@
-import BaseFloat from "@/ui/baseFloat";
-import { EVENT_KEYS } from "@/config";
+import BaseFloat from "@muya/ui/baseFloat";
+import { EVENT_KEYS } from "@muya/config";
 
 class BaseScrollFloat extends BaseFloat {
   public scrollElement: HTMLElement;

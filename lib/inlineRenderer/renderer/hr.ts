@@ -1,4 +1,4 @@
-import { CLASS_NAMES } from "@/config";
+import { CLASS_NAMES } from "@muya/config";
 
 export default function hr(h, cursor, block, token, outerClass) {
   const { start, end } = token.range;

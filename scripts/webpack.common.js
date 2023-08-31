@@ -8,7 +8,7 @@ const proMode = process.env.NODE_ENV === 'production'
 exports.default = {
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '../lib')
+      '@muya': path.resolve(__dirname, '../lib')
     },
     extensions: ['', '.webpack.js', '.web.js', '.ts', '.js'],
     fallback: {

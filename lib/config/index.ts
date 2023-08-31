@@ -1,4 +1,4 @@
-import { generateKeyHash, genUpper2LowerKeyHash } from "@/utils";
+import { generateKeyHash, genUpper2LowerKeyHash } from "@muya/utils";
 import htmlTags from "html-tags";
 import voidHtmlTags from "html-tags/void";
 import en from "../locales/en";

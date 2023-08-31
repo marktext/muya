@@ -1,4 +1,4 @@
-import marked from "@/utils/marked";
+import marked from "@muya/utils/marked";
 import StateToMarkdown from "../jsonState/stateToMarkdown";
 
 export default {

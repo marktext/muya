@@ -2,7 +2,7 @@ import Renderer from "./renderer";
 import { normal, breaks, gfm, pedantic } from "./inlineRules";
 import defaultOptions from "./options";
 import { escape, findClosingBracket, getUniqueId, rtrim } from "./utils";
-import { validateEmphasize, lowerPriority } from "@/inlineRenderer/utils";
+import { validateEmphasize, lowerPriority } from "@muya/inlineRenderer/utils";
 
 /**
  * Inline Lexer & Compiler

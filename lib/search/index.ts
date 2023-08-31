@@ -1,6 +1,6 @@
-import { DEFAULT_SEARCH_OPTIONS } from "@/config";
-import { matchString, buildRegexValue } from "@/utils/search";
-import Muya from "@/index";
+import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
+import { matchString, buildRegexValue } from "@muya/utils/search";
+import Muya from "@muya/index";
 
 class Search {
   get scrollPage() {

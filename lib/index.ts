@@ -1,15 +1,15 @@
-import EventCenter from "@/event/index";
-import Editor from "@/editor/index";
-import Ui from "@/ui/index";
-import I18n from "@/i18n/index";
+import EventCenter from "@muya/event/index";
+import Editor from "@muya/editor/index";
+import Ui from "@muya/ui/index";
+import I18n from "@muya/i18n/index";
 import {
   BLOCK_DOM_PROPERTY,
   MUYA_DEFAULT_OPTIONS,
   CLASS_NAMES,
-} from "@/config/index";
+} from "@muya/config/index";
 
 import { MuyaOptions } from "../types/muya";
-import Search from "@/search";
+import Search from "@muya/search";
 
 import { TState } from "../types/state";
 import { ISearchOption } from "../types/search";

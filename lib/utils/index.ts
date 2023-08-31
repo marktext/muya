@@ -1,6 +1,6 @@
 import runSanitize from "./dompurify";
-import Selection from "@/selection";
-import { EVENT_KEYS } from "@/config";
+import Selection from "@muya/selection";
+import { EVENT_KEYS } from "@muya/config";
 
 const uniqueIdGenerator = () => {
   const ID_PREFIX = "mu-";

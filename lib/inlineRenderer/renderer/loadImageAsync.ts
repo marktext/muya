@@ -1,7 +1,7 @@
-import { getUniqueId } from "@/utils";
-import { loadImage } from "@/utils/image";
-import { insertAfter, operateClassName } from "@/utils/dom";
-import { CLASS_NAMES } from "@/config";
+import { getUniqueId } from "@muya/utils";
+import { loadImage } from "@muya/utils/image";
+import { insertAfter, operateClassName } from "@muya/utils/dom";
+import { CLASS_NAMES } from "@muya/config";
 
 export default function loadImageAsync(
   imageInfo,

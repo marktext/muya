@@ -1,8 +1,8 @@
-import Renderer from '@/inlineRenderer/renderer'
-import { tokenizer } from '@/inlineRenderer/lexer'
-import logger from '@/utils/logger'
-import { beginRules } from '@/inlineRenderer/rules'
-import Muya from "@/index";
+import Renderer from '@muya/inlineRenderer/renderer'
+import { tokenizer } from '@muya/inlineRenderer/lexer'
+import logger from '@muya/utils/logger'
+import { beginRules } from '@muya/inlineRenderer/rules'
+import Muya from "@muya/index";
 
 const debug = logger('inlinerenderer:')
 

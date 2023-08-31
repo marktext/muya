@@ -1,5 +1,5 @@
-import { CLASS_NAMES } from "@/config";
-import { validEmoji } from "@/utils/emoji";
+import { CLASS_NAMES } from "@muya/config";
+import { validEmoji } from "@muya/utils/emoji";
 
 // render token of emoji to vdom
 export default function emoji(h, cursor, block, token, outerClass) {

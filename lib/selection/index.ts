@@ -4,11 +4,11 @@ import {
   findContentDOM,
   compareParagraphsOrder,
 } from "./dom";
-import { CLASS_NAMES, BLOCK_DOM_PROPERTY } from "@/config";
-import Muya from "@/index";
-import ContentBlock from "@/block/base/content";
+import { CLASS_NAMES, BLOCK_DOM_PROPERTY } from "@muya/config";
+import Muya from "@muya/index";
+import ContentBlock from "@muya/block/base/content";
 import { NodeOffset, ICursor, ISelection } from "../../types/selection";
-import { getImageInfo } from "@/utils/image";
+import { getImageInfo } from "@muya/utils/image";
 
 class Selection {
   /**

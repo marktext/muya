@@ -1,5 +1,5 @@
-import { CLASS_NAMES } from "@/config";
-import { snakeToCamel } from "@/utils";
+import { CLASS_NAMES } from "@muya/config";
+import { snakeToCamel } from "@muya/utils";
 
 // render factory of `del`,`em`,`strong`
 export default function delEmStrongFac(

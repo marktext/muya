@@ -1,5 +1,5 @@
-import { CLASS_NAMES } from "@/config";
-import { sanitizeHyperlink } from "@/utils/url";
+import { CLASS_NAMES } from "@muya/config";
+import { sanitizeHyperlink } from "@muya/utils/url";
 
 // render auto_link to vdom
 export default function autoLinkExtension(h, cursor, block, token, outerClass) {

@@ -1,8 +1,8 @@
-import LinkedNode from "@/block/base/linkedList/linkedNode";
-import LinkedList from "@/block/base/linkedList/linkedList";
-import { createDomNode } from "@/utils/dom";
-import { BLOCK_DOM_PROPERTY } from "@/config";
-import Muya from "@/index";
+import LinkedNode from "@muya/block/base/linkedList/linkedNode";
+import LinkedList from "@muya/block/base/linkedList/linkedList";
+import { createDomNode } from "@muya/utils/dom";
+import { BLOCK_DOM_PROPERTY } from "@muya/config";
+import Muya from "@muya/index";
 
 interface IAttributes {
   [propName: string]: string | boolean;

@@ -1,7 +1,7 @@
 import katex from "katex/dist/katex.js";
 import "katex/dist/contrib/mhchem.min.js";
-import { CLASS_NAMES } from "@/config";
-import { htmlToVNode } from "@/utils/snabbdom";
+import { CLASS_NAMES } from "@muya/config";
+import { htmlToVNode } from "@muya/utils/snabbdom";
 
 import "katex/dist/katex.min.css";
 

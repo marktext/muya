@@ -1,6 +1,6 @@
-import ScrollPage from "@/block";
-import emptyStates from "@/config/emptyStates";
-import { deepCopy } from "@/utils";
+import ScrollPage from "@muya/block";
+import emptyStates from "@muya/config/emptyStates";
+import { deepCopy } from "@muya/utils";
 import { IBlockQuoteState, IParagraphState } from "../../types/state";
 
 export default {

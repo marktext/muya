@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@/config";
-import { isLengthEven, snakeToCamel } from "@/utils";
-import { sanitizeHyperlink } from "@/utils/url";
+import { CLASS_NAMES } from "@muya/config";
+import { isLengthEven, snakeToCamel } from "@muya/utils";
+import { sanitizeHyperlink } from "@muya/utils/url";
 
 // 'link': /^(\[)((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*?)(\\*)\]\((.*?)(\\*)\)/, // can nest
 export default function link(h, cursor, block, token, outerClass) {

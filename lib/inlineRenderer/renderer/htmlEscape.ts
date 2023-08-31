@@ -1,5 +1,5 @@
-import { CLASS_NAMES } from "@/config";
-import escapeCharactersMap from "@/config/escapeCharacter";
+import { CLASS_NAMES } from "@muya/config";
+import escapeCharactersMap from "@muya/config/escapeCharacter";
 
 export default function htmlEscape(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor);

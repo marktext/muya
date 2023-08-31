@@ -1,6 +1,6 @@
-import BaseScrollFloat from "@/ui/baseScrollFloat";
+import BaseScrollFloat from "@muya/ui/baseScrollFloat";
 import Emoji from "./emoji";
-import { patch, h } from "@/utils/snabbdom";
+import { patch, h } from "@muya/utils/snabbdom";
 
 import "./index.css";
 

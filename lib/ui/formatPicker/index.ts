@@ -1,7 +1,7 @@
 import BaseFloat, { IBaseFloatOptions } from "../baseFloat";
-import { patch, h } from "@/utils/snabbdom";
+import { patch, h } from "@muya/utils/snabbdom";
 import icons, { IIcon } from "./config";
-import Format from "@/block/base/format";
+import Format from "@muya/block/base/format";
 
 import "./index.css";
 
@@ -73,12 +73,11 @@ class FormatPicker extends BaseFloat {
     };
 
     const handleKeydown = (event) => {
-      const { key, shiftKey, metaKey } = event;
-
+      const { key, shiftKey, metaKey, ctrlKey } = event;
       const { anchorBlock, isSelectionInSameBlock } =
         editor.selection.getSelection();
       if (isSelectionInSameBlock) {
-        if (!(anchorBlock instanceof Format) || !metaKey) {
+        if (!(anchorBlock instanceof Format) || (!metaKey && !ctrlKey)) {
           return;
         }
         if (shiftKey) {

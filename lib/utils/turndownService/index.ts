@@ -1,5 +1,5 @@
 import TurndownService from "turndown";
-import { identity } from "@/utils";
+import { identity } from "@muya/utils";
 
 const turndownPluginGfm = require("joplin-turndown-plugin-gfm");
 
