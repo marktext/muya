@@ -73,7 +73,7 @@ class FormatPicker extends BaseFloat {
     };
 
     const handleKeydown = (event) => {
-      const { key, shiftKey, metaKey,ctrlKey } = event;
+      const { key, shiftKey, metaKey, ctrlKey } = event;
       const { anchorBlock, isSelectionInSameBlock } =
         editor.selection.getSelection();
       if (isSelectionInSameBlock) {
