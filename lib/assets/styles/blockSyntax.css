@@ -180,7 +180,7 @@ code.mu-code .mu-code-copy:hover {
 
   width: 16px;
   height: 16px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .mu-code-copy i.icon > i[class^=icon-] {
@@ -272,8 +272,9 @@ ul.mu-task-list {
 li.mu-task-list-item {
   position: relative;
 
-  list-style-type: none;
   padding-left: .3em;
+
+  list-style-type: none;
 }
 
 li.mu-task-list-item > input[type="checkbox"] {
@@ -288,7 +289,8 @@ li.mu-task-list-item > input[type="checkbox"] {
   cursor: pointer;
 
   transition: all .2s ease;
-  -webkit-appearance: none;
+
+  appearance: none;
 }
 
 ul.mu-tight-list > li.mu-task-list-item > input[type="checkbox"] {
