@@ -32,9 +32,9 @@ class EventCenter {
    * [attachDOMEvent] bind event listener to target, and return a unique ID,
    * this ID
    */
-  attachDOMEvent(target, event, listener, capture?) {
+  attachDOMEvent(target, event, listener, capture?): string {
     if (this.checkHasBind(target, event, listener, capture)) {
-      return false;
+      return "";
     }
 
     const eventId = this.eventId;
@@ -115,7 +115,7 @@ class EventCenter {
   }
 
   /**
-   * [once] usbscribe event and listen once
+   * [once] subscribe event and listen once
    */
   once(event, listener) {
     this.subscribe(event, listener, true);
