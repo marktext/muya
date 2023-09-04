@@ -6,9 +6,10 @@ import logger from "@muya/utils/logger";
 
 const debug = logger("parent:");
 
-class Parent extends TreeNode {
+abstract class Parent extends TreeNode {
   public attachments: LinkedList<TreeNode>;
   public children: LinkedList<TreeNode>;
+
   private _active: boolean;
 
   get active() {

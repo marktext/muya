@@ -401,5 +401,5 @@ muya.on('json-change', (changes) => {
 const md2Html = new MD2Html(DEFAULT_MARKDOWN)
 md2Html.generate({ printOptimization: true })
   .then(html => {
-    console.log('html: ', html)
+    // console.log('html: ', html)
   })

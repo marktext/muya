@@ -18,7 +18,7 @@ interface IConstructor<T> {
   new (muya: Muya): T;
 }
 
-class TreeNode extends LinkedNode {
+abstract class TreeNode extends LinkedNode {
   static blockName = 'tree.node';
 
   public muya: Muya;

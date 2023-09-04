@@ -8,7 +8,7 @@ import arrowHandler from "./arrow";
 
 // const debug = logger('block.content:')
 
-class Content extends TreeNode {
+abstract class Content extends TreeNode {
   static blockName = "content";
 
   public _text: string;
@@ -17,7 +17,6 @@ class Content extends TreeNode {
   public deleteHandler: (event: KeyboardEvent) => void;
   public enterHandler: (event: KeyboardEvent) => void;
   public arrowHandler: (event: KeyboardEvent) => void;
-  public tabHandler: (event: KeyboardEvent) => void;
 
   get hasSelection() {
     return !!this.getCursor();
@@ -294,7 +293,13 @@ class Content extends TreeNode {
   }
 
   // Do nothing, because this method will implemented in sub class.
-  inputHandler(event?) {}
+  abstract inputHandler(event: KeyboardEvent): void;
+  // Do nothing, because this method will implemented in sub class.
+  abstract tabHandler(event: KeyboardEvent): void;
+
+  abstract keyupHandler(event: KeyboardEvent): void;
+
+  clickHandler() {}
 
   keydownHandler = (event) => {
     // TODO: move codes bellow to muya.ui ?
@@ -366,10 +371,6 @@ class Content extends TreeNode {
         break;
     }
   };
-
-  keyupHandler() {}
-
-  clickHandler() {}
 
   blurHandler() {
     this.scrollPage.handleBlurFromContent(this);
