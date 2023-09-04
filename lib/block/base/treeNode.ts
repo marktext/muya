@@ -3,6 +3,7 @@ import LinkedList from "@muya/block/base/linkedList/linkedList";
 import { createDomNode } from "@muya/utils/dom";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
+import Parent from "./parent";
 
 interface IAttributes {
   [propName: string]: string | boolean;
@@ -22,7 +23,7 @@ abstract class TreeNode extends LinkedNode {
   static blockName = 'tree.node';
 
   public muya: Muya;
-  public parent: TreeNode | null;
+  public parent: Parent | null;
   public domNode: HTMLElement;
   public tagName: string;
   public classList: Array<string>;
@@ -32,6 +33,7 @@ abstract class TreeNode extends LinkedNode {
   public prev: TreeNode | null;
   public next: TreeNode | null;
 
+  abstract get path(): Array<number | string>;
 
   get static(): IConstructor<TreeNode> {
     return this.constructor as any as IConstructor<TreeNode>;

@@ -3,6 +3,8 @@ import LinkedList from "@muya/block/base/linkedList/linkedList";
 import { operateClassName } from "@muya/utils/dom";
 import { CLASS_NAMES } from "@muya/config";
 import logger from "@muya/utils/logger";
+import Content from "./content/index";
+import { TState } from "../../../types/state";
 
 const debug = logger("parent:");
 
@@ -41,8 +43,10 @@ abstract class Parent extends TreeNode {
     this._active = false;
   }
 
+  abstract getState(): TState;
+
   getJsonPath() {
-    const { path } = this as any;
+    const { path } = this;
     if (this.isContainerBlock) {
       path.pop();
     }
@@ -54,7 +58,7 @@ abstract class Parent extends TreeNode {
    * Clone itself.
    */
   clone() {
-    const state = (this as any).getState();
+    const state = this.getState();
     const { muya } = this;
 
     return this.static.create(muya, state);
@@ -206,8 +210,8 @@ abstract class Parent extends TreeNode {
   /**
    * find the first content block, paragraph.content etc.
    */
-  firstContentInDescendant() {
-    let firstContentBlock: TreeNode | null = this;
+  firstContentInDescendant(): Content {
+    let firstContentBlock: Content | any = this;
     do {
       firstContentBlock = firstContentBlock.children.head;
     } while (firstContentBlock.children);
@@ -218,8 +222,8 @@ abstract class Parent extends TreeNode {
   /**
    * find the last content block in container block.
    */
-  lastContentInDescendant() {
-    let lastContentBlock: TreeNode | null = this;
+  lastContentInDescendant(): Content {
+    let lastContentBlock: Content | any = this;
 
     do {
       lastContentBlock = lastContentBlock.children.tail;

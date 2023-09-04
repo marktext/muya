@@ -137,7 +137,7 @@ export interface IDiagramState {
 
 export type TLeafState  = IParagraphState | IAtxHeadingState | ISetextHeadingState | IThematicBreakState | ICodeBlockState | IHtmlBlockState | ILinkReferenceDefinitionState | IMathBlockState | IFrontmatterState | IDiagramState;
 
-export type TContainerState = IBlockQuoteState | IOrderListState | IBulletListState | ITableState | ITaskListState
+export type TContainerState = IBlockQuoteState | IOrderListState | IBulletListState | ITableState | ITaskListState | ITaskListItemState | IListItemState
 
 export type TState = TLeafState | TContainerState;
 
