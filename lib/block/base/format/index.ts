@@ -10,6 +10,7 @@ import backspaceHandler from "./backspace";
 import deleteHandler from "./delete";
 import converter from "./converter";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
+import { ICursor } from "../../../../types/selection";
 
 abstract class Format extends Content {
   static blockName = "format";
@@ -87,7 +88,7 @@ abstract class Format extends Content {
     return false;
   }
 
-  checkNeedRender(cursor = this.selection) {
+  checkNeedRender(cursor: ICursor = this.selection) {
     const { labels } = this.inlineRenderer;
     const { text } = this;
     const { start: cStart, end: cEnd, anchor, focus } = cursor;
@@ -127,9 +128,7 @@ abstract class Format extends Content {
     }
   }
 
-  tabHandler(event) {
-    console.log("tab");
-  }
+  tabHandler(event) {}
 
   /**
    * Update emoji text if cursor is in emoji syntax.
@@ -222,7 +221,7 @@ abstract class Format extends Content {
     const selector = `#${
       imageId.indexOf("_") > -1 ? imageId : imageId + "_" + token.range.start
     } img`;
-    const image = document.querySelector(selector);
+    const image: HTMLImageElement = document.querySelector(selector);
 
     if (image) {
       image.click();
