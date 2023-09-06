@@ -220,9 +220,17 @@ export const generateKeyHash = (keys) => {
   }, {});
 };
 
-// mixins
-export const mixins = (constructor, ...object) =>
-  Object.assign(constructor.prototype, ...object);
+export const mixins = (constructor, ...objects) => {
+  for (const object of objects) {
+    Object.keys(object).forEach((name) => {
+      Object.defineProperty(
+        constructor.prototype,
+        name,
+        Object.getOwnPropertyDescriptor(object, name) || Object.create(null)
+      );
+    });
+  }
+};
 
 export const sanitize = (html, purifyOptions, disableHtml) => {
   if (disableHtml) {
