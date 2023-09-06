@@ -3,6 +3,7 @@ import ScrollPage from "@muya/block/scrollPage";
 import { h, toHTML } from "@muya/utils/snabbdom";
 import copyIcon from "@muya/assets/icons/copy/2.png";
 import logger from "@muya/utils/logger";
+import CodeBlock from "./index";
 import { TState } from "../../../../types/state";
 
 const debug = logger("code:");
@@ -36,6 +37,8 @@ const renderCopyButton = (i18n) => {
 };
 
 class Code extends Parent {
+  public parent: CodeBlock;
+
   static blockName = "code";
 
   static create(muya, state) {

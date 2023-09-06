@@ -1,22 +1,24 @@
 import diff from "fast-diff";
 import { BRACKET_HASH, BACK_HASH, EVENT_KEYS } from "@muya/config";
-import { diffToTextOp, mixins } from "@muya/utils";
+import { diffToTextOp } from "@muya/utils";
 import TreeNode from "@muya/block/base/treeNode";
-import arrowHandler from "./arrow";
+import Selection from "@muya/selection";
+import ScrollPage from "@muya/block";
+import { adjustOffset } from "@muya/utils";
 
 // import logger from '@muya/utils/logger'
 
 // const debug = logger('block.content:')
 
 abstract class Content extends TreeNode {
-  static blockName = "content";
+  abstract inputHandler(event: KeyboardEvent): void;
+  abstract backspaceHandler(event: KeyboardEvent): void;
+  abstract enterHandler(event: KeyboardEvent): void;
 
   public _text: string;
   public isComposed: boolean;
-  public backspaceHandler: (event: KeyboardEvent) => void;
-  public deleteHandler: (event: KeyboardEvent) => void;
-  public enterHandler: (event: KeyboardEvent) => void;
-  public arrowHandler: (event: KeyboardEvent) => void;
+
+  static blockName = "content";
 
   get hasSelection() {
     return !!this.getCursor();
@@ -90,6 +92,85 @@ abstract class Content extends TreeNode {
     this.isComposed = false;
   }
 
+  clickHandler(event: MouseEvent): void {
+    // Do nothing.
+  }
+
+  tabHandler(event: KeyboardEvent): void {
+    // Do nothing.
+  }
+  keyupHandler(event: KeyboardEvent): void {
+    // Do nothing.
+  }
+  deleteHandler(event: KeyboardEvent): void {
+    // Do nothing.
+  }
+
+  arrowHandler(event) {
+    const previousContentBlock = this.previousContentInContext();
+    const nextContentBlock = this.nextContentInContext();
+    const { start, end } = this.getCursor();
+    const { topOffset, bottomOffset } = Selection.getCursorYOffset(
+      this.domNode
+    );
+
+    // Just do nothing if the cursor is not collapsed or `shiftKey` pressed
+    if (start.offset !== end.offset || event.shiftKey) {
+      return;
+    }
+
+    if (
+      (event.key === EVENT_KEYS.ArrowUp && topOffset > 0) ||
+      (event.key === EVENT_KEYS.ArrowDown && bottomOffset > 0)
+    ) {
+      return;
+    }
+
+    const { muya } = this;
+    let cursorBlock = null;
+    let offset = 0;
+
+    if (
+      event.key === EVENT_KEYS.ArrowUp ||
+      (event.key === EVENT_KEYS.ArrowLeft && start.offset === 0)
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!previousContentBlock) {
+        return;
+      }
+      cursorBlock = previousContentBlock;
+      offset = previousContentBlock.text.length;
+    } else if (
+      event.key === EVENT_KEYS.ArrowDown ||
+      (event.key === EVENT_KEYS.ArrowRight && start.offset === this.text.length)
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (nextContentBlock) {
+        cursorBlock = nextContentBlock;
+      } else {
+        const newNodeState = {
+          name: "paragraph",
+          text: "",
+        };
+        const newNode = ScrollPage.loadBlock(newNodeState.name).create(
+          muya,
+          newNodeState
+        );
+        this.scrollPage.append(newNode, "user");
+        cursorBlock = newNode.children.head;
+      }
+      offset = adjustOffset(0, cursorBlock, event);
+    }
+
+    if (cursorBlock) {
+      this.update();
+      cursorBlock.setCursor(offset, offset, true);
+    }
+  }
+
   createDomNode() {
     super.createDomNode();
     this.update();
@@ -129,7 +210,7 @@ abstract class Content extends TreeNode {
    * @param {number} end
    * @param {boolean} needUpdate
    */
-  setCursor(begin, end, needUpdate = false) {
+  setCursor(begin: number, end: number, needUpdate = false) {
     const cursor = {
       block: this,
       path: this.path,
@@ -304,15 +385,6 @@ abstract class Content extends TreeNode {
     }
   }
 
-  // Do nothing, because this method will implemented in sub class.
-  abstract inputHandler(event: KeyboardEvent): void;
-  // Do nothing, because this method will implemented in sub class.
-  abstract tabHandler(event: KeyboardEvent): void;
-
-  abstract keyupHandler(event: KeyboardEvent): void;
-
-  clickHandler() {}
-
   keydownHandler = (event) => {
     // TODO: move codes bellow to muya.ui ?
     if (
@@ -427,7 +499,5 @@ abstract class Content extends TreeNode {
     return this;
   }
 }
-
-mixins(Content, arrowHandler);
 
 export default Content;

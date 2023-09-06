@@ -128,8 +128,6 @@ abstract class Format extends Content {
     }
   }
 
-  tabHandler(event) {}
-
   /**
    * Update emoji text if cursor is in emoji syntax.
    * @param {string} text emoji text

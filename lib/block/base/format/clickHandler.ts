@@ -1,4 +1,4 @@
-import { CLASS_NAMES, BLOCK_DOM_PROPERTY } from "@muya/config";
+import { CLASS_NAMES } from "@muya/config";
 import { getCursorReference } from "@muya/utils";
 
 export default {
