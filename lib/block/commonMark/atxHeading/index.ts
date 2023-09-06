@@ -3,12 +3,15 @@ import ScrollPage from "@muya/block/scrollPage";
 import { mixins } from "@muya/utils";
 import leafQueryBlock from "@muya/block/mixins/leafQueryBlock";
 import { IAtxHeadingState } from "../../../../types/state";
+import AtxHeadingContent from "@muya/block/content/atxHeadingContent";
+import LinkedList from "@muya/block/base/linkedList/linkedList";
 
 interface IAtxHeadingMeta {
   level: number;
 }
 
 class AtxHeading extends Parent {
+  public children: LinkedList<AtxHeadingContent>;
   static blockName = "atx-heading";
 
   static create(muya, state) {
@@ -42,7 +45,7 @@ class AtxHeading extends Parent {
     return {
       name: "atx-heading",
       meta: this.meta,
-      text: (this.children.head as any).text as string,
+      text: this.children.head.text,
     };
   }
 }

@@ -23,6 +23,18 @@ class TaskListCheckbox extends TreeNode {
     return [...pPath, "meta", "checked"];
   }
 
+  get isContentBlock() {
+    return false;
+  }
+
+  get isLeafBlock() {
+    return false;
+  }
+
+  get isContainerBlock() {
+    return false;
+  }
+
   constructor(muya, { checked }) {
     super(muya);
     this.tagName = "input";

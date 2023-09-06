@@ -67,6 +67,18 @@ abstract class Content extends TreeNode {
     return isCollapsed;
   }
 
+  get isContentBlock() {
+    return true;
+  }
+
+  get isLeafBlock() {
+    return false;
+  }
+
+  get isContainerBlock() {
+    return false;
+  }
+
   constructor(muya, text) {
     super(muya);
     this.tagName = "span";

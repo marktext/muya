@@ -1,5 +1,4 @@
 import LinkedNode from "@muya/block/base/linkedList/linkedNode";
-import LinkedList from "@muya/block/base/linkedList/linkedList";
 import { createDomNode } from "@muya/utils/dom";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
@@ -20,8 +19,6 @@ interface IConstructor<T> {
 }
 
 abstract class TreeNode extends LinkedNode {
-  static blockName = 'tree.node';
-
   public muya: Muya;
   public parent: Parent | null;
   public domNode: HTMLElement;
@@ -29,11 +26,13 @@ abstract class TreeNode extends LinkedNode {
   public classList: Array<string>;
   public attributes: IAttributes;
   public datasets: IDatasets;
-  public children: LinkedList<TreeNode> | undefined;
-  public prev: TreeNode | null;
-  public next: TreeNode | null;
 
   abstract get path(): Array<number | string>;
+  abstract get isContentBlock(): boolean;
+  abstract get isLeafBlock(): boolean;
+  abstract get isContainerBlock(): boolean;
+
+  static blockName = 'tree.node';
 
   get static(): IConstructor<TreeNode> {
     return this.constructor as any as IConstructor<TreeNode>;
@@ -70,23 +69,6 @@ abstract class TreeNode extends LinkedNode {
     }
 
     return null;
-  }
-
-  /**
-   * Judge weather block is content block. paragraph content, atx heading content, setext heading content etc.
-   */
-  get isContentBlock() {
-    return typeof (this as any).text === "string";
-  }
-
-  get isLeafBlock() {
-    return this.children instanceof LinkedList;
-  }
-
-  get isContainerBlock() {
-    return /block-quote|order-list|bullet-list|task-list|list-item|task-list-item/.test(
-      this.blockName
-    );
   }
 
   constructor(muya) {
@@ -128,7 +110,7 @@ abstract class TreeNode extends LinkedNode {
     const { parent } = this;
     if (parent.prev) {
       return parent.prev.isLeafBlock
-        ? (parent.prev as any).lastContentInDescendant()
+        ? parent.prev.lastContentInDescendant()
         : parent.prev; // language input
     } else {
       return parent.previousContentInContext();
@@ -144,11 +126,11 @@ abstract class TreeNode extends LinkedNode {
     const { parent } = this;
 
     if (this.blockName === "language-input") {
-      return (parent as any).lastContentInDescendant();
+      return parent.lastContentInDescendant();
     }
 
     if (parent.next) {
-      return (parent.next as any).firstContentInDescendant();
+      return parent.next.firstContentInDescendant();
     } else {
       return parent.nextContentInContext();
     }
@@ -237,7 +219,7 @@ abstract class TreeNode extends LinkedNode {
     }
 
     if (this.parent) {
-      (this.parent as any).removeChild(this);
+      this.parent.removeChild(this);
     }
 
     parent.insertBefore(this, refBlock);
@@ -253,35 +235,6 @@ abstract class TreeNode extends LinkedNode {
     this.domNode.remove();
 
     return this;
-  }
-
-  breadthFirstTraverse(callback) {
-    const queue = [this];
-
-    while (queue.length) {
-      const node = queue.shift();
-
-      callback(node);
-
-      if (node.children) {
-        node.children.forEach((child) => queue.push(child));
-      }
-    }
-  }
-
-  depthFirstTraverse(callback) {
-    const stack = [this];
-
-    while (stack.length) {
-      const node = stack.shift();
-
-      callback(node);
-
-      if (node.children) {
-        // Use splice ot make sure the first block in document is process first.
-        node.children.forEach((child, i) => stack.splice(i, 0, child));
-      }
-    }
   }
 }
 

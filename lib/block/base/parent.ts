@@ -9,8 +9,10 @@ import { TState } from "../../../types/state";
 const debug = logger("parent:");
 
 abstract class Parent extends TreeNode {
-  public attachments: LinkedList<TreeNode>;
-  public children: LinkedList<TreeNode>;
+  public attachments: LinkedList<Parent>;
+  public children: LinkedList<Parent | Content>;
+  public prev: Parent | null;
+  public next: Parent | null;
 
   private _active: boolean;
 
@@ -33,6 +35,20 @@ abstract class Parent extends TreeNode {
 
   get lastChild() {
     return this.children.tail;
+  }
+
+  get isContentBlock() {
+    return false;
+  }
+
+  get isLeafBlock() {
+    return this.children instanceof LinkedList;
+  }
+
+  get isContainerBlock() {
+    return /block-quote|order-list|bullet-list|task-list|list-item|task-list-item/.test(
+      this.blockName
+    );
   }
 
   constructor(muya) {
@@ -146,7 +162,7 @@ abstract class Parent extends TreeNode {
       return;
     }
 
-    (this.parent as any).insertBefore(block, this, source);
+    this.parent.insertBefore(block, this, source);
     block.parent = this.parent;
     this.remove(source);
 
@@ -181,7 +197,7 @@ abstract class Parent extends TreeNode {
     if (source === "user") {
       // dispatch json1 operation
       const path = this.getJsonPath();
-      const state = (this as any).getState();
+      const state = this.getState();
       this.jsonState.pushOperation("removeOp", path, state);
     }
     super.remove();
@@ -197,7 +213,7 @@ abstract class Parent extends TreeNode {
 
   removeChild(node, source = "user") {
     if (!this.children.contains(node)) {
-      (debug as any).warn(
+      debug.warn(
         "Can not removeChild(node), because node is not child of this block"
       );
     }
@@ -230,6 +246,35 @@ abstract class Parent extends TreeNode {
     } while (lastContentBlock.children);
 
     return lastContentBlock;
+  }
+
+  breadthFirstTraverse(callback) {
+    const queue = [this];
+
+    while (queue.length) {
+      const node = queue.shift();
+
+      callback(node);
+
+      if (node.children) {
+        node.children.forEach((child) => queue.push(child));
+      }
+    }
+  }
+
+  depthFirstTraverse(callback) {
+    const stack = [this];
+
+    while (stack.length) {
+      const node = stack.shift();
+
+      callback(node);
+
+      if (node.children) {
+        // Use splice ot make sure the first block in document is process first.
+        node.children.forEach((child, i) => stack.splice(i, 0, child));
+      }
+    }
   }
 }
 
