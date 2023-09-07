@@ -8,6 +8,7 @@
 - [ ] Website(docs, demo)
 - [ ] Compatible with Firefox and Safari
 - [ ] Unit test and e2e test
+- [ ] Remove the axios from dependencies
 
 **June 2020**
 

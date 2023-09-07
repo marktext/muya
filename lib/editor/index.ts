@@ -140,7 +140,7 @@ class Editor {
       return;
     }
 
-    // Phase 1: Pick. Returns updated subdocument.
+    // Phase 1: Pick. Returns updated subDocument.
     function pick(subDoc, descent) {
       const stack = [];
 
@@ -241,7 +241,7 @@ class Editor {
                   break;
 
                 default:
-                  debug.warn(`Unknow operation path ${key}`);
+                  debug.warn(`Unknown operation path ${key}`);
                   break;
               }
             }
