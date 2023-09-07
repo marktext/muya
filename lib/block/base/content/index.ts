@@ -11,10 +11,6 @@ import { adjustOffset } from "@muya/utils";
 // const debug = logger('block.content:')
 
 abstract class Content extends TreeNode {
-  abstract inputHandler(event: KeyboardEvent): void;
-  abstract backspaceHandler(event: KeyboardEvent): void;
-  abstract enterHandler(event: KeyboardEvent): void;
-
   public _text: string;
   public isComposed: boolean;
 
@@ -92,7 +88,7 @@ abstract class Content extends TreeNode {
     this.isComposed = false;
   }
 
-  clickHandler(event: MouseEvent): void {
+  clickHandler(event): void {
     // Do nothing.
   }
 
@@ -103,6 +99,16 @@ abstract class Content extends TreeNode {
     // Do nothing.
   }
   deleteHandler(event: KeyboardEvent): void {
+    // Do nothing.
+  }
+
+  inputHandler(event: InputEvent): void {
+    // Do nothing.
+  }
+  backspaceHandler(event: KeyboardEvent): void {
+    // Do nothing.
+  }
+  enterHandler(event: KeyboardEvent): void {
     // Do nothing.
   }
 

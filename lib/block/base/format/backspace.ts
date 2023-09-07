@@ -3,7 +3,7 @@ import { CLASS_NAMES } from "@muya/config";
 import { getImageInfo } from "@muya/utils/image";
 
 export default {
-  backspaceHandler(event) {
+  backspaceHandler(event: KeyboardEvent): void {
     const { start, end } = this.getCursor();
     // Let input handler to handle this case.
     if (start.offset !== end.offset) {

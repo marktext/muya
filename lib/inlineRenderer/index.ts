@@ -30,7 +30,7 @@ class InlineRenderer {
     return tokenizer(text, { hasBeginRules, labels, options, highlights })
   }
 
-  patch (block, cursor, highlights = []) {
+  patch (block, cursor?, highlights = []) {
     this.collectReferenceDefinitions()
     const { domNode } = block
     if (block.isLeafBlock) {

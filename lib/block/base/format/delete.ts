@@ -1,5 +1,5 @@
 export default {
-  deleteHandler(event) {
+  deleteHandler(event: KeyboardEvent): void {
     const { start, end } = this.getCursor();
     const { text } = this;
     // Let input handler to handle this case.

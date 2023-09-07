@@ -3,7 +3,7 @@ import { getCursorReference } from "@muya/utils";
 import { CLASS_NAMES } from "@muya/config";
 
 export default {
-  inputHandler(event) {
+  inputHandler(event: InputEvent): void {
     if (this.isComposed || /historyUndo|historyRedo/.test(event.inputType)) {
       return;
     }

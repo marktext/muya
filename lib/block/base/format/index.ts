@@ -12,6 +12,25 @@ import converter from "./converter";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
 import { ICursor } from "../../../../types/selection";
 
+type FormatMethods = typeof formatMethods;
+type ClickHandler = typeof clickHandler;
+type EnterHandler = typeof enterHandler;
+type InputHandler = typeof inputHandler;
+type KeyupHandler = typeof keyupHandler;
+type BackSpaceHandler = typeof backspaceHandler;
+type DeleteHandler = typeof deleteHandler;
+type Converter = typeof converter;
+
+interface Format
+  extends FormatMethods,
+    ClickHandler,
+    EnterHandler,
+    InputHandler,
+    KeyupHandler,
+    BackSpaceHandler,
+    DeleteHandler,
+    Converter {}
+
 abstract class Format extends Content {
   static blockName = "format";
 

@@ -1,7 +1,7 @@
 import ScrollPage from "@muya/block";
 
 export default {
-  shiftEnterHandler(event) {
+  shiftEnterHandler(event: KeyboardEvent): void {
     event.preventDefault();
     event.stopPropagation();
 
@@ -12,7 +12,7 @@ export default {
     this.setCursor(start.offset + 1, end.offset + 1, true);
   },
 
-  enterHandler(event) {
+  enterHandler(event: KeyboardEvent): void {
     event.preventDefault();
     const { text: oldText, muya, parent } = this;
     const { start, end } = this.getCursor();

@@ -138,7 +138,7 @@ class CodeBlockContent extends Content {
     }
   }
 
-  inputHandler(event: KeyboardEvent): void {
+  inputHandler(event: InputEvent): void {
     if (this.isComposed) {
       return;
     }

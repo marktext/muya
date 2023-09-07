@@ -11,7 +11,7 @@ export default {
     return this.setCursor(startOffset, endOffset, true);
   },
 
-  clickHandler(event) {
+  clickHandler(event): void {
     // Handler click inline math and inline ruby html.
     const { target } = event;
     const inlineRuleRenderEle =
