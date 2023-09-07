@@ -2,7 +2,7 @@
 
 **2023**
 
-- [ ] Convert JS code to TS code and add types
+- [x] Convert JS code to TS code and add types
 - [ ] Patch the latest marked to muya
 - [ ] Optimization of build process，replace webpack with vite and build using esbuild？
 - [ ] Website(docs, demo)

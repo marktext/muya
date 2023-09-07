@@ -6,6 +6,12 @@ import { BLOCK_DOM_PROPERTY } from '@muya/config'
 
 import './index.css'
 
+interface IIcon {
+  type: string;
+  tooltip: string;
+  icon: string;
+}
+
 const OFFSET = 27
 
 const defaultOptions = {
@@ -19,6 +25,11 @@ const defaultOptions = {
 }
 
 class TableColumnTools extends BaseFloat {
+  public oldVnode: any;
+  public block: any;
+  public icons: Array<IIcon>;
+  public toolsContainer: HTMLDivElement;
+
   static pluginName = 'tableColumnTools'
 
   constructor (muya, options = {}) {

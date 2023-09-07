@@ -7,8 +7,7 @@
     "declaration": true,
     "baseUrl": ".",
     "outDir": "./built",
-    "allowJs": true,
-    "checkJs": false,
+    "allowJs": false,
     "target": "es2017",
     "paths": {
       "@muya/*": ["./lib/*"],
