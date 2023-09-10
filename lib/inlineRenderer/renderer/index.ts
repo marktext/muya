@@ -8,7 +8,7 @@ import hr from "./hr";
 import tailHeader from "./tailHeader";
 import hardLineBreak from "./hardLineBreak";
 import softLineBreak from "./softLineBreak";
-import codeFense from "./codeFense";
+import codeFence from "./codeFence";
 import inlineMath from "./inlineMath";
 import autoLink from "./autoLink";
 import autoLinkExtension from "./autoLinkExtension";
@@ -45,7 +45,7 @@ const inlineSyntaxRenderer = {
   tailHeader,
   hardLineBreak,
   softLineBreak,
-  codeFense,
+  codeFence,
   inlineMath,
   autoLink,
   autoLinkExtension,

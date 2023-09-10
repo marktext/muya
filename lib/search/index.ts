@@ -1,6 +1,7 @@
 import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
 import { matchString, buildRegexValue } from "@muya/utils/search";
 import Muya from "@muya/index";
+import Content from "@muya/block/base/content";
 
 class Search {
   get scrollPage() {
@@ -15,9 +16,9 @@ class Search {
   public matches: Array<{
     start: number;
     end: number;
-    block: any;
-    match: any;
-    subMatches: any;
+    block: Content;
+    match: string;
+    subMatches: Array<string>;
   }>;
   public index: number;
 
@@ -171,6 +172,7 @@ class Search {
           const { text } = block;
           if (text && typeof text === "string") {
             const strMatches = matchString(text, value, options);
+            console.log(strMatches);
             matches.push(
               ...strMatches.map(({ index, match, subMatches }) => {
                 return {

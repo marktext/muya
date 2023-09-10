@@ -1,6 +1,6 @@
 import { CLASS_NAMES } from "@muya/config";
 
-export default function codeFense(h, cursor, block, token, outerClass) {
+export default function codeFence(h, cursor, block, token, outerClass) {
   const { start, end } = token.range;
   const { marker } = token;
 
