@@ -2,16 +2,18 @@ import runSanitize from "./dompurify";
 import Selection from "@muya/selection";
 import { EVENT_KEYS } from "@muya/config";
 
-const uniqueIdIterator = (function* uniqueIdGenerator() {
-  const ID_PREFIX = "mu-";
+export const uniqueIdGenerator = function* () {
   let id = 0;
 
   while (true) {
-    yield `${ID_PREFIX}${id++}`;
+    yield id++;
   }
-})();
+}
 
-export const getUniqueId = () => uniqueIdIterator.next().value;
+const ID_PREFIX = "mu-";
+const uniqueIdIterator = uniqueIdGenerator();
+
+export const getUniqueId = () => `${ID_PREFIX}${uniqueIdIterator.next().value}`;
 
 export const getLongUniqueId = () =>
   `${getUniqueId()}-${(+new Date()).toString(32)}`;

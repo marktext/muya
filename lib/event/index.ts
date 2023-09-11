@@ -13,14 +13,16 @@ interface IListeners {
   }>;
 }
 
-const idIterator = (function* () {
-  const PREFIX = 'eventId-';
+// TODO: @Jocs use the same name function in utils.
+const uniqueIdGenerator = function* () {
   let id = 0;
 
   while (true) {
-    yield `${PREFIX}${id++}`;
+    yield id++;
   }
-})();
+}
+const PREFIX = 'event-';
+const idIterator = uniqueIdGenerator();
 
 class EventCenter {
   public events: Array<IEvent>;
@@ -32,7 +34,7 @@ class EventCenter {
   }
 
   get eventId() {
-    return idIterator.next().value;
+    return `${PREFIX}${idIterator.next().value}`;
   }
 
   /**
