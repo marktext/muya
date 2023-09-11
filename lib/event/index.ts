@@ -13,19 +13,26 @@ interface IListeners {
   }>;
 }
 
+const idIterator = (function* () {
+  const PREFIX = 'eventId-';
+  let id = 0;
+
+  while (true) {
+    yield `${PREFIX}${id++}`;
+  }
+})();
+
 class EventCenter {
   public events: Array<IEvent>;
   public listeners: IListeners;
-  private id: number;
 
   constructor() {
     this.events = [];
     this.listeners = {};
-    this.id = 0;
   }
 
   get eventId() {
-    return `eventId-${this.id++}`;
+    return idIterator.next().value;
   }
 
   /**
@@ -37,7 +44,7 @@ class EventCenter {
       return "";
     }
 
-    const eventId = this.eventId;
+    const { eventId } = this;
     target.addEventListener(event, listener, capture);
     this.events.push({
       eventId,

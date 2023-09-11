@@ -172,7 +172,6 @@ class Search {
           const { text } = block;
           if (text && typeof text === "string") {
             const strMatches = matchString(text, value, options);
-            console.log(strMatches);
             matches.push(
               ...strMatches.map(({ index, match, subMatches }) => {
                 return {

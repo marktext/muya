@@ -3,12 +3,12 @@ import { escapeCharacters } from "@muya/config/escapeCharacter";
 /* eslint-disable no-useless-escape */
 export const beginRules = {
   hr: /^(\*{3,}$|^\-{3,}$|^\_{3,}$)/,
-  code_fense: /^(`{3,})([^`]*)$/,
+  code_fence: /^(`{3,})([^`]*)$/,
   header: /(^ {0,3}#{1,6}(\s{1,}|$))/,
   reference_definition:
     /^( {0,3}\[)([^\]]+?)(\\*)(\]: *)(<?)([^\s>]+)(>?)(?:( +)(["'(]?)([^\n"'\(\)]+)\9)?( *)$/,
 
-  // extra syntax (not belogs to GFM)
+  // extra syntax (not belongs to GFM)
   multiple_math: /^(\$\$)$/,
 };
 

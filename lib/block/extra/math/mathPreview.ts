@@ -52,7 +52,6 @@ class MathPreview extends Parent {
   }
 
   clickHandler(event) {
-    console.log(event);
     event.preventDefault();
     event.stopPropagation();
 

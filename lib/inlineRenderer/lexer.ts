@@ -45,7 +45,7 @@ const tokenizerFac = (
   };
 
   if (beginRules && pos === 0) {
-    const beginRuleList = ["header", "hr", "code_fense", "multiple_math"];
+    const beginRuleList = ["header", "hr", "code_fence", "multiple_math"];
 
     for (const ruleName of beginRuleList) {
       const to = beginRules[ruleName].exec(src);

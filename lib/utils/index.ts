@@ -2,14 +2,16 @@ import runSanitize from "./dompurify";
 import Selection from "@muya/selection";
 import { EVENT_KEYS } from "@muya/config";
 
-const uniqueIdGenerator = () => {
+const uniqueIdIterator = (function* uniqueIdGenerator() {
   const ID_PREFIX = "mu-";
   let id = 0;
 
-  return () => `${ID_PREFIX}${id++}`;
-};
+  while (true) {
+    yield `${ID_PREFIX}${id++}`;
+  }
+})();
 
-export const getUniqueId = uniqueIdGenerator();
+export const getUniqueId = () => uniqueIdIterator.next().value;
 
 export const getLongUniqueId = () =>
   `${getUniqueId()}-${(+new Date()).toString(32)}`;
@@ -27,8 +29,9 @@ export const isEven = (number) => Math.abs(number) % 2 === 0;
 
 export const isLengthEven = (str = "") => str.length % 2 === 0;
 
-export const snakeToCamel = (name) =>
-  name.replace(/_([a-z])/g, (p0, p1) => p1.toUpperCase());
+export const snakeToCamel = (name) => {
+  return name.replace(/_([a-z])/g, (p0, p1) => p1.toUpperCase());
+}
 /**
  *  Are two arrays have intersection
  */

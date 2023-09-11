@@ -9,6 +9,8 @@
     "outDir": "./built",
     "allowJs": false,
     "target": "es2017",
+    // "noImplicitAny": true,
+    // "strictNullChecks": true,
     "paths": {
       "@muya/*": ["./lib/*"],
       "@types/*": ["./types/*"]
