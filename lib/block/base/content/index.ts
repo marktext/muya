@@ -98,9 +98,6 @@ abstract class Content extends TreeNode {
   keyupHandler(event: KeyboardEvent): void {
     // Do nothing.
   }
-  deleteHandler(event: KeyboardEvent): void {
-    // Do nothing.
-  }
 
   inputHandler(event: InputEvent): void {
     // Do nothing.
@@ -110,6 +107,16 @@ abstract class Content extends TreeNode {
   }
   enterHandler(event: KeyboardEvent): void {
     // Do nothing.
+  }
+
+  deleteHandler(event: KeyboardEvent): void {
+    const { start, end } = this.getCursor();
+    const { text } = this;
+    // Only `languageInputContent` and `codeBlockContent` will call this method.
+    if (start.offset === end.offset && start.offset === text.length) {
+      event.preventDefault();
+      return;
+    }
   }
 
   arrowHandler(event) {

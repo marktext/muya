@@ -9,6 +9,7 @@ export default {
     const nextBlock = this.nextContentInContext();
     if (!nextBlock || nextBlock.blockName !== "paragraph.content") {
       // If the next block is code content or table cell, nothing need to do.
+      event.preventDefault();
       return;
     }
 
