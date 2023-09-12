@@ -128,22 +128,24 @@ class Selection {
     return isCollapsed ? "Caret" : "Range";
   }
 
-  public doc: Document;
-  public muya: Muya;
+  public doc: Document = document;
   public anchorPath: Array<string | number>;
   public anchorBlock: ContentBlock;
   public focusPath: Array<string | number>;
   public focusBlock: ContentBlock;
   public anchor: NodeOffset;
   public focus: NodeOffset;
-  public selectedImage: any;
+  public selectedImage: any = null;
   private selectInfo: {
     isSelect: boolean;
     selection: any;
+  } = {
+    isSelect: false,
+    selection: null,
   };
 
   constructor(
-    muya,
+    public muya: Muya,
     {
       anchor,
       focus,
@@ -153,8 +155,6 @@ class Selection {
       focusPath,
     }: ICursor = {}
   ) {
-    this.doc = document;
-    this.muya = muya;
     this.anchorPath = anchorPath;
     this.anchorBlock = anchorBlock;
     this.focusPath = focusPath;
@@ -162,12 +162,6 @@ class Selection {
     this.anchor = anchor;
     this.focus = focus;
     this.listenSelectActions();
-    // selected image
-    this.selectedImage = null;
-    this.selectInfo = {
-      isSelect: false,
-      selection: null,
-    };
   }
 
   listenSelectActions() {

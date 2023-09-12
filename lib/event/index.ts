@@ -20,18 +20,13 @@ const uniqueIdGenerator = function* () {
   while (true) {
     yield id++;
   }
-}
-const PREFIX = 'event-';
+};
+const PREFIX = "event-";
 const idIterator = uniqueIdGenerator();
 
 class EventCenter {
-  public events: Array<IEvent>;
-  public listeners: IListeners;
-
-  constructor() {
-    this.events = [];
-    this.listeners = {};
-  }
+  public events: Array<IEvent> = [];
+  public listeners: IListeners = {};
 
   get eventId() {
     return `${PREFIX}${idIterator.next().value}`;

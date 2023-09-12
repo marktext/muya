@@ -1,7 +1,7 @@
 // utils used in selection/index.js
 import { CLASS_NAMES } from "@muya/config";
 
-export const isContentDOM = (element) => {
+export const isContentDOM = (element: HTMLElement) => {
   return (
     element &&
     element.tagName === "SPAN" &&
@@ -9,20 +9,22 @@ export const isContentDOM = (element) => {
   );
 };
 
-export const findContentDOM = (node) => {
+export const findContentDOM = (node: Node | null) => {
   if (!node) {
     return null;
   }
 
   do {
-    if (isContentDOM(node)) {
+    if (node instanceof HTMLElement && isContentDOM(node)) {
       return node;
     }
     node = node.parentNode;
   } while (node);
+
+  return null;
 };
 
-export const compareParagraphsOrder = (paragraph1, paragraph2) => {
+export const compareParagraphsOrder = (paragraph1: HTMLElement, paragraph2: HTMLElement) => {
   return (
     paragraph1.compareDocumentPosition(paragraph2) &
     Node.DOCUMENT_POSITION_FOLLOWING

@@ -5,7 +5,7 @@ import HtmlToMarkdown from "@muya/jsonState/htmlToMarkdown";
 import MarkdownToState from "@muya/jsonState/markdownToState";
 
 export default {
-  async pasteHandler(event) {
+  async pasteHandler(event: ClipboardEvent) {
     event.preventDefault();
     event.stopPropagation();
 

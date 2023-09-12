@@ -1,11 +1,17 @@
 import * as json1 from "ot-json1";
 import Muya from "@muya/index";
 import { ISelection } from "../../types/selection";
+import type { JSONOpList } from "ot-json1";
 
 interface IOptions {
   delay: number;
   maxStack: number;
   userOnly: boolean;
+}
+
+interface IOperation {
+  operation: JSONOpList;
+  selection: ISelection
 }
 
 const DEFAULT_OPTIONS = {
@@ -15,32 +21,19 @@ const DEFAULT_OPTIONS = {
 };
 
 class History {
+  private lastRecorded: number = 0;
+  private ignoreChange: boolean = false;
+  private selectionStack: Array<ISelection> = [];
+  private stack: {
+    undo: Array<IOperation>;
+    redo: Array<IOperation>;
+  };
+
   get selection() {
     return this.muya.editor.selection;
   }
 
-  public muya: Muya;
-  public options: IOptions;
-  private lastRecorded: number;
-  private ignoreChange: boolean;
-  private selectionStack: Array<ISelection>;
-  private stack: {
-    undo: Array<{
-      operation: any;
-      selection: ISelection;
-    }>;
-    redo: Array<{
-      operation: any;
-      selection: ISelection;
-    }>;
-  };
-
-  constructor(muya, options = {}) {
-    this.muya = muya;
-    this.options = Object.assign({}, DEFAULT_OPTIONS, options);
-    this.lastRecorded = 0;
-    this.ignoreChange = false;
-    this.selectionStack = [];
+  constructor(public muya: Muya, private options: IOptions = DEFAULT_OPTIONS) {
     this.clear();
     this.muya.eventCenter.on("json-change", ({ op, source, doc }) => {
       if (this.ignoreChange) {

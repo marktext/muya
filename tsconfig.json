@@ -9,6 +9,10 @@
     "outDir": "./built",
     "allowJs": false,
     "target": "es2017",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    // "noUnusedParameters": true,
+    // "noUnusedLocals": true,
     // "noImplicitAny": true,
     // "strictNullChecks": true,
     "paths": {

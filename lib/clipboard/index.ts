@@ -6,7 +6,20 @@ import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import { findContentDOM } from "@muya/selection/dom";
 import Muya from "@muya/index";
 
+type Copy = typeof copy;
+type Cut = typeof cut;
+type Paste = typeof paste;
+
+interface Clipboard extends Copy, Cut, Paste {}
+
 class Clipboard {
+  public copyHandler: (event: ClipboardEvent) => void;
+  public cutHandler: (event: ClipboardEvent) => void;
+  public pasteHandler: (event: ClipboardEvent) => Promise<void>;
+  private copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml`
+  private pasteType: string = "normal"; // `normal` or `pasteAsPlainText`
+  private copyInfo: string = null;
+
   get selection() {
     return this.muya.editor.selection;
   }
@@ -15,20 +28,7 @@ class Clipboard {
     return this.muya.editor.scrollPage;
   }
 
-  public muya: Muya;
-  public copyHandler: (event: Event) => void;
-  public cutHandler: (event: Event) => void;
-  public pasteHandler: (event: Event) => void;
-  private copyType: string;
-  private pasteType: string;
-  private copyInfo: string;
-
-  constructor(muya) {
-    this.muya = muya;
-    this.copyType = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml`
-    this.pasteType = "normal"; // `normal` or `pasteAsPlainText`
-    this.copyInfo = null;
-
+  constructor(public muya: Muya) {
     this.listen();
   }
 
@@ -57,7 +57,11 @@ class Clipboard {
       }
 
       // TODO: Is there any way to identify these key bellow?
-      if (/Alt|Option|Meta|Shift|CapsLock|ArrowUp|ArrowDown|ArrowLeft|ArrowRight/.test(key)) {
+      if (
+        /Alt|Option|Meta|Shift|CapsLock|ArrowUp|ArrowDown|ArrowLeft|ArrowRight/.test(
+          key
+        )
+      ) {
         return;
       }
 

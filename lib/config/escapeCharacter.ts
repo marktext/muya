@@ -1,5 +1,5 @@
 // special character
-const charachers = [
+const characters = [
   '"',
   "&",
   "<",
@@ -545,7 +545,7 @@ export const escapeCharacters = [
 
 const escapeCharactersMap = escapeCharacters.reduce(
   (acc, escapeCharacter, index) => {
-    return Object.assign(acc, { [escapeCharacter]: charachers[index] });
+    return Object.assign(acc, { [escapeCharacter]: characters[index] });
   },
   {}
 );
