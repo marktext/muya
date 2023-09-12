@@ -3,7 +3,7 @@ import TurndownService, { usePluginAddRules } from "@muya/utils/turndownService"
 import { ITurnoverOptions } from "../../types/state";
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
-const turnSoftBreakToSpan = (html) => {
+const turnSoftBreakToSpan = (html: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(
     `<x-mt id="turn-root">${html}</x-mt>`,
@@ -69,13 +69,13 @@ export default class HtmlToMarkdown {
     );
   }
 
-  generate(html, keeps = []) {
+  generate(html: string, keeps = []): string {
     // turn html to markdown
     const { options } = this;
     const turndownService = new TurndownService(options);
     usePluginAddRules(turndownService, keeps);
 
-    // fix #752, but I don't know why the &nbsp; vanlished.
+    // fix #752, but I don't know why the &nbsp; vanished.
     html = html.replace(/<span>&nbsp;<\/span>/g, String.fromCharCode(160));
 
     html = turnSoftBreakToSpan(html);

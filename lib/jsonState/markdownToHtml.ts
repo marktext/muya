@@ -23,17 +23,10 @@ const DIAGRAM_TYPE = [
 ];
 
 class MarkdownToHtml {
-  public markdown: string;
-  public muya: Muya | undefined;
-  private exportContainer: HTMLDivElement;
-  private mathRendererCalled: boolean;
+  private exportContainer: HTMLDivElement = null;
+  private mathRendererCalled: boolean = false;
 
-  constructor(markdown, muya) {
-    this.markdown = markdown;
-    this.muya = muya;
-    this.exportContainer = null;
-    this.mathRendererCalled = false;
-  }
+  constructor(public markdown: string, public muya?: Muya) {}
 
   async renderMermaid() {
     const codes = this.exportContainer.querySelectorAll(
@@ -149,7 +142,8 @@ class MarkdownToHtml {
     let html = marked(this.markdown, {
       superSubScript: this.muya?.options?.superSubScript ?? false,
       footnote: this.muya?.options?.footnote ?? false,
-      isGitlabCompatibilityEnabled: this.muya?.options?.isGitlabCompatibilityEnabled ?? false,
+      isGitlabCompatibilityEnabled:
+        this.muya?.options?.isGitlabCompatibilityEnabled ?? false,
       highlight(code, lang) {
         // Language may be undefined (GH#591)
         if (!lang) {
@@ -230,7 +224,7 @@ class MarkdownToHtml {
     this.mathRendererCalled = false;
 
     // `extraCss` may changed in the mean time.
-    const { title = '', extraCss = '' } = options;
+    const { title = "", extraCss = "" } = options;
     return `<!DOCTYPE html>
 <html lang="en">
 <head>

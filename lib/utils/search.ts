@@ -1,6 +1,7 @@
 import execAll from "execall";
+import { IMatch, ISearchOption } from "../../types/search";
 
-export const matchString = (text, value, options) => {
+export const matchString = (text: string, value: string, options: ISearchOption) => {
   const { isCaseSensitive, isWholeWord, isRegexp } = options;
   /* eslint-disable no-useless-escape */
   const SPECIAL_CHAR_REG = /[\[\]\\^$.\|\?\*\+\(\)\/]{1}/g;
@@ -33,7 +34,7 @@ export const matchString = (text, value, options) => {
   }
 };
 
-export const buildRegexValue = (match, value) => {
+export const buildRegexValue = (match: IMatch, value: string) => {
   const groups = value.match(/(?<!\\)\$\d/g);
 
   if (Array.isArray(groups) && groups.length) {

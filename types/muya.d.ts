@@ -30,7 +30,7 @@ export interface MuyaOptions {
   locale: {
     name: string;
     resource: {
-      [propName: string]: string;
+      [key: string]: string;
     }
   },
   imageAction: (...args: Array<any>) => Promise<string>;

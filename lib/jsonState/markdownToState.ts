@@ -1,5 +1,6 @@
 import { Lexer } from "@muya/utils/marked";
 import logger from "@muya/utils/logger";
+import { TState } from "../../types/state";
 
 const debug = logger("import markdown: ");
 const restoreTableEscapeCharacters = (text) => {
@@ -16,18 +17,24 @@ export interface IMarkdownToStateOptions {
   frontMatter: boolean;
 }
 
+const DEFAULT_OPTIONS = {
+  footnote: false,
+  isGitlabCompatibilityEnabled: false,
+  superSubScript: false,
+  trimUnnecessaryCodeBlockEmptyLines: false,
+  frontMatter: true,
+};
+
 class MarkdownToState {
-  private options: IMarkdownToStateOptions;
+  constructor(
+    private options: IMarkdownToStateOptions = DEFAULT_OPTIONS
+  ) {}
 
-  constructor(options = {}) {
-    this.options = options as IMarkdownToStateOptions;
-  }
-
-  generate(markdown) {
+  generate(markdown: string): Array<TState> {
     return this.convertMarkdownToState(markdown);
   }
 
-  convertMarkdownToState(markdown) {
+  convertMarkdownToState(markdown: string): Array<TState> {
     const states = [];
     const {
       footnote = false,

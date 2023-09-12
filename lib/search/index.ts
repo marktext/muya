@@ -1,36 +1,55 @@
 import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
 import { matchString, buildRegexValue } from "@muya/utils/search";
 import Muya from "@muya/index";
-import Content from "@muya/block/base/content";
+import { IMatch } from "../../types/search";
 
 class Search {
+  public value: string = "";
+  public matches: Array<IMatch> = [];
+  public index: number = -1;
+
   get scrollPage() {
     return this.muya.editor.scrollPage;
   }
 
-  public muya: Muya;
-  public options: {
-    [propName: string]: any;
-  }
-  public value: string;
-  public matches: Array<{
-    start: number;
-    end: number;
-    block: Content;
-    match: string;
-    subMatches: Array<string>;
-  }>;
-  public index: number;
+  constructor(public muya: Muya) {}
 
-  constructor(muya, options = {}) {
-    this.muya = muya;
-    this.options = options;
-    this.value = "";
-    this.matches = [];
-    this.index = -1;
+  private updateMatches(isClear = false) {
+    const { matches, index } = this;
+    let i;
+    const len = matches.length;
+    const matchesMap = new Map();
+
+    for (i = 0; i < len; i++) {
+      const { block, start, end } = matches[i];
+      const active = i === index;
+      const highlight = { start, end, active };
+
+      if (matchesMap.has(block)) {
+        const highlights = matchesMap.get(block);
+        highlights.push(highlight);
+        matchesMap.set(block, highlights);
+      } else {
+        matchesMap.set(block, [highlight]);
+      }
+    }
+
+    for (const [block, highlights] of matchesMap.entries()) {
+      const isActive = highlights.some((h) => h.active);
+
+      block.update(undefined, isClear ? [] : highlights);
+
+      if (block.parent.active && !isActive) {
+        block.blurHandler();
+      }
+
+      if (isActive && !isClear) {
+        block.focusHandler();
+      }
+    }
   }
 
-  innerReplace(matches, value) {
+  private innerReplace(matches: Array<IMatch>, value: string) {
     if (!matches.length) {
       return;
     }
@@ -90,12 +109,12 @@ class Search {
    * Find preview or next value, and highlight it.
    * @param {string} action : previous or next.
    */
-  find(action) {
+  find(action: "previous" | "next"): this {
     let { matches, index } = this;
     const len = matches.length;
 
     if (!len) {
-      return;
+      return this;
     }
 
     index = action === "next" ? index + 1 : index - 1;
@@ -116,47 +135,12 @@ class Search {
     return this;
   }
 
-  updateMatches(isClear = false) {
-    const { matches, index } = this;
-    let i;
-    const len = matches.length;
-    const matchesMap = new Map();
-
-    for (i = 0; i < len; i++) {
-      const { block, start, end } = matches[i];
-      const active = i === index;
-      const highlight = { start, end, active };
-
-      if (matchesMap.has(block)) {
-        const highlights = matchesMap.get(block);
-        highlights.push(highlight);
-        matchesMap.set(block, highlights);
-      } else {
-        matchesMap.set(block, [highlight]);
-      }
-    }
-
-    for (const [block, highlights] of matchesMap.entries()) {
-      const isActive = highlights.some((h) => h.active);
-
-      block.update(undefined, isClear ? [] : highlights);
-
-      if (block.parent.active && !isActive) {
-        block.blurHandler();
-      }
-
-      if (isActive && !isClear) {
-        block.focusHandler();
-      }
-    }
-  }
-
   /**
    * Search value in current document.
    * @param {string} value
    * @param {object} opts
    */
-  search(value, opts = {}) {
+  search(value: string, opts = {}) {
     const matches = [];
     const options = Object.assign({}, DEFAULT_SEARCH_OPTIONS, opts);
     const { highlightIndex } = options;

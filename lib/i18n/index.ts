@@ -2,24 +2,22 @@ import en from "../locales/en";
 import Muya from "@muya/index";
 
 class I18n {
-  public muya: Muya;
   public lang: string;
   public resources: {
-    [propName: string]: {
-      [propName: string]: string;
+    [key: string]: {
+      [key: string]: string;
     };
   };
 
-  constructor(muya, object) {
+  constructor(public muya: Muya, object) {
     const { name, resource } = object || en;
-    this.muya = muya;
     this.lang = name;
     this.resources = {
       [name]: resource,
     };
   }
 
-  t(key) {
+  t(key: string): string {
     const { lang, resources } = this;
 
     return resources?.[lang]?.[key] || resources.en[key] || key;

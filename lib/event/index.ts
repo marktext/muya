@@ -7,7 +7,7 @@ interface IEvent {
 }
 
 interface IListeners {
-  [propName: string]: Array<{
+  [key: string]: Array<{
     listener: (...args: Array<any>) => void;
     once: boolean;
   }>;

@@ -5,38 +5,42 @@ import MarkdownToState from "./markdownToState";
 import { deepCopyArray } from "@muya/utils";
 import Muya from "@muya/index";
 
+import type { JSONOpList, Doc, Path } from "ot-json1";
+
 import { TState } from "../../types/state";
 
 const debug = logger("jsonstate:");
 
 class JSONState {
-  static invert(op) {
+  static invert(op: JSONOpList) {
     return json1.type.invert(op);
   }
 
-  static compose(op1, op2) {
+  static compose(op1: JSONOpList, op2: JSONOpList) {
     return json1.type.compose(op1, op2);
   }
 
-  static transform(op, otherOp, type) {
+  static transform(
+    op: JSONOpList,
+    otherOp: JSONOpList,
+    type: "left" | "right"
+  ) {
     return json1.type.transform(op, otherOp, type);
   }
 
-  public muya: Muya;
-  public operationCache: Array<any>;
-  private isGoing: boolean;
+  public operationCache: Array<JSONOpList> = [];
+  private isGoing: boolean = false;
   public state: Array<TState>;
 
-  constructor(muya, state) {
-    this.muya = muya;
+  constructor(public muya: Muya, state) {
     this.setContent(state);
-
-    this.operationCache = [];
-    this.isGoing = false;
   }
 
-  apply(op) {
-    this.state = json1.type.apply(this.state as any, op) as unknown as Array<TState>;
+  apply(op: JSONOpList) {
+    this.state = json1.type.apply(
+      this.state as unknown as Doc,
+      op
+    ) as unknown as Array<TState>;
   }
 
   setContent(content: Array<TState> | string) {
@@ -71,11 +75,16 @@ class JSONState {
 
   /**
    * This method only used by user source.
-   * @param {string} method json1 operation method insertOp, removeOp, replaceOp, editOp
-   * @param  {...any} args
+   * @param method json1 operation method insertOp, removeOp, replaceOp, editOp
+   * @param path 
+   * @param args 
    */
-  pushOperation(method, ...args) {
-    const operation = json1[method](...args);
+  pushOperation(
+    method: string,
+    path: Path,
+    ...args: [unknown, ...unknown[]]
+  ) {
+    const operation: JSONOpList = json1[method](path, ...args);
     this.operationCache.push(operation);
 
     if (!this.isGoing) {
@@ -96,11 +105,11 @@ class JSONState {
     }
   }
 
-  dispatch(op, source = "user" /* user, api */) {
+  dispatch(op: JSONOpList, source = "user" /* user, api */) {
     this.apply(op);
     // TODO: remove doc in future
     const doc = this.getState();
-    (debug as any).log(op);
+    debug.log(JSON.stringify(op));
     this.muya.eventCenter.emit("json-change", {
       op,
       source,
@@ -108,7 +117,7 @@ class JSONState {
     });
   }
 
-  getState() {
+  getState(): Array<TState> {
     return deepCopyArray(this.state);
   }
 

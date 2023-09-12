@@ -5,11 +5,11 @@ import Muya from "@muya/index";
 import Parent from "./parent";
 
 interface IAttributes {
-  [propName: string]: string | boolean;
+  [key: string]: string | boolean;
 }
 
 interface IDatasets {
-  [propName: string]: string | boolean;
+  [key: string]: string | boolean;
 }
 
 interface IConstructor<T> {
