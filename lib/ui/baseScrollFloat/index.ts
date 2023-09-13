@@ -1,3 +1,4 @@
+// @ts-nocheck
 import BaseFloat from "@muya/ui/baseFloat";
 import { EVENT_KEYS } from "@muya/config";
 

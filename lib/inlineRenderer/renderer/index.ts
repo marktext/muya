@@ -1,3 +1,4 @@
+// @ts-nocheck
 import backlashInToken from "./backlashInToken";
 import backlash from "./backlash";
 import highlight from "./highlight";

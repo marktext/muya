@@ -7,7 +7,6 @@
     "declaration": true,
     "baseUrl": ".",
     "outDir": "./built",
-    "allowJs": false,
     "target": "es2017",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
@@ -15,10 +14,11 @@
     // "noUnusedLocals": true,
     // "noImplicitAny": true,
     // "strictNullChecks": true,
+    "strict": true,
     "paths": {
       "@muya/*": ["./lib/*"],
       "@types/*": ["./types/*"]
     }
   },
-  "include": ["./lib/**/*", "./types/**/*"]
+  "include": ["./lib/**/*", "./types/**/*"],
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 export default {
   queryBlock(path) {
     if (/children|meta|align|type|lang/.test(path[0])) {

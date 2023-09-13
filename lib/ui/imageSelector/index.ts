@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createApi } from "unsplash-js";
 import BaseFloat from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";

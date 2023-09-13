@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as json1 from "ot-json1";
 import Muya from "@muya/index";
 import { ISelection } from "../../types/selection";

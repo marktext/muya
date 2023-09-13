@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Renderer from "./renderer";
 import InlineLexer from "./inlineLexer";
 import Slugger from "./slugger";

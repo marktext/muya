@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { beginRules, inlineRules, validateRules } from "@muya/inlineRenderer/rules";
 import { isLengthEven, union } from "@muya/utils";
 import {

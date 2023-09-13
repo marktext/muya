@@ -1,3 +1,4 @@
+// @ts-nocheck
 interface IEvent {
   eventId: string;
   target: HTMLElement;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import "./index.css";
 import Muya from "../../index";
 

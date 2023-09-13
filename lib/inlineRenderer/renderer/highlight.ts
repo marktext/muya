@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { union } from "@muya/utils";
 
 // change text to highlight vdom

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { union, isEven } from "@muya/utils";
 import { CLASS_NAMES } from "@muya/config";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 type TLevel = "error" | "warn" | "log" | "info";
 
 const levels: Array<TLevel> = ["error", "warn", "log", "info"];

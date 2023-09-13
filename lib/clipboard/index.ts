@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { mixins } from "@muya/utils";
 import copy from "@muya/clipboard/copy";
 import cut from "@muya/clipboard/cut";

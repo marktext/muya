@@ -1,3 +1,4 @@
+// @ts-nocheck
 import logger from "@muya/utils/logger";
 
 const debug = logger("paragraph:content");

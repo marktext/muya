@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getUniqueId } from "@muya/utils";
 import { loadImage } from "@muya/utils/image";
 import { insertAfter, operateClassName } from "@muya/utils/dom";

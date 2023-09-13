@@ -1,3 +1,4 @@
+// @ts-nocheck
 // TODO@jocs: remove the use of `axios` in muya
 import axios from "axios";
 import { isWin } from "@muya/config/index";

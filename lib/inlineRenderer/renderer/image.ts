@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { getImageSrc } from "@muya/utils/image";
 import ImageIcon from "@muya/assets/icons/image/2.png";

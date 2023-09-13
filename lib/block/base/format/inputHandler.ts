@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getTextContent } from "@muya/selection/dom";
 import { getCursorReference } from "@muya/utils";
 import { CLASS_NAMES } from "@muya/config";

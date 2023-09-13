@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Fuse from "fuse.js";
 import emojis from "@muya/config/emojis.json";
 

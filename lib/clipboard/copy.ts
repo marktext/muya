@@ -1,3 +1,4 @@
+// @ts-nocheck
 import marked from "@muya/utils/marked";
 import StateToMarkdown from "../jsonState/stateToMarkdown";
 

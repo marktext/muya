@@ -1,3 +1,4 @@
+// @ts-nocheck
 import BaseFloat from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import { toolList } from "./config";

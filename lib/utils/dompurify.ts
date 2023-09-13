@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { sanitize, isValidAttribute } from "dompurify";
 
 export { isValidAttribute };

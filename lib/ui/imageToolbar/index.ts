@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { patch, h } from "@muya/utils/snabbdom";
 import BaseFloat from "../baseFloat";
 import icons from "./config";

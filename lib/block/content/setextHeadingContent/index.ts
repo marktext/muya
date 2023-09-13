@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Format from "@muya/block/base/format";
 import ScrollPage from "@muya/block";
 

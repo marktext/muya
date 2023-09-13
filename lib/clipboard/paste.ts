@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { normalizePastedHTML, checkCopyType } from "@muya/utils/paste";
 import ScrollPage from "@muya/block/scrollPage";
 import { URL_REG } from "@muya/config";

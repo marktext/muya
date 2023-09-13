@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getCursorReference } from "@muya/utils";
 
 export default {

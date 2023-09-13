@@ -1,3 +1,4 @@
+// @ts-nocheck
 import en from "../locales/en";
 import Muya from "@muya/index";
 

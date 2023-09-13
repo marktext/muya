@@ -1,3 +1,4 @@
+// @ts-nocheck
 import copyIcon from "@muya/assets/icons/copy/2.png";
 import newIcon from "@muya/assets/icons/paragraph/2.png";
 import deleteIcon from "@muya/assets/icons/delete/2.png";

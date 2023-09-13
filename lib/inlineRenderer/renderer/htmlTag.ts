@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CLASS_NAMES, BLOCK_TYPE6 } from "@muya/config";
 import { snakeToCamel } from "@muya/utils";
 import sanitize, { isValidAttribute } from "@muya/utils/dompurify";

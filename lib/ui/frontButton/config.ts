@@ -1,3 +1,4 @@
+// @ts-nocheck
 import paragraphIcon from "@muya/assets/icons/paragraph/2.png";
 import htmlIcon from "@muya/assets/icons/html/2.png";
 import thematicBreakIcon from "@muya/assets/icons/horizontal_line/2.png";

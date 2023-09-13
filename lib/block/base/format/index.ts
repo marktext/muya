@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Content from "@muya/block/base/content";
 import { mixins, conflict } from "@muya/utils";
 import { correctImageSrc } from "@muya/utils/image";

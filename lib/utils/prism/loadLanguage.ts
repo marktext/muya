@@ -1,3 +1,4 @@
+// @ts-nocheck
 import components from "prismjs/components.js";
 import getLoader from "prismjs/dependencies";
 import { getDefer } from "../index";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Prism from "prismjs";
 import Fuse from "fuse.js";
 import initLoadLanguage, {

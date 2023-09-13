@@ -1,3 +1,4 @@
+// @ts-nocheck
 export default function tailHeader(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const { start, end } = token.range;

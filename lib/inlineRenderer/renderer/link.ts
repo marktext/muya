@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { isLengthEven, snakeToCamel } from "@muya/utils";
 import { sanitizeHyperlink } from "@muya/utils/url";

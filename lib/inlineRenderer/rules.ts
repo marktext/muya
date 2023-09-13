@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { escapeCharacters } from "@muya/config/escapeCharacter";
 
 /* eslint-disable no-useless-escape */

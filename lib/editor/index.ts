@@ -1,3 +1,4 @@
+// @ts-nocheck
 import ScrollPage from "@muya/block";
 import Selection from "@muya/selection";
 import Search from "@muya/search";

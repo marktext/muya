@@ -1,3 +1,4 @@
+// @ts-nocheck
 // utils used in selection/index.js
 import { CLASS_NAMES } from "@muya/config";
 

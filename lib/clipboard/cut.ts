@@ -1,3 +1,4 @@
+// @ts-nocheck
 import ScrollPage from "@muya/block";
 import emptyStates from "@muya/config/emptyStates";
 import { deepCopy } from "@muya/utils";

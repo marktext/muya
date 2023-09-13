@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { findClosingBracket } from "@muya/utils/marked/utils";
 
 // ASCII PUNCTUATION character

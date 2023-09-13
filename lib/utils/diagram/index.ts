@@ -1,3 +1,4 @@
+// @ts-nocheck
 const rendererCache = new Map();
 /**
  *

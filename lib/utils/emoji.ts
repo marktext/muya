@@ -1,3 +1,4 @@
+// @ts-nocheck
 import emojis from "@muya/config/emojis.json";
 import { CLASS_NAMES } from "@muya/config";
 

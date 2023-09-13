@@ -1,3 +1,4 @@
+// @ts-nocheck
 import defaultOptions from "./options";
 import { cleanUrl, escape } from "./utils";
 

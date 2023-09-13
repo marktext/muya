@@ -1,3 +1,4 @@
+// @ts-nocheck
 import BaseScrollFloat from "../baseScrollFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import FolderIcon from "@muya/assets/icons/folder.svg";

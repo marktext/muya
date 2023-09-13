@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { generateKeyHash, genUpper2LowerKeyHash } from "@muya/utils";
 import htmlTags from "html-tags";
 import voidHtmlTags from "html-tags/void";

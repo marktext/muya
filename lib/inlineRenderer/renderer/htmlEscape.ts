@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import escapeCharactersMap from "@muya/config/escapeCharacter";
 

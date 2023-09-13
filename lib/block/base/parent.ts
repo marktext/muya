@@ -1,3 +1,4 @@
+// @ts-nocheck
 import TreeNode from "@muya/block/base/treeNode";
 import LinkedList from "@muya/block/base/linkedList/linkedList";
 import { operateClassName } from "@muya/utils/dom";
@@ -262,8 +263,8 @@ abstract class Parent extends TreeNode {
     }
   }
 
-  depthFirstTraverse(callback) {
-    const stack = [this];
+  depthFirstTraverse(callback: (node: Parent | Content) => void) {
+    const stack: Parent | Content = [this];
 
     while (stack.length) {
       const node = stack.shift();

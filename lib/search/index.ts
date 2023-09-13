@@ -2,6 +2,13 @@ import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
 import { matchString, buildRegexValue } from "@muya/utils/search";
 import Muya from "@muya/index";
 import { IMatch } from "../../types/search";
+import Content from "@muya/block/base/content";
+
+type Highlight = {
+  start: number;
+  end: number;
+  active: boolean;
+};
 
 class Search {
   public value: string = "";
@@ -18,15 +25,15 @@ class Search {
     const { matches, index } = this;
     let i;
     const len = matches.length;
-    const matchesMap = new Map();
+    const matchesMap = new Map<Content, Array<Highlight>>();
 
     for (i = 0; i < len; i++) {
       const { block, start, end } = matches[i];
       const active = i === index;
-      const highlight = { start, end, active };
+      const highlight: Highlight = { start, end, active };
+      const highlights = matchesMap.get(block);
 
-      if (matchesMap.has(block)) {
-        const highlights = matchesMap.get(block);
+      if (matchesMap.has(block) && Array.isArray(highlights)) {
         highlights.push(highlight);
         matchesMap.set(block, highlights);
       } else {
@@ -39,7 +46,7 @@ class Search {
 
       block.update(undefined, isClear ? [] : highlights);
 
-      if (block.parent.active && !isActive) {
+      if (block.parent?.active && !isActive) {
         block.blurHandler();
       }
 
@@ -77,7 +84,7 @@ class Search {
     lastBlock.text = tempText + lastBlock.text.substring(lastEnd);
   }
 
-  replace(replaceValue, opt = { isSingle: true, isRegexp: false }) {
+  replace(replaceValue: string, opt = { isSingle: true, isRegexp: false }) {
     const { isSingle, isRegexp, ...rest } = opt;
     const options = Object.assign({}, DEFAULT_SEARCH_OPTIONS, rest);
     const { matches, value, index } = this;
@@ -141,7 +148,7 @@ class Search {
    * @param {object} opts
    */
   search(value: string, opts = {}) {
-    const matches = [];
+    const matches: Array<IMatch> = [];
     const options = Object.assign({}, DEFAULT_SEARCH_OPTIONS, opts);
     const { highlightIndex } = options;
     let index = -1;
@@ -153,13 +160,13 @@ class Search {
     if (value) {
       this.scrollPage.depthFirstTraverse((block) => {
         if (block.isContentBlock) {
-          const { text } = block;
+          const { text } = block as Content;
           if (text && typeof text === "string") {
             const strMatches = matchString(text, value, options);
             matches.push(
               ...strMatches.map(({ index, match, subMatches }) => {
                 return {
-                  block,
+                  block: block as Content,
                   start: index,
                   end: index + match.length,
                   match,

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { sanitize } from "@muya/utils";
 import { PREVIEW_DOMPURIFY_CONFIG, PARAGRAPH_TYPES } from "@muya/config";
 

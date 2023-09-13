@@ -1,3 +1,4 @@
+// @ts-nocheck
 // render token of text type to vdom.
 export default function text(h, cursor, block, token) {
   const { start, end } = token.range;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Renderer from "@muya/inlineRenderer/renderer";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
 import logger from "@muya/utils/logger";

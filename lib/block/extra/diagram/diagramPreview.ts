@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import { PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
 import { sanitize } from "@muya/utils";

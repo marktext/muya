@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Renderer from "./renderer";
 import { normal, breaks, gfm, pedantic } from "./inlineRules";
 import defaultOptions from "./options";

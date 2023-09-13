@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Popper from "popper.js/dist/esm/popper";
 import resizeDetector from "element-resize-detector";
 import { noop } from "@muya/utils";

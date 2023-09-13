@@ -1,3 +1,4 @@
+// @ts-nocheck
 import diff from "fast-diff";
 import { BRACKET_HASH, BACK_HASH, EVENT_KEYS } from "@muya/config";
 import { diffToTextOp } from "@muya/utils";
@@ -240,7 +241,7 @@ abstract class Content extends TreeNode {
     this.selection.setSelection(cursor);
   }
 
-  update(cursor?) {
+  update(cursor?, highlights: Array<any> = []) {
     const { text } = this;
     this.domNode.innerHTML = `<span class="mu-syntax-text">${text}</span>`;
   }

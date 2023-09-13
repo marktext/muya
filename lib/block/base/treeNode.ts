@@ -1,3 +1,4 @@
+// @ts-nocheck
 import LinkedNode from "@muya/block/base/linkedList/linkedNode";
 import { createDomNode } from "@muya/utils/dom";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";

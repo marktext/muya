@@ -1,3 +1,4 @@
+// @ts-nocheck
 import LinkedNode from "./linkedNode";
 
 class LinkedList<T extends LinkedNode> {

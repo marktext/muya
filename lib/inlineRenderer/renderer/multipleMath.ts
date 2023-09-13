@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 
 export default function multipleMath(h, cursor, block, token, outerClass) {

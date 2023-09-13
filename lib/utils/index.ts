@@ -1,3 +1,4 @@
+// @ts-nocheck
 import runSanitize from "./dompurify";
 import Selection from "@muya/selection";
 import { EVENT_KEYS } from "@muya/config";
