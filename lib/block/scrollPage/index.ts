@@ -102,7 +102,7 @@ class ScrollPage extends Parent {
     const REG = new RegExp(`\\[${label}\\](?!:)`);
 
     this.breadthFirstTraverse((node) => {
-      if (node.isContentBlock && REG.test(node.text)) {
+      if (node.isContent() && REG.test(node.text)) {
         node.update();
       }
     });
@@ -132,7 +132,7 @@ class ScrollPage extends Parent {
     if (blur && focus) {
       needFocusBlocks = focus.getAncestors();
       block = blur.parent;
-      while (block && block.isLeafBlock && !needFocusBlocks.includes(block)) {
+      while (block && block.isParent && block.isParent() && !needFocusBlocks.includes(block)) {
         needBlurBlocks.push(block);
         block = block.parent;
       }

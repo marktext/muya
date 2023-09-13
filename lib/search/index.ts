@@ -159,14 +159,14 @@ class Search {
     // Highlight current search.
     if (value) {
       this.scrollPage.depthFirstTraverse((block) => {
-        if (block.isContentBlock) {
-          const { text } = block as Content;
+        if (block.isContent()) {
+          const { text } = block;
           if (text && typeof text === "string") {
             const strMatches = matchString(text, value, options);
             matches.push(
               ...strMatches.map(({ index, match, subMatches }) => {
                 return {
-                  block: block as Content,
+                  block,
                   start: index,
                   end: index + match.length,
                   match,

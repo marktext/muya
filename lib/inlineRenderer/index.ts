@@ -35,7 +35,7 @@ class InlineRenderer {
   patch(block, cursor?, highlights = []) {
     this.collectReferenceDefinitions();
     const { domNode } = block;
-    if (block.isLeafBlock) {
+    if (block.isParent()) {
       (debug as any).error("Patch can only handle content block");
     }
 

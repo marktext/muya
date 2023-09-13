@@ -87,7 +87,7 @@ class Clipboard {
     const { target } = event;
     const domNode = findContentDOM(target);
 
-    return domNode && domNode[BLOCK_DOM_PROPERTY].isContentBlock
+    return domNode && domNode[BLOCK_DOM_PROPERTY].isContent()
       ? domNode[BLOCK_DOM_PROPERTY]
       : null;
   }

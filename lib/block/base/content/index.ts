@@ -66,14 +66,6 @@ abstract class Content extends TreeNode {
     return isCollapsed;
   }
 
-  get isContentBlock() {
-    return true;
-  }
-
-  get isLeafBlock() {
-    return false;
-  }
-
   get isContainerBlock() {
     return false;
   }
@@ -482,7 +474,7 @@ abstract class Content extends TreeNode {
     const ancestors = [];
     let block = this.parent;
 
-    while (block && block.isLeafBlock) {
+    while (block && block.isParent && block.isParent()) {
       ancestors.push(block);
       block = block.parent;
     }

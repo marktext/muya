@@ -38,14 +38,6 @@ abstract class Parent extends TreeNode {
     return this.children.tail;
   }
 
-  get isContentBlock() {
-    return false;
-  }
-
-  get isLeafBlock() {
-    return this.children instanceof LinkedList;
-  }
-
   get isContainerBlock() {
     return /block-quote|order-list|bullet-list|task-list|list-item|task-list-item/.test(
       this.blockName

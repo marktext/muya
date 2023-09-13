@@ -1,7 +1,14 @@
-// @ts-nocheck
+import type { IAttributes, IDatasets } from "../../types/dom";
+
+type TCreateDomOptions = {
+  classList: Array<string>;
+  attributes: IAttributes;
+  datasets: IDatasets;
+};
+
 export const createDomNode = (
-  tagName,
-  { classList = [], attributes = {}, datasets = {} } = {}
+  tagName: string,
+  { classList = [], attributes = {}, datasets = {} }: TCreateDomOptions = {} as TCreateDomOptions
 ) => {
   const domNode = document.createElement(tagName);
 
@@ -10,11 +17,11 @@ export const createDomNode = (
   }
 
   for (const [key, value] of Object.entries(attributes)) {
-    domNode.setAttribute(key, value);
+    domNode.setAttribute(key, value.toString());
   }
 
   for (const [key, value] of Object.entries(datasets)) {
-    domNode.dataset[key] = value;
+    domNode.dataset[key] = value.toString();
   }
 
   return domNode;
@@ -23,7 +30,11 @@ export const createDomNode = (
 /**
  * [description `add` or `remove` className of element
  */
-export const operateClassName = (element, ctrl, className) => {
+export const operateClassName = (
+  element: HTMLElement,
+  ctrl: "add" | "remove",
+  className: string
+) => {
   const existed = element.classList.contains(className);
 
   if ((ctrl === "add" && !existed) || (ctrl === "remove" && existed)) {
@@ -31,14 +42,20 @@ export const operateClassName = (element, ctrl, className) => {
   }
 };
 
-export const insertBefore = (newNode, originNode) => {
+export const insertBefore = (newNode: HTMLElement, originNode: HTMLElement) => {
   const parentNode = originNode.parentNode;
-  parentNode.insertBefore(newNode, originNode);
+  if (parentNode) {
+    parentNode.insertBefore(newNode, originNode);
+  }
 };
 
 // DOM operations
-export const insertAfter = (newNode, originNode) => {
+export const insertAfter = (newNode: HTMLElement, originNode: HTMLElement) => {
   const parentNode = originNode.parentNode;
+
+  if (!parentNode) {
+    return;
+  }
 
   if (originNode.nextSibling) {
     parentNode.insertBefore(newNode, originNode.nextSibling);

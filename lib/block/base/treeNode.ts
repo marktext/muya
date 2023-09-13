@@ -1,42 +1,33 @@
-// @ts-nocheck
 import LinkedNode from "@muya/block/base/linkedList/linkedNode";
 import { createDomNode } from "@muya/utils/dom";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
 import Parent from "./parent";
-
-interface IAttributes {
-  [key: string]: string | boolean;
-}
-
-interface IDatasets {
-  [key: string]: string | boolean;
-}
+import Content from "./content";
+import type { IAttributes, IDatasets } from "../../../types/dom";
+import type { TState } from "../../../types/state";
 
 interface IConstructor<T> {
   blockName: string;
-  create: (muya: Muya, state: any) => T;
+  create: (muya: Muya, state: Array<TState>) => T;
   new (muya: Muya): T;
 }
 
 abstract class TreeNode extends LinkedNode {
-  public muya: Muya;
-  public parent: Parent | null;
-  public domNode: HTMLElement;
-  public tagName: string;
-  public classList: Array<string>;
-  public attributes: IAttributes;
-  public datasets: IDatasets;
+  public parent: Parent | null = null;
+  public domNode: HTMLElement | null = null;
+  public tagName: string = "";
+  public classList: Array<string> = [];
+  public attributes: IAttributes = {};
+  public datasets: IDatasets = {};
 
   abstract get path(): Array<number | string>;
-  abstract get isContentBlock(): boolean;
-  abstract get isLeafBlock(): boolean;
   abstract get isContainerBlock(): boolean;
 
-  static blockName = 'tree.node';
+  static blockName = "tree.node";
 
   get static(): IConstructor<TreeNode> {
-    return this.constructor as any as IConstructor<TreeNode>;
+    return this.constructor as unknown as IConstructor<TreeNode>;
   }
 
   get blockName() {
@@ -55,12 +46,12 @@ abstract class TreeNode extends LinkedNode {
     return this.blockName === "scrollpage";
   }
 
-  get isOutMostBlock() {
-    return this.parent.isScrollPage;
+  get isOutMostBlock(): boolean {
+    return this.parent ? this.parent.isScrollPage : false;
   }
 
-  get outMostBlock() {
-    let node: TreeNode | null = this;
+  get outMostBlock(): this | Parent | null {
+    let node = this.isContent() ? this.parent : this;
 
     while (node) {
       if (node.isOutMostBlock) {
@@ -72,15 +63,26 @@ abstract class TreeNode extends LinkedNode {
     return null;
   }
 
-  constructor(muya) {
+  constructor(public muya: Muya) {
     super();
-    this.muya = muya;
-    this.parent = null;
-    this.domNode = null;
-    this.tagName = null;
-    this.classList = [];
-    this.attributes = {};
-    this.datasets = {};
+  }
+
+  /**
+   * check this is a Content block?
+   * @param this
+   * @returns boolean
+   */
+  isContent(this: any): this is Content {
+    return typeof this.text === "string";
+  }
+
+  /**
+   * check this is a Parent block?
+   * @param this
+   * @returns boolean
+   */
+  isParent(this: unknown): this is Parent {
+    return this instanceof Parent;
   }
 
   /**
@@ -103,14 +105,14 @@ abstract class TreeNode extends LinkedNode {
   }
 
   // Get previous content block in block tree.
-  previousContentInContext() {
-    if (this.isScrollPage) {
+  previousContentInContext(): Content | null {
+    if (this.isScrollPage || !this.parent) {
       return null;
     }
 
     const { parent } = this;
     if (parent.prev) {
-      return parent.prev.isLeafBlock
+      return parent.prev.isParent()
         ? parent.prev.lastContentInDescendant()
         : parent.prev; // language input
     } else {
@@ -119,8 +121,8 @@ abstract class TreeNode extends LinkedNode {
   }
 
   // Get next content block in block tree.
-  nextContentInContext() {
-    if (this.isScrollPage) {
+  nextContentInContext(): Content | null {
+    if (this.isScrollPage || !this.parent) {
       return null;
     }
 
@@ -162,7 +164,7 @@ abstract class TreeNode extends LinkedNode {
    * Weather `this` is descendant of `block`
    * @param {*} block
    */
-  isInBlock(block) {
+  isInBlock(block: Parent) {
     let parent = this.parent;
     while (parent) {
       if (parent === block) {
@@ -178,7 +180,7 @@ abstract class TreeNode extends LinkedNode {
    * Find the closest block which blockName is `blockName`. return `null` if not found.
    * @param {string} blockName
    */
-  closestBlock(blockName) {
+  closestBlock(blockName: string): TreeNode | null {
     if (this.blockName === blockName) {
       return this;
     }
@@ -195,8 +197,8 @@ abstract class TreeNode extends LinkedNode {
     return null;
   }
 
-  farthestBlock(blockName) {
-    const results = [];
+  farthestBlock(blockName: string): TreeNode | null {
+    const results: Array<TreeNode> = [];
     if (this.blockName === blockName) {
       results.push(this);
     }
@@ -210,11 +212,12 @@ abstract class TreeNode extends LinkedNode {
 
       parent = parent.parent;
     }
+    const popItem = results.pop();
 
-    return results.pop();
+    return popItem ? popItem : null;
   }
 
-  insertInto(parent, refBlock) {
+  insertInto(parent: Parent, refBlock: TreeNode) {
     if (this.parent === parent && this.next === refBlock) {
       return;
     }
@@ -229,11 +232,13 @@ abstract class TreeNode extends LinkedNode {
   /**
    * Remove the current block in the block tree.
    */
-  remove() {
-    if (!this.parent) return;
+  remove(): this {
+    if (!this.parent) {
+      return this;
+    }
     this.parent.children.remove(this);
     this.parent = null;
-    this.domNode.remove();
+    this.domNode?.remove();
 
     return this;
   }

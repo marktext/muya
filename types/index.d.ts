@@ -3,6 +3,10 @@ export {};
 declare global {
   interface Window {
     MUYA_VERSION: string;
-    Prism: any;
+    Prism: unknown;
+  }
+
+  interface HTMLElement {
+    __MUYA_BLOCK__: unknown;
   }
 }
