@@ -13,7 +13,7 @@ interface IConstructor<T> {
   new (muya: Muya): T;
 }
 
-abstract class TreeNode extends LinkedNode {
+abstract class TreeNode extends LinkedNode<TreeNode> {
   public parent: Parent | null = null;
   public domNode: HTMLElement | null = null;
   public tagName: string = "";
@@ -232,7 +232,7 @@ abstract class TreeNode extends LinkedNode {
   /**
    * Remove the current block in the block tree.
    */
-  remove(): this {
+  remove(this: Parent | Content): Parent | Content {
     if (!this.parent) {
       return this;
     }

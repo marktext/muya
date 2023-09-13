@@ -1,15 +1,9 @@
-// @ts-nocheck
 import LinkedNode from "./linkedNode";
 
-class LinkedList<T extends LinkedNode> {
-  public head: T;
-  public tail: T;
-  public length: number;
-
-  constructor() {
-    this.head = this.tail = null;
-    this.length = 0;
-  }
+class LinkedList<T extends LinkedNode<T>> {
+  public head: T | null = null;
+  public tail: T | null = null;
+  public length: number = 0;
 
   *iterator(curNode: T | null = this.head, length = this.length) {
     let count = 0;
@@ -17,17 +11,17 @@ class LinkedList<T extends LinkedNode> {
     while (count < length && curNode) {
       yield curNode;
       count++;
-      curNode = curNode.next as T;
+      curNode = curNode.next;
     }
   }
 
-  append(...nodes) {
+  append(...nodes: Array<T>) {
     for (const node of nodes) {
       this.insertBefore(node);
     }
   }
 
-  contains(node) {
+  contains(node: T) {
     const it = this.iterator();
     let data = null;
 
@@ -41,7 +35,7 @@ class LinkedList<T extends LinkedNode> {
     return false;
   }
 
-  insertBefore(node, refNode = null) {
+  insertBefore(node: T, refNode: T | null = null) {
     if (!node) return;
     node.next = refNode;
     if (refNode !== null) {
@@ -64,11 +58,11 @@ class LinkedList<T extends LinkedNode> {
     this.length += 1;
   }
 
-  offset(node) {
+  offset(node: T) {
     return [...this.iterator()].indexOf(node);
   }
 
-  remove(node) {
+  remove(node: T) {
     // If linkedList does not contain this node, just return
     if (!this.contains(node)) return;
     if (node.prev) {
@@ -89,7 +83,7 @@ class LinkedList<T extends LinkedNode> {
     this.length -= 1;
   }
 
-  find(index) {
+  find(index: number) {
     if (index < 0 || index >= this.length) {
       return null;
     }
@@ -97,11 +91,11 @@ class LinkedList<T extends LinkedNode> {
     return [...this.iterator()][index];
   }
 
-  forEach(callback) {
+  forEach(callback: (cur: T, i: number) => void) {
     return [...this.iterator()].forEach(callback);
   }
 
-  forEachAt(index, length, callback) {
+  forEachAt(index: number, length: number, callback: (cur: T, i: number) => void) {
     const curNode = this.find(index);
 
     return [...this.iterator(curNode, length)].forEach((node, i) => {
@@ -109,8 +103,8 @@ class LinkedList<T extends LinkedNode> {
     });
   }
 
-  map(callback) {
-    return this.reduce((acc, node, i) => {
+  map<M>(callback: (cur: T, i: number) => M): Array<M> {
+    return this.reduce((acc: Array<M>, node: T, i: number) => {
       return [...acc, callback(node, i)];
     }, []);
   }
