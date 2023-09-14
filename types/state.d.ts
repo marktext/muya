@@ -181,5 +181,5 @@ export interface ITurnoverOptions {
   strongDelimiter: "**" | "__"; // ** or __
   linkStyle: "inlined";
   linkReferenceStyle: "full";
-  blankReplacement: (content: any, node: HTMLElement, options: any) => string;
+  blankReplacement: (content: unknown, node: any, options: unknown) => string;
 }
