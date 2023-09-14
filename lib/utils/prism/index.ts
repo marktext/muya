@@ -3,7 +3,7 @@ import Prism from "prismjs";
 import Fuse from "fuse.js";
 import initLoadLanguage, {
   loadedLanguages,
-  transfromAliasToOrigin,
+  transformAliasToOrigin,
 } from "./loadLanguage";
 import { languages } from "prismjs/components.js";
 
@@ -57,6 +57,6 @@ const search = (text) => {
 loadLanguage("latex");
 loadLanguage("yaml");
 
-export { search, loadLanguage, loadedLanguages, transfromAliasToOrigin };
+export { search, loadLanguage, loadedLanguages, transformAliasToOrigin };
 
 export default prism;

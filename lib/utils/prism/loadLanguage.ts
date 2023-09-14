@@ -17,7 +17,7 @@ export const loadedLanguages = new Set([
 const { languages } = components;
 
 // Look for the origin language by alias
-export const transfromAliasToOrigin = (langs) => {
+export const transformAliasToOrigin = (langs) => {
   const result = [];
 
   for (const lang of langs) {
@@ -67,7 +67,7 @@ function initLoadLanguage(Prism) {
       langs = [langs];
     }
 
-    const promises = [];
+    const promises: Array<Promise<unknown>> = [];
     // The user might have loaded languages via some other way or used `prism.js` which already includes some
     // We don't need to validate the ids because `getLoader` will ignore invalid ones
     const loaded = [...loadedLanguages, ...Object.keys(Prism.languages)];

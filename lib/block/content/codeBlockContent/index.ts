@@ -2,7 +2,7 @@
 import Content from "@muya/block/base/content";
 import prism, {
   loadedLanguages,
-  transfromAliasToOrigin,
+  transformAliasToOrigin,
 } from "@muya/utils/prism/";
 import ScrollPage from "@muya/block/scrollPage";
 import { escapeHTML, adjustOffset } from "@muya/utils";
@@ -115,7 +115,7 @@ class CodeBlockContent extends Content {
   update(_, highlights = []) {
     const { lang, text } = this;
     // transfrom alias to original language
-    const fullLengthLang = transfromAliasToOrigin([lang])[0];
+    const fullLengthLang = transformAliasToOrigin([lang])[0];
     const domNode = this.domNode;
     const code = escapeHTML(getHighlightHtml(text, highlights, true, true))
       .replace(new RegExp(MARKER_HASK["<"], "g"), "<")
