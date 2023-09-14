@@ -1,7 +1,7 @@
 // @ts-nocheck
 import ScrollPage from "@muya/block";
 import emptyStates from "@muya/config/emptyStates";
-import { deepCopy } from "@muya/utils";
+import { deepClone } from "@muya/utils";
 import { IBlockQuoteState, IParagraphState } from "../../types/state";
 
 export default {
@@ -55,7 +55,7 @@ export default {
         )
       ) {
         if (position === "start") {
-          const state = outBlock.blockName === "block-quote" ? deepCopy(emptyStates["block-quote"]) : deepCopy(emptyStates.paragraph);
+          const state = outBlock.blockName === "block-quote" ? deepClone(emptyStates["block-quote"]) : deepClone(emptyStates.paragraph);
           const newBlock = ScrollPage.loadBlock((state as IBlockQuoteState | IParagraphState).name).create(
             this.muya,
             state
@@ -117,7 +117,7 @@ export default {
     if (anchorOutMostBlock === focusOutMostBlock) {
       // Handle anchor and focus in same list\quote block
       if (anchorOutMostBlock.blockName === "block-quote") {
-        const state = deepCopy(emptyStates["block-quote"]);
+        const state = deepClone(emptyStates["block-quote"]);
         const newQuoteBlock = ScrollPage.loadBlock((state as IBlockQuoteState).name).create(
           this.muya,
           state

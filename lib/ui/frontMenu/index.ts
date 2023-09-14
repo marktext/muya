@@ -1,7 +1,7 @@
 // @ts-nocheck
 import BaseFloat from "@muya/ui/baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
-import { deepCopy } from "@muya/utils";
+import { deepClone } from "@muya/utils";
 import emptyStates from "@muya/config/emptyStates";
 import ScrollPage from "@muya/block/scrollPage";
 import { FRONT_MENU, canTurnIntoMenu } from "./config";
@@ -186,7 +186,7 @@ class FrontMenu extends BaseFloat {
     if (/duplicate|new|delete/.test(label)) {
       switch (label) {
         case "duplicate": {
-          state = deepCopy(oldState);
+          state = deepClone(oldState);
           const dupBlock = ScrollPage.loadBlock(state.name).create(muya, state);
           block.parent.insertAfter(dupBlock, block);
           cursorBlock = dupBlock.lastContentInDescendant();
@@ -194,7 +194,7 @@ class FrontMenu extends BaseFloat {
         }
 
         case "new": {
-          state = deepCopy(emptyStates.paragraph);
+          state = deepClone(emptyStates.paragraph);
           const newBlock = ScrollPage.loadBlock("paragraph").create(
             muya,
             state
@@ -210,7 +210,7 @@ class FrontMenu extends BaseFloat {
           } else if (block.next) {
             cursorBlock = block.next.firstContentInDescendant();
           } else {
-            state = deepCopy(emptyStates.paragraph);
+            state = deepClone(emptyStates.paragraph);
             const newBlock = ScrollPage.loadBlock("paragraph").create(
               muya,
               state
@@ -258,7 +258,7 @@ class FrontMenu extends BaseFloat {
           if (block.blockName === label) {
             break;
           }
-          state = deepCopy(oldState);
+          state = deepClone(oldState);
           if (block.blockName === "task-list") {
             state.children.forEach((listItem) => {
               listItem.name = "list-item";

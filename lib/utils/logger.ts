@@ -1,4 +1,3 @@
-// @ts-nocheck
 type TLevel = "error" | "warn" | "log" | "info";
 
 const levels: Array<TLevel> = ["error", "warn", "log", "info"];
@@ -6,7 +5,7 @@ let level: TLevel = "log";
 
 type Ilogger = Record<TLevel,  (...args: Array<string>) => void>;
 
-function debug(method, ...args) {
+function debug(method: TLevel, ...args: Array<unknown>) {
   if (
     levels.indexOf(method) <= levels.indexOf(level) &&
     process.env.NODE_ENV !== "production"
@@ -23,7 +22,7 @@ function namespace(ns: string): Ilogger {
   }, {} as Ilogger);
 }
 
-namespace.level = (newLevel) => {
+namespace.level = (newLevel: TLevel) => {
   level = newLevel;
 };
 debug.level = namespace.level;

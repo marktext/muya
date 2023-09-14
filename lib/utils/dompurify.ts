@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { sanitize, isValidAttribute } from "dompurify";
+import type { Config } from "dompurify";
 
-export { isValidAttribute };
+export { isValidAttribute, Config };
 
 export default sanitize;

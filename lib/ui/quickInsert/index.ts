@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Fuse from "fuse.js";
 import { patch, h } from "@muya/utils/snabbdom";
-import { deepCopyArray } from "@muya/utils";
+import { deepClone } from "@muya/utils";
 import BaseScrollFloat from "@muya/ui/baseScrollFloat";
 import ParagraphContent from "@muya/block/content/paragraphContent";
 import { MENU_CONFIG, replaceBlockByLabel, getLabelFromEvent } from "./config";
@@ -166,7 +166,7 @@ class QuickInsert extends BaseScrollFloat {
     const { muya, block } = this;
     const { i18n } = muya;
     const canInserFrontMatter = checkCanInsertFrontMatter(muya, block);
-    const menuConfig = deepCopyArray(MENU_CONFIG);
+    const menuConfig = deepClone(MENU_CONFIG);
 
     if (!canInserFrontMatter) {
       menuConfig

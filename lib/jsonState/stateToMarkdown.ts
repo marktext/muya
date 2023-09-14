@@ -10,7 +10,7 @@
  * The output markdown needs to obey the standards of these Spec.
  */
 import logger from "@muya/utils/logger";
-import { deepCopy } from "@muya/utils";
+import { deepClone } from "@muya/utils";
 
 const debug = logger("export markdown: ");
 const escapeText = (str) => {
@@ -146,7 +146,7 @@ export default class ExportMarkdown {
             this.insertLineBreak(result, indent);
           }
 
-          this.listType.push(deepCopy(meta));
+          this.listType.push(deepClone(meta));
           result.push(this.serializeList(state, indent, listIndent));
           this.listType.pop();
           break;

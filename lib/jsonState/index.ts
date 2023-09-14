@@ -3,7 +3,7 @@ import * as json1 from "ot-json1";
 import logger from "@muya/utils/logger";
 import StateToMarkdown from "./stateToMarkdown";
 import MarkdownToState from "./markdownToState";
-import { deepCopyArray } from "@muya/utils";
+import { deepClone } from "@muya/utils";
 import Muya from "@muya/index";
 
 import type { JSONOpList, Doc, Path } from "ot-json1";
@@ -119,7 +119,7 @@ class JSONState {
   }
 
   getState(): Array<TState> {
-    return deepCopyArray(this.state);
+    return deepClone(this.state);
   }
 
   getMarkdown() {

@@ -1,7 +1,22 @@
-// @ts-nocheck
-import runSanitize from "./dompurify";
+import runSanitize, { Config } from "./dompurify";
 import Selection from "@muya/selection";
 import { EVENT_KEYS } from "@muya/config";
+import Content from "@muya/block/base/content";
+import type { Diff } from "fast-diff";
+
+type Union = {
+  start: number;
+  end: number;
+  active?: boolean;
+};
+
+type Constructor = new (...args: any[]) => {};
+
+type Defer = {
+  resolve: (value: unknown) => void;
+  reject: (reason?: any) => void;
+  promise: Promise<unknown>;
+};
 
 export const uniqueIdGenerator = function* () {
   let id = 0;
@@ -9,7 +24,7 @@ export const uniqueIdGenerator = function* () {
   while (true) {
     yield id++;
   }
-}
+};
 
 const ID_PREFIX = "mu-";
 const uniqueIdIterator = uniqueIdGenerator();
@@ -19,31 +34,28 @@ export const getUniqueId = () => `${ID_PREFIX}${uniqueIdIterator.next().value}`;
 export const getLongUniqueId = () =>
   `${getUniqueId()}-${(+new Date()).toString(32)}`;
 
-export const isMetaKey = ({ key }) =>
-  key === "Shift" || key === "Control" || key === "Alt" || key === "Meta";
-
 export const noop = () => {};
 
-export const identity = (i) => i;
+export const identity = <T>(i: T): T => i;
 
-export const isOdd = (number) => Math.abs(number) % 2 === 1;
+export const isOdd = (n: number) => Math.abs(n) % 2 === 1;
 
-export const isEven = (number) => Math.abs(number) % 2 === 0;
+export const isEven = (n: number) => Math.abs(n) % 2 === 0;
 
 export const isLengthEven = (str = "") => str.length % 2 === 0;
 
-export const snakeToCamel = (name) => {
+export const snakeToCamel = (name: string) => {
   return name.replace(/_([a-z])/g, (p0, p1) => p1.toUpperCase());
-}
+};
 /**
  *  Are two arrays have intersection
  */
-export const conflict = (arr1, arr2) =>
+export const conflict = (arr1: [number, number], arr2: [number, number]) =>
   !(arr1[1] < arr2[0] || arr2[1] < arr1[0]);
 
 export const union = (
-  { start: tStart, end: tEnd },
-  { start: lStart, end: lEnd, active }
+  { start: tStart, end: tEnd }: Union,
+  { start: lStart, end: lEnd, active }: Union
 ) => {
   if (!(tEnd <= lStart || lEnd <= tStart)) {
     if (lStart < tStart) {
@@ -65,11 +77,12 @@ export const union = (
 };
 
 // https://github.com/jashkenas/underscore
-export const throttle = (func, wait = 50) => {
-  let context;
-  let args;
-  let result;
-  let timeout = null;
+// TODO: @jocs rewrite in the future.
+export const throttle = (func: any, wait = 50) => {
+  let context: any;
+  let args: any;
+  let result: any;
+  let timeout: any = null;
   let previous = 0;
   const later = () => {
     previous = Date.now();
@@ -80,7 +93,7 @@ export const throttle = (func, wait = 50) => {
     }
   };
 
-  return function () {
+  return function (this: any) {
     const now = Date.now();
     const remaining = wait - (now - previous);
 
@@ -104,57 +117,11 @@ export const throttle = (func, wait = 50) => {
   };
 };
 
-// simple implementation...
-export const debounce = (func, wait = 50) => {
-  let timer = null;
-
-  return function (...args) {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      func(...args);
-    }, wait);
-  };
+export const deepClone = <T>(value: T): T => {
+  return structuredClone(value);
 };
 
-export const deepCopyArray = (array) => {
-  const result = [];
-  const len = array.length;
-  let i;
-
-  for (i = 0; i < len; i++) {
-    if (typeof array[i] === "object" && array[i] !== null) {
-      if (Array.isArray(array[i])) {
-        result.push(deepCopyArray(array[i]));
-      } else {
-        result.push(deepCopy(array[i]));
-      }
-    } else {
-      result.push(array[i]);
-    }
-  }
-
-  return result;
-};
-
-// TODO: @jocs rewrite deepCopy
-export const deepCopy = (object) => {
-  const obj = {};
-  Object.keys(object).forEach((key) => {
-    if (typeof object[key] === "object" && object[key] !== null) {
-      if (Array.isArray(object[key])) {
-        obj[key] = deepCopyArray(object[key]);
-      } else {
-        obj[key] = deepCopy(object[key]);
-      }
-    } else {
-      obj[key] = object[key];
-    }
-  });
-
-  return obj;
-};
-
-export const escapeHTML = (str) =>
+export const escapeHTML = (str: string) =>
   str.replace(
     /[&<>'"]/g,
     (tag) =>
@@ -167,7 +134,7 @@ export const escapeHTML = (str) =>
       }[tag] || tag)
   );
 
-export const unescapeHTML = (str) =>
+export const unescapeHTML = (str: string) =>
   str.replace(
     /(?:&amp;|&lt;|&gt;|&quot;|&#39;)/g,
     (tag) =>
@@ -180,7 +147,7 @@ export const unescapeHTML = (str) =>
       }[tag] || tag)
   );
 
-export const escapeInBlockHtml = (html) => {
+export const escapeInBlockHtml = (html: string) => {
   return html.replace(
     /(<(style|script|title)[^<>]*>)([\s\S]*?)(<\/\2>)/g,
     (m, p1, p2, p3, p4) => {
@@ -189,7 +156,7 @@ export const escapeInBlockHtml = (html) => {
   );
 };
 
-export const wordCount = (markdown) => {
+export const wordCount = (markdown: string) => {
   const paragraph = markdown.split(/\n{2,}/).filter((line) => line).length;
   let word = 0;
   let character = 0;
@@ -209,7 +176,7 @@ export const wordCount = (markdown) => {
  * [genUpper2LowerKeyHash generate constants map hash, the value is lowercase of the key,
  * also translate `_` to `-`]
  */
-export const genUpper2LowerKeyHash = (keys) => {
+export const genUpper2LowerKeyHash = (keys: Array<string>): Record<string, string> => {
   return keys.reduce((acc, key) => {
     const value = key.toLowerCase().replace(/_/g, "-");
 
@@ -220,13 +187,13 @@ export const genUpper2LowerKeyHash = (keys) => {
 /**
  * generate constants map, the value is the key.
  */
-export const generateKeyHash = (keys) => {
+export const generateKeyHash = (keys: Array<string>): Record<string, string> => {
   return keys.reduce((acc, key) => {
     return Object.assign(acc, { [key]: key });
   }, {});
 };
 
-export const mixins = (constructor, ...objects) => {
+export const mixins = (constructor: Constructor, ...objects: Array<Record<string, any>>) => {
   for (const object of objects) {
     Object.keys(object).forEach((name) => {
       Object.defineProperty(
@@ -238,7 +205,7 @@ export const mixins = (constructor, ...objects) => {
   }
 };
 
-export const sanitize = (html, purifyOptions, disableHtml) => {
+export const sanitize = (html: string, purifyOptions: Config, disableHtml: boolean) => {
   if (disableHtml) {
     return runSanitize(escapeHTML(html), purifyOptions);
   } else {
@@ -246,7 +213,13 @@ export const sanitize = (html, purifyOptions, disableHtml) => {
   }
 };
 
-export const getParagraphReference = (ele, id) => {
+/**
+ * TODO: @jocs remove in the future, because it's not used.
+ * @param ele 
+ * @param id 
+ * @returns 
+ */
+export const getParagraphReference = (ele: HTMLElement, id: string) => {
   const { x, y, left, top, bottom, height } = ele.getBoundingClientRect();
 
   return {
@@ -259,7 +232,7 @@ export const getParagraphReference = (ele, id) => {
   };
 };
 
-function visibleLength(str) {
+function visibleLength(str: string) {
   return [...new (Intl as any).Segmenter().segment(str)].length;
 }
 
@@ -267,7 +240,7 @@ function visibleLength(str) {
  * transform diff to text-unicode op
  * @param {array} diffs
  */
-export const diffToTextOp = (diffs) => {
+export const diffToTextOp = (diffs: Array<Diff>) => {
   const op = [];
 
   for (const diff of diffs) {
@@ -301,6 +274,10 @@ export const diffToTextOp = (diffs) => {
 export const getCursorReference = () => {
   const rect = Selection.getCursorCoords();
 
+  if (!rect) {
+    return null;
+  }
+
   return {
     getBoundingClientRect() {
       return rect;
@@ -311,9 +288,9 @@ export const getCursorReference = () => {
 };
 
 // If the next block is header, put cursor after the `#{1,6} *`
-export const adjustOffset = (offset, block, event) => {
+export const adjustOffset = <T extends Content>(offset: number, block: T, event: KeyboardEvent) => {
   if (
-    block.parent.blockName === "atx-heading" &&
+    block.parent?.blockName === "atx-heading" &&
     event.key === EVENT_KEYS.ArrowDown
   ) {
     const match = /^\s{0,3}(?:#{1,6})(?:\s{1,}|$)/.exec(block.text);
@@ -325,17 +302,17 @@ export const adjustOffset = (offset, block, event) => {
   return offset;
 };
 
-export const verticalPositionInRect = (event, rect) => {
+export const verticalPositionInRect = (event: MouseEvent, rect: DOMRect) => {
   const { clientY } = event;
   const { top, height } = rect;
 
   return clientY - top > height / 2 ? "down" : "up";
 };
 
-export const hasPick = (c) => c && (c.p != null || c.r !== undefined);
+export const hasPick = (c: any) => c && (c.p != null || c.r !== undefined);
 
 export const getDefer = () => {
-  const defer: any = {};
+  const defer: Defer = {} as Defer;
   const promise = new Promise((resolve, reject) => {
     defer.resolve = resolve;
     defer.reject = reject;

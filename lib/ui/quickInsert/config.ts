@@ -23,7 +23,7 @@ import plantumlIcon from "@muya/assets/icons/plantuml/2.png";
 import vegaIcon from "@muya/assets/icons/chart/2.png";
 import { isOsx } from "@muya/config";
 
-import { deepCopy } from "@muya/utils";
+import { deepClone } from "@muya/utils";
 import emptyStates from "@muya/config/emptyStates";
 import ScrollPage from "@muya/block/scrollPage";
 
@@ -370,7 +370,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
     case "code-block":
 
     case "block-quote":
-      state = deepCopy(emptyStates[label]);
+      state = deepClone(emptyStates[label]);
       if (label === "paragraph") {
         state.text = text;
       } else if (label === "block-quote") {
@@ -380,7 +380,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
       break;
 
     case "frontmatter":
-      state = deepCopy(emptyStates.frontmatter);
+      state = deepClone(emptyStates.frontmatter);
       state.meta.type = frontmatterType;
       state.meta.lang = /\+-/.test(frontmatterType) ? "yaml" : "json";
       newBlock = ScrollPage.loadBlock(label).create(muya, state);
@@ -397,7 +397,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
     case "atx-heading 5":
 
     case "atx-heading 6":
-      state = deepCopy(emptyStates["atx-heading"]);
+      state = deepClone(emptyStates["atx-heading"]);
       // eslint-disable-next-line no-case-declarations
       const [blockName, level] = label.split(" ");
       state.meta.level = level;
@@ -406,7 +406,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
       break;
 
     case "order-list":
-      state = deepCopy(emptyStates[label]);
+      state = deepClone(emptyStates[label]);
       state.meta.loose = preferLooseListItem;
       state.meta.delimiter = orderListDelimiter;
       if (text) {
@@ -418,7 +418,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
     case "bullet-list":
 
     case "task-list":
-      state = deepCopy(emptyStates[label]);
+      state = deepClone(emptyStates[label]);
       state.meta.loose = preferLooseListItem;
       state.meta.marker = bulletListMarker;
       if (text) {
@@ -436,7 +436,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
     case "diagram mermaid":
 
     case "diagram plantuml":
-      state = deepCopy(emptyStates.diagram);
+      state = deepClone(emptyStates.diagram);
       // eslint-disable-next-line no-case-declarations
       const [name, type] = label.split(" ");
       state.meta.type = type;
@@ -453,7 +453,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
   if (label === "thematic-break") {
     const nextParagraphBlock = ScrollPage.loadBlock("paragraph").create(
       muya,
-      deepCopy(emptyStates.paragraph)
+      deepClone(emptyStates.paragraph)
     );
     newBlock.parent.insertAfter(nextParagraphBlock, newBlock);
     cursorBlock = nextParagraphBlock.firstContentInDescendant();

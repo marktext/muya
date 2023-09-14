@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   init,
   classModule,
@@ -24,7 +23,7 @@ export const h = sh;
 export const toVnode = sToVNode;
 
 export const toHTML = require("snabbdom-to-html"); // helper function for convert vnode to HTML string
-export const htmlToVNode = (html) => {
+export const htmlToVNode = (html: string) => {
   // helper function for convert html to vnode
   const wrapper = document.createElement("div");
   wrapper.innerHTML = html;
