@@ -1,18 +1,4 @@
-// @ts-nocheck
-interface IEvent {
-  eventId: string;
-  target: HTMLElement;
-  event: string;
-  listener: (event: Event) => void;
-  capture: any;
-}
-
-interface IListeners {
-  [key: string]: Array<{
-    listener: (...args: Array<any>) => void;
-    once: boolean;
-  }>;
-}
+import type { Event, Listeners, Listener } from "../../types/event";
 
 // TODO: @Jocs use the same name function in utils.
 const uniqueIdGenerator = function* () {
@@ -26,8 +12,8 @@ const PREFIX = "event-";
 const idIterator = uniqueIdGenerator();
 
 class EventCenter {
-  public events: Array<IEvent> = [];
-  public listeners: IListeners = {};
+  public events: Array<Event> = [];
+  public listeners: Listeners = {};
 
   get eventId() {
     return `${PREFIX}${idIterator.next().value}`;
@@ -37,7 +23,12 @@ class EventCenter {
    * [attachDOMEvent] bind event listener to target, and return a unique ID,
    * this ID
    */
-  attachDOMEvent(target, event, listener, capture?): string {
+  attachDOMEvent(
+    target: HTMLElement,
+    event: string,
+    listener: EventListener,
+    capture?: boolean | AddEventListenerOptions
+  ): string {
     if (this.checkHasBind(target, event, listener, capture)) {
       return "";
     }
@@ -59,7 +50,7 @@ class EventCenter {
    * [detachDOMEvent removeEventListener]
    * @param  {[type]} eventId [unique eventId]
    */
-  detachDOMEvent(eventId) {
+  detachDOMEvent(eventId: string) {
     if (!eventId) {
       return false;
     }
@@ -88,7 +79,7 @@ class EventCenter {
   /**
    * inner method for on and once
    */
-  subscribe(event, listener, once = false) {
+  subscribe(event: string, listener: Listener, once = false) {
     const listeners = this.listeners[event];
     const handler = { listener, once };
     if (listeners && Array.isArray(listeners)) {
@@ -101,14 +92,14 @@ class EventCenter {
   /**
    * [on] on custom event
    */
-  on(event, listener) {
+  on(event: string, listener: Listener) {
     this.subscribe(event, listener);
   }
 
   /**
    * [off] off custom event
    */
-  off(event, listener) {
+  off(event: string, listener: Listener) {
     const listeners = this.listeners[event];
     if (
       Array.isArray(listeners) &&
@@ -122,14 +113,14 @@ class EventCenter {
   /**
    * [once] subscribe event and listen once
    */
-  once(event, listener) {
+  once(event: string, listener: Listener) {
     this.subscribe(event, listener, true);
   }
 
   /**
    * emit custom event
    */
-  emit(event, ...data) {
+  emit(event: string, ...data: unknown[]) {
     const eventListener = this.listeners[event];
 
     if (eventListener && Array.isArray(eventListener)) {
@@ -143,7 +134,12 @@ class EventCenter {
   }
 
   // Determine whether the event has been bind
-  checkHasBind(cTarget, cEvent, cListener, cCapture) {
+  checkHasBind(
+    cTarget: HTMLElement,
+    cEvent: string,
+    cListener: EventListenerOrEventListenerObject,
+    cCapture?: boolean | AddEventListenerOptions
+  ) {
     for (const { target, event, listener, capture } of this.events) {
       if (
         target === cTarget &&

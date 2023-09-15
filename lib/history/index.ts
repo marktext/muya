@@ -1,8 +1,8 @@
-// @ts-nocheck
 import * as json1 from "ot-json1";
 import Muya from "@muya/index";
 import { ISelection } from "../../types/selection";
-import type { JSONOpList } from "ot-json1";
+import type { JSONOpList, Doc } from "ot-json1";
+import type { TState } from "../../types/state";
 
 interface IOptions {
   delay: number;
@@ -12,8 +12,15 @@ interface IOptions {
 
 interface IOperation {
   operation: JSONOpList;
-  selection: ISelection
+  selection: ISelection | null;
 }
+
+interface Stack {
+  undo: Array<IOperation>;
+  redo: Array<IOperation>;
+}
+
+type HistoryAction = "undo" | "redo";
 
 const DEFAULT_OPTIONS = {
   delay: 1000,
@@ -25,9 +32,9 @@ class History {
   private lastRecorded: number = 0;
   private ignoreChange: boolean = false;
   private selectionStack: Array<ISelection> = [];
-  private stack: {
-    undo: Array<IOperation>;
-    redo: Array<IOperation>;
+  private stack: Stack = {
+    undo: [],
+    redo: [],
   };
 
   get selection() {
@@ -35,29 +42,43 @@ class History {
   }
 
   constructor(public muya: Muya, private options: IOptions = DEFAULT_OPTIONS) {
-    this.clear();
-    this.muya.eventCenter.on("json-change", ({ op, source, doc }) => {
-      if (this.ignoreChange) {
-        return;
-      }
-
-      if (!this.options.userOnly || source === "user") {
-        this.record(op, doc);
-      } else {
-        this.transform(op);
-      }
-    });
+    this.listen();
   }
 
-  change(source, dest) {
+  listen() {
+    this.muya.eventCenter.on(
+      "json-change",
+      ({
+        op,
+        source,
+        doc,
+      }: {
+        op: JSONOpList;
+        source: string;
+        doc: TState[];
+      }) => {
+        if (this.ignoreChange) {
+          return;
+        }
+
+        if (!this.options.userOnly || source === "user") {
+          this.record(op, doc);
+        } else {
+          this.transform(op);
+        }
+      }
+    );
+  }
+
+  change(source: HistoryAction, dest: HistoryAction) {
     if (this.stack[source].length === 0) {
       return;
     }
-    const { operation, selection } = this.stack[source].pop();
+    const { operation, selection } = this.stack[source].pop()!;
     const inverseOperation = json1.type.invert(operation);
 
     this.stack[dest].push({
-      operation: inverseOperation,
+      operation: inverseOperation as JSONOpList,
       selection: this.selection.getSelection(),
     });
 
@@ -87,7 +108,7 @@ class History {
     return this.selectionStack.length === 2 ? this.selectionStack[0] : null;
   }
 
-  record(op, doc) {
+  record(op: JSONOpList, doc: TState[]) {
     if (op.length === 0) {
       return;
     }
@@ -100,11 +121,11 @@ class History {
       this.stack.undo.length > 0
     ) {
       const { operation: lastOperation, selection: lastSelection } =
-        this.stack.undo.pop();
+        this.stack.undo.pop()!;
       selection = lastSelection;
       undoOperation = json1.type.makeInvertible(
         json1.type.compose(undoOperation, lastOperation),
-        doc
+        doc as unknown as Doc
       );
     } else {
       this.lastRecorded = timestamp;
@@ -125,9 +146,9 @@ class History {
     this.change("redo", "undo");
   }
 
-  transform(operation) {
-    transformStack(this.stack.undo, operation);
-    transformStack(this.stack.redo, operation);
+  transform(op: JSONOpList) {
+    transformStack(this.stack.undo, op);
+    transformStack(this.stack.redo, op);
   }
 
   undo() {
@@ -135,7 +156,7 @@ class History {
   }
 }
 
-function transformStack(stack, operation) {
+function transformStack(stack: IOperation[], operation: JSONOpList) {
   let remoteOperation = operation;
 
   for (let i = stack.length - 1; i >= 0; i -= 1) {
@@ -148,7 +169,7 @@ function transformStack(stack, operation) {
       remoteOperation,
       oldOperation,
       "right"
-    );
+    )!;
     if (stack[i].operation.length === 0) {
       stack.splice(i, 1);
     }

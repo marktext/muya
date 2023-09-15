@@ -31,11 +31,11 @@ class MarkdownToState {
     private options: IMarkdownToStateOptions = DEFAULT_OPTIONS
   ) {}
 
-  generate(markdown: string): Array<TState> {
+  generate(markdown: string): TState[] {
     return this.convertMarkdownToState(markdown);
   }
 
-  convertMarkdownToState(markdown: string): Array<TState> {
+  convertMarkdownToState(markdown: string): TState[] {
     const states = [];
     const {
       footnote = false,

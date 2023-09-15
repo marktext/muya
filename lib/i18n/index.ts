@@ -1,16 +1,13 @@
-// @ts-nocheck
 import en from "../locales/en";
 import Muya from "@muya/index";
 
+import type { Locale } from "../../types/i18n";
+
 class I18n {
   public lang: string;
-  public resources: {
-    [key: string]: {
-      [key: string]: string;
-    };
-  };
+  public resources: Record<string, Locale["resource"]>;
 
-  constructor(public muya: Muya, object) {
+  constructor(public muya: Muya, object: Locale) {
     const { name, resource } = object || en;
     this.lang = name;
     this.resources = {
@@ -24,7 +21,7 @@ class I18n {
     return resources?.[lang]?.[key] || resources.en[key] || key;
   }
 
-  locale(object) {
+  locale(object: Locale) {
     const { name, resource } = object;
     this.lang = name;
     this.resources = {

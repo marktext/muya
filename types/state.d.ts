@@ -46,12 +46,12 @@ export interface ILinkReferenceDefinitionState {
 
 export interface IBlockQuoteState {
   name: "block-quote";
-  children: Array<TState>;
+  children: TState[];
 }
 
 export interface IListItemState {
   name: "list-item";
-  children: Array<TState>;
+  children: TState[];
 }
 
 export interface IOrderListState {
@@ -100,7 +100,7 @@ export interface ITaskListItemMeta {
 export interface ITaskListItemState {
   name: "task-list-item";
   meta: ITaskListItemMeta;
-  children: Array<TState>;
+  children: TState[];
 }
 
 export interface ITaskListMeta {
@@ -126,7 +126,7 @@ export interface IMathBlockState {
 
 export interface IFrontmatterMeta {
   lang: "yaml" | "toml" | "json";
-  style: "-" | "+" | ";;;" | "{}";
+  style: "-" | "+" | ";" | "{}";
 }
 
 export interface IFrontmatterState {

@@ -7,10 +7,9 @@ import { deepClone } from "@muya/utils";
 import Muya from "@muya/index";
 
 import type { JSONOpList, Doc, Path } from "ot-json1";
+import type { TState } from "../../types/state";
 
-import { TState } from "../../types/state";
-
-const debug = logger("jsonstate:");
+const debug = logger("jsonState:");
 
 class JSONState {
   static invert(op: JSONOpList) {
@@ -31,20 +30,20 @@ class JSONState {
 
   public operationCache: Array<JSONOpList> = [];
   private isGoing: boolean = false;
-  public state: Array<TState>;
+  private state: TState[] = [];
 
-  constructor(public muya: Muya, state) {
-    this.setContent(state);
+  constructor(public muya: Muya, stateOrMarkdown: TState[] | string) {
+    this.setContent(stateOrMarkdown);
   }
 
   apply(op: JSONOpList) {
     this.state = json1.type.apply(
       this.state as unknown as Doc,
       op
-    ) as unknown as Array<TState>;
+    ) as unknown as TState[];
   }
 
-  setContent(content: Array<TState> | string) {
+  setContent(content: TState[] | string) {
     if (typeof content === "object") {
       this.setState(content);
     } else {
@@ -52,7 +51,7 @@ class JSONState {
     }
   }
 
-  setState(state: Array<TState>) {
+  setState(state: TState[]) {
     this.state = state;
   }
 
@@ -77,11 +76,11 @@ class JSONState {
   /**
    * This method only used by user source.
    * @param method json1 operation method insertOp, removeOp, replaceOp, editOp
-   * @param path 
-   * @param args 
+   * @param path
+   * @param args
    */
   pushOperation(
-    method: string,
+    method: "insertOp" | "removeOp" | "replaceOp" | "editOp",
     path: Path,
     ...args: [unknown, ...unknown[]]
   ) {
@@ -118,7 +117,7 @@ class JSONState {
     });
   }
 
-  getState(): Array<TState> {
+  getState(): TState[] {
     return deepClone(this.state);
   }
 

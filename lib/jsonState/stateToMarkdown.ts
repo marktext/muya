@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Hi contributors!
  *
@@ -12,8 +11,28 @@
 import logger from "@muya/utils/logger";
 import { deepClone } from "@muya/utils";
 
+import type {
+  TState,
+  IBulletListState,
+  IOrderListState,
+  IFrontmatterState,
+  IParagraphState,
+  IAtxHeadingState,
+  ISetextHeadingState,
+  ICodeBlockState,
+  IHtmlBlockState,
+  IMathBlockState,
+  IDiagramState,
+  IBlockQuoteState,
+  ITableState,
+  ITaskListState,
+  ITaskListItemState,
+  IListItemState,
+  IThematicBreakState,
+} from "../../types/state";
+
 const debug = logger("export markdown: ");
-const escapeText = (str) => {
+const escapeText = (str: string) => {
   return str.replace(/([^\\])\|/g, "$1\\|");
 };
 
@@ -55,11 +74,15 @@ export default class ExportMarkdown {
     }
   }
 
-  generate(states) {
+  generate(states: TState[]) {
     return this.convertStatesToMarkdown(states);
   }
 
-  convertStatesToMarkdown(states, indent = "", listIndent = "") {
+  convertStatesToMarkdown(
+    states: TState[],
+    indent = "",
+    listIndent = ""
+  ): string {
     const result = [];
     // helper for CommonMark 264
     let lastListBullet = "";
@@ -135,7 +158,9 @@ export default class ExportMarkdown {
           const { meta } = state;
 
           // Start a new list without separation due changing the bullet or ordered list delimiter starts a new list.
-          const { bulletMarkerOrDelimiter } = meta.delimiter || meta.marker;
+          const bulletMarkerOrDelimiter =
+            (meta as IOrderListState["meta"]).delimiter ||
+            (meta as IBulletListState["meta"]).marker;
 
           if (lastListBullet && lastListBullet !== bulletMarkerOrDelimiter) {
             insertNewLine = false;
@@ -180,12 +205,12 @@ export default class ExportMarkdown {
     return result.join("");
   }
 
-  insertLineBreak(result, indent) {
+  insertLineBreak(result: unknown[], indent: string) {
     if (!result.length) return;
     result.push(`${indent}\n`);
   }
 
-  serializeFrontMatter(state) {
+  serializeFrontMatter(state: IFrontmatterState) {
     let startToken;
     let endToken;
     switch (state.meta.lang) {
@@ -223,22 +248,26 @@ export default class ExportMarkdown {
     return result.join("");
   }
 
-  serializeTextParagraph(state, indent) {
+  serializeTextParagraph(
+    state: IParagraphState | IThematicBreakState,
+    indent: string
+  ) {
     const { text } = state;
     const lines = text.split("\n");
 
     return lines.map((line) => `${indent}${line}`).join("\n") + "\n";
   }
 
-  serializeAtxHeading(state, indent) {
+  serializeAtxHeading(state: IAtxHeadingState, indent: string) {
     const { text } = state;
     const match = text.match(/(#{1,6})(.*)/);
-    const atxHeadingText = `${match[1]} ${match[2].trim()}`;
+
+    const atxHeadingText = `${match?.[1]} ${match?.[2].trim()}`;
 
     return `${indent}${atxHeadingText}\n`;
   }
 
-  serializeSetextHeading(state, indent) {
+  serializeSetextHeading(state: ISetextHeadingState, indent: string) {
     const { text, meta } = state;
     const { underline } = meta;
     const lines = text.trim().split("\n");
@@ -249,7 +278,7 @@ export default class ExportMarkdown {
     );
   }
 
-  serializeCodeBlock(state, indent) {
+  serializeCodeBlock(state: ICodeBlockState, indent: string) {
     const result = [];
     const { text, meta } = state;
     const textList = text.split("\n");
@@ -270,7 +299,7 @@ export default class ExportMarkdown {
     return result.join("");
   }
 
-  serializeHtmlBlock(state, indent) {
+  serializeHtmlBlock(state: IHtmlBlockState, indent: string) {
     const result = [];
     const { text } = state;
     const lines = text.split("\n");
@@ -282,7 +311,7 @@ export default class ExportMarkdown {
     return result.join("");
   }
 
-  serializeMathBlock(state, indent) {
+  serializeMathBlock(state: IMathBlockState, indent: string) {
     const result = [];
     const {
       text,
@@ -299,7 +328,7 @@ export default class ExportMarkdown {
     return result.join("");
   }
 
-  serializeDiagramBlock(state, indent) {
+  serializeDiagramBlock(state: IDiagramState, indent: string) {
     const result = [];
     const {
       text,
@@ -316,15 +345,15 @@ export default class ExportMarkdown {
     return result.join("");
   }
 
-  serializeBlockquote(state, indent) {
+  serializeBlockquote(state: IBlockQuoteState, indent: string) {
     const { children } = state;
     const newIndent = `${indent}> `;
 
     return this.convertStatesToMarkdown(children, newIndent);
   }
 
-  serializeTable(state, indent) {
-    const result = [];
+  serializeTable(state: ITableState, indent: string) {
+    const result: string[] = [];
     const row = state.children.length;
     const column = state.children[0].children.length;
     const tableData = [];
@@ -400,18 +429,25 @@ export default class ExportMarkdown {
     return result.join("\n") + "\n";
   }
 
-  serializeList(state, indent, listIndent) {
+  serializeList(
+    state: IBulletListState | IOrderListState | ITaskListState,
+    indent: string,
+    listIndent: string
+  ) {
     const { children } = state;
 
     return this.convertStatesToMarkdown(children, indent, listIndent);
   }
 
-  serializeListItem(state, indent) {
+  serializeListItem(
+    state: IListItemState | ITaskListItemState,
+    indent: string
+  ) {
     const result = [];
     const listInfo = this.listType[this.listType.length - 1];
     const { marker, delimiter, start } = listInfo;
     const isUnorderedList = !!marker;
-    const { children, name, meta } = state;
+    const { children, name } = state;
     let itemMarker;
 
     if (isUnorderedList) {
@@ -442,11 +478,11 @@ export default class ExportMarkdown {
 
     // TODO: Indent subsequent paragraphs by one tab. - not important
     //  Problem: "convertStatesToMarkdown" use "indent" in spaces to indent elements. How should
-    //  we integrate tabs in blockquotes and subsequent paragraphs and how to combine with spaces?
+    //  we integrate tabs in block quotes and subsequent paragraphs and how to combine with spaces?
     //  I don't know how to combine tabs and spaces and it seems not specified, so work for another day.
 
     if (name === "task-list-item") {
-      itemMarker += meta.checked ? "[x] " : "[ ] ";
+      itemMarker += state.meta.checked ? "[x] " : "[ ] ";
     }
 
     result.push(`${indent}${itemMarker}`);

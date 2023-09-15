@@ -9,7 +9,7 @@ import type { TState } from "../../../types/state";
 
 interface IConstructor<T> {
   blockName: string;
-  create: (muya: Muya, state: Array<TState>) => T;
+  create: (muya: Muya, state: TState[]) => T;
   new (muya: Muya): T;
 }
 

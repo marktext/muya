@@ -48,9 +48,9 @@ class Muya {
   public on: (event: string, listener: (...args: Array<any>) => void) => void;
   public off: (event: string, listener: (...args: Array<any>) => void) => void;
   public once: (event: string, listener: (...args: Array<any>) => void) => void;
-  public getState: () => Array<TState>;
+  public getState: () => TState[];
   public getMarkdown: () => string;
-  public setContent: (content: string | Array<TState>) => void;
+  public setContent: (content: string | TState[]) => void;
   public undo: () => void;
   public redo: () => void;
   public search: (value: string, opt: ISearchOption) => Search;
