@@ -16,7 +16,7 @@ import FrontButton from '../lib/ui/frontButton'
 import FrontMenu from '../lib/ui/frontMenu'
 
 import zh from '../lib/locales/zh'
-import ja from '../lib/locales/ja'
+// import ja from '../lib/locales/ja'
 
 import MD2Html from '../lib/jsonState/markdownToHtml'
 
@@ -254,6 +254,8 @@ const DEFAULT_STATE = [
   }
 ]
 
+console.log(DEFAULT_STATE)
+
 // const DEFAULT_MARKDOWN = `
 // foo bar^hello^~world~
 
@@ -291,6 +293,8 @@ const DEFAULT_STATE = [
 // > bar
 const DEFAULT_MARKDOWN = `
 **foo bar**
+
+![](https://scontent-hkg4-1.xx.fbcdn.net/v/t39.30808-1/359813520_663290345840957_4422358330943057609_n.jpg?stp=c60.0.200.200a_dst-jpg_p200x200&_nc_cat=103&ccb=1-7&_nc_sid=754033&_nc_ohc=l1TpRjLxBtIAX-doSiD&_nc_ht=scontent-hkg4-1.xx&oh=00_AfDz75TdS_dEflQ8qypAGQYpWMdd47201mBKyCrgS0hElQ&oe=650A344D)
 
 - [ ] foo bar
 `
@@ -396,7 +400,6 @@ muya.on('json-change', (changes) => {
 //   const { anchor, focus, path } = changes
 //   console.log(JSON.stringify([anchor.offset, focus.offset, path]))
 // })
-
 
 const md2Html = new MD2Html(DEFAULT_MARKDOWN)
 md2Html.generate({ printOptimization: true })

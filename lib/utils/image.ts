@@ -1,6 +1,4 @@
 // @ts-nocheck
-// TODO@jocs: remove the use of `axios` in muya
-import axios from "axios";
 import { isWin } from "@muya/config/index";
 import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
@@ -89,9 +87,11 @@ export const loadImage = async (url, detectContentType = false) => {
 
 export const checkImageContentType = async (url) => {
   try {
-    const res = await axios.head(url);
-    const contentType = res.headers["content-type"];
+    const res = await fetch(url, { method: "HEAD" });
+    const contentType = res.headers.get("content-type");
+
     if (
+      contentType &&
       res.status === 200 &&
       /^image\/(?:jpeg|png|gif|svg\+xml|webp)$/.test(contentType)
     ) {

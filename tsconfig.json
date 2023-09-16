@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "ES2022",
+    "lib": ["DOM", "ES2015"],
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "moduleResolution": "Node",
