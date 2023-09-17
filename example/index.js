@@ -1,260 +1,259 @@
-import Muya from '../lib'
-import EmojiPicker from '../lib/ui/emojiPicker'
-import FormatPicker from '../lib/ui/formatPicker'
-// import ImagePicker from '../lib/ui/imagePicker'
-import ImageSelector from '../lib/ui/imageSelector'
-import ImageToolBar from '../lib/ui/imageToolbar'
-import ImageTransformer from '../lib/ui/transformer'
-import CodePicker from '../lib/ui/codePicker'
-import TableColumnTools from '../lib/ui/tableColumnTools'
-import QuickInsert from '../lib/ui/quickInsert'
-import TableDragBar from '../lib/ui/tableDragBar'
-import TableTools from '../lib/ui/tableTools'
-import PreviewTools from '../lib/ui/previewTools'
+import Muya from "../dist/muya";
+import {
+  EmojiPicker,
+  FormatPicker,
+  ImageSelector,
+  ImageToolBar,
+  ImageTransformer,
+  CodePicker,
+  TableColumnTools,
+  QuickInsert,
+  TableDragBar,
+  TableTools,
+  PreviewTools,
+  FrontButton,
+  FrontMenu,
+} from "../dist/ui/index";
 
-import FrontButton from '../lib/ui/frontButton'
-import FrontMenu from '../lib/ui/frontMenu'
+import zh from "../dist/locales/zh";
 
-import zh from '../lib/locales/zh'
-// import ja from '../lib/locales/ja'
-
-import MD2Html from '../lib/jsonState/markdownToHtml'
+import MD2Html from "../dist/jsonState/markdownToHtml";
 
 const DEFAULT_STATE = [
   {
-    name: 'diagram',
-    text: 'A->B: Does something',
+    name: "diagram",
+    text: "A->B: Does something",
     meta: {
-      lang: 'yaml',
-      type: 'sequence'
-    }
+      lang: "yaml",
+      type: "sequence",
+    },
   },
   {
-    name: 'diagram',
+    name: "diagram",
     text: `flowchart TD
     A[Hard] -->|Text| B(Round)
     B --> C{Decision}
     C -->|One| D[Result 1]
     C -->|Two| E[Result 2]`,
     meta: {
-      lang: 'yaml',
-      type: 'mermaid'
-    }
+      lang: "yaml",
+      type: "mermaid",
+    },
   },
   // Indented code blocks and Fenced code blocks
   {
-    name: 'code-block',
+    name: "code-block",
     meta: {
-      type: 'indented', // indented or fenced
-      lang: 'javascript' // lang will be enpty string if block is indented block. set language will auto change into fenced code block.
+      type: "indented", // indented or fenced
+      lang: "javascript", // lang will be empty string if block is indented block. set language will auto change into fenced code block.
     },
-    text: 'const foo = `bar`'
+    text: "const foo = `bar`",
   },
   {
-    name: 'paragraph',
-    text: 'foo bar'
+    name: "paragraph",
+    text: "foo bar",
   },
   {
-    name: 'math-block',
-    text: 'a \\ne b',
+    name: "math-block",
+    text: "a \\ne b",
     meta: {
-      mathStyle: ''
-    }
+      mathStyle: "",
+    },
   },
   {
-    name: 'html-block',
-    text: '<div>\nfoo bar\n</div>'
+    name: "html-block",
+    text: "<div>\nfoo bar\n</div>",
   },
   // Table
   {
-    name: 'table',
+    name: "table",
     children: [
       {
-        name: 'table.row',
+        name: "table.row",
         children: [
           {
-            name: 'table.cell',
+            name: "table.cell",
             meta: {
-              align: 'right' // none left center right, cells in the same column has the same alignment.
+              align: "right", // none left center right, cells in the same column has the same alignment.
             },
-            text: 'foo'
+            text: "foo",
           },
           {
-            name: 'table.cell',
+            name: "table.cell",
             meta: {
-              align: 'none' // none left center right, cells in the same column has the same alignment.
+              align: "none", // none left center right, cells in the same column has the same alignment.
             },
-            text: 'bar'
-          }
-        ]
+            text: "bar",
+          },
+        ],
       },
       {
-        name: 'table.row',
+        name: "table.row",
         children: [
           {
-            name: 'table.cell',
+            name: "table.cell",
             meta: {
-              align: 'right' // none left center right, cells in the same column has the same alignment.
+              align: "right", // none left center right, cells in the same column has the same alignment.
             },
-            text: 'zar'
+            text: "zar",
           },
           {
-            name: 'table.cell',
+            name: "table.cell",
             meta: {
-              align: 'none' // none left center right, cells in the same column has the same alignment.
+              align: "none", // none left center right, cells in the same column has the same alignment.
             },
-            text: 'foo bar'
-          }
-        ]
-      }
-    ]
+            text: "foo bar",
+          },
+        ],
+      },
+    ],
   },
   // Indented code blocks and Fenced code blocks
   // Order List Blocks
   {
-    name: 'order-list',
+    name: "order-list",
     meta: {
       start: 0, // 0 ~ 999999999
       loose: true, // true or false, true is loose list and false is tight.
-      delimiter: '.' // . or )
+      delimiter: ".", // . or )
     },
     children: [
       // List Item
       {
-        name: 'list-item', // Can contains any type and number of leaf blocks.
+        name: "list-item", // Can contains any type and number of leaf blocks.
         children: [
           {
-            name: 'paragraph',
-            text: 'foo\nbar'
-          }
-        ]
-      }
-    ]
+            name: "paragraph",
+            text: "foo\nbar",
+          },
+        ],
+      },
+    ],
   },
   // Bullet List Blocks
   {
-    name: 'bullet-list',
+    name: "bullet-list",
     meta: {
-      marker: '-', // - + *
-      loose: false // true or false
+      marker: "-", // - + *
+      loose: false, // true or false
     },
     children: [
       // List Item
       {
-        name: 'list-item', // Can contains any type and number of leaf blocks.
+        name: "list-item", // Can contains any type and number of leaf blocks.
         children: [
           {
-            name: 'paragraph',
-            text: 'foo bar1'
+            name: "paragraph",
+            text: "foo bar1",
           },
           {
-            name: 'paragraph',
-            text: 'foo bar2'
-          }
-        ]
-      }
-    ]
+            name: "paragraph",
+            text: "foo bar2",
+          },
+        ],
+      },
+    ],
   },
   // Task List
   {
-    name: 'task-list',
+    name: "task-list",
     meta: {
-      marker: '-' // - + *
+      marker: "-", // - + *
     },
     children: [
       {
-        name: 'task-list-item',
+        name: "task-list-item",
         meta: {
-          checked: false // true or false
+          checked: false, // true or false
         },
         children: [
           {
-            name: 'paragraph',
-            text: 'a'
-          }
-        ]
+            name: "paragraph",
+            text: "a",
+          },
+        ],
       },
       {
-        name: 'task-list-item',
+        name: "task-list-item",
         meta: {
-          checked: true // true or false
+          checked: true, // true or false
         },
         children: [
           {
-            name: 'paragraph',
-            text: 'b'
-          }
-        ]
+            name: "paragraph",
+            text: "b",
+          },
+        ],
       },
       {
-        name: 'task-list-item',
+        name: "task-list-item",
         meta: {
-          checked: false // true or false
+          checked: false, // true or false
         },
         children: [
           {
-            name: 'paragraph',
-            text: 'c'
-          }
-        ]
+            name: "paragraph",
+            text: "c",
+          },
+        ],
       },
       {
-        name: 'task-list-item',
+        name: "task-list-item",
         meta: {
-          checked: false // true or false
+          checked: false, // true or false
         },
         children: [
           {
-            name: 'paragraph',
-            text: 'd'
-          }
-        ]
-      }
-    ]
+            name: "paragraph",
+            text: "d",
+          },
+        ],
+      },
+    ],
   },
   {
-    name: 'paragraph',
-    text: '**blod** *emphasis* :man: <u>underline</u> <mark>highlight</mark> `inline code`~~删除~~ [百度](http://www.baidu.com) http://google.com'
+    name: "paragraph",
+    text: "**blod** *emphasis* :man: <u>underline</u> <mark>highlight</mark> `inline code`~~删除~~ [百度](http://www.baidu.com) http://google.com",
   },
   // Thematic breaks
   {
-    name: 'thematic-break',
-    text: '---' // --- or ___ or ***
+    name: "thematic-break",
+    text: "---", // --- or ___ or ***
   },
   {
-    name: 'atx-heading',
+    name: "atx-heading",
     meta: {
-      level: 1 // 1 ~ 6
+      level: 1, // 1 ~ 6
     },
-    text: '# foo bar' // can not contain `\n`!
+    text: "# foo bar", // can not contain `\n`!
   },
   // Setext headings
   {
-    name: 'setext-heading',
+    name: "setext-heading",
     meta: {
       level: 1,
-      underline: '===' // === or ---
+      underline: "===", // === or ---
     },
-    text: 'foo\nbar' // can contain multiple lines.
+    text: "foo\nbar", // can contain multiple lines.
   },
   // Block quotes
   {
-    name: 'block-quote',
+    name: "block-quote",
     children: [
       {
         // Can contains any type and number of leaf blocks.
-        name: 'paragraph',
-        text: 'foo\nbar'
-      }
-    ]
+        name: "paragraph",
+        text: "foo\nbar",
+      },
+    ],
   },
   {
-    name: 'paragraph',
-    text: 'Image![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592848169049&di=1bf848686f738f8697ec90a2d484a29c&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_pic%2F01%2F54%2F05%2F625746fd5b60878.jpg) bar &gt; *zar* <ruby>北京<rt>Beijing</rt></ruby> foo bar $a \\ne b$ 和自己'
-  }
-]
+    name: "paragraph",
+    text: "Image![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1592848169049&di=1bf848686f738f8697ec90a2d484a29c&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_pic%2F01%2F54%2F05%2F625746fd5b60878.jpg) bar &gt; *zar* <ruby>北京<rt>Beijing</rt></ruby> foo bar $a \\ne b$ 和自己",
+  },
+];
 
-console.log(DEFAULT_STATE)
+console.log(DEFAULT_STATE);
 
 // const DEFAULT_MARKDOWN = `
 // foo bar^hello^~world~
@@ -297,112 +296,116 @@ const DEFAULT_MARKDOWN = `
 ![](https://scontent-hkg4-1.xx.fbcdn.net/v/t39.30808-1/359813520_663290345840957_4422358330943057609_n.jpg?stp=c60.0.200.200a_dst-jpg_p200x200&_nc_cat=103&ccb=1-7&_nc_sid=754033&_nc_ohc=l1TpRjLxBtIAX-doSiD&_nc_ht=scontent-hkg4-1.xx&oh=00_AfDz75TdS_dEflQ8qypAGQYpWMdd47201mBKyCrgS0hElQ&oe=650A344D)
 
 - [ ] foo bar
-`
+`;
 
-Muya.use(EmojiPicker)
-Muya.use(FormatPicker)
+Muya.use(EmojiPicker);
+Muya.use(FormatPicker);
 // Muya.use(ImagePicker)
 Muya.use(ImageSelector, {
-  unsplashAccessKey: process.env.UNSPLASH_ACCESS_KEY
-})
-Muya.use(ImageToolBar)
-Muya.use(ImageTransformer)
-Muya.use(CodePicker)
+  unsplashAccessKey: process.env.UNSPLASH_ACCESS_KEY,
+});
+Muya.use(ImageToolBar);
+Muya.use(ImageTransformer);
+Muya.use(CodePicker);
 
-Muya.use(FrontButton)
-Muya.use(FrontMenu)
-Muya.use(TableColumnTools)
-Muya.use(QuickInsert)
-Muya.use(TableDragBar)
-Muya.use(TableTools)
-Muya.use(PreviewTools)
+Muya.use(FrontButton);
+Muya.use(FrontMenu);
+Muya.use(TableColumnTools);
+Muya.use(QuickInsert);
+Muya.use(TableDragBar);
+Muya.use(TableTools);
+Muya.use(PreviewTools);
 
-const container = document.querySelector('#editor')
-const undoBtn = document.querySelector('#undo')
-const redoBtn = document.querySelector('#redo')
-const searchInput = document.querySelector('#search')
-const previousBtn = document.querySelector('#previous')
-const nextBtn = document.querySelector('#next')
-const replaceInput = document.querySelector('#replace')
-const singleBtn = document.querySelector('#single')
-const allBtn = document.querySelector('#all')
-const setContentBtn = document.querySelector('#set-content')
-const selectAllBtn = document.querySelector('#select-all')
+const container = document.querySelector("#editor");
+const undoBtn = document.querySelector("#undo");
+const redoBtn = document.querySelector("#redo");
+const searchInput = document.querySelector("#search");
+const previousBtn = document.querySelector("#previous");
+const nextBtn = document.querySelector("#next");
+const replaceInput = document.querySelector("#replace");
+const singleBtn = document.querySelector("#single");
+const allBtn = document.querySelector("#all");
+const setContentBtn = document.querySelector("#set-content");
+const selectAllBtn = document.querySelector("#select-all");
 
 const imagePathPicker = async () => {
-  return 'https://pics.ettoday.net/images/2253/d2253152.jpg'
-}
+  return "https://pics.ettoday.net/images/2253/d2253152.jpg";
+};
 
 const imageAction = async () => {
-  return 'https://pics.ettoday.net/images/2469/d2469498.jpg'
-}
+  return "https://pics.ettoday.net/images/2469/d2469498.jpg";
+};
 
-const muya = new Muya(container, { markdown: DEFAULT_MARKDOWN, disableHtml: true, imagePathPicker, imageAction })
+const muya = new Muya(container, {
+  markdown: DEFAULT_MARKDOWN,
+  disableHtml: true,
+  imagePathPicker,
+  imageAction,
+});
 
-window.muya = muya
+window.muya = muya;
 
-muya.locale(zh)
+muya.locale(zh);
 
-muya.init()
+muya.init();
 
-undoBtn.addEventListener('click', () => {
-  muya.undo()
-})
+undoBtn.addEventListener("click", () => {
+  muya.undo();
+});
 
-redoBtn.addEventListener('click', () => {
-  muya.redo()
-})
+redoBtn.addEventListener("click", () => {
+  muya.redo();
+});
 
-searchInput.addEventListener('input', (event) => {
-  const value = event.target.value
+searchInput.addEventListener("input", (event) => {
+  const value = event.target.value;
 
-  muya.search(value, { isRegexp: true })
-})
+  muya.search(value, { isRegexp: true });
+});
 
-previousBtn.addEventListener('click', () => {
-  muya.find('previous')
-})
+previousBtn.addEventListener("click", () => {
+  muya.find("previous");
+});
 
-nextBtn.addEventListener('click', () => {
-  muya.find('next')
-})
+nextBtn.addEventListener("click", () => {
+  muya.find("next");
+});
 
-singleBtn.addEventListener('click', () => {
-  muya.replace(replaceInput.value, { isSingle: true, isRegexp: true })
-})
+singleBtn.addEventListener("click", () => {
+  muya.replace(replaceInput.value, { isSingle: true, isRegexp: true });
+});
 
-allBtn.addEventListener('click', () => {
-  muya.replace(replaceInput.value, { isSingle: false })
-})
+allBtn.addEventListener("click", () => {
+  muya.replace(replaceInput.value, { isSingle: false });
+});
 
-selectAllBtn.addEventListener('click', () => {
-  muya.selectAll()
-})
+selectAllBtn.addEventListener("click", () => {
+  muya.selectAll();
+});
 
 const content = [
   {
-    name: 'paragraph',
-    text: 'foo bar'
-  }
-]
+    name: "paragraph",
+    text: "foo bar",
+  },
+];
 
-setContentBtn.addEventListener('click', () => {
-  muya.setContent(content, true)
-})
+setContentBtn.addEventListener("click", () => {
+  muya.setContent(content, true);
+});
 
-muya.on('json-change', (changes) => {
+muya.on("json-change", (changes) => {
   // console.log(JSON.stringify(muya.getState(), null, 2))
   // console.log(muya.getMarkdown())
-  console.log(JSON.stringify(changes, null, 2))
-})
+  console.log(JSON.stringify(changes, null, 2));
+});
 
 // muya.on('selection-change', changes => {
 //   const { anchor, focus, path } = changes
 //   console.log(JSON.stringify([anchor.offset, focus.offset, path]))
 // })
 
-const md2Html = new MD2Html(DEFAULT_MARKDOWN)
-md2Html.generate({ printOptimization: true })
-  .then(html => {
-    // console.log('html: ', html)
-  })
+const md2Html = new MD2Html(DEFAULT_MARKDOWN);
+md2Html.generate({ printOptimization: true }).then((html) => {
+  // console.log('html: ', html)
+});

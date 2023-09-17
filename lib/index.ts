@@ -1,7 +1,7 @@
 // @ts-nocheck
 import EventCenter from "@muya/event/index";
 import Editor from "@muya/editor/index";
-import Ui from "@muya/ui/index";
+import Ui from "@muya/ui/ui";
 import I18n from "@muya/i18n/index";
 import {
   BLOCK_DOM_PROPERTY,
@@ -147,7 +147,7 @@ function getContainer(originContainer, options) {
   newContainer.setAttribute("autocomplete", "off");
   newContainer.setAttribute(
     "spellcheck",
-    !!spellcheckEnabled ? "true" : "false"
+    spellcheckEnabled ? "true" : "false"
   );
   originContainer.replaceWith(newContainer);
 

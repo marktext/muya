@@ -1,3 +1,7 @@
 docs
 lib/assets/libs/sequence
 example/
+scripts/
+commitlint.config.js
+jest.config.js
+lint-staged.config.js

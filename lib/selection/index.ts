@@ -116,7 +116,7 @@ class Selection {
       const fDom = focusBlock.domNode;
       const order = compareParagraphsOrder(aDom, fDom);
 
-      return !!order ? "forward" : "backward";
+      return order ? "forward" : "backward";
     }
   }
 
@@ -518,7 +518,7 @@ class Selection {
       const aDom = anchorBlock.domNode;
       const fDom = focusBlock.domNode;
       const order = compareParagraphsOrder(aDom, fDom);
-      direction = !!order ? "forward" : "backward";
+      direction = order ? "forward" : "backward";
     }
 
     return {
