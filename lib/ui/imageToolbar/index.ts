@@ -154,7 +154,9 @@ class ImageToolbar extends BaseFloat {
         this.muya.eventCenter.emit("muya-transformer", {
           reference: null,
         });
+
         this.muya.eventCenter.emit("muya-image-selector", {
+          block: this.block,
           reference,
           imageInfo,
           cb: () => {},

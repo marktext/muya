@@ -2,13 +2,13 @@
 
 **2023**
 
-- [x] Convert JS code to TS code and add types
+- [x] Convert JS code to TS code
+- [ ] Complete all missing types and support strict mode for TS compilation
 - [ ] Patch the latest marked to muya
 - [ ] Optimization of build process，replace webpack with vite and build using esbuild？
 - [ ] Website(docs, demo)
 - [ ] Compatible with Firefox and Safari
 - [ ] Unit test and e2e test
-- [ ] Remove the axios from dependencies
 
 **June 2020**
 
