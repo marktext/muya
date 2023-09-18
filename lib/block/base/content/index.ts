@@ -233,6 +233,7 @@ abstract class Content extends TreeNode {
     this.selection.setSelection(cursor);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(cursor?, highlights: Array<any> = []) {
     const { text } = this;
     this.domNode.innerHTML = `<span class="mu-syntax-text">${text}</span>`;
@@ -296,7 +297,6 @@ abstract class Content extends TreeNode {
             end.offset -= 1;
             text = text.substring(0, offset - 1) + text.substring(offset);
           }
-          /* eslint-disable no-useless-escape */
         } else if (
           event.inputType.indexOf("delete") === -1 &&
           inputChar === postInputChar &&
@@ -311,7 +311,6 @@ abstract class Content extends TreeNode {
           needRender = true;
           text = text.substring(0, offset) + text.substring(offset + 1);
         } else {
-          /* eslint-disable no-useless-escape */
           // Not Unicode aware, since things like \p{Alphabetic} or \p{L} are not supported yet
 
           if (
@@ -336,7 +335,6 @@ abstract class Content extends TreeNode {
               : text;
           }
 
-          /* eslint-enable no-useless-escape */
           // Delete the last `*` of `**` when you insert one space between `**` to create a bullet list.
           if (
             type === "format" &&

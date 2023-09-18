@@ -1,38 +1,30 @@
-// @ts-nocheck
-import Muya from "../index";
+import EmojiPicker from "./emojiPicker";
+import FormatPicker from "./formatPicker";
+import ImageSelector from "./imageSelector";
+import ImageToolBar from "./imageToolbar";
+import ImageTransformer from "./transformer";
+import CodePicker from "./codePicker";
+import TableColumnTools from "./tableColumnTools";
+import QuickInsert from "./quickInsert";
+import TableDragBar from "./tableDragBar";
+import TableTools from "./tableTools";
+import PreviewTools from "./previewTools";
 
-class Ui {
-  public muya: Muya;
-  public shownFloat: Set<any>;
-  public shownButton: Set<any>;
+import FrontButton from "./frontButton";
+import FrontMenu from "./frontMenu";
 
-  constructor(muya) {
-    this.muya = muya;
-    this.shownFloat = new Set();
-    this.shownButton = new Set();
-    this.listen();
-  }
-
-  listen() {
-    // cache shown float box
-    this.muya.eventCenter.subscribe("muya-float", (tool, status) => {
-      status ? this.shownFloat.add(tool) : this.shownFloat.delete(tool);
-    });
-    // cache shown btn
-    this.muya.eventCenter.subscribe("muya-float-button", (tool, status) => {
-      status ? this.shownButton.add(tool) : this.shownButton.delete(tool);
-    });
-  }
-
-  hideAllFloatTools() {
-    for (const tool of this.shownFloat) {
-      tool.hide();
-    }
-
-    for (const btn of this.shownButton) {
-      btn.hide();
-    }
-  }
-}
-
-export default Ui;
+export {
+  EmojiPicker,
+  FormatPicker,
+  ImageSelector,
+  ImageToolBar,
+  ImageTransformer,
+  CodePicker,
+  TableColumnTools,
+  QuickInsert,
+  TableDragBar,
+  TableTools,
+  PreviewTools,
+  FrontButton,
+  FrontMenu,
+};

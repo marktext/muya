@@ -77,9 +77,13 @@ class Clipboard {
       this.cutHandler(event);
     };
 
+    const pasteHandler = (event) => {
+      this.pasteHandler(event);
+    };
+
     eventCenter.attachDOMEvent(domNode, "copy", copyCutHandler);
     eventCenter.attachDOMEvent(domNode, "cut", copyCutHandler);
-    eventCenter.attachDOMEvent(domNode, "paste", this.pasteHandler.bind(this));
+    eventCenter.attachDOMEvent(domNode, "paste", pasteHandler);
     eventCenter.attachDOMEvent(domNode, "keydown", keydownHandler);
   }
 

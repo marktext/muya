@@ -1,8 +1,7 @@
 // @ts-nocheck
 import TurndownService from "turndown";
 import { identity } from "@muya/utils";
-
-const turndownPluginGfm = require("joplin-turndown-plugin-gfm");
+import * as turndownPluginGfm from "joplin-turndown-plugin-gfm";
 
 export const usePluginAddRules = (turndownService, keeps) => {
   // Use the gfm plugin

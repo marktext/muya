@@ -1,25 +1,28 @@
 {
   "compilerOptions": {
-    "module": "ES2022",
-    "lib": ["DOM", "ES2015"],
     "allowSyntheticDefaultImports": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "moduleResolution": "Node",
-    "declaration": true,
-    "baseUrl": ".",
-    "outDir": "./built",
-    "target": "es2017",
-    "noEmitOnError": true,
-    "noFallthroughCasesInSwitch": true,
-    // "noUnusedParameters": true,
-    // "noUnusedLocals": true,
-    // "noImplicitAny": true,
-    // "strictNullChecks": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    /* Linting */
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
       "@muya/*": ["./lib/*"],
       "@types/*": ["./types/*"]
     }
   },
-  "include": ["./lib/**/*", "./types/**/*"],
+  "include": ["src", "types", "lib"]
 }

@@ -90,10 +90,8 @@ export default {
     let thematicLineHasPushed = false;
 
     for (const l of lines) {
-      /* eslint-disable no-useless-escape */
       const THEMATIC_BREAK_REG =
         / {0,3}(?:\* *\* *\*|- *- *-|_ *_ *_)[ \*\-\_]*$/;
-      /* eslint-enable no-useless-escape */
       if (THEMATIC_BREAK_REG.test(l) && !thematicLineHasPushed) {
         thematicLine = l;
         thematicLineHasPushed = true;

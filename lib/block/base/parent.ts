@@ -15,7 +15,7 @@ abstract class Parent extends TreeNode {
   public prev: Parent | null;
   public next: Parent | null;
 
-  private _active: boolean;
+  private _active: boolean = false;
 
   get active() {
     return this._active;
@@ -49,7 +49,6 @@ abstract class Parent extends TreeNode {
     // Used to store icon, checkbox etc. these blocks are not in children properties in json state.
     this.attachments = new LinkedList();
     this.children = new LinkedList();
-    this._active = false;
   }
 
   abstract getState(): TState;

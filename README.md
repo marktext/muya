@@ -1,4 +1,4 @@
-<p  align="center"><img  src="./logo.jpg"  alt="muya"  height="150"></p>
+<p  align="center"><img  src="./public/logo.jpg"  alt="muya"  height="150"></p>
 
 
 

@@ -86,7 +86,7 @@ function initLoadLanguage(Prism) {
         });
       } else {
         delete Prism.languages[lang];
-        await import("prismjs/components/prism-" + lang);
+        await import(`../../../node_modules/prismjs/components/prism-${lang}.js`);
         defer.resolve({
           lang,
           status: "loaded",
