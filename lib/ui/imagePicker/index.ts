@@ -1,9 +1,10 @@
 // @ts-nocheck
 import BaseScrollFloat from "../baseScrollFloat";
 import { patch, h } from "@muya/utils/snabbdom";
-import FolderIcon from "@muya/assets/icons/folder.svg";
-import ImageIcon from "@muya/assets/icons/image.svg";
-import UploadIcon from "@muya/assets/icons/upload.svg";
+// TODO replace images.
+import FolderIcon from "@muya/assets/icons/edit.png";
+import ImageIcon from "@muya/assets/icons/edit.png";
+import UploadIcon from "@muya/assets/icons/edit.png";
 
 import "./index.css";
 

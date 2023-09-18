@@ -1,12 +1,13 @@
 {
   "name": "@marktext/muya",
-  "version": "0.1.13",
+  "version": "0.2.0",
   "description": "Future markdown editor",
-  "main": "dist/muya.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build && tsc",
     "test": "jest --env=jsdom",
     "lint:ts": "eslint lib",
     "lint:ts:fix": "eslint --fix lib",
@@ -62,6 +63,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@laynezh/vite-plugin-lib-assets": "0.5.2",
     "@types/dompurify": "^3.0.2",
     "@types/prismjs": "^1.26.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
@@ -78,6 +80,7 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-order": "^6.0.3",
     "typescript": "^5.2.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.5.3"
   }
 }

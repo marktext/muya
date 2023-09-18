@@ -409,12 +409,13 @@ export const DEFAULT_TURNDOWN_CONFIG = {
   strongDelimiter: "**", // ** or __
   linkStyle: "inlined",
   linkReferenceStyle: "full",
-  blankReplacement(content: unknown, node: any, options: unknown) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  blankReplacement(_content: unknown, node: any, _options: unknown) {
     if (node && node.classList.contains("mu-soft-line-break")) {
       return LINE_BREAK;
     } else if (node && node.classList.contains("mu-hard-line-break")) {
       return "  " + LINE_BREAK;
-    } else if (node && node.classList.contains("mu-hard-line-break-sapce")) {
+    } else if (node && node.classList.contains("mu-hard-line-break-space")) {
       return "";
     } else {
       return node.isBlock ? "\n\n" : "";

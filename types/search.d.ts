@@ -1,11 +1,11 @@
 import Content from "@muya/block/base/content";
 
 export interface ISearchOption {
-  isCaseSensitive: boolean;
-  isWholeWord: boolean;
-  isRegexp: boolean;
-  selectHighlight: boolean;
-  highlightIndex: number;
+  isCaseSensitive?: boolean;
+  isWholeWord?: boolean;
+  isRegexp?: boolean;
+  selectHighlight?: boolean;
+  highlightIndex?: number;
 }
 
 export interface IMatch {

@@ -45,7 +45,7 @@ export const isEven = (n: number) => Math.abs(n) % 2 === 0;
 export const isLengthEven = (str = "") => str.length % 2 === 0;
 
 export const snakeToCamel = (name: string) => {
-  return name.replace(/_([a-z])/g, (p0, p1) => p1.toUpperCase());
+  return name.replace(/_([a-z])/g, (_p0, p1) => p1.toUpperCase());
 };
 /**
  *  Are two arrays have intersection
@@ -150,7 +150,7 @@ export const unescapeHTML = (str: string) =>
 export const escapeInBlockHtml = (html: string) => {
   return html.replace(
     /(<(style|script|title)[^<>]*>)([\s\S]*?)(<\/\2>)/g,
-    (m, p1, p2, p3, p4) => {
+    (_m, p1, _p2, p3, p4) => {
       return `${escapeHTML(p1)}${p3}${escapeHTML(p4)}`;
     }
   );
