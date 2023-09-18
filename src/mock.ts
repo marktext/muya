@@ -1,25 +1,4 @@
-import Muya from "../dist/muya";
-import {
-  EmojiPicker,
-  FormatPicker,
-  ImageSelector,
-  ImageToolBar,
-  ImageTransformer,
-  CodePicker,
-  TableColumnTools,
-  QuickInsert,
-  TableDragBar,
-  TableTools,
-  PreviewTools,
-  FrontButton,
-  FrontMenu,
-} from "../dist/ui/index";
-
-import zh from "../dist/locales/zh";
-
-import MD2Html from "../dist/jsonState/markdownToHtml";
-
-const DEFAULT_STATE = [
+export const DEFAULT_STATE = [
   {
     name: "diagram",
     text: "A->B: Does something",
@@ -213,7 +192,7 @@ const DEFAULT_STATE = [
   },
   {
     name: "paragraph",
-    text: "**blod** *emphasis* :man: <u>underline</u> <mark>highlight</mark> `inline code`~~删除~~ [百度](http://www.baidu.com) http://google.com",
+    text: "**bold** *emphasis* :man: <u>underline</u> <mark>highlight</mark> `inline code`~~删除~~ [百度](http://www.baidu.com) http://google.com",
   },
   // Thematic breaks
   {
@@ -253,159 +232,39 @@ const DEFAULT_STATE = [
   },
 ];
 
-console.log(DEFAULT_STATE);
+export const DEFAULT_MARKDOWN = `
+foo bar^hello^~world~
 
-// const DEFAULT_MARKDOWN = `
-// foo bar^hello^~world~
+<div>
+foo bar
+</div>
 
-// <div>
-// foo bar
-// </div>
+| foo | bar     |
+| ---:| ------- |
+| zar | foo bar |
 
-// | foo | bar     |
-// | ---:| ------- |
-// | zar | foo bar |
+0. foo
+   bar
 
-// 0. foo
-//    bar
+- foo bar1
 
-// - foo bar1
+  foo bar2
 
-//   foo bar2
+- [ ] a
+- [x] b
+- [ ] c
+- [ ] d
 
-// - [ ] a
-// - [x] b
-// - [ ] c
-// - [ ] d
+**bold** *emphasis* :man: <u>underline</u> <mark>highlight</mark> \`inline code\`~~Delete~~ [Baidu](http://www.baidu.com) http://google.com
 
-// **bold** *emphasis* :man: <u>underline</u> <mark>highlight</mark> \`inline code\`~~Delete~~ [Baidu](http://www.baidu.com) http://google.com
+---
 
-// ---
+# foo bar
 
-// # foo bar
+foo
+bar
+===
 
-// foo
-// bar
-// ===
-
-// > foo
-// > bar
-const DEFAULT_MARKDOWN = `
-**foo bar**
-
-![](https://scontent-hkg4-1.xx.fbcdn.net/v/t39.30808-1/359813520_663290345840957_4422358330943057609_n.jpg?stp=c60.0.200.200a_dst-jpg_p200x200&_nc_cat=103&ccb=1-7&_nc_sid=754033&_nc_ohc=l1TpRjLxBtIAX-doSiD&_nc_ht=scontent-hkg4-1.xx&oh=00_AfDz75TdS_dEflQ8qypAGQYpWMdd47201mBKyCrgS0hElQ&oe=650A344D)
-
-- [ ] foo bar
-`;
-
-Muya.use(EmojiPicker);
-Muya.use(FormatPicker);
-// Muya.use(ImagePicker)
-Muya.use(ImageSelector, {
-  unsplashAccessKey: process.env.UNSPLASH_ACCESS_KEY,
-});
-Muya.use(ImageToolBar);
-Muya.use(ImageTransformer);
-Muya.use(CodePicker);
-
-Muya.use(FrontButton);
-Muya.use(FrontMenu);
-Muya.use(TableColumnTools);
-Muya.use(QuickInsert);
-Muya.use(TableDragBar);
-Muya.use(TableTools);
-Muya.use(PreviewTools);
-
-const container = document.querySelector("#editor");
-const undoBtn = document.querySelector("#undo");
-const redoBtn = document.querySelector("#redo");
-const searchInput = document.querySelector("#search");
-const previousBtn = document.querySelector("#previous");
-const nextBtn = document.querySelector("#next");
-const replaceInput = document.querySelector("#replace");
-const singleBtn = document.querySelector("#single");
-const allBtn = document.querySelector("#all");
-const setContentBtn = document.querySelector("#set-content");
-const selectAllBtn = document.querySelector("#select-all");
-
-const imagePathPicker = async () => {
-  return "https://pics.ettoday.net/images/2253/d2253152.jpg";
-};
-
-const imageAction = async () => {
-  return "https://pics.ettoday.net/images/2469/d2469498.jpg";
-};
-
-const muya = new Muya(container, {
-  markdown: DEFAULT_MARKDOWN,
-  disableHtml: true,
-  imagePathPicker,
-  imageAction,
-});
-
-window.muya = muya;
-
-muya.locale(zh);
-
-muya.init();
-
-undoBtn.addEventListener("click", () => {
-  muya.undo();
-});
-
-redoBtn.addEventListener("click", () => {
-  muya.redo();
-});
-
-searchInput.addEventListener("input", (event) => {
-  const value = event.target.value;
-
-  muya.search(value, { isRegexp: true });
-});
-
-previousBtn.addEventListener("click", () => {
-  muya.find("previous");
-});
-
-nextBtn.addEventListener("click", () => {
-  muya.find("next");
-});
-
-singleBtn.addEventListener("click", () => {
-  muya.replace(replaceInput.value, { isSingle: true, isRegexp: true });
-});
-
-allBtn.addEventListener("click", () => {
-  muya.replace(replaceInput.value, { isSingle: false });
-});
-
-selectAllBtn.addEventListener("click", () => {
-  muya.selectAll();
-});
-
-const content = [
-  {
-    name: "paragraph",
-    text: "foo bar",
-  },
-];
-
-setContentBtn.addEventListener("click", () => {
-  muya.setContent(content, true);
-});
-
-muya.on("json-change", (changes) => {
-  // console.log(JSON.stringify(muya.getState(), null, 2))
-  // console.log(muya.getMarkdown())
-  console.log(JSON.stringify(changes, null, 2));
-});
-
-// muya.on('selection-change', changes => {
-//   const { anchor, focus, path } = changes
-//   console.log(JSON.stringify([anchor.offset, focus.offset, path]))
-// })
-
-const md2Html = new MD2Html(DEFAULT_MARKDOWN);
-md2Html.generate({ printOptimization: true }).then((html) => {
-  // console.log('html: ', html)
-});
+> foo
+> bar
+`

@@ -1,0 +1,32 @@
+@supports(-moz-appearance:none) {
+  /* CSS code */
+  html {
+    position: fixed;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#editor {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+
+  font-size: 16px;
+  
+  outline: none;
+}
+
+#search {
+  width: 200px;
+  height: 18px;
+
+  border: 1px slid #eee;
+  border-radius: 4px;
+  outline: none;
+}
