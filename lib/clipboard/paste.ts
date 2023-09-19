@@ -1,12 +1,19 @@
-// @ts-nocheck
-import { normalizePastedHTML, checkCopyType } from "@muya/utils/paste";
+/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
+import { normalizePastedHTML, getCopyTextType } from "@muya/utils/paste";
 import ScrollPage from "@muya/block/scrollPage";
 import { URL_REG } from "@muya/config";
 import HtmlToMarkdown from "@muya/jsonState/htmlToMarkdown";
 import MarkdownToState from "@muya/jsonState/markdownToState";
+import Base from "./base";
+import Cut from "./cut";
+import CodeBlockContent from "@muya/block/content/codeBlockContent";
 
-export default {
-  async pasteHandler(event: ClipboardEvent) {
+interface Paste extends Cut {}
+
+class Paste extends Base {
+  public pasteType: string = "normal"; // `normal` or `pasteAsPlainText`
+
+  async pasteHandler(event: ClipboardEvent): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
 
@@ -22,12 +29,12 @@ export default {
     const { isSelectionInSameBlock, anchorBlock } = this.selection.getSelection();
 
     if (!isSelectionInSameBlock) {
-      this.cutHandler(event);
+      this.cutHandler();
 
       return this.pasteHandler(event);
     }
 
-    if (!anchorBlock) {
+    if (!anchorBlock || !event.clipboardData) {
       return;
     }
 
@@ -41,12 +48,12 @@ export default {
 
     // Remove crap from HTML such as meta data and styles.
     html = await normalizePastedHTML(html);
-    const copyType = checkCopyType(html, text, this.pasteType);
+    const copyType = getCopyTextType(html, text, this.pasteType);
 
-    const { start, end } = anchorBlock.getCursor();
+    const { start, end } = anchorBlock.getCursor()!;
     const { text: content } = anchorBlock;
-    let wraperBlock = anchorBlock.getAnchor();
-    const originWraperBlock = wraperBlock;
+    let wrapperBlock = anchorBlock.getAnchor();
+    const originWrapperBlock = wrapperBlock;
 
     if (/html|text/.test(copyType)) {
       let markdown =
@@ -74,16 +81,16 @@ export default {
 
         for (const state of states) {
           const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
-          wraperBlock.parent.insertAfter(newBlock, wraperBlock);
-          wraperBlock = newBlock;
+          wrapperBlock.parent.insertAfter(newBlock, wrapperBlock);
+          wrapperBlock = newBlock;
         }
 
         // Remove empty paragraph when paste.
-        if (originWraperBlock.blockName === 'paragraph' && originWraperBlock.getState().text === "") {
-          originWraperBlock.remove();
+        if (originWrapperBlock.blockName === 'paragraph' && originWrapperBlock.getState().text === "") {
+          originWrapperBlock.remove();
         }
 
-        const cursorBlock = wraperBlock.firstContentInDescendant();
+        const cursorBlock = wrapperBlock.firstContentInDescendant();
         const offset = cursorBlock.text.length;
         cursorBlock.setCursor(offset, offset, true);
       } else {
@@ -101,12 +108,13 @@ export default {
         anchorBlock.setCursor(offset, offset, true);
         // Update html preview if the out container is `html-block`
         if (
+          anchorBlock instanceof CodeBlockContent &&
           anchorBlock.outContainer &&
           /html-block|math-block|diagram/.test(
             anchorBlock.outContainer.blockName
           )
         ) {
-          anchorBlock.outContainer.attachments.head.update(anchorBlock.text);
+          (anchorBlock.outContainer.attachments.head as any).update(anchorBlock.text);
         }
       }
     } else {
@@ -119,10 +127,12 @@ export default {
         text,
       };
       const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
-      wraperBlock.parent.insertAfter(newBlock, wraperBlock);
+      wrapperBlock.parent.insertAfter(newBlock, wrapperBlock);
       const offset = text.length;
 
       newBlock.lastContentInDescendant().setCursor(offset, offset, true);
     }
-  },
-};
+  }
+}
+
+export default Paste;

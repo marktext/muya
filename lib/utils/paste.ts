@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { sanitize } from "@muya/utils";
 import { PREVIEW_DOMPURIFY_CONFIG, PARAGRAPH_TYPES } from "@muya/config";
 
@@ -6,7 +5,7 @@ const TIMEOUT = 1500;
 
 export const isOnline = () => navigator.onLine === true;
 
-export const getPageTitle = (url) => {
+export const getPageTitle = async (url: string) => {
   // No need to request the title when it's not url.
   if (!url.startsWith("http")) {
     return "";
@@ -17,52 +16,28 @@ export const getPageTitle = (url) => {
     return "";
   }
 
-  const req = new XMLHttpRequest();
-  let settle;
-  const promise = new Promise((resolve, reject) => {
-    settle = resolve;
-  });
-  const handler = () => {
-    if (req.readyState === XMLHttpRequest.DONE) {
-      if (req.status === 200) {
-        const contentType = req.getResponseHeader("Content-Type");
-        if (/text\/html/.test(contentType)) {
-          const { response } = req;
-          if (typeof response === "string") {
-            const match = response.match(/<title>(.*)<\/title>/);
+  try {
+    const res = await fetch(url, { method: "GET", mode: "cors" });
+    const contentType = res.headers.get("content-type");
 
-            return match && match[1] ? settle(match[1]) : settle("");
-          }
+    if (res.status === 200 && contentType && /text\/html/.test(contentType)) {
+      const response = await res.json();
 
-          return settle("");
-        }
+      if (typeof response === "string") {
+        const match = response.match(/<title>(.*)<\/title>/);
 
-        return settle("");
-      } else {
-        return settle("");
+        return match && match[1] ? match[1] : "";
       }
+
+      return "";
     }
-  };
-
-  const handleError = (e) => {
-    settle("");
-  };
-  req.open("GET", url);
-  req.onreadystatechange = handler;
-  req.onerror = handleError;
-  req.send();
-
-  // Resolve empty string when `TIMEOUT` passed.
-  const timer = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve("");
-    }, TIMEOUT);
-  });
-
-  return Promise.race([promise, timer]);
+    return "";
+  } catch (err) {
+    return "";
+  }
 };
 
-export const normalizePastedHTML = async function (html) {
+export const normalizePastedHTML = async function (html: string) {
   // Only extract the `body.innerHTML` when the `html` is a full HTML Document.
   if (/<body>[\s\S]*<\/body>/.test(html)) {
     const match = /<body>([\s\S]*)<\/body>/.exec(html);
@@ -72,7 +47,11 @@ export const normalizePastedHTML = async function (html) {
   }
 
   // Prevent XSS and sanitize HTML.
-  const sanitizedHtml = sanitize(html, PREVIEW_DOMPURIFY_CONFIG, false);
+  const sanitizedHtml = sanitize(
+    html,
+    PREVIEW_DOMPURIFY_CONFIG,
+    false
+  ) as string;
   const tempWrapper = document.createElement("div");
   tempWrapper.innerHTML = sanitizedHtml;
 
@@ -81,7 +60,7 @@ export const normalizePastedHTML = async function (html) {
 
   for (const table of tables) {
     const row = table.querySelector("tr");
-    if (row.firstElementChild.tagName !== "TH") {
+    if (row && row.firstElementChild?.tagName !== "TH") {
       [...row.children].forEach((cell) => {
         const th = document.createElement("th");
         th.innerHTML = cell.innerHTML;
@@ -107,19 +86,28 @@ export const normalizePastedHTML = async function (html) {
   }
 
   // Prevent it parse into a link if copy a url.
-  const links: Array<HTMLElement> = Array.from(tempWrapper.querySelectorAll("a"));
+  const links: Array<HTMLElement> = Array.from(
+    tempWrapper.querySelectorAll("a")
+  );
 
   for (const link of links) {
     const href = link.getAttribute("href");
     const text = link.textContent;
 
-    if (href === text) {
-      const title = await getPageTitle(href);
+    if (href === text && typeof href === "string") {
+      // Resolve empty string when `TIMEOUT` passed.
+      const timer = new Promise((resolve) => {
+        setTimeout(() => {
+          resolve("");
+        }, TIMEOUT);
+      });
+
+      const title = await Promise.race([getPageTitle(href), timer]);
       if (title) {
         link.textContent = title as string;
       } else {
         const span = document.createElement("span");
-        span.innerHTML = text;
+        span.innerHTML = text as string;
         link.replaceWith(span);
       }
     }
@@ -136,8 +124,12 @@ export const normalizePastedHTML = async function (html) {
  * return html | text | code, if the return value is html, we'll use html as paste data, we'll use text
  * as paste data if the return value is text, we'll create a html code block if the result is code.
  */
-export const checkCopyType = function (html, text, pasteType) {
-  const getCopyType = (text) => {
+export const getCopyTextType = function (
+  html: string,
+  text: string,
+  pasteType: string
+) {
+  const getTextType = (text: string) => {
     const match =
       /^<([a-zA-Z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-zA-Z\d-]+)>$/.exec(
         text.trim()
@@ -152,8 +144,8 @@ export const checkCopyType = function (html, text, pasteType) {
   };
 
   if (pasteType === "normal") {
-    return html && text ? "html" : getCopyType(text);
+    return html && text ? "html" : getTextType(text);
   } else {
-    return getCopyType(text);
+    return getTextType(text);
   }
 };

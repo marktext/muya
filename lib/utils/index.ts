@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import runSanitize, { Config } from "./dompurify";
 import Selection from "@muya/selection";
 import { EVENT_KEYS } from "@muya/config";
@@ -10,11 +11,12 @@ type Union = {
   active?: boolean;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Constructor = new (...args: any[]) => {};
 
 type Defer = {
   resolve: (value: unknown) => void;
-  reject: (reason?: any) => void;
+  reject: (reason?: unknown) => void;
   promise: Promise<unknown>;
 };
 
@@ -97,7 +99,9 @@ export const throttle = (func: any, wait = 50) => {
     const now = Date.now();
     const remaining = wait - (now - previous);
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     context = this;
+    // eslint-disable-next-line prefer-rest-params
     args = arguments;
     if (remaining <= 0 || remaining > wait) {
       if (timeout) {
@@ -176,7 +180,9 @@ export const wordCount = (markdown: string) => {
  * [genUpper2LowerKeyHash generate constants map hash, the value is lowercase of the key,
  * also translate `_` to `-`]
  */
-export const genUpper2LowerKeyHash = (keys: Array<string>): Record<string, string> => {
+export const genUpper2LowerKeyHash = (
+  keys: Array<string>
+): Record<string, string> => {
   return keys.reduce((acc, key) => {
     const value = key.toLowerCase().replace(/_/g, "-");
 
@@ -187,25 +193,19 @@ export const genUpper2LowerKeyHash = (keys: Array<string>): Record<string, strin
 /**
  * generate constants map, the value is the key.
  */
-export const generateKeyHash = (keys: Array<string>): Record<string, string> => {
+export const generateKeyHash = (
+  keys: Array<string>
+): Record<string, string> => {
   return keys.reduce((acc, key) => {
     return Object.assign(acc, { [key]: key });
   }, {});
 };
 
-export const mixins = (constructor: Constructor, ...objects: Array<Record<string, any>>) => {
-  for (const object of objects) {
-    Object.keys(object).forEach((name) => {
-      Object.defineProperty(
-        constructor.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(object, name) || Object.create(null)
-      );
-    });
-  }
-};
-
-export const sanitize = (html: string, purifyOptions: Config, disableHtml: boolean) => {
+export const sanitize = (
+  html: string,
+  purifyOptions: Config,
+  disableHtml: boolean
+) => {
   if (disableHtml) {
     return runSanitize(escapeHTML(html), purifyOptions);
   } else {
@@ -215,9 +215,9 @@ export const sanitize = (html: string, purifyOptions: Config, disableHtml: boole
 
 /**
  * TODO: @jocs remove in the future, because it's not used.
- * @param ele 
- * @param id 
- * @returns 
+ * @param ele
+ * @param id
+ * @returns
  */
 export const getParagraphReference = (ele: HTMLElement, id: string) => {
   const { x, y, left, top, bottom, height } = ele.getBoundingClientRect();
@@ -288,7 +288,11 @@ export const getCursorReference = () => {
 };
 
 // If the next block is header, put cursor after the `#{1,6} *`
-export const adjustOffset = <T extends Content>(offset: number, block: T, event: KeyboardEvent) => {
+export const adjustOffset = <T extends Content>(
+  offset: number,
+  block: T,
+  event: KeyboardEvent
+) => {
   if (
     block.parent?.blockName === "atx-heading" &&
     event.key === EVENT_KEYS.ArrowDown
@@ -321,3 +325,37 @@ export const getDefer = () => {
 
   return defer;
 };
+
+export const mixins = (
+  constructor: Constructor,
+  ...objects: Array<Record<string, any>>
+) => {
+  for (const object of objects) {
+    Object.keys(object).forEach((name) => {
+      Object.defineProperty(
+        constructor.prototype,
+        name,
+        Object.getOwnPropertyDescriptor(object, name) || Object.create(null)
+      );
+    });
+  }
+};
+
+function applyMixins(derivedCtor: Constructor, constructors: Constructor[]) {
+  constructors.forEach((baseCtor) => {
+    Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
+      Object.defineProperty(
+        derivedCtor.prototype,
+        name,
+        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
+          Object.create(null)
+      );
+    });
+  });
+}
+
+export const mixin =
+  (...constructors: Constructor[]) =>
+  (derivedCtor: Constructor) => {
+    applyMixins(derivedCtor, constructors);
+  };

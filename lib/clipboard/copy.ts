@@ -1,8 +1,12 @@
-// @ts-nocheck
 import marked from "@muya/utils/marked";
 import StateToMarkdown from "../jsonState/stateToMarkdown";
+import Base from "./base";
+import Parent from "@muya/block/base/parent";
 
-export default {
+class Copy extends Base {
+  public copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
+  public copyInfo: string = "";
+
   getClipboardData() {
     const { copyType, copyInfo } = this;
     if (copyType === "copyCodeContent") {
@@ -64,26 +68,26 @@ export default {
         ? focus.offset
         : anchor.offset;
 
-    const getPartialState = (position) => {
+    const getPartialState = (position: "start" | "end") => {
       const outBlock = position === "start" ? startOutBlock : endOutBlock;
       const block = position === "start" ? startBlock : endBlock;
       // Handle anchor and focus in different blocks
       if (
-        /block-qupte|code-block|html-block|table|math-block|frontmatter|diagram/.test(
-          outBlock.blockName
+        /block-quote|code-block|html-block|table|math-block|frontmatter|diagram/.test(
+          outBlock!.blockName
         )
       ) {
-        copyState.push(outBlock.getState());
-      } else if (/bullet-list|order-list|task-list/.test(outBlock.blockName)) {
+        copyState.push((outBlock as Parent).getState());
+      } else if (/bullet-list|order-list|task-list/.test(outBlock!.blockName)) {
         const listItemBlockName =
-          outBlock.blockName === "task-list" ? "task-list-item" : "list-item";
+          outBlock!.blockName === "task-list" ? "task-list-item" : "list-item";
         const listItem = block.farthestBlock(listItemBlockName);
-        const offset = outBlock.offset(listItem);
-        const { name, meta, children } = outBlock.getState();
+        const offset = (outBlock as Parent).offset(listItem);
+        const { name, meta, children } = (outBlock as any).getState();
         copyState.push({
           name,
           meta,
-          children: children.filter((_, index) =>
+          children: children.filter((_: unknown, index: number) =>
             position === "start" ? index >= offset : index <= offset
           ),
         });
@@ -104,36 +108,36 @@ export default {
 
     if (anchorOutMostBlock === focusOutMostBlock) {
       // Handle anchor and focus in same list\quote block
-      if (/block-quote|table/.test(anchorOutMostBlock.blockName)) {
-        copyState.push(anchorOutMostBlock.getState());
+      if (/block-quote|table/.test(anchorOutMostBlock!.blockName)) {
+        copyState.push((anchorOutMostBlock as Parent).getState());
       } else {
         const listItemBlockName =
-          anchorOutMostBlock.blockName === "task-list"
+          anchorOutMostBlock!.blockName === "task-list"
             ? "task-list-item"
             : "list-item";
         const anchorFarthestListItem =
           anchorBlock.farthestBlock(listItemBlockName);
         const focusFarthestListItem =
           focusBlock.farthestBlock(listItemBlockName);
-        const anchorOffset = anchorOutMostBlock.offset(anchorFarthestListItem);
-        const focusOffset = anchorOutMostBlock.offset(focusFarthestListItem);
+        const anchorOffset = (anchorOutMostBlock as Parent).offset(anchorFarthestListItem);
+        const focusOffset = (anchorOutMostBlock as Parent).offset(focusFarthestListItem);
         const minOffset = Math.min(anchorOffset, focusOffset);
         const maxOffset = Math.max(anchorOffset, focusOffset);
-        const { name, meta, children } = anchorOutMostBlock.getState();
+        const { name, meta, children } = (anchorOutMostBlock as any).getState();
         copyState.push({
           name,
           meta,
           children: children.filter(
-            (_, index) => index >= minOffset && index <= maxOffset
+            (_: unknown, index: number) => index >= minOffset && index <= maxOffset
           ),
         });
       }
     } else {
       getPartialState("start");
       // Get State between the start outmost block and the end outmost block.
-      let node = startOutBlock.next;
+      let node = startOutBlock?.next;
       while (node && node !== endOutBlock) {
-        copyState.push(node.getState());
+        copyState.push((node as Parent).getState());
         node = node.next;
       }
       getPartialState("end");
@@ -145,12 +149,16 @@ export default {
     html = marked(text, { frontMatter });
 
     return { html, text };
-  },
+  }
 
-  copyHandler(event) {
-    const { html, text } = this.getClipboardData(event);
+  copyHandler(event: ClipboardEvent): void {
+    const { html, text } = this.getClipboardData();
 
     const { copyType } = this;
+
+    if (!event.clipboardData) {
+      return;
+    }
 
     switch (copyType) {
       case "normal": {
@@ -177,5 +185,7 @@ export default {
         break;
       }
     }
-  },
-};
+  }
+}
+
+export default Copy;

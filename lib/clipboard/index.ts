@@ -1,31 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import { mixins } from "@muya/utils";
-import copy from "@muya/clipboard/copy";
-import cut from "@muya/clipboard/cut";
-import paste from "@muya/clipboard/paste";
+import { mixin } from "@muya/utils";
 import Muya from "@muya/index";
-
-type Copy = typeof copy;
-type Cut = typeof cut;
-type Paste = typeof paste;
+import Base from "./base";
+import Copy from "./copy";
+import Cut from "./cut";
+import Paste from "./paste";
 
 interface Clipboard extends Copy, Cut, Paste {}
 
-class Clipboard {
-  private copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml`
-  private pasteType: string = "normal"; // `normal` or `pasteAsPlainText`
-  private copyInfo: string | null = null;
+@mixin(Copy, Cut, Paste)
+class Clipboard extends Base {
+  public copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
+  public pasteType: string = "normal"; // `normal` or `pasteAsPlainText`
+  public copyInfo: string = "";
 
-  get selection() {
-    return this.muya.editor.selection;
-  }
+  static create(muya: Muya) {
+    const clipboard = new Clipboard(muya);
+    clipboard.listen();
 
-  get scrollPage() {
-    return this.muya.editor.scrollPage;
-  }
-
-  constructor(public muya: Muya) {
-    this.listen();
+    return clipboard;
   }
 
   listen() {
@@ -76,10 +69,18 @@ class Clipboard {
       this.pasteHandler(event);
     };
 
-    eventCenter.attachDOMEvent(domNode, "copy", copyCutHandler as EventListener);
+    eventCenter.attachDOMEvent(
+      domNode,
+      "copy",
+      copyCutHandler as EventListener
+    );
     eventCenter.attachDOMEvent(domNode, "cut", copyCutHandler as EventListener);
     eventCenter.attachDOMEvent(domNode, "paste", pasteHandler as EventListener);
-    eventCenter.attachDOMEvent(domNode, "keydown", keydownHandler as EventListener);
+    eventCenter.attachDOMEvent(
+      domNode,
+      "keydown",
+      keydownHandler as EventListener
+    );
   }
 
   copyAsMarkdown() {
@@ -107,7 +108,5 @@ class Clipboard {
     this.copyType = "normal";
   }
 }
-
-mixins(Clipboard, copy, cut, paste);
 
 export default Clipboard;

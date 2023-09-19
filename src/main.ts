@@ -1,4 +1,4 @@
-import Muya from "../dist/index";
+import Muya from "../lib/index";
 import {
   EmojiPicker,
   FormatPicker,
@@ -13,13 +13,13 @@ import {
   PreviewTools,
   FrontButton,
   FrontMenu,
-} from "../dist/ui/index";
-import zh from "../dist/locales/zh";
-import MD2Html from "../dist/jsonState/markdownToHtml";
+} from "../lib/ui/index";
+import zh from "../lib/locales/zh";
+import MD2Html from "../lib/jsonState/markdownToHtml";
 import { DEFAULT_STATE, DEFAULT_MARKDOWN } from "./mock";
 import { TState } from "../types/state";
 
-import "../dist/assets/style.css";
+// import "../lib/assets/style.css";
 
 Muya.use(EmojiPicker);
 Muya.use(FormatPicker);
@@ -114,10 +114,10 @@ setContentBtn.addEventListener("click", () => {
   muya.setContent(content as TState[]);
 });
 
-muya.on("json-change", (changes) => {
+muya.on("json-change", (_changes) => {
   // console.log(JSON.stringify(muya.getState(), null, 2))
   // console.log(muya.getMarkdown())
-  console.log(JSON.stringify(changes, null, 2));
+  // console.log(JSON.stringify(changes, null, 2));
 });
 
 // muya.on('selection-change', changes => {

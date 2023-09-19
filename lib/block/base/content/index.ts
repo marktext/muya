@@ -81,6 +81,10 @@ abstract class Content extends TreeNode {
     this.isComposed = false;
   }
 
+  getAnchor(): Parent {
+    // Do nothing.
+  }
+
   clickHandler(event): void {
     // Do nothing.
   }
