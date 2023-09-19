@@ -5,7 +5,7 @@ import { deepClone } from "@muya/utils";
 import { IBlockQuoteState, IParagraphState } from "../../types/state";
 
 export default {
-  cutHandler(event: ClipboardEvent) {
+  cutHandler() {
     const {
       isSelectionInSameBlock,
       anchor,

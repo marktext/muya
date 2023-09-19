@@ -1,3 +1,4 @@
+/* eslint-disable no-fallthrough */
 /**
  * Hi contributors!
  *
@@ -38,29 +39,24 @@ const escapeText = (str: string) => {
 
 export interface IExportMarkdownOptions {
   listIndentation: number | string;
-  isGitlabCompatibilityEnabled: boolean;
 }
 
 export default class ExportMarkdown {
   private listType: Array<any>;
   private isLooseParentList: boolean;
-  private isGitlabCompatibilityEnabled: boolean;
   private listIndentation: string;
   private listIndentationCount: number;
 
   constructor(
     {
       listIndentation,
-      isGitlabCompatibilityEnabled,
     }: IExportMarkdownOptions = {
       listIndentation: 1,
-      isGitlabCompatibilityEnabled: false,
     }
   ) {
     this.listType = []; // 'ul' or 'ol'
     // helper to translate the first tight item in a nested list
     this.isLooseParentList = true;
-    this.isGitlabCompatibilityEnabled = !!isGitlabCompatibilityEnabled;
 
     // set and validate settings
     this.listIndentation = "number";

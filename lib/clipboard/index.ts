@@ -1,10 +1,8 @@
-// @ts-nocheck
+/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
 import { mixins } from "@muya/utils";
 import copy from "@muya/clipboard/copy";
 import cut from "@muya/clipboard/cut";
 import paste from "@muya/clipboard/paste";
-import { BLOCK_DOM_PROPERTY } from "@muya/config";
-import { findContentDOM } from "@muya/selection/dom";
 import Muya from "@muya/index";
 
 type Copy = typeof copy;
@@ -14,12 +12,9 @@ type Paste = typeof paste;
 interface Clipboard extends Copy, Cut, Paste {}
 
 class Clipboard {
-  public copyHandler: (event: ClipboardEvent) => void;
-  public cutHandler: (event: ClipboardEvent) => void;
-  public pasteHandler: (event: ClipboardEvent) => Promise<void>;
   private copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml`
   private pasteType: string = "normal"; // `normal` or `pasteAsPlainText`
-  private copyInfo: string = null;
+  private copyInfo: string | null = null;
 
   get selection() {
     return this.muya.editor.selection;
@@ -36,7 +31,7 @@ class Clipboard {
   listen() {
     const { domNode, eventCenter } = this.muya;
 
-    const copyCutHandler = (event) => {
+    const copyCutHandler = (event: ClipboardEvent): void => {
       event.preventDefault();
       event.stopPropagation();
 
@@ -45,11 +40,11 @@ class Clipboard {
       this.copyHandler(event);
 
       if (isCut) {
-        this.cutHandler(event);
+        this.cutHandler();
       }
     };
 
-    const keydownHandler = (event) => {
+    const keydownHandler = (event: KeyboardEvent): void => {
       const { key, metaKey } = event;
 
       const { isSelectionInSameBlock } = this.selection.getSelection();
@@ -74,26 +69,17 @@ class Clipboard {
         event.preventDefault();
       }
 
-      this.cutHandler(event);
+      this.cutHandler();
     };
 
-    const pasteHandler = (event) => {
+    const pasteHandler = (event: ClipboardEvent): void => {
       this.pasteHandler(event);
     };
 
-    eventCenter.attachDOMEvent(domNode, "copy", copyCutHandler);
-    eventCenter.attachDOMEvent(domNode, "cut", copyCutHandler);
-    eventCenter.attachDOMEvent(domNode, "paste", pasteHandler);
-    eventCenter.attachDOMEvent(domNode, "keydown", keydownHandler);
-  }
-
-  getTargetBlock(event) {
-    const { target } = event;
-    const domNode = findContentDOM(target);
-
-    return domNode && domNode[BLOCK_DOM_PROPERTY].isContent()
-      ? domNode[BLOCK_DOM_PROPERTY]
-      : null;
+    eventCenter.attachDOMEvent(domNode, "copy", copyCutHandler as EventListener);
+    eventCenter.attachDOMEvent(domNode, "cut", copyCutHandler as EventListener);
+    eventCenter.attachDOMEvent(domNode, "paste", pasteHandler as EventListener);
+    eventCenter.attachDOMEvent(domNode, "keydown", keydownHandler as EventListener);
   }
 
   copyAsMarkdown() {
@@ -114,9 +100,9 @@ class Clipboard {
     this.pasteType = "normal";
   }
 
-  copy(type, info) {
-    this.copyInfo = info;
+  copy(type: string, info: string) {
     this.copyType = type;
+    this.copyInfo = info;
     document.execCommand("copy");
     this.copyType = "normal";
   }
