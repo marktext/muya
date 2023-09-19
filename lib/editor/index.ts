@@ -50,7 +50,7 @@ class Editor {
     this.inlineRenderer = new InlineRenderer(muya);
     this.selection = new Selection(muya);
     this.searchModule = new Search(muya);
-    this.clipboard = new Clipboard(muya);
+    this.clipboard = Clipboard.create(muya);
     this.history = new History(muya);
     this._activeContentBlock = null;
   }

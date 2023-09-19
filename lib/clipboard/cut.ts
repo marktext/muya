@@ -3,8 +3,9 @@ import ScrollPage from "@muya/block";
 import emptyStates from "@muya/config/emptyStates";
 import { deepClone } from "@muya/utils";
 import { IBlockQuoteState, IParagraphState } from "../../types/state";
+import Base from "./base";
 
-export default {
+class Cut extends Base {
   cutHandler() {
     const {
       isSelectionInSameBlock,
@@ -45,7 +46,7 @@ export default {
     let cursorBlock;
     let cursorOffset;
 
-    const removePartial = (position) => {
+    const removePartial = (position: "start" | "end") => {
       const outBlock = position === "start" ? startOutBlock : endOutBlock;
       const block = position === "start" ? startBlock : endBlock;
       // Handle anchor and focus in different blocks
@@ -203,5 +204,7 @@ export default {
       cursorBlock = newParagraphBlock.firstContentInDescendant();
       cursorBlock.setCursor(0, 0, true);
     }
-  },
-};
+  }
+}
+
+export default Cut;
