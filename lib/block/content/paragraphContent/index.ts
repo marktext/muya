@@ -95,6 +95,7 @@ class ParagraphContent extends Format {
     } else {
       domNode.removeAttribute("placeholder");
     }
+
     eventCenter.emit("muya-quick-insert", {
       reference: domNode,
       block: this,

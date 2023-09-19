@@ -1,10 +1,11 @@
 // @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import containerQueryBlock from "@muya/block/mixins/containerQueryBlock";
+import { mixin } from "@muya/utils";
+import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import { ITableRowState } from "../../../../types/state";
 
+@mixin(ContainerQueryBlock)
 class TableRow extends Parent {
   static blockName = "table.row";
 
@@ -44,7 +45,5 @@ class TableRow extends Parent {
     return state;
   }
 }
-
-mixins(TableRow, containerQueryBlock);
 
 export default TableRow;

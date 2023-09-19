@@ -1,6 +1,13 @@
-// @ts-nocheck
-export default {
-  queryBlock(path) {
+/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
+import type { Path } from "ot-json1";
+import Parent from "../base/parent";
+import Content from "../base/content";
+
+interface ContainerQueryBlock {
+  find(p: number): Parent | Content;
+}
+class ContainerQueryBlock {
+  queryBlock(path: [string, ...Path]) {
     if (/children|meta|align|type|lang/.test(path[0])) {
       path.shift();
     }
@@ -9,9 +16,11 @@ export default {
       return this;
     }
 
-    const p = path.shift();
+    const p = path.shift() as number;
     const block = this.find(p);
 
-    return block && path.length ? block.queryBlock(path) : block;
-  },
-};
+    return block && path.length ? (block as any).queryBlock(path) : block;
+  }
+}
+
+export default ContainerQueryBlock;

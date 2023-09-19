@@ -1,10 +1,11 @@
 // @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import containerQueryBlock from "@muya/block/mixins/containerQueryBlock";
+import { mixin } from "@muya/utils";
+import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import { ITaskListMeta, ITaskListState } from "../../../../types/state";
 
+@mixin(ContainerQueryBlock)
 class TaskList extends Parent {
   public meta: ITaskListMeta;
 
@@ -81,7 +82,5 @@ class TaskList extends Parent {
     return state;
   }
 }
-
-mixins(TaskList, containerQueryBlock);
 
 export default TaskList;

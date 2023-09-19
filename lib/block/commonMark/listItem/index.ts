@@ -1,14 +1,15 @@
-// @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import containerQueryBlock from "@muya/block/mixins/containerQueryBlock";
+import { mixin } from "@muya/utils";
+import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import { IListItemState } from "../../../../types/state";
+import Muya from "@muya/index";
 
+@mixin(ContainerQueryBlock)
 class ListItem extends Parent {
   static blockName = "list-item";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IListItemState) {
     const listItem = new ListItem(muya);
 
     listItem.append(
@@ -21,13 +22,13 @@ class ListItem extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset, "children"];
   }
 
-  constructor(muya) {
+  constructor(muya: Muya) {
     super(muya);
     this.tagName = "li";
     this.classList = ["mu-list-item"];
@@ -37,13 +38,11 @@ class ListItem extends Parent {
   getState(): IListItemState {
     const state: IListItemState = {
       name: "list-item",
-      children: this.children.map((child) => child.getState()),
+      children: this.children.map((child) => (child as Parent).getState()),
     };
 
     return state;
   }
 }
-
-mixins(ListItem, containerQueryBlock);
 
 export default ListItem;
