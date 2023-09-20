@@ -4,19 +4,22 @@ import { tokenizer } from "@muya/inlineRenderer/lexer";
 import logger from "@muya/utils/logger";
 import { beginRules } from "@muya/inlineRenderer/rules";
 import Muya from "@muya/index";
+import Format from "@muya/block/base/format";
+import ParagraphContent from "@muya/block/content/paragraphContent";
+import { TState, IParagraphState, TContainerState } from "../../types/state";
+import { Highlight, Label } from "../../types/inlineRender";
 
-const debug = logger("inlinerenderer:");
+const debug = logger("inlineRenderer:");
 
 class InlineRenderer {
-  public labels: Map<any, any> = new Map();
+  public labels: Label = new Map();
   public renderer: Renderer;
 
   constructor(public muya: Muya) {
-    this.labels = new Map();
     this.renderer = new Renderer(muya, this);
   }
 
-  tokenizer(block, highlights) {
+  tokenizer(block: Format, highlights: Highlight[]) {
     const { options } = this.muya;
     const { text } = block;
     const { labels } = this;
@@ -32,11 +35,11 @@ class InlineRenderer {
     return tokenizer(text, { hasBeginRules, labels, options, highlights });
   }
 
-  patch(block, cursor?, highlights = []) {
+  patch(block: Format, cursor?, highlights: Highlight[] = []) {
     this.collectReferenceDefinitions();
     const { domNode } = block;
     if (block.isParent()) {
-      (debug as any).error("Patch can only handle content block");
+      debug.error("Patch can only handle content block");
     }
 
     const tokens = this.tokenizer(block, highlights);
@@ -45,14 +48,14 @@ class InlineRenderer {
       block,
       cursor && cursor.block === block ? cursor : {}
     );
-    domNode.innerHTML = html;
+    domNode!.innerHTML = html;
   }
 
   collectReferenceDefinitions() {
     const state = this.muya.editor.jsonState.getState();
     const labels = new Map();
 
-    const travel = (sts) => {
+    const travel = (sts: TState[]) => {
       if (Array.isArray(sts) && sts.length) {
         for (const st of sts) {
           if (st.name === "paragraph") {
@@ -60,8 +63,8 @@ class InlineRenderer {
             if (label && info) {
               labels.set(label, info);
             }
-          } else if (st.children) {
-            travel(st.children);
+          } else if ((st as TContainerState).children) {
+            travel((st as TContainerState).children);
           }
         }
       }
@@ -72,8 +75,8 @@ class InlineRenderer {
     this.labels = labels;
   }
 
-  getLabelInfo(block) {
-    const { text } = block;
+  getLabelInfo(blockOrState: ParagraphContent | IParagraphState) {
+    const { text } = blockOrState;
     const tokens = beginRules.reference_definition.exec(text);
     let label = null;
     let info = null;

@@ -3,12 +3,7 @@ import { matchString, buildRegexValue } from "@muya/utils/search";
 import Muya from "@muya/index";
 import { IMatch } from "../../types/search";
 import Content from "@muya/block/base/content";
-
-type Highlight = {
-  start: number;
-  end: number;
-  active: boolean;
-};
+import { Highlight } from "../../types/inlineRender";
 
 class Search {
   public value: string = "";
@@ -117,7 +112,8 @@ class Search {
    * @param {string} action : previous or next.
    */
   find(action: "previous" | "next"): this {
-    let { matches, index } = this;
+    const { matches } = this;
+    let { index } = this;
     const len = matches.length;
 
     if (!len) {
