@@ -416,7 +416,7 @@ class Selection {
       return;
     }
 
-    // Handle click imagewrapper when it's empty or image load failed.
+    // Handle click imageWrapper when it's empty or image load failed.
     if (
       imageWrapper.classList.contains(CLASS_NAMES.MU_EMPTY_IMAGE) ||
       imageWrapper.classList.contains(CLASS_NAMES.MU_IMAGE_FAIL)
@@ -616,7 +616,7 @@ class Selection {
       return 
     }
     
-    const anchorPargraph = anchorBlock
+    const anchorParagraph = anchorBlock
       ? anchorBlock.domNode
       : scrollPage.queryBlock(anchorPath);
     const focusParagraph = focusBlock
@@ -701,7 +701,7 @@ class Selection {
     };
 
     const { node: anchorNode, offset: anchorOffset } = getNodeAndOffset(
-      anchorPargraph,
+      anchorParagraph,
       anchor.offset
     );
     const { node: focusNode, offset: focusOffset } = getNodeAndOffset(

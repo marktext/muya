@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [20.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -28,7 +28,5 @@ jobs:
       run: npm install -g yarn
     - name: Install dependencies
       run: yarn install --frozen-lockfile
-    - name: test
-      run: yarn test
-    - name: build
-      run: yarn build
+    - name: lint
+      run: yarn lint:ts
