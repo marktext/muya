@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Renderer from "@muya/inlineRenderer/renderer";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
 import logger from "@muya/utils/logger";
@@ -7,12 +6,13 @@ import Muya from "@muya/index";
 import Format from "@muya/block/base/format";
 import ParagraphContent from "@muya/block/content/paragraphContent";
 import { TState, IParagraphState, TContainerState } from "../jsonState/types";
-import type { Highlight, Label } from "./types";
+import type { Highlight, Labels } from "./types";
+import type { Cursor } from "../selection/types";
 
 const debug = logger("inlineRenderer:");
 
 class InlineRenderer {
-  public labels: Label = new Map();
+  public labels: Labels = new Map();
   public renderer: Renderer;
 
   constructor(public muya: Muya) {
@@ -35,7 +35,7 @@ class InlineRenderer {
     return tokenizer(text, { hasBeginRules, labels, options, highlights });
   }
 
-  patch(block: Format, cursor?, highlights: Highlight[] = []) {
+  patch(block: Format, cursor?: Cursor, highlights: Highlight[] = []) {
     this.collectReferenceDefinitions();
     const { domNode } = block;
     if (block.isParent()) {

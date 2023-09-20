@@ -8,7 +8,7 @@ import {
 import { CLASS_NAMES, BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
 import ContentBlock from "@muya/block/base/content";
-import { NodeOffset, ICursor, ISelection } from "./types";
+import { NodeOffset, Cursor, ISelection } from "./types";
 import { getImageInfo } from "@muya/utils/image";
 
 class Selection {
@@ -154,7 +154,7 @@ class Selection {
       anchorPath,
       focusBlock,
       focusPath,
-    }: ICursor = {}
+    }: Cursor = {}
   ) {
     this.anchorPath = anchorPath;
     this.anchorBlock = anchorBlock;
@@ -451,7 +451,7 @@ class Selection {
       isSelectionInSameBlock &&
       Math.abs(focus.offset - anchor.offset) < anchorBlock.text.length
     ) {
-      const cursor: ICursor = {
+      const cursor: Cursor = {
         anchor: { offset: 0 },
         focus: { offset: anchorBlock.text.length },
         block: anchorBlock,
@@ -465,7 +465,7 @@ class Selection {
     const aBlock: any = scrollPage.firstContentInDescendant();
     const fBlock: any = scrollPage.lastContentInDescendant();
 
-    const cursor: ICursor = {
+    const cursor: Cursor = {
       anchor: { offset: 0 },
       focus: { offset: fBlock.text.length },
       anchorBlock: aBlock,
@@ -545,7 +545,7 @@ class Selection {
     anchorPath,
     focusBlock,
     focusPath,
-  }: ICursor) {
+  }: Cursor) {
     this.anchor = anchor ?? start;
     this.focus = focus ?? end;
     this.anchorBlock = anchorBlock ?? block;

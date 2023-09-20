@@ -8,6 +8,13 @@ import {
   correctUrl,
 } from "./utils";
 import type { BeginRules, InlineRules } from "./rules";
+import type {
+  Labels,
+  TokenizerOptions,
+  TokenizerFacOptions,
+  Token,
+  StrongEmToken,
+} from "./types";
 
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html
@@ -20,11 +27,11 @@ const tokenizerFac = (
   inlineRules: InlineRules,
   pos = 0,
   top: boolean,
-  labels,
-  options
+  labels: Labels,
+  options: TokenizerFacOptions
 ) => {
   const originSrc = src;
-  const tokens = [];
+  const tokens: Token[] = [];
   let pending = "";
   let pendingStartPos = pos;
   const { superSubScript, footnote } = options;
@@ -32,6 +39,7 @@ const tokenizerFac = (
     if (pending) {
       tokens.push({
         type: "text",
+        parent: tokens,
         raw: pending,
         content: pending,
         range: {
@@ -46,9 +54,14 @@ const tokenizerFac = (
   };
 
   if (beginRules && pos === 0) {
-    const beginRuleList = ["header", "hr", "code_fence", "multiple_math"];
+    const beginRuleKeys = [
+      "header",
+      "hr",
+      "code_fence",
+      "multiple_math",
+    ] as const;
 
-    for (const ruleName of beginRuleList) {
+    for (const ruleName of beginRuleKeys) {
       const to = beginRules[ruleName].exec(src);
 
       if (to) {
@@ -73,7 +86,7 @@ const tokenizerFac = (
     const def = beginRules.reference_definition.exec(src);
     if (def && isLengthEven(def[3])) {
       const token = {
-        type: "reference_definition",
+        type: "reference_definition" as const,
         parent: tokens,
         leftBracket: def[1],
         label: def[2],
@@ -82,7 +95,7 @@ const tokenizerFac = (
         leftHrefMarker: def[5] || "",
         href: def[6],
         rightHrefMarker: def[7] || "",
-        leftTitlespace: def[8],
+        leftTitleSpace: def[8],
         titleMarker: def[9] || "",
         title: def[10] || "",
         rightTitleSpace: def[11] || "",
@@ -121,7 +134,7 @@ const tokenizerFac = (
       continue;
     }
     // strong | em
-    const emRules = ["strong", "em"];
+    const emRules = ["strong", "em"] as const;
     let inChunk;
 
     for (const rule of emRules) {
@@ -168,7 +181,7 @@ const tokenizerFac = (
     if (inChunk) continue;
 
     // emoji | inline_code | del | inline_math
-    const chunks = ["inline_code", "del", "emoji", "inline_math"];
+    const chunks = ["inline_code", "del", "emoji", "inline_math"] as const;
 
     for (const rule of chunks) {
       const to = inlineRules[rule].exec(src);
@@ -616,13 +629,16 @@ const tokenizerFac = (
 };
 
 export const tokenizer = (
-  src,
+  src: string,
   {
     highlights = [],
     hasBeginRules = true,
     labels = new Map(),
-    options = {},
-  } = {}
+    options = {
+      superSubScript: false,
+      footnote: false,
+    },
+  }: TokenizerOptions = {} as TokenizerOptions
 ) => {
   const tokens = tokenizerFac(
     src,
@@ -634,7 +650,7 @@ export const tokenizer = (
     options
   );
 
-  const postTokenizer = (tokens) => {
+  const postTokenizer = (tokens: Token[]) => {
     for (const token of tokens) {
       for (const light of highlights) {
         const highlight = union(token.range, light);
@@ -647,8 +663,9 @@ export const tokenizer = (
         }
       }
 
-      if (token.children && Array.isArray(token.children)) {
-        postTokenizer(token.children);
+      // TODO: @JOCS, Use as StrongEmToken just to eliminate the typescript error, any better solution?
+      if ((token as StrongEmToken).children && Array.isArray((token as StrongEmToken).children)) {
+        postTokenizer((token as StrongEmToken).children);
       }
     }
   };
@@ -662,7 +679,7 @@ export const tokenizer = (
 
 // transform `tokens` to text ignore the range of token
 // the opposite of tokenizer
-export const generator = (tokens) => {
+export const generator = (tokens: Token[]) => {
   let result = "";
 
   for (const token of tokens) {

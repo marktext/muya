@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { findClosingBracket } from "@muya/utils/marked/utils";
-import { Rule } from "./types";
+import type { Rules } from "./types";
 
 // ASCII PUNCTUATION character
 // export const punctuation = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
@@ -73,7 +72,7 @@ const validWidthAndHeight = (value: string) => {
   return num >= 0 ? num.toString() : "";
 };
 
-export const lowerPriority = (src: string, offset: number, rules: Rule[]) => {
+export const lowerPriority = (src: string, offset: number, rules: Rules) => {
   let i;
   const ignoreIndex: number[] = [];
 
@@ -83,8 +82,8 @@ export const lowerPriority = (src: string, offset: number, rules: Rule[]) => {
     }
     const text = src.substring(i);
 
-    for (const rule of Object.keys(rules)) {
-      const to = rules[rule].exec(text);
+    for (const [, regexp] of Object.entries(rules)) {
+      const to = regexp.exec(text);
       if (to && to[0].length <= offset - i) {
         ignoreIndex.push(i + to[0].length - 1);
       }
@@ -222,7 +221,7 @@ export const validateEmphasize = (
   offset: number,
   marker: string,
   pending: string,
-  rules: Rule[]
+  rules: Rules
 ) => {
   if (!canOpenEmphasis(src, marker, pending)) {
     return false;
