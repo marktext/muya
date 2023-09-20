@@ -4,7 +4,7 @@ import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
 import Parent from "./parent";
 import Content from "./content";
-import type { Attributes, Datasets } from "../../utils/dom";
+import type { Attributes, Datasets } from "../../utils/types";
 import type { TState } from "../../jsonState/types";
 
 interface IConstructor<T> {

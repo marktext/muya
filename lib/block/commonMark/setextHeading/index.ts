@@ -1,6 +1,6 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixin } from "@muya/utils";
+import { mixins } from "@muya/utils";
 import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
 import { ISetextHeadingState } from "../../../jsonState/types";
 import SetextHeadingContent from "@muya/block/content/setextHeadingContent";
@@ -11,7 +11,7 @@ interface ISetextHeadingMeta {
   underline: "===" | "---";
 }
 
-@mixin(LeafQueryBlock)
+@mixins(LeafQueryBlock)
 class SetextHeading extends Parent {
   public meta: ISetextHeadingMeta;
 

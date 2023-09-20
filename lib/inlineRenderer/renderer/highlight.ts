@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { union } from "@muya/utils";
 
-// change text to highlight vdom
+// change text to highlight vnode
 export default function highlight(h, block, rStart, rEnd, token) {
   const { text } = block;
   const { highlights } = token;

@@ -1,4 +1,4 @@
-import type { Attributes, Datasets } from "./dom";
+import type { Attributes, Datasets } from "./types";
 
 type TCreateDomOptions = {
   classList: Array<string>;

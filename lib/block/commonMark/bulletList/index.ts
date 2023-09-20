@@ -1,8 +1,8 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixin } from "@muya/utils";
+import { mixins } from "@muya/utils";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { IBulletListState } from "../../../jsonState/types";
+import { IBulletListState, IListItemState } from "@muya/jsonState/types";
 import Muya from "@muya/index";
 
 interface IBulletListMeta {
@@ -10,7 +10,7 @@ interface IBulletListMeta {
   loose: boolean;
 }
 
-@mixin(ContainerQueryBlock)
+@mixins(ContainerQueryBlock)
 class BulletList extends Parent {
   static blockName = "bullet-list";
 
@@ -53,7 +53,9 @@ class BulletList extends Parent {
     const state: IBulletListState = {
       name: "bullet-list",
       meta: { ...this.meta },
-      children: this.children.map((child) => (child as Parent).getState()),
+      children: this.children.map((child) =>
+        (child as Parent).getState()
+      ) as IListItemState[],
     };
 
     return state;

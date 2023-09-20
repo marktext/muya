@@ -1,11 +1,10 @@
-// @ts-nocheck
 import { isWin } from "@muya/config/index";
 import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
 
-export const getImageInfo = (image) => {
+export const getImageInfo = (image: HTMLImageElement) => {
   const paragraph = findContentDOM(image);
-  const raw = image.getAttribute("data-raw");
+  const raw = image.getAttribute("data-raw")!;
   const offset = getOffsetOfParagraph(image, paragraph);
   const tokens = tokenizer(raw);
   const token = tokens[0];
@@ -20,7 +19,7 @@ export const getImageInfo = (image) => {
   };
 };
 
-export const getImageSrc = (src) => {
+export const getImageSrc = (src: string) => {
   const EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
   // http[s] (domain or IPv4 or localhost or IPv6) [port] /not-white-space
   const URL_REG =
@@ -62,7 +61,7 @@ export const getImageSrc = (src) => {
   }
 };
 
-export const loadImage = async (url, detectContentType = false) => {
+export const loadImage = async (url: string, detectContentType = false) => {
   if (detectContentType) {
     const isImage = await checkImageContentType(url);
     if (!isImage) throw new Error("not an image");
@@ -85,7 +84,7 @@ export const loadImage = async (url, detectContentType = false) => {
   });
 };
 
-export const checkImageContentType = async (url) => {
+export const checkImageContentType = async (url: string) => {
   try {
     const res = await fetch(url, { method: "HEAD" });
     const contentType = res.headers.get("content-type");
@@ -104,7 +103,7 @@ export const checkImageContentType = async (url) => {
   }
 };
 
-export const correctImageSrc = (src) => {
+export const correctImageSrc = (src: string) => {
   if (src) {
     // Fix ASCII and UNC paths on Windows (#1997).
     if (isWin && /^(?:[a-zA-Z]:\\|[a-zA-Z]:\/).+/.test(src)) {
@@ -113,7 +112,7 @@ export const correctImageSrc = (src) => {
       src = "file:///" + src.substring(4).replace(/\\/g, "/");
     } else if (/^\/.+/.test(src)) {
       // Also adding file protocol on UNIX.
-      src = src;
+      // Do nothing: src = src
     }
   }
 

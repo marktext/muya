@@ -326,9 +326,8 @@ export const getDefer = () => {
   return defer;
 };
 
-export const mixins = (
-  constructor: Constructor,
-  ...objects: Array<Record<string, any>>
+export const methodMixins = (...objects: Record<string, (...args: unknown[]) => unknown>[]) => (
+  constructor: Constructor
 ) => {
   for (const object of objects) {
     Object.keys(object).forEach((name) => {
@@ -341,25 +340,21 @@ export const mixins = (
   }
 };
 
-function applyMixins(derivedCtor: Constructor, constructors: Constructor[]) {
-  constructors.forEach((baseCtor) => {
-    Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
-      // Do not rewrite the constructor of derivedCtor.
-      if (name === "constructor") {
-        return;
-      }
-      Object.defineProperty(
-        derivedCtor.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
-          Object.create(null)
-      );
-    });
-  });
-}
-
-export const mixin =
+export const mixins =
   (...constructors: Constructor[]) =>
   (derivedCtor: Constructor) => {
-    applyMixins(derivedCtor, constructors);
+    constructors.forEach((baseCtor) => {
+      Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
+        // Do not rewrite the constructor of derivedCtor.
+        if (name === "constructor") {
+          return;
+        }
+        Object.defineProperty(
+          derivedCtor.prototype,
+          name,
+          Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
+            Object.create(null)
+        );
+      });
+    });
   };

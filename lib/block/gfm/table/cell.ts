@@ -1,6 +1,6 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixin } from "@muya/utils";
+import { mixins } from "@muya/utils";
 import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
 import { ITableCellMeta, ITableCellState } from "../../../jsonState/types";
 import Muya from "@muya/index";
@@ -9,7 +9,7 @@ import TableInner from "./table";
 import Table from ".";
 import Row from "./row";
 
-@mixin(LeafQueryBlock)
+@mixins(LeafQueryBlock)
 class TableBodyCell extends Parent {
   public meta: ITableCellMeta;
 

@@ -30,9 +30,14 @@ import referenceImage from "./referenceImage";
 import superSubScript from "./superSubScript";
 import footnoteIdentifier from "./footnoteIdentifier";
 import { CLASS_NAMES } from "@muya/config";
-import { mixins, conflict, snakeToCamel } from "@muya/utils";
+import { methodMixins, conflict, snakeToCamel } from "@muya/utils";
 import { h, toHTML } from "@muya/utils/snabbdom";
-import Muya from "@muya/index";
+import type Muya from "@muya/index";
+import type Format from "@muya/block/base/format";
+import type InlineRenderer from "../index";
+import type { VNode } from "snabbdom";
+import type { Token } from "../types";
+import type { Cursor } from "@muya/selection/types";
 
 const inlineSyntaxRenderer = {
   backlashInToken,
@@ -68,26 +73,28 @@ const inlineSyntaxRenderer = {
   footnoteIdentifier,
 };
 
+type InlineSyntaxRender = typeof inlineSyntaxRenderer;
+
+interface Renderer extends InlineSyntaxRender {}
+
+@methodMixins(inlineSyntaxRenderer)
 class Renderer {
-  public muya: Muya;
-  public parent: any;
-  public loadMathMap: Map<any, any>;
-  public loadImageMap: Map<any, any>;
-  public urlMap: Map<any, any>;
+  public loadMathMap: Map<string, string | VNode | undefined> = new Map();
+  public loadImageMap: Map<
+    string,
+    {
+      id: string;
+      isSuccess: boolean;
+    }
+  > = new Map();
+  public urlMap: Map<string, string> = new Map();
 
-  constructor(muya, parent) {
-    this.muya = muya;
-    this.parent = parent;
-    this.loadMathMap = new Map();
-    this.loadImageMap = new Map();
-    this.urlMap = new Map();
-  }
+  constructor(public muya: Muya, public parent: InlineRenderer) {}
 
-  checkConflicted(block, token, cursor: any = {}) {
-    // cursor start.block === end.block, so we only need to check start
+  checkConflicted(block: Format, token: Token, cursor: Cursor = {}) {
     const anchor = cursor.anchor || cursor.start;
     const focus = cursor.focus || cursor.end;
-    if (!anchor || (anchor.block && anchor.block !== block)) {
+    if (!anchor || !focus || (cursor.block && cursor.block !== block)) {
       return false;
     }
 
@@ -99,7 +106,12 @@ class Renderer {
     );
   }
 
-  getClassName(outerClass, block, token, cursor) {
+  getClassName(
+    outerClass: string,
+    block: Format,
+    token: Token,
+    cursor: Cursor
+  ) {
     return (
       outerClass ||
       (this.checkConflicted(block, token, cursor)
@@ -108,17 +120,18 @@ class Renderer {
     );
   }
 
-  getHighlightClassName(active) {
+  getHighlightClassName(active: boolean) {
     return active ? CLASS_NAMES.MU_HIGHLIGHT : CLASS_NAMES.MU_SELECTION;
   }
 
-  output(tokens, block, cursor) {
-    const children = tokens.reduce(
+  output(tokens: Token[], block: Format, cursor: Cursor) {
+    const children: VNode[] = tokens.reduce(
       (acc, token) => [
         ...acc,
-        ...this[snakeToCamel(token.type)](h, cursor, block, token),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...(this as any)[snakeToCamel(token.type)](h, cursor, block, token),
       ],
-      []
+      [] as VNode[]
     );
     const vNode = h("span", children);
     const rawHtml = toHTML(vNode);
@@ -126,7 +139,5 @@ class Renderer {
     return rawHtml.replace(/^<span>([\s\S]*)<\/span>$/g, (_, p) => p);
   }
 }
-
-mixins(Renderer, inlineSyntaxRenderer);
 
 export default Renderer;

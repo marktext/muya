@@ -1,6 +1,6 @@
 // @ts-nocheck
 import Content from "@muya/block/base/content";
-import { mixins, conflict } from "@muya/utils";
+import { methodMixins, conflict } from "@muya/utils";
 import { correctImageSrc } from "@muya/utils/image";
 import formatMethods from "./format";
 import clickHandler from "./clickHandler";
@@ -32,6 +32,16 @@ interface Format
     DeleteHandler,
     Converter {}
 
+@methodMixins(
+  formatMethods,
+  clickHandler,
+  enterHandler,
+  inputHandler,
+  keyupHandler,
+  backspaceHandler,
+  deleteHandler,
+  converter
+)
 abstract class Format extends Content {
   static blockName = "format";
 
@@ -259,17 +269,5 @@ abstract class Format extends Content {
     eventCenter.emit("muya-image-toolbar", { reference: null });
   }
 }
-
-mixins(
-  Format,
-  formatMethods,
-  clickHandler,
-  enterHandler,
-  inputHandler,
-  keyupHandler,
-  backspaceHandler,
-  deleteHandler,
-  converter
-);
 
 export default Format;

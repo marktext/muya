@@ -30,7 +30,7 @@ Coming soon!!!
 [commit-msg-guideline](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-guidelines)
 
 ```sh
-# step1: install dependences
+# step1: install dependencies
 yarn
 # step2: run the development codes
 yarn dev
@@ -40,7 +40,6 @@ yarn dev
 
 ```sh
 yarn build
-yarn copyfiles
 ```
 
 ## publish

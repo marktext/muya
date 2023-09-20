@@ -1,9 +1,10 @@
-// @ts-nocheck
+
 import { CLASS_NAMES } from "@muya/config";
 import { sanitizeHyperlink } from "@muya/utils/url";
+import type Renderer from "./index";
 
-// render auto_link to vdom
-export default function autoLink(h, cursor, block, token, outerClass) {
+// render auto_link to VNode
+export default function autoLink(this: Renderer, h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const { isLink, marker, href, email } = token;
   const { start, end } = token.range;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import { mixin } from "@muya/utils";
+import { mixins } from "@muya/utils";
 import Muya from "@muya/index";
 import Base from "./base";
 import Copy from "./copy";
@@ -8,7 +8,7 @@ import Paste from "./paste";
 
 interface Clipboard extends Copy, Cut, Paste {}
 
-@mixin(Copy, Cut, Paste)
+@mixins(Copy, Cut, Paste)
 class Clipboard extends Base {
   public copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
   public pasteType: string = "normal"; // `normal` or `pasteAsPlainText`

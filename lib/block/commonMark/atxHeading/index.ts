@@ -1,6 +1,6 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixin } from "@muya/utils";
+import { mixins } from "@muya/utils";
 import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
 import { IAtxHeadingState } from "../../../jsonState/types";
 import Muya from "@muya/index";
@@ -10,7 +10,7 @@ interface IAtxHeadingMeta {
   level: number;
 }
 
-@mixin(LeafQueryBlock)
+@mixins(LeafQueryBlock)
 class AtxHeading extends Parent {
   public meta: IAtxHeadingMeta;
 

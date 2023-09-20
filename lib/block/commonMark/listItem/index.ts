@@ -1,11 +1,11 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixin } from "@muya/utils";
+import { mixins } from "@muya/utils";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import { IListItemState } from "../../../jsonState/types";
 import Muya from "@muya/index";
 
-@mixin(ContainerQueryBlock)
+@mixins(ContainerQueryBlock)
 class ListItem extends Parent {
   static blockName = "list-item";
 

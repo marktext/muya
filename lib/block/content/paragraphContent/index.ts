@@ -1,6 +1,6 @@
 // @ts-nocheck
 import Format from "@muya/block/base/format";
-import { mixins, isLengthEven } from "@muya/utils";
+import { methodMixins, isLengthEven } from "@muya/utils";
 import backspaceHandler from "./backspace";
 import tabHandler from "./tab";
 import ScrollPage from "@muya/block/scrollPage";
@@ -42,6 +42,7 @@ type BackspaceHandler = typeof backspaceHandler;
 
 interface ParagraphContent extends BackspaceHandler {}
 
+@methodMixins(backspaceHandler, tabHandler)
 class ParagraphContent extends Format {
   public parent: Paragraph;
 
@@ -396,7 +397,5 @@ class ParagraphContent extends Format {
     }
   }
 }
-
-mixins(ParagraphContent, backspaceHandler, tabHandler);
 
 export default ParagraphContent;
