@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { findClosingBracket } from "@muya/utils/marked/utils";
+import { Rule } from "../../types/inlineRender";
 
 // ASCII PUNCTUATION character
 // export const punctuation = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
@@ -65,16 +66,16 @@ export const WHITELIST_ATTRIBUTES = [
 
 const UNICODE_WHITESPACE_REG = /^\s/;
 
-const validWidthAndHeight = (value) => {
+const validWidthAndHeight = (value: string) => {
   if (!/^\d{1,}$/.test(value)) return "";
-  value = parseInt(value);
+  const num = parseInt(value);
 
-  return value >= 0 ? value : "";
+  return num >= 0 ? num.toString() : "";
 };
 
-export const lowerPriority = (src, offset, rules) => {
+export const lowerPriority = (src: string, offset: number, rules: Rule[]) => {
   let i;
-  const ignoreIndex = [];
+  const ignoreIndex: number[] = [];
 
   for (i = 0; i < offset; i++) {
     if (ignoreIndex.includes(i)) {
@@ -97,12 +98,12 @@ export const lowerPriority = (src, offset, rules) => {
   return true;
 };
 
-export const getAttributes = (html) => {
+export const getAttributes = (html: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
-  const target = doc.querySelector("body").firstElementChild;
+  const target = doc.querySelector("body")?.firstElementChild;
   if (!target) return null;
-  const attrs = {};
+  const attrs: Record<string, string | null> = {};
   if (target.tagName === "IMG") {
     Object.assign(attrs, {
       title: "",
@@ -113,10 +114,11 @@ export const getAttributes = (html) => {
 
   for (const attr of target.getAttributeNames()) {
     if (!WHITELIST_ATTRIBUTES.includes(attr)) continue;
-    if (/width|height/.test(attr)) {
-      attrs[attr] = validWidthAndHeight(target.getAttribute(attr));
+    const attribute = target.getAttribute(attr);
+    if (/width|height/.test(attr) && attribute) {
+      attrs[attr] = validWidthAndHeight(attribute);
     } else {
-      attrs[attr] = target.getAttribute(attr);
+      attrs[attr] = attribute;
     }
   }
 
@@ -148,7 +150,7 @@ export const parseSrcAndTitle = (text = "") => {
   return { src, title };
 };
 
-const canOpenEmphasis = (src, marker, pending) => {
+const canOpenEmphasis = (src: string, marker: string, pending: string) => {
   const precededChar = pending.charAt(pending.length - 1) || "\n";
   const followedChar = src[marker.length];
   // not followed by Unicode whitespace,
@@ -182,7 +184,7 @@ const canOpenEmphasis = (src, marker, pending) => {
   return true;
 };
 
-const canCloseEmphasis = (src, offset, marker) => {
+const canCloseEmphasis = (src: string, offset: number, marker: string) => {
   const precededChar = src[offset - marker.length - 1];
   const followedChar = src[offset] || "\n";
   // not preceded by Unicode whitespace,
@@ -215,7 +217,13 @@ const canCloseEmphasis = (src, offset, marker) => {
   return true;
 };
 
-export const validateEmphasize = (src, offset, marker, pending, rules) => {
+export const validateEmphasize = (
+  src: string,
+  offset: number,
+  marker: string,
+  pending: string,
+  rules: Rule[]
+) => {
   if (!canOpenEmphasis(src, marker, pending)) {
     return false;
   }
@@ -249,7 +257,7 @@ export const validateEmphasize = (src, offset, marker, pending, rules) => {
   return lowerPriority(src, offset, rules);
 };
 
-export const correctUrl = (token) => {
+export const correctUrl = (token: string[] | null) => {
   if (token && typeof token[4] === "string") {
     const lastParenIndex = findClosingBracket(token[4], "()");
 

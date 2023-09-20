@@ -11,3 +11,5 @@ export type Label = Map<
     title: string;
   }
 >;
+
+export type Rule = Record<string, RegExp>;
