@@ -5,7 +5,7 @@ import { h, toHTML } from "@muya/utils/snabbdom";
 import copyIcon from "@muya/assets/icons/copy/2.png";
 import logger from "@muya/utils/logger";
 import CodeBlock from "./index";
-import { TState } from "../../../../types/state";
+import { TState } from "../../../jsonState/types";
 
 const debug = logger("code:");
 

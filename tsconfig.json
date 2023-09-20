@@ -20,9 +20,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "noErrorTruncation": true,
     "paths": {
       "@muya/*": ["./lib/*"],
-      "@types/*": ["./types/*"]
     }
   },
   "include": ["src", "types", "lib"]

@@ -3,7 +3,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { loadLanguage } from "@muya/utils/prism";
 import logger from "@muya/utils/logger";
-import { IDiagramMeta, IDiagramState } from "../../../../types/state";
+import { IDiagramMeta, IDiagramState } from "../../../jsonState/types";
 
 const debug = logger("diagram:");
 

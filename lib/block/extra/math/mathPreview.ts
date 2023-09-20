@@ -3,7 +3,7 @@ import katex from "katex/dist/katex.js";
 import "katex/dist/contrib/mhchem.min.js";
 import Parent from "@muya/block/base/parent";
 import logger from "@muya/utils/logger";
-import { TState } from "../../../../types/state";
+import { TState } from "../../../jsonState/types";
 
 const debug = logger("mathPreview:");
 

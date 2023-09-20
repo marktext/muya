@@ -4,7 +4,7 @@ import { PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
 import { sanitize } from "@muya/utils";
 import logger from "@muya/utils/logger";
 import { getImageSrc } from "@muya/utils/image";
-import { TState } from "../../../../types/state";
+import { TState } from "../../../jsonState/types";
 
 const debug = logger("htmlPreview:");
 

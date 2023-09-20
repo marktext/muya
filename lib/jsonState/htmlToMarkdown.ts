@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { DEFAULT_TURNDOWN_CONFIG } from "@muya/config";
 import TurndownService, { usePluginAddRules } from "@muya/utils/turndownService";
-import { ITurnoverOptions } from "../../types/state";
+import { ITurnoverOptions } from "./types";
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
 const turnSoftBreakToSpan = (html: string) => {

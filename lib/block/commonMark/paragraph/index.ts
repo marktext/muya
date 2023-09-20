@@ -2,7 +2,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixin } from "@muya/utils";
 import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { IParagraphState } from "../../../../types/state";
+import { IParagraphState } from "../../../jsonState/types";
 import Muya from "@muya/index";
 import ParagraphContent from "@muya/block/content/paragraphContent";
 

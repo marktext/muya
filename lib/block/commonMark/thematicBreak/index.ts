@@ -2,7 +2,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixin } from "@muya/utils";
 import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { IThematicBreakState } from "../../../../types/state";
+import { IThematicBreakState } from "../../../jsonState/types";
 import Muya from "@muya/index";
 import ThematicBreakContent from "@muya/block/content/thematicBreakContent";
 

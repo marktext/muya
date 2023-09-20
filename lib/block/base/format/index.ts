@@ -11,7 +11,7 @@ import backspaceHandler from "./backspace";
 import deleteHandler from "./delete";
 import converter from "./converter";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
-import { ICursor } from "../../../../types/selection";
+import { ICursor } from "../../../selection/types";
 
 type FormatMethods = typeof formatMethods;
 type ClickHandler = typeof clickHandler;

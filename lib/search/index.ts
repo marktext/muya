@@ -1,9 +1,9 @@
 import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
 import { matchString, buildRegexValue } from "@muya/utils/search";
 import Muya from "@muya/index";
-import { IMatch } from "../../types/search";
+import { IMatch } from "./types";
 import Content from "@muya/block/base/content";
-import { Highlight } from "../../types/inlineRender";
+import { Highlight } from "../inlineRenderer/types";
 
 class Search {
   public value: string = "";

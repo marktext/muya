@@ -2,7 +2,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixin } from "@muya/utils";
 import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { IAtxHeadingState } from "../../../../types/state";
+import { IAtxHeadingState } from "../../../jsonState/types";
 import Muya from "@muya/index";
 import Content from "@muya/block/base/content";
 

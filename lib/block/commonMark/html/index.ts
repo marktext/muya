@@ -2,7 +2,7 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { CLASS_NAMES } from "@muya/config";
-import { IHtmlBlockState } from "../../../../types/state";
+import { IHtmlBlockState } from "../../../jsonState/types";
 
 class HTMLBlock extends Parent {
   static blockName = "html-block";

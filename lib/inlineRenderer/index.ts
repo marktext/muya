@@ -6,8 +6,8 @@ import { beginRules } from "@muya/inlineRenderer/rules";
 import Muya from "@muya/index";
 import Format from "@muya/block/base/format";
 import ParagraphContent from "@muya/block/content/paragraphContent";
-import { TState, IParagraphState, TContainerState } from "../../types/state";
-import { Highlight, Label } from "../../types/inlineRender";
+import { TState, IParagraphState, TContainerState } from "../jsonState/types";
+import type { Highlight, Label } from "./types";
 
 const debug = logger("inlineRenderer:");
 

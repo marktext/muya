@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Lexer } from "@muya/utils/marked";
 import logger from "@muya/utils/logger";
-import { TState } from "../../types/state";
+import { TState } from "./types";
 
 const debug = logger("import markdown: ");
 const restoreTableEscapeCharacters = (text) => {

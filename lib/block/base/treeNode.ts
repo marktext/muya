@@ -4,8 +4,8 @@ import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
 import Parent from "./parent";
 import Content from "./content";
-import type { IAttributes, IDatasets } from "../../../types/dom";
-import type { TState } from "../../../types/state";
+import type { Attributes, Datasets } from "../../utils/dom";
+import type { TState } from "../../jsonState/types";
 
 interface IConstructor<T> {
   blockName: string;
@@ -18,8 +18,8 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
   public domNode: HTMLElement | null = null;
   public tagName: string = "";
   public classList: Array<string> = [];
-  public attributes: IAttributes = {};
-  public datasets: IDatasets = {};
+  public attributes: Attributes = {};
+  public datasets: Datasets = {};
 
   abstract get path(): Array<number | string>;
   abstract get isContainerBlock(): boolean;

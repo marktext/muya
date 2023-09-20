@@ -3,7 +3,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixin } from "@muya/utils";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { ITableRowState } from "../../../../types/state";
+import { ITableRowState } from "../../../jsonState/types";
 
 @mixin(ContainerQueryBlock)
 class TableRow extends Parent {

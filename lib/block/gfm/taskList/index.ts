@@ -3,7 +3,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixin } from "@muya/utils";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { ITaskListMeta, ITaskListState } from "../../../../types/state";
+import { ITaskListMeta, ITaskListState } from "../../../jsonState/types";
 
 @mixin(ContainerQueryBlock)
 class TaskList extends Parent {

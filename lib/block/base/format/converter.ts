@@ -1,7 +1,7 @@
 // @ts-nocheck
 import ScrollPage from "@muya/block";
 import { PARAGRAPH_STATE, THEMATIC_BREAK_STATE } from "@muya/config";
-import { IOrderListState, IBulletListState } from "../../../../types/state";
+import { IOrderListState, IBulletListState } from "../../../jsonState/types";
 
 const INLINE_UPDATE_FRAGMENTS = [
   "(?:^|\n) {0,3}([*+-] {1,4})", // Bullet list

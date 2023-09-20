@@ -7,7 +7,7 @@ import { deepClone } from "@muya/utils";
 import Muya from "@muya/index";
 
 import type { JSONOpList, Doc, Path } from "ot-json1";
-import type { TState } from "../../types/state";
+import type { TState } from "./types";
 
 const debug = logger("jsonState:");
 

@@ -9,11 +9,11 @@ import {
   CLASS_NAMES,
 } from "@muya/config/index";
 
-import { MuyaOptions } from "../types/muya";
+import { MuyaOptions } from "./types";
 import Search from "@muya/search";
 
-import { TState } from "../types/state";
-import { ISearchOption } from "../types/search";
+import { TState } from "./jsonState/types";
+import { ISearchOption } from "./search/types";
 
 import "./assets/styles/index.css";
 import "./assets/styles/prismjs/light.theme.css";

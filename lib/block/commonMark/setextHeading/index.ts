@@ -2,7 +2,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixin } from "@muya/utils";
 import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { ISetextHeadingState } from "../../../../types/state";
+import { ISetextHeadingState } from "../../../jsonState/types";
 import SetextHeadingContent from "@muya/block/content/setextHeadingContent";
 import Muya from "@muya/index";
 

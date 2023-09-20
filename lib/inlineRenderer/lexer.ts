@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { beginRules, inlineRules, validateRules } from "@muya/inlineRenderer/rules";
+import { beginRules, inlineRules, validateRules } from "./rules";
 import { isLengthEven, union } from "@muya/utils";
 import {
   getAttributes,
@@ -7,7 +6,8 @@ import {
   validateEmphasize,
   lowerPriority,
   correctUrl,
-} from "@muya/inlineRenderer/utils";
+} from "./utils";
+import type { BeginRules, InlineRules } from "./rules";
 
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html
@@ -15,11 +15,11 @@ const disallowedHtmlTag =
   /(?:title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext)/i;
 
 const tokenizerFac = (
-  src,
-  beginRules,
-  inlineRules,
+  src: string,
+  beginRules: BeginRules | null,
+  inlineRules: InlineRules,
   pos = 0,
-  top,
+  top: boolean,
   labels,
   options
 ) => {
@@ -150,7 +150,7 @@ const tokenizerFac = (
             parent: tokens,
             children: tokenizerFac(
               to[2],
-              undefined,
+              null,
               inlineRules,
               pos + to[1].length,
               false,
@@ -208,7 +208,7 @@ const tokenizerFac = (
             parent: tokens,
             children: tokenizerFac(
               to[2],
-              undefined,
+              null,
               inlineRules,
               pos + to[1].length,
               false,
@@ -323,7 +323,7 @@ const tokenizerFac = (
         },
         children: tokenizerFac(
           linkTo[2],
-          undefined,
+          null,
           inlineRules,
           pos + linkTo[1].length,
           false,
@@ -366,7 +366,7 @@ const tokenizerFac = (
         },
         children: tokenizerFac(
           rLinkTo[1],
-          undefined,
+          null,
           inlineRules,
           pos + 1,
           false,
@@ -525,7 +525,7 @@ const tokenizerFac = (
         children: htmlTo[4]
           ? tokenizerFac(
               htmlTo[4],
-              undefined,
+              null,
               inlineRules,
               pos + htmlTo[2].length,
               false,

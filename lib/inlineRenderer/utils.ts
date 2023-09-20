@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { findClosingBracket } from "@muya/utils/marked/utils";
-import { Rule } from "../../types/inlineRender";
+import { Rule } from "./types";
 
 // ASCII PUNCTUATION character
 // export const punctuation = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
