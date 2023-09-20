@@ -7,7 +7,7 @@ import ScrollPage from "@muya/block/scrollPage";
 import logger from "@muya/utils/logger";
 import { VOID_HTML_TAGS, HTML_TAGS } from "@muya/config";
 import Paragraph from "@muya/block/commonMark/paragraph";
-import { ITaskListItemState } from "../../../../types/state";
+import { ITaskListItemState } from "../../../jsonState/types";
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
 const checkQuickInsert = (text) => /^[\/、]\S*$/.test(text);
@@ -95,6 +95,7 @@ class ParagraphContent extends Format {
     } else {
       domNode.removeAttribute("placeholder");
     }
+
     eventCenter.emit("muya-quick-insert", {
       reference: domNode,
       block: this,

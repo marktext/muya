@@ -4,7 +4,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { diffToTextOp } from "@muya/utils";
 import logger from "@muya/utils/logger";
-import { ITableState } from "../../../../types/state";
+import { ITableState } from "../../../jsonState/types";
 
 const debug = logger("table:");
 

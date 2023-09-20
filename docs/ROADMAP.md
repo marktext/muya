@@ -2,13 +2,40 @@
 
 **2023**
 
+Optimization:
+
+Support TypeScript
+
 - [x] Convert JS code to TS code
-- [ ] Complete all missing types and support strict mode for TS compilation
+- [ ] Complete all missing types(no any) and support strict mode for TS compilation(eslint --fix and no error)
+
+Better Code Design
+
 - [ ] Patch the latest marked to muya
-- [ ] Optimization of build process，replace webpack with vite and build using esbuild？
+- [x] Remove use axios and XMLHttpRequest etc
+- [ ] Use constructor mixin to replace property mixin
+- [ ] Use DI?
+- [ ] Remove the dependence: diagram, file-icons, flowchart?
+- [ ] Use TSX to replace snabbdom(The ecology is better and easier to read)?
+
+Compatibility
+
+- [ ] Compatible with Firefox
+- [ ] Safari
+
+Documents
 - [ ] Website(docs, demo)
-- [ ] Compatible with Firefox and Safari
-- [ ] Unit test and e2e test
+- [ ] Documents
+- [ ] Comments
+
+CI and CD
+- [x] Optimization of build process，replace webpack with vite and build using rollup
+- [x] Speed up the development process and replace webpack with vite
+- [ ] Add and publish Github Action, modify the version number of the package.json, automatically tag and publish the new version to npm after merging or push to master
+
+Test
+- [ ] Unit test
+- [ ] e2e test
 
 **June 2020**
 

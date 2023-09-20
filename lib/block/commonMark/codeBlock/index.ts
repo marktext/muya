@@ -6,7 +6,7 @@ import { diffToTextOp } from "@muya/utils";
 import { loadLanguage } from "@muya/utils/prism";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
-import { ICodeBlockState } from "../../../../types/state";
+import { ICodeBlockState } from "../../../jsonState/types";
 
 const debug = logger("codeblock:");
 

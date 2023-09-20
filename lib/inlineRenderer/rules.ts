@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { escapeCharacters } from "@muya/config/escapeCharacter";
 
 /* eslint-disable no-useless-escape */
@@ -16,6 +15,8 @@ export const beginRules = {
 export const endRules = {
   tail_header: /^(\s{1,}#{1,})(\s*)$/,
 };
+
+export type BeginRules = typeof beginRules;
 
 export const commonMarkRules = {
   strong: /^(\*\*|__)(?=\S)([\s\S]*?[^\s\\])(\\*)\1(?!(\*|_))/, // can nest
@@ -35,6 +36,8 @@ export const commonMarkRules = {
   backlash: /^(\\)([\\`*{}\[\]()#+\-.!_>~:\|\<\>$]{1})/,
 };
 
+export type CommonMarkRules = typeof commonMarkRules;
+
 export const gfmRules = {
   emoji: /^(:)([a-z_\d+-]+?)\1/,
   del: /^(~{2})(?=\S)([\s\S]*?\S)(\\*)\1/, // can nest
@@ -45,6 +48,8 @@ export const gfmRules = {
     /^(?:(www\.[a-z_-]+\.[a-z]{2,}(?::[0-9]{1,5})?(?:\/[\S]+)?)|(http(?:s)?:\/\/(?:[a-z0-9\-._~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(?::[0-9]{1,5})?(?:\/[\S]+)?)|([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*))(?=\s|$)/,
 };
 
+export type GfmRules = typeof gfmRules;
+
 // Markdown extensions (not belongs to GFM and Commonmark)
 export const inlineExtensionRules = {
   inline_math: /^(\$)([^\$]*?[^\$\\])(\\*)\1(?!\1)/,
@@ -53,7 +58,8 @@ export const inlineExtensionRules = {
   subscript: /^(~)((?:[^~\s]|(?<=\\)\1|(?<=\\) )+?)(?<!\\)\1(?!\1)/,
   footnote_identifier: /^(\[\^)([^\^\[\]\s]+?)(?<!\\)\]/,
 };
-/* eslint-enable no-useless-escape */
+
+export type InlineExtensionRules = typeof inlineExtensionRules;
 
 export const inlineRules = {
   ...endRules,
@@ -62,13 +68,32 @@ export const inlineRules = {
   ...inlineExtensionRules,
 };
 
-const rawValidateRules = Object.assign({}, inlineRules);
-delete rawValidateRules.em;
-delete rawValidateRules.strong;
-delete rawValidateRules.tail_header;
-delete rawValidateRules.backlash;
-delete rawValidateRules.superscript;
-delete rawValidateRules.subscript;
-delete rawValidateRules.footnote_identifier;
+export type InlineRules = typeof inlineRules;
 
-export const validateRules = rawValidateRules;
+const EXCLUDE_KEYS = [
+  "em",
+  "strong",
+  "tail_header",
+  "backlash",
+  "superscript",
+  "subscript",
+  "footnote_identifier",
+] as const;
+
+type InlineRuleKeys = keyof InlineRules;
+
+type ValidateRules = {
+  [keys in Exclude<InlineRuleKeys, typeof EXCLUDE_KEYS[number]>]: RegExp
+}
+
+export const validateRules: ValidateRules = (Object.keys(inlineRules) as InlineRuleKeys[]).reduce((acc, key) => {
+  // work around with TypeScript type: https://stackoverflow.com/questions/56565528/typescript-const-assertions-how-to-use-array-prototype-includes
+  if ((EXCLUDE_KEYS as ReadonlyArray<string>).includes(key)) {
+    return acc;
+  } else {
+    return {
+      ...acc,
+      [key]: inlineRules[key],
+    }
+  }
+}, {} as ValidateRules);

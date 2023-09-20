@@ -30,7 +30,7 @@ import type {
   ITaskListItemState,
   IListItemState,
   IThematicBreakState,
-} from "../../types/state";
+} from "./types";
 
 const debug = logger("export markdown: ");
 const escapeText = (str: string) => {

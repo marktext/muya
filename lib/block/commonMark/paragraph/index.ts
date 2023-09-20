@@ -1,14 +1,16 @@
-// @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import leafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { IParagraphState } from "../../../../types/state";
+import { mixin } from "@muya/utils";
+import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
+import { IParagraphState } from "../../../jsonState/types";
+import Muya from "@muya/index";
+import ParagraphContent from "@muya/block/content/paragraphContent";
 
+@mixin(LeafQueryBlock)
 class Paragraph extends Parent {
   static blockName = "paragraph";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IParagraphState) {
     const paragraph = new Paragraph(muya);
 
     paragraph.append(
@@ -19,13 +21,13 @@ class Paragraph extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
   }
 
-  constructor(muya) {
+  constructor(muya: Muya) {
     super(muya);
     this.tagName = "p";
     this.classList = ["mu-paragraph"];
@@ -35,11 +37,9 @@ class Paragraph extends Parent {
   getState(): IParagraphState {
     return {
       name: "paragraph",
-      text: (this.children.head as any).text,
+      text: (this.children.head as ParagraphContent).text,
     };
   }
 }
-
-mixins(Paragraph, leafQueryBlock);
 
 export default Paragraph;

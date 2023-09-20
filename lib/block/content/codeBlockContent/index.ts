@@ -114,7 +114,7 @@ class CodeBlockContent extends Content {
 
   update(_, highlights = []) {
     const { lang, text } = this;
-    // transfrom alias to original language
+    // transform alias to original language
     const fullLengthLang = transformAliasToOrigin([lang])[0];
     const domNode = this.domNode;
     const code = escapeHTML(getHighlightHtml(text, highlights, true, true))

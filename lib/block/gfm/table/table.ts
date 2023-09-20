@@ -1,10 +1,11 @@
 // @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import containerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { ITableState } from "../../../../types/state";
+import { mixin } from "@muya/utils";
+import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
+import { ITableState } from "../../../jsonState/types";
 
+@mixin(ContainerQueryBlock)
 class TableInner extends Parent {
   static blockName = "table.inner";
 
@@ -41,7 +42,5 @@ class TableInner extends Parent {
     return state;
   }
 }
-
-mixins(TableInner, containerQueryBlock);
 
 export default TableInner;

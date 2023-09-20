@@ -1,4 +1,4 @@
-import type { Event, Listeners, Listener } from "../../types/event";
+import type { Event, Listeners, Listener } from "./types";
 
 // TODO: @Jocs use the same name function in utils.
 const uniqueIdGenerator = function* () {

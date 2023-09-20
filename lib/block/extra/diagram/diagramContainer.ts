@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { IDiagramMeta, TState } from "../../../../types/state";
+import { IDiagramMeta, TState } from "../../../jsonState/types";
 import logger from "@muya/utils/logger";
 
 const debug = logger("diagramContainer:");

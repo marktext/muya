@@ -1,9 +1,9 @@
-import type { IAttributes, IDatasets } from "../../types/dom";
+import type { Attributes, Datasets } from "./dom";
 
 type TCreateDomOptions = {
   classList: Array<string>;
-  attributes: IAttributes;
-  datasets: IDatasets;
+  attributes: Attributes;
+  datasets: Datasets;
 };
 
 export const createDomNode = (

@@ -11,7 +11,7 @@ import backspaceHandler from "./backspace";
 import deleteHandler from "./delete";
 import converter from "./converter";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
-import { ICursor } from "../../../../types/selection";
+import { Cursor } from "../../../selection/types";
 
 type FormatMethods = typeof formatMethods;
 type ClickHandler = typeof clickHandler;
@@ -108,7 +108,7 @@ abstract class Format extends Content {
     return false;
   }
 
-  checkNeedRender(cursor: ICursor = this.selection) {
+  checkNeedRender(cursor: Cursor = this.selection) {
     const { labels } = this.inlineRenderer;
     const { text } = this;
     const { start: cStart, end: cEnd, anchor, focus } = cursor;

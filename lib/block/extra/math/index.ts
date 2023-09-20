@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { IMathMeta, IMathBlockState } from "../../../../types/state";
+import { IMathMeta, IMathBlockState } from "../../../jsonState/types";
 
 class MathBlock extends Parent {
   public meta: IMathMeta;

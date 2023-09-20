@@ -1,10 +1,11 @@
 import ContentBlock from "@muya/block/base/content";
 
-export interface NodeOffset {
+export type NodeOffset = {
   offset: number;
-}
+};
 
-export interface ICursor {
+// TODO: @JOCS, merge Cursor and ISelection into one typescript type???
+export type Cursor = {
   anchor?: NodeOffset;
   focus?: NodeOffset;
   start?: NodeOffset;
@@ -15,9 +16,11 @@ export interface ICursor {
   anchorPath?: Array<string | number>;
   focusBlock?: ContentBlock;
   focusPath?: Array<string | number>;
-}
+  isCollapsed?: boolean;
+  isSelectionInSameBlock?: boolean;
+};
 
-export interface ISelection {
+export type ISelection = {
   anchor: NodeOffset;
   focus: NodeOffset;
   anchorBlock: ContentBlock;
@@ -28,4 +31,4 @@ export interface ISelection {
   isSelectionInSameBlock: boolean;
   direction: string;
   type?: string;
-}
+};

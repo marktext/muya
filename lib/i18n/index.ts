@@ -1,7 +1,7 @@
 import en from "../locales/en";
 import Muya from "@muya/index";
 
-import type { Locale } from "../../types/i18n";
+import type { Locale } from "./types";
 
 class I18n {
   public lang: string;

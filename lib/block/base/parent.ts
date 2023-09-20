@@ -5,7 +5,7 @@ import { operateClassName } from "@muya/utils/dom";
 import { CLASS_NAMES } from "@muya/config";
 import logger from "@muya/utils/logger";
 import Content from "./content/index";
-import { TState } from "../../../types/state";
+import { TState } from "../../jsonState/types";
 
 const debug = logger("parent:");
 

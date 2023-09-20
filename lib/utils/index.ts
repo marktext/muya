@@ -344,6 +344,10 @@ export const mixins = (
 function applyMixins(derivedCtor: Constructor, constructors: Constructor[]) {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
+      // Do not rewrite the constructor of derivedCtor.
+      if (name === "constructor") {
+        return;
+      }
       Object.defineProperty(
         derivedCtor.prototype,
         name,

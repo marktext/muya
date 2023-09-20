@@ -2,7 +2,7 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import logger from "@muya/utils/logger";
-import { TState } from "../../../../types/state";
+import { TState } from "../../../jsonState/types";
 
 const debug = logger("htmlContainer:");
 

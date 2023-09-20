@@ -1,7 +1,7 @@
-export interface IAttributes {
+export interface Attributes {
   [key: string]: string | boolean;
 }
 
-export interface IDatasets {
+export interface Datasets {
   [key: string]: string | boolean;
 }
