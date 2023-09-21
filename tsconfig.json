@@ -25,5 +25,5 @@
       "@muya/*": ["./lib/*"],
     }
   },
-  "include": ["src", "types", "lib"]
+  "include": ["src", "lib"]
 }

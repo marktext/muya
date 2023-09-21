@@ -1,4 +1,5 @@
 @supports(-moz-appearance:none) {
+
   /* CSS code */
   html {
     position: fixed;
@@ -11,22 +12,51 @@ body {
   padding: 0;
 }
 
-#editor {
-  box-sizing: border-box;
-  width: 100%;
-  height: 100vh;
-  overflow-y: auto;
-
-  font-size: 16px;
-  
-  outline: none;
+.tools {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  z-index: 100000;
 }
 
-#search {
-  width: 200px;
-  height: 18px;
+button {
+  padding: 0 5px;
+  height: 26px;
+  margin-right: 10px;
+  box-sizing: border-box;
+}
+
+input {
+  width: 150px;
+  height: 26px;
+  padding: 0 5px;
+  box-sizing: border-box;
 
   border: 1px slid #eee;
   border-radius: 4px;
+  outline: none;
+  margin-right: 10px;
+}
+
+.editor-container {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-top: 50px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+#editor {
+  box-sizing: border-box;
+  width: 100%;
+  font-size: 16px;
   outline: none;
 }

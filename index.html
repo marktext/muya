@@ -10,16 +10,18 @@
   <div class="tools">
     <button id="undo">UNDO</button>
     <button id="redo">REDO</button>
-    <input type="text" id="search">
+    <input id="search" type="text" placeholder="Search text...">
     <button id="previous">Previous</button>
     <button id="next">Next</button>
-    <input type="text" id="replace">
+    <input id="replace" type="text" placeholder="Replace text...">
     <button id="single">Single</button>
     <button id="all">All</button>
     <button id="set-content">Set Content</button>
     <button id="select-all">Select All</button>
   </div>
-  <div id="editor"></div>
+  <div class="editor-container">
+    <div id="editor"></div>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

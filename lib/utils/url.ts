@@ -1,6 +1,6 @@
 import { isValidAttribute } from "./dompurify";
 
-export const sanitizeHyperlink = (rawLink) => {
+export const sanitizeHyperlink = (rawLink: string) => {
   if (
     rawLink &&
     typeof rawLink === "string" &&

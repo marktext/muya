@@ -19,6 +19,8 @@ import MD2Html from "../lib/jsonState/markdownToHtml";
 import { DEFAULT_STATE, DEFAULT_MARKDOWN } from "./mock";
 import { TState } from "../lib/jsonState/types";
 
+import "./style.css"
+
 // import "../lib/assets/style.css";
 
 Muya.use(EmojiPicker);

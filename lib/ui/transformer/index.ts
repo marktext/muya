@@ -1,5 +1,7 @@
 import "./index.css";
-import Muya from "../../index";
+import type Muya from "../../index";
+import type Format from "@muya/block/base/format";
+import type { ImageToken } from "@muya/inlineRenderer/types";
 
 const CIRCLES = ["top-left", "top-right", "bottom-left", "bottom-right"];
 
@@ -7,28 +9,21 @@ const CIRCLE_RADIO = 6;
 
 class Transformer {
   static pluginName = "transformer";
-  private reference: any;
-  private block: any;
-  private imageInfo: any;
-  private movingAnchor: any;
-  private status: boolean;
-  private width: any;
-  private eventId: any[];
-  private lastScrollTop: any;
-  private resizing: boolean;
+  private reference: any = null;
+  private block: Format | null = null;
+  private imageInfo: {
+    token: ImageToken;
+    imageId: string;
+  } | null = null;
+  private movingAnchor: string | null = null;
+  private status: boolean = false;
+  private width: number | null = null;
+  private eventId: string[] = [];
+  private lastScrollTop: number | null = null;
+  private resizing: boolean = false;
   private container: HTMLDivElement;
 
   constructor(public muya: Muya) {
-    this.reference = null;
-    this.block = null;
-    this.imageInfo = null;
-    this.movingAnchor = null;
-    this.status = false;
-    this.width = null;
-    this.eventId = [];
-    this.lastScrollTop = null;
-    this.resizing = false;
-
     const container = (this.container = document.createElement("div"));
     container.classList.add("mu-transformer");
     document.body.appendChild(container);
@@ -78,6 +73,7 @@ class Transformer {
   }
 
   render() {
+    console.log('render')
     const { eventCenter } = this.muya;
     if (this.status) {
       this.hide();
@@ -102,7 +98,7 @@ class Transformer {
   update() {
     const rect = this.reference.getBoundingClientRect();
     CIRCLES.forEach((c) => {
-      const circle: HTMLDivElement = this.container.querySelector(`.${c}`);
+      const circle: HTMLDivElement = this.container.querySelector(`.${c}`)!;
 
       switch (c) {
         case "top-left":
@@ -211,6 +207,7 @@ class Transformer {
   };
 
   hide() {
+    console.log('hide')
     const { eventCenter } = this.muya;
     const circles = this.container.querySelectorAll(".circle");
     Array.from(circles).forEach((c) => c.remove());

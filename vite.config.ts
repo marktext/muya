@@ -11,10 +11,6 @@ export default defineConfig({
         find: "@muya",
         replacement: fileURLToPath(new URL("./lib", import.meta.url)),
       },
-      {
-        find: "@types",
-        replacement: fileURLToPath(new URL("./types", import.meta.url)),
-      },
     ],
   },
   esbuild: {
