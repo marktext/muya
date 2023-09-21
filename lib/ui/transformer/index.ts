@@ -73,7 +73,6 @@ class Transformer {
   }
 
   render() {
-    console.log("render");
     const { eventCenter } = this.muya;
     if (this.status) {
       this.hide();
@@ -207,7 +206,6 @@ class Transformer {
   };
 
   hide() {
-    console.log("hide");
     const { eventCenter } = this.muya;
     const circles = this.container.querySelectorAll(".circle");
     Array.from(circles).forEach((c) => c.remove());

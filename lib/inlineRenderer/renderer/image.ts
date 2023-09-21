@@ -125,12 +125,12 @@ export default function image(
 
     // Add image selected class name.
     if (selectedImage) {
-      const { imageId, block: SelectedImageBlock, token: selectToken } = selectedImage;
+      const { imageId, block: SelectedImageBlock, token: selectedToken } = selectedImage;
       if (
-        imageId === id &&
+        imageId === `${id}_${token.range.start}` &&
         SelectedImageBlock === block &&
-        selectToken.range.start === token.range.start &&
-        selectToken.range.end === token.range.end
+        selectedToken.range.start === token.range.start &&
+        selectedToken.range.end === token.range.end
       ) {
         wrapperSelector += `.${CLASS_NAMES.MU_INLINE_IMAGE_SELECTED}`;
       }

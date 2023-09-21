@@ -29,6 +29,7 @@ class Editor {
   }
 
   set activeContentBlock(block) {
+    console.log(block)
     const { activeContentBlock: oldActiveContentBlock } = this;
     if (block !== oldActiveContentBlock) {
       this._activeContentBlock = block;
