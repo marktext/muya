@@ -73,7 +73,7 @@ class Transformer {
   }
 
   render() {
-    console.log('render')
+    console.log("render");
     const { eventCenter } = this.muya;
     if (this.status) {
       this.hide();
@@ -160,7 +160,7 @@ class Transformer {
 
     switch (this.movingAnchor) {
       case "top-left":
-        // fallsthrough
+      // fallsthrough
       case "bottom-left":
         relativeAnchor = this.container.querySelector(".top-right");
         width = Math.max(
@@ -170,7 +170,7 @@ class Transformer {
         break;
 
       case "top-right":
-        // fallsthrough
+      // fallsthrough
       case "bottom-right":
         relativeAnchor = this.container.querySelector(".top-left");
         width = Math.max(
@@ -196,18 +196,18 @@ class Transformer {
       this.eventId = [];
     }
 
-    // todo update data
-    if (typeof this.width === "number") {
-      this.block.updateImage(this.imageInfo, "width", this.width);
-      this.width = null;
+    if (typeof this.width === "number" && this.block && this.imageInfo) {
+      this.block.updateImage(this.imageInfo, "width", String(this.width));
       this.hide();
     }
+
+    this.width = null;
     this.resizing = false;
     this.movingAnchor = null;
   };
 
   hide() {
-    console.log('hide')
+    console.log("hide");
     const { eventCenter } = this.muya;
     const circles = this.container.querySelectorAll(".circle");
     Array.from(circles).forEach((c) => c.remove());

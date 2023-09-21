@@ -11,6 +11,7 @@ import deleteHandler from "./delete";
 import converter from "./converter";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
 import { Cursor } from "../../../selection/types";
+import { ImageToken } from "@muya/inlineRenderer/types";
 
 type FormatMethods = typeof formatMethods;
 type ClickHandler = typeof clickHandler;
@@ -221,7 +222,11 @@ abstract class Format extends Content {
     this.update();
   }
 
-  updateImage({ imageId, token }, attrName, attrValue) {
+  updateImage(
+    { imageId, token }: { imageId: string; token: ImageToken },
+    attrName: string,
+    attrValue: string
+  ) {
     // inline/left/center/right
     const { start, end } = token.range;
     const oldText = this.text;
@@ -248,7 +253,7 @@ abstract class Format extends Content {
     const selector = `#${
       imageId.indexOf("_") > -1 ? imageId : imageId + "_" + token.range.start
     } img`;
-    const image: HTMLImageElement = document.querySelector(selector);
+    const image: HTMLImageElement | null = document.querySelector(selector);
 
     if (image) {
       image.click();

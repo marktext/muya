@@ -145,11 +145,11 @@ export default function image(
         },
       };
 
-      if (typeof width === "number") {
+      if (typeof width === "string" && width) {
         Object.assign(data.props, { width });
       }
 
-      if (typeof height === "number") {
+      if (typeof height === "string" && height) {
         Object.assign(data.props, { height });
       }
 
