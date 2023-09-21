@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Selection from "@muya/selection";
 import { tokenizer, generator } from "@muya/inlineRenderer/lexer";
 import { FORMAT_MARKER_MAP, FORMAT_TYPES } from "@muya/config";

@@ -1,8 +1,17 @@
-// @ts-nocheck
 import { union } from "@muya/utils";
+import type { H, Token } from "../types";
+import type Format from "@muya/block/base/format";
+import type Renderer from "./index";
 
 // change text to highlight vnode
-export default function highlight(h, block, rStart, rEnd, token) {
+export default function highlight(
+  this: Renderer,
+  h: H,
+  block: Format,
+  rStart: number,
+  rEnd: number,
+  token: Token
+) {
   const { text } = block;
   const { highlights } = token;
   let result = [];
@@ -19,7 +28,7 @@ export default function highlight(h, block, rStart, rEnd, token) {
   if (unions.length) {
     for (const u of unions) {
       const { start, end, active } = u;
-      const className = this.getHighlightClassName(active);
+      const className = this.getHighlightClassName(!!active);
 
       if (pos < start) {
         result.push(text.substring(pos, start));

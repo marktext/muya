@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Content from "@muya/block/base/content";
 import { getHighlightHtml } from "@muya/utils/highlightHTML";
 import CodeBlock from "@muya/block/commonMark/codeBlock";

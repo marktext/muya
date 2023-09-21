@@ -1,9 +1,14 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { validEmoji } from "@muya/utils/emoji";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, CodeEmojiMathToken } from "../types";
+import { VNode } from "snabbdom";
 
-// render token of emoji to vdom
-export default function emoji(h, cursor, block, token, outerClass) {
+// render token of emoji to vnode
+export default function emoji(
+  this: Renderer,
+  { h, cursor, block, token, outerClass }: SyntaxRenderOptions & { token: CodeEmojiMathToken }
+) {
   const { start: rStart, end: rEnd } = token.range;
   const className = this.getClassName(outerClass, block, token, cursor);
   const validation = validEmoji(token.content);
@@ -15,22 +20,23 @@ export default function emoji(h, cursor, block, token, outerClass) {
 
   let startMarkerSelector = `span.${finalClass}.${CLASS_NAMES.MU_EMOJI_MARKER}`;
   let endMarkerSelector = startMarkerSelector;
-  let content = token.content;
+  let content: string | (VNode | string)[] = token.content;
   let pos = rStart + token.marker.length;
 
   if (token.highlights && token.highlights.length) {
     content = [];
 
     for (const light of token.highlights) {
-      let { start, end, active } = light;
-      const HIGHLIGHT_CLASSNAME = this.getHighlightClassName(active);
+      const { active } = light;
+      let { start, end } = light;
+      const HIGHLIGHT_CLASS_NAME = this.getHighlightClassName(!!active);
       if (start === rStart) {
-        startMarkerSelector += `.${HIGHLIGHT_CLASSNAME}`;
+        startMarkerSelector += `.${HIGHLIGHT_CLASS_NAME}`;
         start++;
       }
 
       if (end === rEnd) {
-        endMarkerSelector += `.${HIGHLIGHT_CLASSNAME}`;
+        endMarkerSelector += `.${HIGHLIGHT_CLASS_NAME}`;
         end--;
       }
 
@@ -40,7 +46,7 @@ export default function emoji(h, cursor, block, token, outerClass) {
 
       if (start < end) {
         content.push(
-          h(`span.${HIGHLIGHT_CLASSNAME}`, block.text.substring(start, end))
+          h(`span.${HIGHLIGHT_CLASS_NAME}`, block.text.substring(start, end))
         );
       }
       pos = end;
@@ -51,7 +57,7 @@ export default function emoji(h, cursor, block, token, outerClass) {
     }
   }
 
-  const emojiVdom = validation
+  const emojiVNode = validation
     ? h(
         contentSelector,
         {
@@ -68,7 +74,7 @@ export default function emoji(h, cursor, block, token, outerClass) {
 
   return [
     h(startMarkerSelector, token.marker),
-    emojiVdom,
+    emojiVNode,
     h(endMarkerSelector, token.marker),
   ];
 }

@@ -1,7 +1,11 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, SoftLineBreakToken } from "../types";
 
-export default function softLineBreak(h, cursor, block, token, outerClass) {
+export default function softLineBreak(
+  this: Renderer,
+  { h, token }: SyntaxRenderOptions & { token: SoftLineBreakToken }
+) {
   const { lineBreak, isAtEnd } = token;
   let selector = `span.${CLASS_NAMES.MU_SOFT_LINE_BREAK}`;
   if (isAtEnd) {

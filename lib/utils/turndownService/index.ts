@@ -1,4 +1,3 @@
-// @ts-nocheck
 import TurndownService from "turndown";
 import { identity } from "@muya/utils";
 import * as turndownPluginGfm from "joplin-turndown-plugin-gfm";

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import BaseFloat from "@muya/ui/baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import { deepClone } from "@muya/utils";

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import EventCenter from "@muya/event/index";
 import Editor from "@muya/editor/index";
 import Ui from "@muya/ui/ui";

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import ScrollPage from "@muya/block";
 import Selection from "@muya/selection";
 import Search from "@muya/search";
@@ -16,7 +15,6 @@ import Format from "@muya/block/base/format";
 const debug = logger("editor:");
 
 class Editor {
-  public muya: Muya;
   public jsonState: JSONState;
   public inlineRenderer: InlineRenderer;
   public selection: Selection;
@@ -24,7 +22,7 @@ class Editor {
   public clipboard: Clipboard;
   public history: History;
   public scrollPage: ScrollPage;
-  private _activeContentBlock: Content;
+  private _activeContentBlock: Content | null = null;
 
   get activeContentBlock() {
     return this._activeContentBlock;
@@ -43,16 +41,14 @@ class Editor {
     }
   }
 
-  constructor(muya) {
+  constructor(public muya: Muya) {
     const state = muya.options.json || muya.options.markdown || "";
-    this.muya = muya;
     this.jsonState = new JSONState(muya, state);
     this.inlineRenderer = new InlineRenderer(muya);
     this.selection = new Selection(muya);
     this.searchModule = new Search(muya);
     this.clipboard = Clipboard.create(muya);
     this.history = new History(muya);
-    this._activeContentBlock = null;
   }
 
   init() {

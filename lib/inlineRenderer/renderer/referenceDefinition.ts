@@ -1,12 +1,10 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, ReferenceDefinitionToken } from "../types";
 
 export default function referenceDefinition(
-  h,
-  cursor,
-  block,
-  token,
-  outerClass
+  this: Renderer,
+  { h, block, token }: SyntaxRenderOptions & { token: ReferenceDefinitionToken }
 ) {
   const className = CLASS_NAMES.MU_REFERENCE_MARKER;
   const {

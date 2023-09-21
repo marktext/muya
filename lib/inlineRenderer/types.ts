@@ -1,3 +1,17 @@
+import type Format from "@muya/block/base/format";
+import type { Cursor } from "@muya/selection/types";
+import { h } from "snabbdom";
+
+export type H = typeof h;
+
+export type SyntaxRenderOptions = {
+  h: H;
+  cursor: Cursor;
+  block: Format;
+  token: Token;
+  outerClass?: string;
+};
+
 export type Highlight = {
   start: number;
   end: number;
@@ -134,6 +148,7 @@ export type ImageToken = BaseToken & {
     src: string;
     title: string;
     alt: string;
+    [key: string]: string;
   };
   src: string;
   title: string;

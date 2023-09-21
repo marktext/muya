@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as json1 from "ot-json1";
 import logger from "@muya/utils/logger";
 import StateToMarkdown from "./stateToMarkdown";

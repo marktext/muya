@@ -3,7 +3,6 @@
  *  (c) 2012-2017 Andrew Brampton (bramp.net)
  *  @license Simplified BSD license.
  */
-// @ts-nocheck
 import _ from "underscore";
 import Snap from "snapsvg-cjs";
 import WebFont from "webfontloader";

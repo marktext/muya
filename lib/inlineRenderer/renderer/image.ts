@@ -1,11 +1,13 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { getImageSrc } from "@muya/utils/image";
 import ImageIcon from "@muya/assets/icons/image/2.png";
 import ImageFailIcon from "@muya/assets/icons/image_fail/2.png";
 import DeleteIcon from "@muya/assets/icons/delete/2.png";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, ImageToken, H } from "../types";
+import { VNode } from "snabbdom";
 
-const renderIcon = (h, className, icon) => {
+const renderIcon = (h: H, className: string, icon: string) => {
   const selector = `a.${className}`;
   const iconVnode = h(
     "i.icon",
@@ -24,9 +26,12 @@ const renderIcon = (h, className, icon) => {
   return h(selector, iconVnode);
 };
 
-// I dont want operate dom directly, is there any better way? need help!
-export default function image(h, cursor, block, token, outerClass) {
-  const imageInfo = getImageSrc(token.attrs.src);
+// I don't want operate dom directly, is there any better way? need help!
+export default function image(
+  this: Renderer,
+  { h, block, token }: SyntaxRenderOptions & { token: ImageToken }
+) {
+  const imageSrc = getImageSrc(token.attrs.src);
   const { selectedImage } = this.muya.editor.selection;
   const { i18n } = this.muya;
   const data = {
@@ -39,16 +44,16 @@ export default function image(h, cursor, block, token, outerClass) {
       raw: token.raw,
     },
   };
-  let id;
-  let isSuccess;
-  let { src } = imageInfo;
+  let id: string = "";
+  let isSuccess: boolean | undefined;
+  let src = imageSrc.src;
   const alt = token.attrs.alt;
   const title = token.attrs.title;
   const width = token.attrs.width;
   const height = token.attrs.height;
 
   if (src) {
-    ({ id, isSuccess } = this.loadImageAsync(imageInfo, token.attrs));
+    ({ id, isSuccess } = this.loadImageAsync(imageSrc, token.attrs));
   }
 
   let wrapperSelector = id
@@ -63,7 +68,12 @@ export default function image(h, cursor, block, token, outerClass) {
     renderIcon(h, "mu-image-icon-close", DeleteIcon),
   ];
 
-  const renderImageContainer = (...args) => {
+  /**
+   * The image is used to wrap the img element.
+   * @param args 
+   * @returns 
+   */
+  const renderImageContainer = (...args: VNode[]) => {
     const data = {};
     if (title) {
       Object.assign(data, {
@@ -88,7 +98,7 @@ export default function image(h, cursor, block, token, outerClass) {
     ) {
       selectedImage.imageId = id;
     }
-    src = this.urlMap.get(src);
+    src = this.urlMap.get(src)!;
     isSuccess = true;
   }
 
@@ -98,7 +108,7 @@ export default function image(h, cursor, block, token, outerClass) {
       id: alt,
     });
     if (this.urlMap.has(alt)) {
-      src = this.urlMap.get(alt);
+      src = this.urlMap.get(alt)!;
       isSuccess = true;
     }
   }
@@ -115,9 +125,10 @@ export default function image(h, cursor, block, token, outerClass) {
 
     // Add image selected class name.
     if (selectedImage) {
-      const { key, token: selectToken } = selectedImage;
+      const { imageId, block: SelectedImageBlock, token: selectToken } = selectedImage;
       if (
-        key === block.key &&
+        imageId === id &&
+        SelectedImageBlock === block &&
         selectToken.range.start === token.range.start &&
         selectToken.range.end === token.range.end
       ) {
@@ -151,7 +162,7 @@ export default function image(h, cursor, block, token, outerClass) {
             ...imageIcons,
             renderImageContainer(
               // An image description has inline elements as its contents.
-              // When an image is rendered to HTML, this is standardly used as the image’s alt attribute.
+              // When an image is rendered to HTML, this is used as the image’s alt attribute.
               renderImage()
             ),
           ]),

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import TreeNode from "@muya/block/base/treeNode";
 import logger from "@muya/utils/logger";
 import { operateClassName } from "@muya/utils/dom";

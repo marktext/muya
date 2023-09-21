@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Fuse from "fuse.js";
 import { patch, h } from "@muya/utils/snabbdom";
 import { deepClone } from "@muya/utils";

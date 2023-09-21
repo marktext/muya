@@ -14,7 +14,7 @@ import autoLink from "./autoLink";
 import autoLinkExtension from "./autoLinkExtension";
 import loadImageAsync from "./loadImageAsync";
 import image from "./image";
-import delEmStrongFac from "./delEmStringFactory";
+import delEmStrongFac from "./delEmStrongFactory";
 import emoji from "./emoji";
 import inlineCode from "./inlineCode";
 import text from "./text";
@@ -79,12 +79,17 @@ interface Renderer extends InlineSyntaxRender {}
 
 @methodMixins(inlineSyntaxRenderer)
 class Renderer {
-  public loadMathMap: Map<string, string | VNode | undefined> = new Map();
+  public loadMathMap: Map<
+    string,
+    string | VNode | (string | VNode)[] | undefined
+  > = new Map();
   public loadImageMap: Map<
     string,
     {
       id: string;
       isSuccess: boolean;
+      width?: number;
+      height?: number;
     }
   > = new Map();
   public urlMap: Map<string, string> = new Map();
@@ -107,7 +112,7 @@ class Renderer {
   }
 
   getClassName(
-    outerClass: string,
+    outerClass: string | undefined,
     block: Format,
     token: Token,
     cursor: Cursor
@@ -129,7 +134,12 @@ class Renderer {
       (acc, token) => [
         ...acc,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ...(this as any)[snakeToCamel(token.type)](h, cursor, block, token),
+        ...(this as any)[snakeToCamel(token.type)]({
+          h,
+          cursor,
+          block,
+          token,
+        }),
       ],
       [] as VNode[]
     );

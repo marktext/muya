@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { CLASS_NAMES } from "@muya/config";

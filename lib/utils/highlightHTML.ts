@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getLongUniqueId } from "@muya/utils";
 
 // TODO: @jocs any better solutions?

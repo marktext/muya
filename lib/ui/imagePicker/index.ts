@@ -1,4 +1,3 @@
-// @ts-nocheck
 import BaseScrollFloat from "../baseScrollFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 // TODO replace images.

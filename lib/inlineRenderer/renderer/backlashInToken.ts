@@ -1,20 +1,21 @@
-// @ts-nocheck
 import { union, isEven } from "@muya/utils";
 import { CLASS_NAMES } from "@muya/config";
+import type { H, Token } from "../types";
+import type Renderer from "./index";
 
-// TODO HIGHLIGHT
 export default function backlashInToken(
-  h,
-  backlashes,
-  outerClass,
-  start,
-  token
+  this: Renderer,
+  h: H,
+  backlashes: string,
+  outerClass: string,
+  start: number,
+  token: Token
 ) {
   const { highlights = [] } = token;
   const chunks = backlashes.split("");
   const len = chunks.length;
   const result = [];
-  let i;
+  let i: number;
 
   for (i = 0; i < len; i++) {
     const chunk = chunks[i];
@@ -23,7 +24,7 @@ export default function backlashInToken(
     );
     let selector = "span";
     if (light.length) {
-      const className = this.getHighlightClassName(light[0].active);
+      const className = this.getHighlightClassName(!!light[0].active);
       selector += `.${className}`;
     }
 

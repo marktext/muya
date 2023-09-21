@@ -543,7 +543,7 @@ export const escapeCharacters = [
   "&euro;",
 ];
 
-const escapeCharactersMap = escapeCharacters.reduce(
+const escapeCharactersMap: Record<string, string> = escapeCharacters.reduce(
   (acc, escapeCharacter, index) => {
     return Object.assign(acc, { [escapeCharacter]: characters[index] });
   },

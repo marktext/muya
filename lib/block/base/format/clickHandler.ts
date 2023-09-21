@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { getCursorReference } from "@muya/utils";
 

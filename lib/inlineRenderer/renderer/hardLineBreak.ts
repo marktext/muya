@@ -1,7 +1,11 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, HardLineBreakToken } from "../types";
 
-export default function hardLineBreak(h, cursor, block, token, outerClass) {
+export default function hardLineBreak(
+  this: Renderer,
+  { h, token }: SyntaxRenderOptions & { token: HardLineBreakToken }
+) {
   const { spaces, lineBreak, isAtEnd } = token;
   const className = CLASS_NAMES.MU_HARD_LINE_BREAK;
   const spaceClass = CLASS_NAMES.MU_HARD_LINE_BREAK_SPACE;

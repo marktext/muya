@@ -1,4 +1,3 @@
-// @ts-nocheck
 import diff from "fast-diff";
 import { BRACKET_HASH, BACK_HASH, EVENT_KEYS } from "@muya/config";
 import { diffToTextOp } from "@muya/utils";

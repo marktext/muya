@@ -61,10 +61,19 @@ export const getImageSrc = (src: string) => {
   }
 };
 
-export const loadImage = async (url: string, detectContentType = false) => {
+export const loadImage = async (
+  url: string,
+  detectContentType = false
+): Promise<{
+  url: string;
+  width: number;
+  height: number;
+}> => {
   if (detectContentType) {
     const isImage = await checkImageContentType(url);
-    if (!isImage) throw new Error("not an image");
+    if (!isImage) {
+      return Promise.reject("not an image.");
+    }
   }
 
   return new Promise((resolve, reject) => {

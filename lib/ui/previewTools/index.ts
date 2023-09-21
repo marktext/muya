@@ -1,4 +1,3 @@
-// @ts-nocheck
 import BaseFloat from "../baseFloat";
 import { throttle } from "@muya/utils";
 import ScrollPage from "@muya/block";

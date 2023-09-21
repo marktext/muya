@@ -1,12 +1,15 @@
-// @ts-nocheck
-import katex from "katex/dist/katex.js";
+import katex from "katex";
 import "katex/dist/contrib/mhchem.min.js";
 import { CLASS_NAMES } from "@muya/config";
 import { htmlToVNode } from "@muya/utils/snabbdom";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, CodeEmojiMathToken } from "../types";
 
 import "katex/dist/katex.min.css";
 
-export default function displayMath(h, cursor, block, token, outerClass) {
+export default function inlineMath(this: Renderer, {
+  h, cursor, block, token, outerClass
+}: SyntaxRenderOptions & { token: CodeEmojiMathToken }) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const { i18n } = this.muya;
   const mathSelector =
@@ -71,8 +74,8 @@ export default function displayMath(h, cursor, block, token, outerClass) {
         {
           attrs: { contenteditable: "false" },
           dataset: {
-            start: start + 1, // '$'.length
-            end: end - 1, // '$'.length
+            start: String(start + 1), // '$'.length
+            end: String(end - 1), // '$'.length
           },
         },
         mathVnode

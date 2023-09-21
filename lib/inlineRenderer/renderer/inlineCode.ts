@@ -1,7 +1,17 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, CodeEmojiMathToken } from "../types";
 
-export default function inlineCode(h, cursor, block, token, outerClass) {
+export default function inlineCode(
+  this: Renderer,
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: CodeEmojiMathToken }
+) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const { marker } = token;
   const { start, end } = token.range;

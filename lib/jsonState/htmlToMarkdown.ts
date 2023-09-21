@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { DEFAULT_TURNDOWN_CONFIG } from "@muya/config";
 import TurndownService, { usePluginAddRules } from "@muya/utils/turndownService";
 import { ITurnoverOptions } from "./types";

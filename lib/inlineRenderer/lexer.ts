@@ -13,7 +13,6 @@ import type {
   TokenizerOptions,
   TokenizerFacOptions,
   Token,
-  StrongEmToken,
 } from "./types";
 
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
@@ -663,9 +662,8 @@ export const tokenizer = (
         }
       }
 
-      // TODO: @JOCS, Use as StrongEmToken just to eliminate the typescript error, any better solution?
-      if ((token as StrongEmToken).children && Array.isArray((token as StrongEmToken).children)) {
-        postTokenizer((token as StrongEmToken).children);
+      if ("children" in token && token.children && Array.isArray(token.children)) {
+        postTokenizer(token.children);
       }
     }
   };

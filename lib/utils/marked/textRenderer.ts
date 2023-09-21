@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TextRenderer
  * returns only the textual part of the token

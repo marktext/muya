@@ -1,34 +1,52 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { snakeToCamel } from "@muya/utils";
+import type Renderer from "./index";
+import type {
+  SyntaxRenderOptions,
+  StrongEmToken,
+  DelToken,
+  Token,
+} from "../types";
+import { VNode } from "snabbdom";
 
 // render factory of `del`,`em`,`strong`
 export default function delEmStrongFac(
-  type,
-  h,
-  cursor,
-  block,
-  token,
-  outerClass
+  this: Renderer,
+  type: "del" | "em" | "strong",
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: StrongEmToken | DelToken }
 ) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const COMMON_MARKER = `span.${className}.${CLASS_NAMES.MU_REMOVE}`;
   const { marker } = token;
   const { start, end } = token.range;
-  const backlashStart = end - marker.length - token.backlash.length;
-  const content = [
-    ...token.children.reduce((acc, to) => {
-      const chunk = this[snakeToCamel(to.type)](
+  const backlashStart =
+    end - marker.length - token.backlash.length;
+  const content: VNode[] = [
+    ...token.children.reduce((acc: VNode[], to: Token) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const chunk = (this as any)[snakeToCamel(to.type)]({
         h,
         cursor,
         block,
-        to,
-        className
-      );
+        token: to,
+        className,
+      });
 
       return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
     }, []),
-    ...this.backlashInToken(h, token.backlash, className, backlashStart, token),
+    ...this.backlashInToken(
+      h,
+      token.backlash,
+      className,
+      backlashStart,
+      token
+    ),
   ];
   const startMarker = this.highlight(
     h,

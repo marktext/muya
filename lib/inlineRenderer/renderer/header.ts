@@ -1,7 +1,17 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, BeginRuleToken } from "../types";
 
-export default function header(h, cursor, block, token, outerClass) {
+export default function header(
+  this: Renderer,
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: BeginRuleToken }
+) {
   const { content } = token;
   const { start, end } = token.range;
   const className = this.getClassName(
@@ -12,7 +22,7 @@ export default function header(h, cursor, block, token, outerClass) {
         start,
         end: end - content.length,
       },
-    },
+    } as BeginRuleToken,
     cursor
   );
   const markerVnode = this.highlight(

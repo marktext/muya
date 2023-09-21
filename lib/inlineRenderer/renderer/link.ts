@@ -1,10 +1,21 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { isLengthEven, snakeToCamel } from "@muya/utils";
 import { sanitizeHyperlink } from "@muya/utils/url";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, LinkToken, Token } from "../types";
+import { VNode } from "snabbdom";
 
 // 'link': /^(\[)((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*?)(\\*)\]\((.*?)(\\*)\)/, // can nest
-export default function link(h, cursor, block, token, outerClass) {
+export default function link(
+  this: Renderer,
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: LinkToken }
+) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const linkClassName =
     className === CLASS_NAMES.MU_HIDE
@@ -33,11 +44,11 @@ export default function link(h, cursor, block, token, outerClass) {
       token.hrefAndTitle.length,
     token
   );
+
   const middleHref = this.highlight(
     h,
     block,
     start + 1 + token.anchor.length + token.backlash.first.length,
-    block,
     start +
       1 +
       token.anchor.length +
@@ -64,7 +75,7 @@ export default function link(h, cursor, block, token, outerClass) {
           firstMiddleBracket
         ),
         h(
-          `a.${CLASS_NAMES.MU_NOTEXT_LINK}.${CLASS_NAMES.MU_INLINE_RULE}`,
+          `a.${CLASS_NAMES.MU_NO_TEXT_LINK}.${CLASS_NAMES.MU_INLINE_RULE}`,
           {
             props: {
               href: sanitizeHyperlink(
@@ -101,20 +112,21 @@ export default function link(h, cursor, block, token, outerClass) {
               title: token.title,
             },
             dataset: {
-              start,
-              end,
+              start: String(start),
+              end: String(end),
               raw: token.raw,
             },
           },
           [
-            ...token.children.reduce((acc, to) => {
-              const chunk = this[snakeToCamel(to.type)](
+            ...token.children.reduce((acc: VNode[], to: Token) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const chunk = (this as any)[snakeToCamel(to.type)]({
                 h,
                 cursor,
                 block,
-                to,
-                className
-              );
+                token: to,
+                className,
+              });
               return Array.isArray(chunk)
                 ? [...acc, ...chunk]
                 : [...acc, chunk];
@@ -151,14 +163,15 @@ export default function link(h, cursor, block, token, outerClass) {
   } else {
     return [
       ...firstBracket,
-      ...token.children.reduce((acc, to) => {
-        const chunk = this[snakeToCamel(to.type)](
+      ...token.children.reduce((acc: VNode[], to: Token) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const chunk = (this as any)[snakeToCamel(to.type)]({
           h,
           cursor,
           block,
-          to,
-          className
-        );
+          token: to,
+          className,
+        });
 
         return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
       }, []),

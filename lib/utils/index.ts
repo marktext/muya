@@ -326,7 +326,7 @@ export const getDefer = () => {
   return defer;
 };
 
-export const methodMixins = (...objects: Record<string, (...args: unknown[]) => unknown>[]) => (
+export const methodMixins = (...objects: Record<string, (...args: any[]) => any>[]) => (
   constructor: Constructor
 ) => {
   for (const object of objects) {

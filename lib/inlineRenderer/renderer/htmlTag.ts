@@ -1,9 +1,20 @@
-// @ts-nocheck
 import { CLASS_NAMES, BLOCK_TYPE6 } from "@muya/config";
 import { snakeToCamel } from "@muya/utils";
 import sanitize, { isValidAttribute } from "@muya/utils/dompurify";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, HTMLTagToken, ImageToken, Token } from "../types";
+import { VNode } from "snabbdom";
 
-export default function htmlTag(h, cursor, block, token, outerClass) {
+export default function htmlTag(
+  this: Renderer,
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: HTMLTagToken }
+) {
   const { tag, openTag, closeTag, children, attrs } = token;
   const className = children
     ? this.getClassName(outerClass, block, token, cursor)
@@ -24,14 +35,15 @@ export default function htmlTag(h, cursor, block, token, outerClass) {
 
   const anchor =
     Array.isArray(children) && tag !== "ruby" // important
-      ? children.reduce((acc, to) => {
-          const chunk = this[snakeToCamel(to.type)](
+      ? children.reduce((acc: VNode[], to: Token) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const chunk = (this as any)[snakeToCamel(to.type)]({
             h,
             cursor,
             block,
-            to,
-            className
-          );
+            token: to,
+            className,
+          });
 
           return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
         }, [])
@@ -40,7 +52,7 @@ export default function htmlTag(h, cursor, block, token, outerClass) {
   switch (tag) {
     // Handle html img.
     case "img": {
-      return this.image(h, cursor, block, token, outerClass);
+      return this.image({ h, cursor, block, token: token as unknown as ImageToken, outerClass });
     }
 
     case "br": {
@@ -52,7 +64,13 @@ export default function htmlTag(h, cursor, block, token, outerClass) {
       if (!closeTag) {
         return [h(`span.${CLASS_NAMES.MU_HTML_TAG}`, openContent)];
       } else if (tag === "ruby") {
-        return this.htmlRuby(h, cursor, block, token, outerClass);
+        return this.htmlRuby({
+          h,
+          cursor,
+          block,
+          token,
+          outerClass,
+        });
       } else {
         // if  tag is a block level element, use a inline element `span` to instead.
         // Because we can not nest a block level element in span element(line is span element)
@@ -62,10 +80,10 @@ export default function htmlTag(h, cursor, block, token, outerClass) {
           BLOCK_TYPE6.includes(tag) || !sanitize(`<${tag}>`) ? "span" : tag;
         selector += `.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_RAW_HTML}`;
         const data = {
-          attrs: {},
+          attrs: {} as Record<string, string>,
           dataset: {
-            start,
-            end,
+            start: String(start),
+            end: String(end),
             raw: token.raw,
           },
         };
@@ -90,7 +108,7 @@ export default function htmlTag(h, cursor, block, token, outerClass) {
         for (const attr of Object.keys(attrs)) {
           if (attr !== "id" && attr !== "class") {
             const attrData = attrs[attr];
-            if (isValidAttribute(tag, attr, attrData)) {
+            if (attrData && isValidAttribute(tag, attr, attrData)) {
               data.attrs[attr] = attrData;
             }
           }

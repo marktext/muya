@@ -1,4 +1,3 @@
-// @ts-nocheck
 import ScrollPage from "@muya/block";
 
 export default {

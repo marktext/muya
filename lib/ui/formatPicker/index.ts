@@ -1,4 +1,3 @@
-// @ts-nocheck
 import BaseFloat, { IBaseFloatOptions } from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import icons, { IIcon } from "./config";

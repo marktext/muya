@@ -1,4 +1,3 @@
-// @ts-nocheck
 // License: BSD
 // Source: https://github.com/django/django/blob/master/django/contrib/admin/static/admin/js/urlify.js
 //

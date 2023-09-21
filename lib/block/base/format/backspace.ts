@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { tokenizer, generator } from "@muya/inlineRenderer/lexer";
 import { CLASS_NAMES } from "@muya/config";
 import { getImageInfo } from "@muya/utils/image";

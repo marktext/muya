@@ -24,7 +24,7 @@ class EventCenter {
    * this ID
    */
   attachDOMEvent(
-    target: HTMLElement,
+    target: HTMLElement | Document,
     event: string,
     listener: EventListener,
     capture?: boolean | AddEventListenerOptions

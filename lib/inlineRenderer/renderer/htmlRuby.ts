@@ -1,8 +1,18 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { htmlToVNode } from "@muya/utils/snabbdom";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, HTMLTagToken } from "../types";
 
-export default function htmlRuby(h, cursor, block, token, outerClass) {
+export default function htmlRuby(
+  this: Renderer,
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: HTMLTagToken }
+) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const { children } = token;
   const { start, end } = token.range;
@@ -25,14 +35,14 @@ export default function htmlRuby(h, cursor, block, token, outerClass) {
                 spellcheck: "false",
               },
               dataset: {
-                start: start + 6, // '<buby>'.length
-                end: end - 7, // '</ruby>'.length
+                start: String(start + 6), // '<ruby>'.length
+                end: String(end - 7), // '</ruby>'.length
               },
             },
             vNode
           ),
         ]),
-        // if children is empty string, no need to render ruby charactors...
+        // if children is empty string, no need to render ruby characters...
       ]
     : [
         h(`span.${className}.${CLASS_NAMES.MU_RUBY}`, [

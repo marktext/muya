@@ -1,4 +1,3 @@
-// @ts-nocheck
 import "@marktext/file-icons/build/index.css";
 import fileIcons from "@marktext/file-icons";
 

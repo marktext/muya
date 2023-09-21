@@ -1,18 +1,22 @@
-// @ts-nocheck
 import { getUniqueId } from "@muya/utils";
 import { loadImage } from "@muya/utils/image";
 import { insertAfter, operateClassName } from "@muya/utils/dom";
 import { CLASS_NAMES } from "@muya/config";
+import type Renderer from "./index";
 
 export default function loadImageAsync(
-  imageInfo,
-  attrs,
-  className,
-  imageClass
+  this: Renderer,
+  imageInfo: {
+    isUnknownType: boolean;
+    src: string;
+  },
+  attrs: Record<string, string>,
+  className?: string,
+  imageClass?: string
 ) {
   const { src, isUnknownType } = imageInfo;
-  let id;
-  let isSuccess;
+  let id: string;
+  let isSuccess: boolean | undefined = undefined;
   let w;
   let h;
 
@@ -20,7 +24,7 @@ export default function loadImageAsync(
     id = getUniqueId();
     loadImage(src, isUnknownType)
       .then(({ url, width, height }) => {
-        const imageText = document.querySelector(`#${id}`);
+        const imageText: HTMLElement | null = document.querySelector(`#${id}`);
         const img = document.createElement("img");
         img.src = url;
         if (attrs.alt)
@@ -43,16 +47,18 @@ export default function loadImageAsync(
             const imageContainer = imageText.querySelector(
               `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`
             );
-            const oldImage = imageContainer.querySelector("img");
+            const oldImage = imageContainer!.querySelector("img");
             if (oldImage) {
               oldImage.remove();
             }
-            imageContainer.appendChild(img);
+            imageContainer!.appendChild(img);
             imageText.classList.remove("mu-image-loading");
             imageText.classList.add("mu-image-success");
           } else {
             insertAfter(img, imageText);
-            operateClassName(imageText, "add", className);
+            if (className) {
+              operateClassName(imageText, "add", className);
+            }
           }
         }
 
@@ -67,7 +73,7 @@ export default function loadImageAsync(
         });
       })
       .catch(() => {
-        const imageText = document.querySelector(`#${id}`);
+        const imageText: HTMLElement | null = document.querySelector(`#${id}`);
         if (imageText) {
           operateClassName(imageText, "remove", CLASS_NAMES.MU_IMAGE_LOADING);
           operateClassName(imageText, "add", CLASS_NAMES.MU_IMAGE_FAIL);
@@ -86,7 +92,7 @@ export default function loadImageAsync(
         });
       });
   } else {
-    const imageInfo = this.loadImageMap.get(src);
+    const imageInfo = this.loadImageMap.get(src)!;
     id = imageInfo.id;
     isSuccess = imageInfo.isSuccess;
     w = imageInfo.width;

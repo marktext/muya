@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Content from "@muya/block/base/content";
 import prism, {
   loadedLanguages,

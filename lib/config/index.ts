@@ -134,7 +134,7 @@ export const CLASS_NAMES = genUpper2LowerKeyHash([
   "MU_MATH_TEXT",
   "MU_MERMAID",
   "MU_MULTIPLE_MATH",
-  "MU_NOTEXT_LINK",
+  "MU_NO_TEXT_LINK",
   "MU_ORDER_LIST",
   "MU_ORDER_LIST_ITEM",
   "MU_OUTPUT_REMOVE",

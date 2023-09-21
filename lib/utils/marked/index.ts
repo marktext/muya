@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Renderer from "./renderer";
 import Lexer from "./lexer";
 import Parser from "./parser";

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Parent from "@muya/block/base/parent";
 import { PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
 import { sanitize } from "@muya/utils";
@@ -55,9 +54,9 @@ class HTMLPreview extends Parent {
       const imgs = doc.documentElement.querySelectorAll("img");
 
       for (const img of imgs) {
-        const src = img.getAttribute("src");
-        const imageInfo = getImageSrc(src);
-        img.setAttribute("src", imageInfo.src);
+        const src = img.getAttribute("src")!;
+        const imageSrc = getImageSrc(src);
+        img.setAttribute("src", imageSrc.src);
       }
 
       this.domNode.innerHTML =

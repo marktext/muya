@@ -1,9 +1,13 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { sanitizeHyperlink } from "@muya/utils/url";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, AutoLinkExtensionToken } from "../types";
 
-// render auto_link to vdom
-export default function autoLinkExtension(h, cursor, block, token, outerClass) {
+// render auto_link to vnode
+export default function autoLinkExtension(
+  this: Renderer,
+  { h, block, token }: SyntaxRenderOptions & { token: AutoLinkExtensionToken }
+) {
   const { linkType, www, url, email } = token;
   const { start, end } = token.range;
 

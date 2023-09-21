@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   getOffsetOfParagraph,
   getTextContent,
@@ -10,13 +9,15 @@ import Muya from "@muya/index";
 import ContentBlock from "@muya/block/base/content";
 import { NodeOffset, Cursor, ISelection } from "./types";
 import { getImageInfo } from "@muya/utils/image";
+import type { ImageToken } from "@muya/inlineRenderer/types";
+import type Format from "@muya/block/base/format";
 
 class Selection {
   /**
    * topOffset is the line counts above cursor, and bottomOffset is line counts bellow cursor.
    * @param {*} paragraph
    */
-  static getCursorYOffset(paragraph) {
+  static getCursorYOffset(paragraph: HTMLElement) {
     const { y } = this.getCursorCoords();
     const { height, top } = paragraph.getBoundingClientRect();
     const lineHeight = parseFloat(getComputedStyle(paragraph).lineHeight);
@@ -36,7 +37,7 @@ class Selection {
     let range;
     let rect = null;
 
-    if (sel.rangeCount) {
+    if (sel?.rangeCount) {
       range = sel.getRangeAt(0).cloneRange();
       if (range.getClientRects) {
         // range.collapse(true)
@@ -136,7 +137,11 @@ class Selection {
   public focusBlock: ContentBlock;
   public anchor: NodeOffset;
   public focus: NodeOffset;
-  public selectedImage: any = null;
+  public selectedImage: {
+    token: ImageToken;
+    imageId: string;
+    block: Format;
+  } | null = null;
   private selectInfo: {
     isSelect: boolean;
     selection: any;

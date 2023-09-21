@@ -1,12 +1,16 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, FootnoteIdentifierToken } from "../types";
 
 export default function footnoteIdentifier(
-  h,
-  cursor,
-  block,
-  token,
-  outerClass
+  this: Renderer,
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: FootnoteIdentifierToken }
 ) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const { marker } = token;

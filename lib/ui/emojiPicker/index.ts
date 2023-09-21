@@ -1,4 +1,3 @@
-// @ts-nocheck
 import BaseScrollFloat from "@muya/ui/baseScrollFloat";
 import Emoji from "./emoji";
 import { patch, h } from "@muya/utils/snabbdom";

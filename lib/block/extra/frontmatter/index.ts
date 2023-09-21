@@ -1,4 +1,3 @@
-// @ts-nocheck
 // import diff from 'fast-diff'
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";

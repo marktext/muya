@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { isValidAttribute } from "./dompurify";
 
 export const sanitizeHyperlink = (rawLink) => {

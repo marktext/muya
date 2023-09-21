@@ -1,4 +1,3 @@
-// @ts-nocheck
 export default {
   deleteHandler(event: KeyboardEvent): void {
     const { start, end } = this.getCursor();

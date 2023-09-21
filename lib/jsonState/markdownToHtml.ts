@@ -1,4 +1,3 @@
-// @ts-nocheck
 import marked from "../utils/marked";
 import Prism from "prismjs";
 import katex from "katex";

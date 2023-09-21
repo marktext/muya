@@ -1,4 +1,3 @@
-// @ts-nocheck
 import zlib from "zlib";
 import { toHTML, h } from "@muya/utils/snabbdom";
 

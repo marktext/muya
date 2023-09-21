@@ -1,4 +1,3 @@
-// @ts-nocheck
 import "./index.css";
 import Muya from "../../index";
 
@@ -8,8 +7,6 @@ const CIRCLE_RADIO = 6;
 
 class Transformer {
   static pluginName = "transformer";
-  public muya: Muya;
-  private options: any;
   private reference: any;
   private block: any;
   private imageInfo: any;
@@ -21,9 +18,7 @@ class Transformer {
   private resizing: boolean;
   private container: HTMLDivElement;
 
-  constructor(muya, options) {
-    this.muya = muya;
-    this.options = options;
+  constructor(public muya: Muya) {
     this.reference = null;
     this.block = null;
     this.imageInfo = null;
@@ -169,7 +164,7 @@ class Transformer {
 
     switch (this.movingAnchor) {
       case "top-left":
-
+        // fallsthrough
       case "bottom-left":
         relativeAnchor = this.container.querySelector(".top-right");
         width = Math.max(
@@ -179,7 +174,7 @@ class Transformer {
         break;
 
       case "top-right":
-
+        // fallsthrough
       case "bottom-right":
         relativeAnchor = this.container.querySelector(".top-left");
         width = Math.max(

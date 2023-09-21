@@ -1,4 +1,3 @@
-// @ts-nocheck
 import ScrollPage from "@muya/block";
 import { PARAGRAPH_STATE, THEMATIC_BREAK_STATE } from "@muya/config";
 import { IOrderListState, IBulletListState } from "../../../jsonState/types";

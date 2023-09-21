@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Format from "@muya/block/base/format";
 import { methodMixins, isLengthEven } from "@muya/utils";
 import backspaceHandler from "./backspace";

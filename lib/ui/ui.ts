@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Muya from "../index";
 
 class Ui {

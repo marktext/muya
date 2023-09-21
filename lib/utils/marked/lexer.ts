@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { normal, gfm, pedantic } from "./blockRules";
 import options from "./options";
 import { splitCells, rtrim, getUniqueId } from "./utils";

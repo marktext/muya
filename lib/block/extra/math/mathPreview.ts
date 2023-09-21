@@ -1,5 +1,4 @@
-// @ts-nocheck
-import katex from "katex/dist/katex.js";
+import katex from "katex";
 import "katex/dist/contrib/mhchem.min.js";
 import Parent from "@muya/block/base/parent";
 import logger from "@muya/utils/logger";

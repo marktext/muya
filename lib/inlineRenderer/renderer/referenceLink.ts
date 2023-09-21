@@ -1,9 +1,20 @@
-// @ts-nocheck
 import { CLASS_NAMES } from "@muya/config";
 import { snakeToCamel } from "@muya/utils";
 import { sanitizeHyperlink } from "@muya/utils/url";
+import type Renderer from "./index";
+import type { SyntaxRenderOptions, ReferenceLinkToken, Token } from "../types";
+import { VNode } from "snabbdom";
 
-export default function referenceLink(h, cursor, block, token, outerClass) {
+export default function referenceLink(
+  this: Renderer,
+  {
+    h,
+    cursor,
+    block,
+    token,
+    outerClass,
+  }: SyntaxRenderOptions & { token: ReferenceLinkToken }
+) {
   const className = this.getClassName(outerClass, block, token, cursor);
   const labelClass =
     className === CLASS_NAMES.MU_GRAY
@@ -16,21 +27,22 @@ export default function referenceLink(h, cursor, block, token, outerClass) {
   const key = (label + backlash.second).toLowerCase();
   const backlashStart = start + MARKER.length + anchor.length;
   const content = [
-    ...children.reduce((acc, to) => {
-      const chunk = this[snakeToCamel(to.type)](
+    ...children.reduce((acc: VNode[], to: Token) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const chunk: VNode[] = (this as any)[snakeToCamel(to.type)]({
         h,
         cursor,
         block,
-        to,
-        className
-      );
+        token: to,
+        className,
+      });
 
       return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
     }, []),
     ...this.backlashInToken(h, backlash.first, className, backlashStart, token),
   ];
 
-  const { href, title } = this.parent.labels.get(key);
+  const { href, title } = this.parent.labels.get(key) ?? {};
   const startMarker = this.highlight(
     h,
     block,
@@ -56,8 +68,8 @@ export default function referenceLink(h, cursor, block, token, outerClass) {
       title,
     },
     dataset: {
-      start,
-      end,
+      start: String(start),
+      end: String(end),
       raw: token.raw,
     },
   };
