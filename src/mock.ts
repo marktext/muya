@@ -19,6 +19,18 @@ export const DEFAULT_STATE = [
   //     type: "mermaid",
   //   },
   // },
+  {
+    name: "diagram",
+    text: 
+`@startuml
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+@enduml`,
+    meta: {
+      lang: "yaml",
+      type: "plantuml",
+    },
+  },
   // // Indented code blocks and Fenced code blocks
   // {
   //   name: "code-block",

@@ -1,5 +1,5 @@
 import { DEFAULT_TURNDOWN_CONFIG } from "@muya/config";
-import TurndownService, { usePluginAddRules } from "@muya/utils/turndownService";
+import TurndownService, { usePluginsAddRules } from "@muya/utils/turndownService";
 import { ITurnoverOptions } from "./types";
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
@@ -73,7 +73,7 @@ export default class HtmlToMarkdown {
     // turn html to markdown
     const { options } = this;
     const turndownService = new TurndownService(options);
-    usePluginAddRules(turndownService, keeps);
+    usePluginsAddRules(turndownService, keeps);
 
     // fix #752, but I don't know why the &nbsp; vanished.
     html = html.replace(/<span>&nbsp;<\/span>/g, String.fromCharCode(160));

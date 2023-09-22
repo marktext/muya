@@ -16,7 +16,7 @@ export const loadedLanguages = new Set([
 const { languages } = components;
 
 // Look for the origin language by alias
-export const transformAliasToOrigin = (langs) => {
+export const transformAliasToOrigin = (langs: string[]) => {
   const result = [];
 
   for (const lang of langs) {
@@ -47,8 +47,9 @@ export const transformAliasToOrigin = (langs) => {
   return result;
 };
 
-function initLoadLanguage(Prism) {
-  return async function loadLanguages(langs) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function initLoadLanguage(Prism: any) {
+  return async function loadLanguages(langs?: string[] | string) {
     // If no argument is passed, load all components
     if (!langs) {
       langs = Object.keys(languages).filter((lang) => lang !== "meta");
@@ -66,11 +67,11 @@ function initLoadLanguage(Prism) {
       langs = [langs];
     }
 
-    const promises: Array<Promise<unknown>> = [];
+    const promises: Promise<unknown>[] = [];
     // The user might have loaded languages via some other way or used `prism.js` which already includes some
     // We don't need to validate the ids because `getLoader` will ignore invalid ones
     const loaded = [...loadedLanguages, ...Object.keys(Prism.languages)];
-    getLoader(components, langs, loaded).load(async (lang) => {
+    getLoader(components, langs, loaded).load(async (lang: string) => {
       const defer = getDefer();
       promises.push(defer.promise);
       if (!(lang in components.languages)) {

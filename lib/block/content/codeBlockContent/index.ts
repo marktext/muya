@@ -5,7 +5,7 @@ import prism, {
 } from "@muya/utils/prism/";
 import ScrollPage from "@muya/block/scrollPage";
 import { escapeHTML, adjustOffset } from "@muya/utils";
-import { getHighlightHtml, MARKER_HASK } from "@muya/utils/highlightHTML";
+import { getHighlightHtml, MARKER_HASH } from "@muya/utils/highlightHTML";
 import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
 import Code from "@muya/block/commonMark/codeBlock/code";
 
@@ -117,10 +117,10 @@ class CodeBlockContent extends Content {
     const fullLengthLang = transformAliasToOrigin([lang])[0];
     const domNode = this.domNode;
     const code = escapeHTML(getHighlightHtml(text, highlights, true, true))
-      .replace(new RegExp(MARKER_HASK["<"], "g"), "<")
-      .replace(new RegExp(MARKER_HASK[">"], "g"), ">")
-      .replace(new RegExp(MARKER_HASK['"'], "g"), '"')
-      .replace(new RegExp(MARKER_HASK["'"], "g"), "'");
+      .replace(new RegExp(MARKER_HASH["<"], "g"), "<")
+      .replace(new RegExp(MARKER_HASH[">"], "g"), ">")
+      .replace(new RegExp(MARKER_HASH['"'], "g"), '"')
+      .replace(new RegExp(MARKER_HASH["'"], "g"), "'");
 
     if (
       fullLengthLang &&

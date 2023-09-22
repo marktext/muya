@@ -8,11 +8,12 @@ import { languages } from "prismjs/components.js";
 
 const prism = Prism;
 window.Prism = Prism;
-/* eslint-disable */
 import("prismjs/plugins/keep-markup/prism-keep-markup");
-/* eslint-enable */
 
-const langs = [];
+const langs: {
+  name: string;
+  [key: string]: string;
+}[] = [];
 
 for (const name of Object.keys(languages)) {
   const lang = languages[name];
@@ -28,7 +29,7 @@ for (const name of Object.keys(languages)) {
       });
     } else if (Array.isArray(lang.alias)) {
       langs.push(
-        ...lang.alias.map((a) => ({
+        ...lang.alias.map((a: string) => ({
           name: a,
           ...lang,
         }))
@@ -39,7 +40,7 @@ for (const name of Object.keys(languages)) {
 
 const loadLanguage = initLoadLanguage(Prism);
 
-const search = (text) => {
+const search = (text: string) => {
   if (!text || typeof text !== "string") {
     return [];
   }

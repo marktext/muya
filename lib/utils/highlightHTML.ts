@@ -1,7 +1,8 @@
 import { getLongUniqueId } from "@muya/utils";
+import type { Highlight } from "@muya/inlineRenderer/types";
 
 // TODO: @jocs any better solutions?
-export const MARKER_HASK = {
+export const MARKER_HASH = {
   "<": `%${getLongUniqueId()}%`,
   ">": `%${getLongUniqueId()}%`,
   '"': `%${getLongUniqueId()}%`,
@@ -9,15 +10,16 @@ export const MARKER_HASK = {
 };
 
 export const getHighlightHtml = (
-  text,
-  highlights,
+  text: string,
+  highlights: Highlight[],
   escape = false,
   handleLineEnding = false
 ) => {
   let code = "";
   let pos = 0;
-  const getEscapeHTML = (className, content) => {
-    return `${MARKER_HASK["<"]}span class=${MARKER_HASK['"']}${className}${MARKER_HASK['"']}${MARKER_HASK[">"]}${content}${MARKER_HASK["<"]}/span${MARKER_HASK[">"]}`;
+
+  const getEscapeHTML = (className: string, content: string) => {
+    return `${MARKER_HASH["<"]}span class=${MARKER_HASH['"']}${className}${MARKER_HASH['"']}${MARKER_HASH[">"]}${content}${MARKER_HASH["<"]}/span${MARKER_HASH[">"]}`;
   };
 
   for (const highlight of highlights) {
