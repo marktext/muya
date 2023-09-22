@@ -533,13 +533,6 @@ class ImageSelector extends BaseFloat {
                 props: {
                   href: photo.links.html,
                 },
-                on: {
-                  click: () => {
-                    if (this.options.photoCreatorClick) {
-                      this.options.photoCreatorClick(photo.user.links.html);
-                    }
-                  },
-                },
               },
               photo.user.name
             ),

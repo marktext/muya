@@ -38,7 +38,11 @@ const renderIcon = (i, className) =>
 
 class FrontButton {
   public name: string;
-  private options: { placement: string; modifiers: { offset: { offset: string; }; }; showArrow: boolean; };
+  private options: {
+    placement: string;
+    modifiers: { offset: { offset: string } };
+    showArrow: boolean;
+  };
   public muya: Muya;
   private block: any;
   private oldVnode: any;
@@ -352,7 +356,7 @@ class FrontButton {
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
     }
-    this.floatBox.style.opacity = '0';
+    this.floatBox.style.opacity = "0";
     eventCenter.emit("muya-float-button", this, false);
   }
 
@@ -365,7 +369,7 @@ class FrontButton {
     const { floatBox } = this;
     const { placement, modifiers } = this.options;
     const { eventCenter } = this.muya;
-    floatBox.style.opacity = '1';
+    floatBox.style.opacity = "1";
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
     }

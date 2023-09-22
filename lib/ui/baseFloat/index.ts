@@ -1,13 +1,13 @@
 import Popper from "popper.js";
 import { noop } from "@muya/utils";
 import { EVENT_KEYS } from "@muya/config";
-import Muya from "@muya/index";
+import type Muya from "@muya/index";
+import type { ReferenceObject, Placement } from "popper.js";
 
 import "./index.css";
 
 export interface IBaseFloatOptions {
-  photoCreatorClick?: any;
-  placement: string;
+  placement: Placement;
   modifiers: {
     offset: {
       offset: string;
@@ -17,25 +17,25 @@ export interface IBaseFloatOptions {
 }
 
 const defaultOptions = () => ({
-  placement: "bottom-start",
+  placement: "bottom-start" as const,
   modifiers: {
     offset: {
       offset: "0, 12",
     },
   },
-  showArrow: true,
+  showArrow: false,
 });
 
 const BUTTON_GROUP = ["mu-table-drag-bar", "mu-front-button"];
 
-class BaseFloat {
+abstract class BaseFloat {
   public options: IBaseFloatOptions;
   public status: boolean = false;
   public floatBox: HTMLElement | null = null;
   public container: HTMLElement | null = null;
   public popper: Popper | null = null;
   public lastScrollTop: number | null = null;
-  public cb: (...args: Array<any>) => void = noop;
+  public cb: (...args: unknown[]) => void = noop;
   private resizeObserver: ResizeObserver | null = null;
 
   constructor(public muya: Muya, public name: string, options = {}) {
@@ -44,7 +44,6 @@ class BaseFloat {
   }
 
   init() {
-    const { showArrow } = this.options;
     const floatBox = document.createElement("div");
     const container = document.createElement("div");
     // Use to remember which float container is shown.
@@ -52,17 +51,15 @@ class BaseFloat {
     container.classList.add("mu-float-container");
     floatBox.classList.add("mu-float-wrapper");
 
-    if (showArrow) {
-      const arrow = document.createElement("div");
-      arrow.setAttribute("x-arrow", "");
-      arrow.classList.add("mu-popper-arrow");
-      floatBox.appendChild(arrow);
-    }
-
     floatBox.appendChild(container);
     document.body.appendChild(floatBox);
 
-    const resizeObserver = this.resizeObserver = new ResizeObserver(() => {
+    this.floatBox = floatBox;
+    this.container = container;
+
+    // Since the size of the container is not fixed and changes according to the change of content,
+    // the floatBox needs to set the size according to the container size
+    const resizeObserver = (this.resizeObserver = new ResizeObserver(() => {
       const { offsetWidth, offsetHeight } = container;
 
       Object.assign(floatBox.style, {
@@ -71,26 +68,36 @@ class BaseFloat {
       });
 
       this.popper && this.popper.update();
-    });
+    }));
 
     resizeObserver.observe(container);
-
-    this.floatBox = floatBox;
-    this.container = container;
   }
 
   listen() {
     const { eventCenter, domNode } = this.muya;
     const { floatBox } = this;
-    const keydownHandler = (event) => {
-      if (event.key === EVENT_KEYS.Escape) {
+
+    // narrowing Event type to KeyboardEvent.
+    function isKeyboardEvent(event: Event): event is KeyboardEvent {
+      return "key" in event;
+    }
+
+    const keydownHandler = (event: Event) => {
+      if (isKeyboardEvent(event) && event.key === EVENT_KEYS.Escape) {
         this.hide();
       }
     };
 
-    const scrollHandler = (event) => {
+    /**
+     * After the editor scrolls vertically beyond a certain range,
+     * it means that the user's focus is no longer on the float box,
+     * so the float box needs to be hidden.
+     */
+    // TODO: @JOCS, But now there is a problem, the container for scroll is indeterminate,
+    // and currently the default scroll container is the parent element of the editor(muya.domNode)
+    const scrollHandler = (event: Event) => {
       if (typeof this.lastScrollTop !== "number") {
-        this.lastScrollTop = event.target.scrollTop;
+        this.lastScrollTop = (event.target as Element)?.scrollTop;
 
         return;
       }
@@ -98,24 +105,26 @@ class BaseFloat {
       // only when scroll distance great than 50px, then hide the float box.
       if (
         this.status &&
-        Math.abs(event.target.scrollTop - this.lastScrollTop) > 50
+        event.target &&
+        Math.abs((event.target as Element).scrollTop - this.lastScrollTop) > 50
       ) {
         this.hide();
       }
     };
 
     eventCenter.attachDOMEvent(document, "click", this.hide.bind(this));
-    eventCenter.attachDOMEvent(floatBox, "click", (event) => {
+    eventCenter.attachDOMEvent(floatBox!, "click", (event) => {
       event.stopPropagation();
       event.preventDefault();
     });
     eventCenter.attachDOMEvent(domNode, "keydown", keydownHandler);
-    eventCenter.attachDOMEvent(domNode, "scroll", scrollHandler);
+    eventCenter.attachDOMEvent(domNode.parentElement!, "scroll", scrollHandler);
   }
 
   hide() {
-    const { eventCenter } = this.muya;
     if (!this.status) return;
+
+    const { eventCenter } = this.muya;
     this.status = false;
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
@@ -129,10 +138,14 @@ class BaseFloat {
     }
   }
 
-  show(reference, cb = noop) {
+  show(reference: ReferenceObject, cb = noop) {
     const { floatBox } = this;
     const { eventCenter } = this.muya;
     const { placement, modifiers } = this.options;
+    if (!floatBox) {
+      throw new Error("The float box is not existed.");
+      return;
+    }
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
     }
