@@ -3,7 +3,7 @@ const rendererCache = new Map();
  *
  * @param {string} name the renderer name: sequence, plantuml, flowchart, mermaid, vega-lite
  */
-const loadRenderer = async (name) => {
+const loadRenderer = async (name: string) => {
   if (!rendererCache.has(name)) {
     let m;
     switch (name) {

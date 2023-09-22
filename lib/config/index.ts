@@ -351,7 +351,7 @@ export const punctuation = [
   "}",
   "~",
 ];
-export const isInElectron = (window.process as any)?.type === "renderer";
+// export const isInElectron = (window.process as any)?.type === "renderer";
 export const IMAGE_EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
 export const isOsx =
   window && window.navigator && /Mac/.test(window.navigator.platform);
@@ -387,7 +387,7 @@ export const EXPORT_DOMPURIFY_CONFIG = {
   RETURN_TRUSTED_TYPE: false,
   // Allow "file" protocol to export images on Windows (#1997).
   ALLOWED_URI_REGEXP:
-    /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+    /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
 };
 export const DEFAULT_SEARCH_OPTIONS = {
   isCaseSensitive: false,

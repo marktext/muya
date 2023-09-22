@@ -135,7 +135,7 @@ class EventCenter {
 
   // Determine whether the event has been bind
   checkHasBind(
-    cTarget: HTMLElement,
+    cTarget: HTMLElement | Document,
     cEvent: string,
     cListener: EventListenerOrEventListenerObject,
     cCapture?: boolean | AddEventListenerOptions

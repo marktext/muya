@@ -1,3 +1,4 @@
+// @ts-nocheck
 /** js sequence diagrams 2.0.1
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2017 Andrew Brampton (bramp.net)
