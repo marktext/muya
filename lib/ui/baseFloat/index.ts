@@ -1,8 +1,7 @@
-import Popper from "popper.js/dist/esm/popper";
-import resizeDetector from "element-resize-detector";
+import Popper from "popper.js";
 import { noop } from "@muya/utils";
 import { EVENT_KEYS } from "@muya/config";
-import Muya from "../../index";
+import Muya from "@muya/index";
 
 import "./index.css";
 
@@ -30,26 +29,17 @@ const defaultOptions = () => ({
 const BUTTON_GROUP = ["mu-table-drag-bar", "mu-front-button"];
 
 class BaseFloat {
-  public name: string;
-  public muya: Muya;
   public options: IBaseFloatOptions;
-  public status: boolean;
-  public floatBox: HTMLElement | null;
-  public container: HTMLElement | null;
-  public popper: any;
-  public lastScrollTop: number | null;
-  public cb: (...args: Array<any>) => void;
+  public status: boolean = false;
+  public floatBox: HTMLElement | null = null;
+  public container: HTMLElement | null = null;
+  public popper: Popper | null = null;
+  public lastScrollTop: number | null = null;
+  public cb: (...args: Array<any>) => void = noop;
+  private resizeObserver: ResizeObserver | null = null;
 
-  constructor(muya, name, options = {}) {
-    this.name = name;
-    this.muya = muya;
+  constructor(public muya: Muya, public name: string, options = {}) {
     this.options = Object.assign({}, defaultOptions(), options);
-    this.status = false;
-    this.floatBox = null;
-    this.container = null;
-    this.popper = null;
-    this.lastScrollTop = null;
-    this.cb = noop;
     this.init();
   }
 
@@ -57,7 +47,7 @@ class BaseFloat {
     const { showArrow } = this.options;
     const floatBox = document.createElement("div");
     const container = document.createElement("div");
-    // Use to remember whick float container is shown.
+    // Use to remember which float container is shown.
     container.classList.add(this.name);
     container.classList.add("mu-float-container");
     floatBox.classList.add("mu-float-wrapper");
@@ -71,19 +61,19 @@ class BaseFloat {
 
     floatBox.appendChild(container);
     document.body.appendChild(floatBox);
-    const erd = resizeDetector({
-      strategy: "scroll",
-    });
 
-    // use polyfill
-    erd.listenTo(container, (ele) => {
-      const { offsetWidth, offsetHeight } = ele;
+    const resizeObserver = this.resizeObserver = new ResizeObserver(() => {
+      const { offsetWidth, offsetHeight } = container;
+
       Object.assign(floatBox.style, {
         width: `${offsetWidth}px`,
         height: `${offsetHeight}px`,
       });
+
       this.popper && this.popper.update();
     });
+
+    resizeObserver.observe(container);
 
     this.floatBox = floatBox;
     this.container = container;
@@ -105,7 +95,7 @@ class BaseFloat {
         return;
       }
 
-      // only when scoll distance great than 50px, then hide the float box.
+      // only when scroll distance great than 50px, then hide the float box.
       if (
         this.status &&
         Math.abs(event.target.scrollTop - this.lastScrollTop) > 50
@@ -160,10 +150,14 @@ class BaseFloat {
   }
 
   destroy() {
+    if (this.container && this.resizeObserver) {
+      this.resizeObserver.unobserve(this.container);
+    }
+
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
     }
-    this.floatBox.remove();
+    this.floatBox?.remove();
   }
 }
 

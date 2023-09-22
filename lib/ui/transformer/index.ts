@@ -1,7 +1,8 @@
-import "./index.css";
-import type Muya from "../../index";
+import type Muya from "@muya/index";
 import type Format from "@muya/block/base/format";
 import type { ImageToken } from "@muya/inlineRenderer/types";
+
+import "./index.css";
 
 const CIRCLES = ["top-left", "top-right", "bottom-left", "bottom-right"];
 
@@ -21,6 +22,7 @@ class Transformer {
   private eventId: string[] = [];
   private lastScrollTop: number | null = null;
   private resizing: boolean = false;
+  // A container for storing drag strips
   private container: HTMLDivElement;
 
   constructor(public muya: Muya) {
@@ -40,6 +42,8 @@ class Transformer {
 
         return;
       }
+
+      console.log(event.target.scrollTop)
 
       // only when scroll distance great than 50px, then hide the float box.
       if (

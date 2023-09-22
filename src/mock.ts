@@ -240,7 +240,7 @@ Bob --> Alice: Authentication Response
   // },
   {
     name: "paragraph",
-    text: "Image![](https://i.ytimg.com/vi/VpZT0Xkht7I/hqdefault.jpg) bar &gt; *zar* <ruby>北京<rt>Beijing</rt></ruby> foo bar $a \\ne b$ 和自己",
+    text: "Image![](https://jingan2.guankou.net/haopic/jj20/389023/010323033238341796.jpg) bar &gt; *zar* <ruby>北京<rt>Beijing</rt></ruby> foo bar $a \\ne b$ 和自己",
   },
 ];
 
