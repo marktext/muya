@@ -6,7 +6,7 @@ declare global {
     MUYA_VERSION: string;
   }
 
-  interface HTMLElement {
+  interface Element {
     __MUYA_BLOCK__: unknown;
   }
 }

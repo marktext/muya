@@ -363,3 +363,8 @@ export const mixins =
 export function isKeyboardEvent(event: Event): event is KeyboardEvent {
   return "key" in event;
 }
+
+// narrowing Event type to MouseEvent.
+export function isMouseEvent(event: Event): event is MouseEvent {
+  return "x" in event;
+}

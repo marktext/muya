@@ -1,14 +1,18 @@
 import BaseFloat from "../baseFloat";
-import { throttle } from "@muya/utils";
+import { throttle, isMouseEvent } from "@muya/utils";
 import ScrollPage from "@muya/block";
 import { patch, h } from "@muya/utils/snabbdom";
 import ICONS from "./config";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 
 import "./index.css";
+import type { VNode } from "snabbdom";
+import type Muya from "@muya/index";
+import type HTMLBlock from "@muya/block/commonMark/html";
+import type MathBlock from "@muya/block/extra/math";
 
 const defaultOptions = {
-  placement: "left-start",
+  placement: "left-start" as const,
   modifiers: {
     offset: {
       offset: "5, -95",
@@ -19,20 +23,17 @@ const defaultOptions = {
 
 class PreviewTools extends BaseFloat {
   static pluginName = "previewTools";
-  private oldVnode: any;
-  private block: any;
-  private iconContainer: HTMLDivElement;
+  private oldVNode: VNode | null = null;
+  private block: HTMLBlock | MathBlock | null = null;
+  private iconContainer: HTMLDivElement = document.createElement("div");
 
-  constructor(muya, options = {}) {
+  constructor(muya: Muya, options = {}) {
     const name = "mu-preview-tools";
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
-    this.oldVnode = null;
-    this.block = null;
     this.options = opts;
-    const iconContainer = (this.iconContainer = document.createElement("div"));
-    this.container.appendChild(iconContainer);
-    this.floatBox.classList.add("mu-preview-tools-container");
+    this.container?.appendChild(this.iconContainer);
+    this.floatBox?.classList.add("mu-preview-tools-container");
     this.listen();
   }
 
@@ -40,16 +41,19 @@ class PreviewTools extends BaseFloat {
     const { eventCenter } = this.muya;
     super.listen();
 
-    const handler = throttle((event) => {
+    const handler = throttle((event: Event) => {
+      if (!isMouseEvent(event)) {
+        return;
+      }
       const { x, y } = event;
       const eles = [...document.elementsFromPoint(x, y)];
       const container = [...eles].find(
         (ele) =>
           ele[BLOCK_DOM_PROPERTY] &&
-          /html-block|math-block/.test(ele[BLOCK_DOM_PROPERTY].blockName)
+          /html-block|math-block/.test((ele[BLOCK_DOM_PROPERTY] as HTMLBlock).blockName)
       );
-      if (container && !container[BLOCK_DOM_PROPERTY].active) {
-        const block = container[BLOCK_DOM_PROPERTY];
+      if (container && !(container[BLOCK_DOM_PROPERTY] as HTMLBlock).active) {
+        const block = container[BLOCK_DOM_PROPERTY] as HTMLBlock;
         if (block.blockName === "html-block" && this.muya.options.disableHtml) {
           return this.hide();
         }
@@ -65,27 +69,22 @@ class PreviewTools extends BaseFloat {
   }
 
   render() {
-    const { iconContainer, oldVnode } = this;
+    const { iconContainer, oldVNode } = this;
     const children = ICONS.map((i) => {
-      let icon;
-      let iconWrapperSelector;
-      if (i.icon) {
-        // SVG icon Asset
-        iconWrapperSelector = "div.icon-wrapper";
-        icon = h(
-          "i.icon",
-          h(
-            "i.icon-inner",
-            {
-              style: {
-                background: `url(${i.icon}) no-repeat`,
-                "background-size": "100%",
-              },
+      const iconWrapperSelector = "div.icon-wrapper";
+      const icon = h(
+        "i.icon",
+        h(
+          "i.icon-inner",
+          {
+            style: {
+              background: `url(${i.icon}) no-repeat`,
+              "background-size": "100%",
             },
-            ""
-          )
-        );
-      }
+          },
+          ""
+        )
+      );
       const iconWrapper = h(iconWrapperSelector, icon);
 
       const itemSelector = `li.item.${i.type}`;
@@ -108,22 +107,22 @@ class PreviewTools extends BaseFloat {
 
     const vnode = h("ul", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(iconContainer, vnode);
     }
 
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
-  selectItem(event, i) {
+  selectItem(event: Event, i: typeof ICONS[number]) {
     event.preventDefault();
-    const { block, muya } = this;
+    const { block } = this;
     let cursorBlock = null;
     switch (i.type) {
       case "edit": {
-        cursorBlock = block.firstContentInDescendant();
+        cursorBlock = block!.firstContentInDescendant();
         break;
       }
 
@@ -137,7 +136,7 @@ class PreviewTools extends BaseFloat {
           this.muya,
           state
         );
-        block.replaceWith(newBlock);
+        block!.replaceWith(newBlock);
         cursorBlock = newBlock.firstContentInDescendant();
         break;
       }

@@ -1,13 +1,15 @@
-import Popper from "popper.js/dist/esm/popper";
-import resizeDetector from "element-resize-detector";
-import { throttle, verticalPositionInRect } from "@muya/utils";
+import Popper from "popper.js";
+import { throttle, verticalPositionInRect, isMouseEvent } from "@muya/utils";
 import { patch, h } from "@muya/utils/snabbdom";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import { getIcon } from "./config";
-import dragIcon from "@muya/assets/icons/drag/2.png";
-import Muya from "../../index";
+import Muya from "@muya/index";
 
 import "./index.css";
+import dragIcon from "@muya/assets/icons/drag/2.png";
+import type { VNode } from "snabbdom";
+import type Parent from "@muya/block/base/parent";
+import type { Placement } from "popper.js";
 
 const LEFT_OFFSET = 100;
 
@@ -21,7 +23,7 @@ const defaultOptions = () => ({
   showArrow: false,
 });
 
-const renderIcon = (i, className) =>
+const renderIcon = (i: string, className: string) =>
   h(
     `i.icon${className ? `.${className}` : ""}`,
     h(
@@ -37,81 +39,67 @@ const renderIcon = (i, className) =>
   );
 
 class FrontButton {
-  public name: string;
+  public name: string = "mu-front-button";
+  public resizeObserver: ResizeObserver | null = null;
   private options: {
-    placement: string;
+    placement: Placement;
     modifiers: { offset: { offset: string } };
     showArrow: boolean;
   };
-  public muya: Muya;
-  private block: any;
-  private oldVnode: any;
-  private status: boolean;
-  private floatBox: HTMLDivElement;
-  private container: HTMLDivElement;
-  private iconWrapper: HTMLDivElement;
-  private popper: any;
-  private dragTimer: any;
-  private dragInfo: any;
-  private ghost: HTMLDivElement;
-  private shadow: HTMLDivElement;
-  private disableListen: boolean;
-  private dragEvents: any[];
+  private block: Parent | null = null;
+  private oldVNode: VNode | null = null;
+  private status: boolean = false;
+  private floatBox: HTMLDivElement = document.createElement("div");
+  private container: HTMLDivElement = document.createElement("div");
+  private iconWrapper: HTMLDivElement = document.createElement("div");
+  private popper: Popper | null = null;
+  private dragTimer: string | number | Timeout | null = null;
+  private dragInfo: {
+    block: Parent;
+    target: Parent | null;
+    position: "down" | "up" | null;
+  } | null = null;
+  private ghost: HTMLDivElement | null = null;
+  private shadow: HTMLDivElement | null = null;
+  private disableListen: boolean = false;
+  private dragEvents: string[] = [];
 
-  constructor(muya, options = {}) {
-    this.name = "mu-front-button";
+  constructor(public muya: Muya, options = {}) {
     this.options = Object.assign({}, defaultOptions(), options);
-    this.muya = muya;
-    this.block = null;
-    this.oldVnode = null;
-    this.status = false;
-    this.floatBox = null;
-    this.container = null;
-    this.iconWrapper = null;
-    this.popper = null;
-    this.dragTimer = null;
-    this.dragInfo = null;
-    this.ghost = null;
-    this.shadow = null;
-    this.disableListen = false;
-    this.dragEvents = [];
     this.init();
     this.listen();
   }
 
   init() {
-    const floatBox = document.createElement("div");
-    const container = document.createElement("div");
-    const iconWrapper = document.createElement("div");
+    const { floatBox, container, iconWrapper } = this;
     // Use to remember which float container is shown.
     container.classList.add(this.name);
     container.appendChild(iconWrapper);
     floatBox.classList.add("mu-front-button-wrapper");
     floatBox.appendChild(container);
-    const erd = resizeDetector({
-      strategy: "scroll",
-    });
+    document.body.appendChild(floatBox);
 
-    // use polyfill
-    erd.listenTo(container, (ele) => {
-      const { offsetWidth, offsetHeight } = ele;
+    // Since the size of the container is not fixed and changes according to the change of content,
+    // the floatBox needs to set the size according to the container size
+    const resizeObserver = (this.resizeObserver = new ResizeObserver(() => {
+      const { offsetWidth, offsetHeight } = container;
+
       Object.assign(floatBox.style, {
         width: `${offsetWidth}px`,
         height: `${offsetHeight}px`,
       });
-      this.popper && this.popper.update();
-    });
-    document.body.appendChild(floatBox);
 
-    this.floatBox = floatBox;
-    this.container = container;
-    this.iconWrapper = iconWrapper;
+      this.popper && this.popper.update();
+    }));
+
+    resizeObserver.observe(container);
   }
 
   listen() {
     const { container } = this;
     const { eventCenter } = this.muya;
-    const mousemoveHandler = throttle((event) => {
+
+    const mousemoveHandler = throttle((event: MouseEvent) => {
       if (this.disableListen) {
         return;
       }
@@ -122,17 +110,18 @@ class FrontButton {
       ];
       const outMostElement = eles.find(
         (ele) =>
-          ele[BLOCK_DOM_PROPERTY] && ele[BLOCK_DOM_PROPERTY].isOutMostBlock
+          ele[BLOCK_DOM_PROPERTY] &&
+          (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock
       );
       if (outMostElement) {
-        this.show(outMostElement[BLOCK_DOM_PROPERTY]);
+        this.show(outMostElement[BLOCK_DOM_PROPERTY] as Parent);
         this.render();
       } else {
         this.hide();
       }
     }, 300);
 
-    const clickHandler = (event) => {
+    const clickHandler = () => {
       eventCenter.emit("muya-front-menu", {
         reference: container,
         block: this.block,
@@ -145,7 +134,7 @@ class FrontButton {
     eventCenter.attachDOMEvent(container, "click", clickHandler);
   }
 
-  dragBarMouseDown = (event) => {
+  dragBarMouseDown = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
     this.dragTimer = setTimeout(() => {
@@ -161,10 +150,11 @@ class FrontButton {
     }
   };
 
-  mouseMove = (event) => {
-    if (!this.dragInfo) {
+  mouseMove = (event: Event) => {
+    if (!this.dragInfo || !isMouseEvent(event)) {
       return;
     }
+
     event.preventDefault();
 
     const { x, y } = event;
@@ -173,14 +163,16 @@ class FrontButton {
       ...document.elementsFromPoint(x + LEFT_OFFSET, y),
     ];
     const outMostElement = eles.find(
-      (ele) => ele[BLOCK_DOM_PROPERTY] && ele[BLOCK_DOM_PROPERTY].isOutMostBlock
+      (ele) =>
+        ele[BLOCK_DOM_PROPERTY] &&
+        (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock
     );
     this.moveShadow(event);
 
     if (
       outMostElement &&
       outMostElement[BLOCK_DOM_PROPERTY] !== this.dragInfo.block &&
-      outMostElement[BLOCK_DOM_PROPERTY].blockName !== "frontmatter"
+      (outMostElement[BLOCK_DOM_PROPERTY] as Parent).blockName !== "frontmatter"
     ) {
       const block = outMostElement[BLOCK_DOM_PROPERTY];
       const rect = outMostElement.getBoundingClientRect();
@@ -201,7 +193,7 @@ class FrontButton {
     }
   };
 
-  mouseUp = (event) => {
+  mouseUp = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
     this.disableListen = false;
@@ -214,9 +206,9 @@ class FrontButton {
     this.destroyShadow();
     document.body.style.cursor = "auto";
     this.dragTimer = null;
-    const { block, target, position } = this.dragInfo;
+    const { block, target, position } = this.dragInfo || {};
 
-    if (target && position) {
+    if (target && position && block) {
       if (
         (position === "down" && block.prev === target) ||
         (position === "up" && block.next === target)
@@ -225,9 +217,9 @@ class FrontButton {
       }
 
       if (position === "up") {
-        block.insertInto(block.parent, target);
+        block.insertInto(block.parent!, target);
       } else {
-        block.insertInto(block.parent, target.next);
+        block.insertInto(block.parent!, target.next);
       }
 
       const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
@@ -247,10 +239,10 @@ class FrontButton {
     this.dragInfo = null;
   };
 
-  startDrag = (event) => {
+  startDrag = () => {
     const { block } = this;
-    // Frontmatter shoud not be drag.
-    if (block.blockName === "frontmatter") {
+    // Frontmatter should not be drag.
+    if (block && block.blockName === "frontmatter") {
       return;
     }
     this.disableListen = true;
@@ -325,7 +317,7 @@ class FrontButton {
   }
 
   render() {
-    const { container, iconWrapper, block, oldVnode } = this;
+    const { container, iconWrapper, block, oldVNode } = this;
 
     const iconWrapperSelector = "div.mu-icon-wrapper";
     const i = getIcon(block);
@@ -334,15 +326,15 @@ class FrontButton {
 
     const vnode = h(iconWrapperSelector, [iconParagraph, iconDrag]);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(iconWrapper, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
 
     // Reset float box style height
-    const { lineHeight } = getComputedStyle(block.domNode);
+    const { lineHeight } = getComputedStyle(block!.domNode!);
     container.style.height = lineHeight;
   }
 
@@ -360,7 +352,7 @@ class FrontButton {
     eventCenter.emit("muya-float-button", this, false);
   }
 
-  show(block) {
+  show(block: Parent) {
     if (this.block && this.block === block) {
       return;
     }
@@ -374,12 +366,12 @@ class FrontButton {
       this.popper.destroy();
     }
 
-    const styles = window.getComputedStyle(domNode);
+    const styles = window.getComputedStyle(domNode!);
     const paddingTop = parseFloat(styles["padding-top"]);
     const isLooseList = /^(?:ul|ol)$/.test(block.tagName) && block.meta.loose;
     modifiers.offset.offset = `${isLooseList ? paddingTop * 2 : paddingTop}, 8`;
 
-    this.popper = new Popper(domNode, floatBox, {
+    this.popper = new Popper(domNode!, floatBox, {
       placement,
       modifiers,
     });
@@ -388,6 +380,10 @@ class FrontButton {
   }
 
   destroy() {
+    if (this.container && this.resizeObserver) {
+      this.resizeObserver.unobserve(this.container);
+    }
+
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
     }
