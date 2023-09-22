@@ -1,28 +1,28 @@
 import BaseFloat from "@muya/ui/baseFloat";
 import { EVENT_KEYS } from "@muya/config";
+import { isKeyboardEvent, noop } from "@muya/utils";
+import type Muya from "@muya/index";
+import type { ReferenceObject } from "popper.js";
 
-class BaseScrollFloat extends BaseFloat {
-  public scrollElement: HTMLElement;
-  public reference: any;
-  public activeItem: any;
-  public renderArray: Array<any>;
+abstract class BaseScrollFloat extends BaseFloat {
+  public scrollElement: HTMLElement | null = null;
+  public reference: Element | ReferenceObject | null = null;
+  public activeItem: unknown | null = null;
+  public renderArray: unknown[] = [];
 
-  constructor(muya, name, options = {}) {
+  constructor(muya: Muya, name: string, options = {}) {
     super(muya, name, options);
-    this.scrollElement = null;
-    this.reference = null;
-    this.activeItem = null;
     this.createScrollElement();
   }
 
   createScrollElement() {
     const { container } = this;
     const scrollElement = document.createElement("div");
-    container.appendChild(scrollElement);
+    container!.appendChild(scrollElement);
     this.scrollElement = scrollElement;
   }
 
-  activeEleScrollIntoView(ele) {
+  activeEleScrollIntoView(ele: HTMLElement) {
     if (ele) {
       ele.scrollIntoView({
         behavior: "smooth",
@@ -35,14 +35,15 @@ class BaseScrollFloat extends BaseFloat {
   listen() {
     super.listen();
     const { eventCenter, domNode } = this.muya;
-    const handler = (event) => {
-      if (!this.status) return;
+    const handler = (event: Event) => {
+      if (!this.status || !isKeyboardEvent(event)) return;
       switch (event.key) {
         case EVENT_KEYS.ArrowUp:
           this.step("previous");
           break;
 
         case EVENT_KEYS.ArrowDown:
+          // // falls through
 
         case EVENT_KEYS.Tab:
           this.step("next");
@@ -51,6 +52,7 @@ class BaseScrollFloat extends BaseFloat {
         case EVENT_KEYS.Enter:
           this.selectItem(this.activeItem);
           break;
+
         default:
           break;
       }
@@ -64,20 +66,18 @@ class BaseScrollFloat extends BaseFloat {
     this.reference = null;
   }
 
-  show(reference, cb?) {
+  show(reference: Element | ReferenceObject, cb = noop) {
     this.cb = cb;
+
     if (reference instanceof HTMLElement) {
       if (this.reference && this.reference === reference && this.status) return;
-    } else {
-      if (this.reference && this.reference.id === reference.id && this.status)
-        return;
     }
 
     this.reference = reference;
     super.show(reference, cb);
   }
 
-  step(direction) {
+  step(direction: "previous" | "next") {
     let index = this.renderArray.findIndex((item) => {
       return item === this.activeItem;
     });
@@ -95,18 +95,16 @@ class BaseScrollFloat extends BaseFloat {
     this.activeEleScrollIntoView(activeEle);
   }
 
-  render() {
-    throw new Error("Method not implemented.");
-  }
-
-  selectItem(item) {
+  selectItem(item: unknown) {
     const { cb } = this;
     cb && cb(item);
     // Delay hide to avoid dispatch enter handler
     requestAnimationFrame(this.hide.bind(this));
   }
 
-  getItemElement(item: any) {}
+  abstract render(): void;
+
+  abstract getItemElement(item: unknown): HTMLElement;
 }
 
 export default BaseScrollFloat;

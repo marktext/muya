@@ -1,5 +1,5 @@
 import Popper from "popper.js";
-import { noop } from "@muya/utils";
+import { noop, isKeyboardEvent } from "@muya/utils";
 import { EVENT_KEYS } from "@muya/config";
 import type Muya from "@muya/index";
 import type { ReferenceObject, Placement } from "popper.js";
@@ -76,11 +76,6 @@ abstract class BaseFloat {
   listen() {
     const { eventCenter, domNode } = this.muya;
     const { floatBox } = this;
-
-    // narrowing Event type to KeyboardEvent.
-    function isKeyboardEvent(event: Event): event is KeyboardEvent {
-      return "key" in event;
-    }
 
     const keydownHandler = (event: Event) => {
       if (isKeyboardEvent(event) && event.key === EVENT_KEYS.Escape) {

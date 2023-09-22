@@ -326,19 +326,19 @@ export const getDefer = () => {
   return defer;
 };
 
-export const methodMixins = (...objects: Record<string, (...args: any[]) => any>[]) => (
-  constructor: Constructor
-) => {
-  for (const object of objects) {
-    Object.keys(object).forEach((name) => {
-      Object.defineProperty(
-        constructor.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(object, name) || Object.create(null)
-      );
-    });
-  }
-};
+export const methodMixins =
+  (...objects: Record<string, (...args: any[]) => any>[]) =>
+  (constructor: Constructor) => {
+    for (const object of objects) {
+      Object.keys(object).forEach((name) => {
+        Object.defineProperty(
+          constructor.prototype,
+          name,
+          Object.getOwnPropertyDescriptor(object, name) || Object.create(null)
+        );
+      });
+    }
+  };
 
 export const mixins =
   (...constructors: Constructor[]) =>
@@ -358,3 +358,8 @@ export const mixins =
       });
     });
   };
+
+// narrowing Event type to KeyboardEvent.
+export function isKeyboardEvent(event: Event): event is KeyboardEvent {
+  return "key" in event;
+}
