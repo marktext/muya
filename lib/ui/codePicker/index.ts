@@ -4,6 +4,11 @@ import { search } from "@muya/utils/prism";
 import ScrollPage from "@muya/block/scrollPage";
 import fileIcons from "../fileIcons";
 
+import type { VNode } from "snabbdom";
+import type Muya from "@muya/index";
+import type ParagraphContent from "@muya/block/content/paragraphContent";
+import type CodeBlock from "@muya/block/commonMark/codeBlock";
+
 import "./index.css";
 
 const defaultOptions = {
@@ -18,17 +23,13 @@ const defaultOptions = {
 
 class CodePicker extends BaseScrollFloat {
   static pluginName = "codePicker";
-  private oldVnode: any;
-  private block: any;
+  private oldVNode: VNode | null = null;
+  private block: ParagraphContent | CodeBlock | null = null;
 
-  constructor(muya, options = {}) {
+  constructor(muya: Muya, options = {}) {
     const name = "mu-list-picker";
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
-    this.renderArray = [];
-    this.oldVnode = null;
-    this.activeItem = null;
-    this.block = null;
     this.listen();
   }
 
@@ -50,8 +51,13 @@ class CodePicker extends BaseScrollFloat {
   }
 
   render() {
-    const { renderArray, oldVnode, scrollElement, activeItem } = this;
-    let children = renderArray.map((item) => {
+    const { renderArray, oldVNode, scrollElement, activeItem } = this;
+    let children = (
+      renderArray as {
+        name: string;
+        [key: string]: string;
+      }[]
+    ).map((item) => {
       let iconClassNames;
       if (item.name) {
         iconClassNames = fileIcons.getClassByLanguage(item.name);
@@ -62,14 +68,14 @@ class CodePicker extends BaseScrollFloat {
       if (!iconClassNames) {
         iconClassNames =
           item.name === "markdown"
-            ? fileIcons.getClassByName("fackname.md")
+            ? fileIcons.getClassByName("fakeName.md")
             : "atom-icon light-cyan";
       }
       const iconSelector =
         "span" +
         iconClassNames
           .split(/\s/)
-          .map((s) => `.${s}`)
+          .map((s: string) => `.${s}`)
           .join("");
       const icon = h("div.icon-wrapper", h(iconSelector));
       const text = h("div.language", item.name);
@@ -96,25 +102,36 @@ class CodePicker extends BaseScrollFloat {
     }
     const vnode = h("ul", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
-      patch(scrollElement, vnode);
+      patch(scrollElement!, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
-  getItemElement(item) {
+  getItemElement(item: { name: string }): HTMLElement {
     const { name } = item;
 
-    return this.floatBox.querySelector(`[data-label="${name}"]`);
+    // Item element will always existed, so use !.
+    return this.floatBox!.querySelector(`[data-label="${name}"]`)!;
   }
 
-  selectItem(item) {
+  selectItem(item: { name: string }) {
     const { block, muya } = this;
     const { name } = item;
 
-    if (block.blockName === "paragraph.content") {
+    if (!block) {
+      return;
+    }
+
+    function isParagraphContent(
+      b: ParagraphContent | CodeBlock
+    ): b is ParagraphContent {
+      return b.blockName === "paragraph.content";
+    }
+
+    if (isParagraphContent(block)) {
       const state =
         muya.options.isGitlabCompatibilityEnabled && name === "math"
           ? {
@@ -137,7 +154,7 @@ class CodePicker extends BaseScrollFloat {
         this.muya,
         state
       );
-      block.parent.replaceWith(newBlock);
+      block.parent?.replaceWith(newBlock);
       const codeContent = newBlock.lastContentInDescendant();
       codeContent.setCursor(0, 0);
     } else {
