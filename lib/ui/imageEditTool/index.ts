@@ -1,4 +1,3 @@
-import { createApi } from "unsplash-js";
 import BaseFloat from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import { EVENT_KEYS, URL_REG, isWin } from "@muya/config";
@@ -7,69 +6,46 @@ import { getImageInfo, getImageSrc } from "@muya/utils/image";
 import logger from "@muya/utils/logger";
 
 import "./index.css";
+import { VNode } from "snabbdom";
+import Muya from "@muya/index";
 
 const debug = logger("image selector:");
 
-const toJson = (res) => {
-  if (res.type === "success") {
-    return Promise.resolve(res.response);
-  } else {
-    return Promise.reject(new Error(res.type));
-  }
-};
+const defaultOptions = {
+  placement: "bottom-center" as const,
+  modifiers: {
+    offset: {
+      offset: "0, 0",
+    },
+  },
+  showArrow: false,
+}
 
 class ImageSelector extends BaseFloat {
   static pluginName = "imageSelector";
-  private renderArray: any[];
-  private oldVNode: any;
+  private oldVNode: VNode | null = null;
   private imageInfo: any;
-  private unsplash: any;
-  private photoList: any[];
-  private loading: boolean;
   private block: any;
-  private tab: string;
+  private tab: string = "link";
   private isFullMode: boolean;
   private state: { alt: string; src: string; title: string };
-  private imageSelectorContainer: HTMLDivElement;
+  private imageSelectorContainer: HTMLDivElement = document.createElement("div");
 
-  constructor(muya, options) {
+  constructor(muya: Muya) {
     const name = "mu-image-selector";
-    const { unsplashAccessKey } = options;
+    super(muya, name, Object.assign({}, defaultOptions));
 
-    options = Object.assign(options, {
-      placement: "bottom-center",
-      modifiers: {
-        offset: {
-          offset: "0, 0",
-        },
-      },
-      showArrow: false,
-    });
-    super(muya, name, options);
-    this.renderArray = [];
-    this.oldVNode = null;
     this.imageInfo = null;
-    if (!unsplashAccessKey) {
-      this.unsplash = null;
-    } else {
-      this.unsplash = createApi({
-        accessKey: unsplashAccessKey,
-      });
-    }
-    this.photoList = [];
-    this.loading = false;
     this.block = null;
-    this.tab = "link"; // select or link
     this.isFullMode = false; // is show title and alt input
     this.state = {
       alt: "",
       src: "",
       title: "",
     };
-    const imageSelectorContainer = (this.imageSelectorContainer =
-      document.createElement("div"));
-    this.container.appendChild(imageSelectorContainer);
-    this.floatBox.classList.add("mu-image-selector-wrapper");
+
+    this.container!.appendChild(this.imageSelectorContainer);
+    this.floatBox!.classList.add("mu-image-selector-wrapper");
     this.listen();
   }
 
@@ -94,25 +70,6 @@ class ImageSelector extends BaseFloat {
             this.state.src = imageSrc.substring(protocolLen);
           }
 
-          if (this.unsplash) {
-            // Load latest unsplash photos.
-            this.loading = true;
-            this.unsplash.photos
-              .list({
-                perPage: 40,
-              })
-              .then(toJson)
-              .then((json) => {
-                this.loading = false;
-                if (Array.isArray(json.results)) {
-                  this.photoList = json.results;
-                  if (this.tab === "unsplash") {
-                    this.render();
-                  }
-                }
-              });
-          }
-
           this.imageInfo = imageInfo;
           this.show(reference, cb);
           this.render();
@@ -130,34 +87,7 @@ class ImageSelector extends BaseFloat {
     );
   }
 
-  searchPhotos = (keyword) => {
-    if (!this.unsplash) {
-      return;
-    }
-
-    this.loading = true;
-    this.photoList = [];
-    this.unsplash.search
-      .getPhotos({
-        query: keyword,
-        page: 1,
-        perPage: 40,
-      })
-      .then(toJson)
-      .then((json) => {
-        this.loading = false;
-        if (Array.isArray(json.results)) {
-          this.photoList = json.results;
-          if (this.tab === "unsplash") {
-            this.render();
-          }
-        }
-      });
-
-    return this.render();
-  };
-
-  tabClick(event, tab) {
+  tabClick(_event: Event, tab) {
     const { value } = tab;
     this.tab = value;
 
@@ -204,7 +134,7 @@ class ImageSelector extends BaseFloat {
         break;
 
       case EVENT_KEYS.ArrowDown:
-
+        // fall through
       case EVENT_KEYS.Tab:
         event.preventDefault();
         imagePathPicker.step("next");
@@ -231,7 +161,8 @@ class ImageSelector extends BaseFloat {
     }
     const value = event.target.value;
     const { eventCenter } = this.muya;
-    const reference: HTMLInputElement = this.imageSelectorContainer.querySelector("input.src");
+    const reference: HTMLInputElement =
+      this.imageSelectorContainer.querySelector("input.src");
     const cb = (item) => {
       const { text } = item;
 
@@ -333,13 +264,6 @@ class ImageSelector extends BaseFloat {
         value: "link",
       },
     ];
-
-    if (this.unsplash) {
-      tabs.push({
-        label: i18n.t("Unsplash"),
-        value: "unsplash",
-      });
-    }
 
     const children = tabs.map((tab) => {
       const itemSelector = this.tab === tab.value ? "li.active" : "li";
@@ -468,82 +392,6 @@ class ImageSelector extends BaseFloat {
         ),
       ]);
       bodyContent = [inputWrapper, embedButton, bottomDes];
-    } else {
-      const searchInput = h("input.search", {
-        props: {
-          placeholder: i18n.t("Search photos on Unsplash"),
-        },
-        on: {
-          keydown: (event) => {
-            const value = (event.target as HTMLInputElement).value;
-            if (event.key === EVENT_KEYS.Enter && value) {
-              event.preventDefault();
-              event.stopPropagation();
-              this.searchPhotos(value);
-            }
-          },
-        },
-      });
-      bodyContent = [searchInput];
-      if (this.loading) {
-        const loadingCom = h("div.mu-plugin-loading");
-        bodyContent.push(loadingCom);
-      } else if (this.photoList.length === 0) {
-        const noDataCom = h("div.no-data", "No result...");
-        bodyContent.push(noDataCom);
-      } else {
-        const photos = this.photoList.map((photo) => {
-          const imageWrapper = h(
-            "div.image-wrapper",
-            {
-              props: {
-                style: `background: ${photo.color};`,
-              },
-              on: {
-                click: () => {
-                  const title = photo.user.name;
-                  const alt = photo.alt_description;
-                  const src = photo.urls.regular;
-                  const { id: photoId } = photo;
-                  this.unsplash.photos
-                    .get({ photoId })
-                    .then(toJson)
-                    .then((result) => {
-                      this.unsplash.photos.trackDownload({
-                        downloadLocation: result.links.download_location,
-                      });
-                    });
-
-                  return this.replaceImageAsync({ alt, title, src });
-                },
-              },
-            },
-            h("img", {
-              props: {
-                src: photo.urls.thumb,
-              },
-            })
-          );
-
-          const desCom = h("div.des", [
-            "By ",
-            h(
-              "a",
-              {
-                props: {
-                  href: photo.links.html,
-                },
-              },
-              photo.user.name
-            ),
-          ]);
-
-          return h("div.photo", [imageWrapper, desCom]);
-        });
-        const photoWrapper = h("div.photos-wrapper", photos);
-        const moreCom = h("div.more", i18n.t("Search for more photos..."));
-        bodyContent.push(photoWrapper, moreCom);
-      }
     }
 
     return h("div.image-select-body", bodyContent);

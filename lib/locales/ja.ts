@@ -79,7 +79,6 @@ const locale = {
     // ImageSelector
     'Select': 'ローカル画像',
     'Embed link': '画像リンク',
-    'Unsplash': 'Unsplash',
     'Choose an Image': '画像を選択する',
     'Choose image from your computer.': 'パソコンから画像を選択する。',
     'Image link or local path': '画像リンク又はローカルパス',
@@ -89,9 +88,6 @@ const locale = {
     'Paste web image or local image path. Use ': '画像リンクまたはローカル画像パスを貼り付けて利用 ',
     'simple mode': '簡単モデル',
     'full mode': '完備モデル',
-    'Search photos on Unsplash': 'Unsplash通じて画像を検索する',
-    'No result...': '結果がありません...',
-    'Search for more photos...': 'その他の画像を検索する...',
     'Load image failed': '画像ロードが失敗しました',
     'Click to add an image': 'クリックして画像を追加する',
     // preview block

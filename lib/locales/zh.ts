@@ -79,7 +79,6 @@ const locale = {
     // ImageSelector
     'Select': '本地图片',
     'Embed link': '图片链接',
-    'Unsplash': 'Unsplash',
     'Choose an Image': '选择图片',
     'Choose image from your computer.': '从电脑选择图片。',
     'Image link or local path': '图片链接或本地路径',
@@ -89,9 +88,6 @@ const locale = {
     'Paste web image or local image path. Use ': '黏贴图片链接或者本地图片路径. 通过 ',
     'simple mode': '简单模式',
     'full mode': '完整模式',
-    'Search photos on Unsplash': '通过Unsplash搜索图片',
-    'No result...': '没有结果...',
-    'Search for more photos...': '搜索更多图片...',
     'Load image failed': '图片加载失败',
     'Click to add an image': '点击添加图片',
     // preview block

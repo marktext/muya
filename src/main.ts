@@ -25,9 +25,7 @@ import "./style.css"
 
 Muya.use(EmojiSelector);
 Muya.use(InlineFormatToolbar);
-Muya.use(ImageEditTool, {
-  unsplashAccessKey: import.meta.env.UNSPLASH_ACCESS_KEY,
-});
+Muya.use(ImageEditTool);
 Muya.use(ImageToolBar);
 Muya.use(ImageResizeBar);
 Muya.use(CodeBlockLanguageSelector);

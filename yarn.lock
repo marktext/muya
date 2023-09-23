@@ -1105,11 +1105,6 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
-"@types/content-type@^1.1.3":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@types/content-type/-/content-type-1.1.6.tgz#f0150cbb12a63729bc4241d4ffdde8a0d0b694a3"
-  integrity sha512-WFHg/KFLCdUQl3m27WSQu0NEaLzoHGmgZHlsSYr0Y0iIvItMcBq7opZc6AGXPXqf+btIM6vTBJyLvuDAihB+zQ==
-
 "@types/d3-scale-chromatic@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/d3-scale-chromatic/-/d3-scale-chromatic-3.0.0.tgz#103124777e8cdec85b20b51fd3397c682ee1e954"
@@ -2153,11 +2148,6 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
-
-content-type@^1.0.4:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.5.tgz#8b773162656d1d1086784c8f23a54ce6d73d7918"
-  integrity sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==
 
 conventional-changelog-angular@^6.0.0:
   version "6.0.0"
@@ -7141,14 +7131,6 @@ unset-value@^1.0.0:
   dependencies:
     has-value "^0.3.1"
     isobject "^3.0.0"
-
-unsplash-js@^7.0.18:
-  version "7.0.18"
-  resolved "https://registry.yarnpkg.com/unsplash-js/-/unsplash-js-7.0.18.tgz#7974fcf483b76045822438e1980145dbd42a15fd"
-  integrity sha512-R3HTszj9EFWVqubcI+ncukGJ4JusWLBKGk5ZbT7ZYcUjNpa5VkHgTh2qu2pWEVX00Br7OI9z60zyoIMVKXhrWg==
-  dependencies:
-    "@types/content-type" "^1.1.3"
-    content-type "^1.0.4"
 
 update-browserslist-db@^1.0.11:
   version "1.0.11"
