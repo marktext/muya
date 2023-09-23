@@ -4,7 +4,7 @@ import { deepClone } from "@muya/utils";
 import emptyStates from "@muya/config/emptyStates";
 import ScrollPage from "@muya/block/scrollPage";
 import { FRONT_MENU, canTurnIntoMenu } from "./config";
-import { replaceBlockByLabel } from "@muya/ui/quickInsert/config";
+import { replaceBlockByLabel } from "@muya/ui/paragraphQuickInsertMenu/config";
 
 import "./index.css";
 

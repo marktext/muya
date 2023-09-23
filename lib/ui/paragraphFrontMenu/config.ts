@@ -1,7 +1,7 @@
 import copyIcon from "@muya/assets/icons/copy/2.png";
 import newIcon from "@muya/assets/icons/paragraph/2.png";
 import deleteIcon from "@muya/assets/icons/delete/2.png";
-import { MENU_CONFIG } from "@muya/ui/quickInsert/config";
+import { MENU_CONFIG } from "@muya/ui/paragraphQuickInsertMenu/config";
 import { isOsx } from "@muya/config";
 
 const ALL_MENU_CONFIG = MENU_CONFIG.reduce(

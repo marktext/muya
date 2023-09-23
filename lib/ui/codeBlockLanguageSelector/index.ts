@@ -2,7 +2,7 @@ import BaseScrollFloat from "../baseScrollFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import { search } from "@muya/utils/prism";
 import ScrollPage from "@muya/block/scrollPage";
-import fileIcons from "../fileIcons";
+import fileIcons from "../utils/fileIcons";
 
 import type { VNode } from "snabbdom";
 import type Muya from "@muya/index";

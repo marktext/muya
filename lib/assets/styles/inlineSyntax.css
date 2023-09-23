@@ -3,7 +3,9 @@
   text-decoration: none;
 }
 
-.mu-hide, .mu-hide .mu-highlight, .mu-hide .mu-selection {
+.mu-hide,
+.mu-hide .mu-highlight,
+.mu-hide .mu-selection {
   display: inline-block;
   width: 0;
   height: 0;
@@ -15,8 +17,7 @@
 /* link and auto-link and reference link */
 a.mu-inline-rule,
 span.mu-inline-rule.mu-link {
-  color: var(--editor-color-80);
-  text-decoration: underline;
+  color: rgb(20, 86, 240);
 
   pointer-events: none;
 }
@@ -130,8 +131,8 @@ code.mu-inline-rule {
   vertical-align: bottom;
 }
 
-.mu-math > .mu-math-render,
-.mu-ruby > .mu-ruby-render {
+.mu-math>.mu-math-render,
+.mu-ruby>.mu-ruby-render {
   position: absolute;
   top: calc(100% + .5em);
   left: 0;
@@ -149,7 +150,7 @@ code.mu-inline-rule {
   user-select: none;
 }
 
-.mu-ruby > .mu-ruby-render {
+.mu-ruby>.mu-ruby-render {
   left: 50%;
 
   padding-bottom: 0;
@@ -158,19 +159,19 @@ code.mu-inline-rule {
 }
 
 div .mu-math-error,
-.mu-math > .mu-math-render.mu-math-error {
+.mu-math>.mu-math-render.mu-math-error {
   color: var(--delete-color);
   font-size: 14px;
   font-family: monospace;
   font-style: italic;
 }
 
-.mu-math > .mu-math-render .katex-display {
+.mu-math>.mu-math-render .katex-display {
   margin: 0;
 }
 
 /* Inline math */
-.mu-math > .mu-math-render .katex {
+.mu-math>.mu-math-render .katex {
   white-space: nowrap;
   vertical-align: middle;
 }
@@ -181,16 +182,16 @@ div .mu-math-error,
   height: auto;
 }
 
-.mu-hide.mu-ruby > .mu-ruby-text,
-.mu-hide.mu-math > .mu-math-text {
+.mu-hide.mu-ruby>.mu-ruby-text,
+.mu-hide.mu-math>.mu-math-text {
   display: inline-block;
   width: 0;
   height: 0;
   overflow: hidden;
 }
 
-.mu-hide.mu-ruby > .mu-ruby-render,
-.mu-hide.mu-math > .mu-math-render {
+.mu-hide.mu-ruby>.mu-ruby-render,
+.mu-hide.mu-math>.mu-math-render {
   position: relative;
   top: 0;
 
@@ -205,20 +206,19 @@ div .mu-math-error,
   user-select: auto;
 }
 
-.mu-ruby:not(.mu-hide) > .mu-ruby-render,
-.mu-math:not(.mu-hide) > .mu-math-render {
+.mu-ruby:not(.mu-hide)>.mu-ruby-render,
+.mu-math:not(.mu-hide)>.mu-math-render {
   z-index: 100;
 
   box-shadow: var(--float-shadow);
 }
 
-.mu-ruby > .mu-ruby-render::before,
-.mu-math > .mu-math-render::before {
+.mu-ruby>.mu-ruby-render::before,
+.mu-math>.mu-math-render::before {
   border-bottom-color: var(--float-bg-color);
 }
 
-.mu-gray.mu-ruby > .mu-ruby-render::before
-.mu-gray.mu-math > .mu-math-render::before {
+.mu-gray.mu-ruby>.mu-ruby-render::before .mu-gray.mu-math>.mu-math-render::before {
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -232,13 +232,12 @@ div .mu-math-error,
   content: "";
 }
 
-.mu-hide.mu-ruby > .mu-ruby-render::before
-.mu-hide.mu-math > .mu-math-render::before {
+.mu-hide.mu-ruby>.mu-ruby-render::before .mu-hide.mu-math>.mu-math-render::before {
   content: none;
 }
 
-blockquote .mu-hide.mu-ruby > .mu-ruby-render,
-blockquote .mu-hide.mu-math > .mu-math-render {
+blockquote .mu-hide.mu-ruby>.mu-ruby-render,
+blockquote .mu-hide.mu-math>.mu-math-render {
   color: var(--editor-color-50);
 }
 
@@ -290,7 +289,7 @@ blockquote .mu-hide.mu-math > .mu-math-render {
   overflow: visible;
 }
 
-.mu-image-marked-text ~ img {
+.mu-image-marked-text~img {
   display: inline-block;
   max-width: 100%;
   margin: 0 auto;
@@ -331,7 +330,7 @@ blockquote .mu-hide.mu-math > .mu-math-render {
   color: var(--icon-color);
 }
 
-.mu-inline-image i.icon > i[class^="icon-"] {
+.mu-inline-image i.icon>i[class^="icon-"] {
   position: absolute;
   left: -20px;
 

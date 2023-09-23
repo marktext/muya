@@ -1,18 +1,18 @@
 import Muya from "../lib/index";
 import {
-  EmojiPicker,
-  FormatPicker,
-  ImageSelector,
+  EmojiSelector,
+  InlineFormatToolbar,
+  ImageEditTool,
   ImageToolBar,
-  ImageTransformer,
-  CodePicker,
-  TableColumnTools,
-  QuickInsert,
+  ImageResizeBar,
+  CodeBlockLanguageSelector,
+  TableColumnToolbar,
+  ParagraphQuickInsertMenu,
   TableDragBar,
-  TableTools,
-  PreviewTools,
-  FrontButton,
-  FrontMenu,
+  TableRowColumMenu,
+  PreviewToolBar,
+  ParagraphFrontButton,
+  ParagraphFrontMenu,
 } from "../lib/ui/index";
 import zh from "../lib/locales/zh";
 import MD2Html from "../lib/jsonState/markdownToHtml";
@@ -23,22 +23,22 @@ import "./style.css"
 
 // import "../lib/assets/style.css";
 
-Muya.use(EmojiPicker);
-Muya.use(FormatPicker);
-Muya.use(ImageSelector, {
+Muya.use(EmojiSelector);
+Muya.use(InlineFormatToolbar);
+Muya.use(ImageEditTool, {
   unsplashAccessKey: import.meta.env.UNSPLASH_ACCESS_KEY,
 });
 Muya.use(ImageToolBar);
-Muya.use(ImageTransformer);
-Muya.use(CodePicker);
+Muya.use(ImageResizeBar);
+Muya.use(CodeBlockLanguageSelector);
 
-Muya.use(FrontButton);
-Muya.use(FrontMenu);
-Muya.use(TableColumnTools);
-Muya.use(QuickInsert);
+Muya.use(ParagraphFrontButton);
+Muya.use(ParagraphFrontMenu);
+Muya.use(TableColumnToolbar);
+Muya.use(ParagraphQuickInsertMenu);
 Muya.use(TableDragBar);
-Muya.use(TableTools);
-Muya.use(PreviewTools);
+Muya.use(TableRowColumMenu);
+Muya.use(PreviewToolBar);
 
 const container: HTMLElement = document.querySelector("#editor")!;
 const undoBtn: HTMLButtonElement = document.querySelector("#undo")!;
