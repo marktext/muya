@@ -19,13 +19,28 @@ import MD2Html from "../lib/jsonState/markdownToHtml";
 import { DEFAULT_STATE, DEFAULT_MARKDOWN } from "./mock";
 import { TState } from "../lib/jsonState/types";
 
-import "./style.css"
+import "./style.css";
 
 // import "../lib/assets/style.css";
 
+const imagePathPicker = async () => {
+  return "https://pics.ettoday.net/images/2253/d2253152.jpg";
+};
+
+const imageAction = async () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg");
+    }, 3000);
+  });
+};
+
 Muya.use(EmojiSelector);
 Muya.use(InlineFormatToolbar);
-Muya.use(ImageEditTool);
+Muya.use(ImageEditTool, {
+  imagePathPicker,
+  imageAction,
+});
 Muya.use(ImageToolBar);
 Muya.use(ImageResizeBar);
 Muya.use(CodeBlockLanguageSelector);
@@ -47,22 +62,14 @@ const nextBtn: HTMLButtonElement = document.querySelector("#next")!;
 const replaceInput: HTMLInputElement = document.querySelector("#replace")!;
 const singleBtn: HTMLButtonElement = document.querySelector("#single")!;
 const allBtn: HTMLButtonElement = document.querySelector("#all")!;
-const setContentBtn: HTMLButtonElement = document.querySelector("#set-content")!;
+const setContentBtn: HTMLButtonElement =
+  document.querySelector("#set-content")!;
 const selectAllBtn: HTMLButtonElement = document.querySelector("#select-all")!;
 
-const imagePathPicker = async () => {
-  return "https://pics.ettoday.net/images/2253/d2253152.jpg";
-};
-
-const imageAction = async () => {
-  return "https://pics.ettoday.net/images/2469/d2469498.jpg";
-};
 
 const muya = new Muya(container, {
   json: DEFAULT_STATE,
   disableHtml: true,
-  imagePathPicker,
-  imageAction,
 });
 
 muya.locale(zh);

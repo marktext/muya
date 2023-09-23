@@ -305,7 +305,6 @@ export default {
                 block: this,
                 reference,
                 imageInfo,
-                cb: () => {},
               });
             }
           }

@@ -67,6 +67,7 @@ class Editor {
     const eventHandler = (event) => {
       const { anchorBlock, isSelectionInSameBlock } =
         this.selection.getSelection();
+
       if (!isSelectionInSameBlock || !anchorBlock) {
         this.activeContentBlock = null;
         return;

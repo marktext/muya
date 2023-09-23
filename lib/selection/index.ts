@@ -437,7 +437,6 @@ class Selection {
         block: contentBlock,
         reference,
         imageInfo,
-        cb: () => {},
       });
     }
   }

@@ -297,14 +297,7 @@ export const MUYA_DEFAULT_OPTIONS = {
   // NOTE: The browser is not able to correct misspelled words words without a custom
   // implementation like in MarkText.
   spellcheckEnabled: false,
-  // transform the image to local folder, cloud or just return the local path
-  imageAction: null,
-  // Call Electron open dialog or input element type is file.
-  imagePathPicker: null,
   clipboardFilePath: () => {},
-  // image path auto completed when you input in image selector.
-  imagePathAutoComplete: () => [],
-
   // Markdown extensions
   superSubScript: false,
   footnote: false,

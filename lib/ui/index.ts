@@ -13,7 +13,7 @@ import PreviewToolBar from "./previewToolBar";
 import ParagraphFrontButton from "./paragraphFrontButton";
 import ParagraphFrontMenu from "./paragraphFrontMenu";
 
-// footnoteTool imagePicker linkTools tableChessboard tooltip are not finished.
+// footnoteTool linkTools tableChessboard tooltip are not finished.
 
 export {
   EmojiSelector,

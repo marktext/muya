@@ -158,7 +158,6 @@ class ImageToolbar extends BaseFloat {
           block: this.block,
           reference,
           imageInfo,
-          cb: () => {},
         });
 
         return this.hide();

@@ -1,49 +1,58 @@
-import BaseFloat from "../baseFloat";
+import BaseFloat, { IBaseFloatOptions } from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import { EVENT_KEYS, URL_REG, isWin } from "@muya/config";
-import { getUniqueId } from "@muya/utils";
+import { getUniqueId, isKeyboardEvent } from "@muya/utils";
 import { getImageInfo, getImageSrc } from "@muya/utils/image";
-import logger from "@muya/utils/logger";
 
 import "./index.css";
 import { VNode } from "snabbdom";
 import Muya from "@muya/index";
+import Format from "@muya/block/base/format";
+import { ImageToken } from "@muya/inlineRenderer/types";
 
-const debug = logger("image selector:");
+type State = {
+  src: string;
+  alt: string;
+  title: string;
+};
+
+type Options = {
+  imagePathPicker?: () => Promise<string>;
+  imageAction?: (state: State) => Promise<string>;
+} & IBaseFloatOptions;
 
 const defaultOptions = {
-  placement: "bottom-center" as const,
+  placement: "bottom" as const,
   modifiers: {
     offset: {
       offset: "0, 0",
     },
   },
   showArrow: false,
-}
+};
 
-class ImageSelector extends BaseFloat {
+class ImageEditTool extends BaseFloat {
+  public options: Options;
   static pluginName = "imageSelector";
   private oldVNode: VNode | null = null;
-  private imageInfo: any;
-  private block: any;
-  private tab: string = "link";
-  private isFullMode: boolean;
-  private state: { alt: string; src: string; title: string };
-  private imageSelectorContainer: HTMLDivElement = document.createElement("div");
+  private imageInfo: {
+    token: ImageToken;
+    imageId: string;
+  } | null = null;
+  private block: Format | null = null;
+  private state: State = {
+    alt: "",
+    src: "",
+    title: "",
+  };
+  private imageSelectorContainer: HTMLDivElement =
+    document.createElement("div");
 
-  constructor(muya: Muya) {
+  constructor(muya: Muya, options: Options = {...defaultOptions}) {
     const name = "mu-image-selector";
-    super(muya, name, Object.assign({}, defaultOptions));
-
-    this.imageInfo = null;
-    this.block = null;
-    this.isFullMode = false; // is show title and alt input
-    this.state = {
-      alt: "",
-      src: "",
-      title: "",
-    };
-
+    super(muya, name, Object.assign({}, defaultOptions, options));
+    // Why aren't options set on baseFloat?
+    this.options = Object.assign({}, defaultOptions, options);
     this.container!.appendChild(this.imageSelectorContainer);
     this.floatBox!.classList.add("mu-image-selector-wrapper");
     this.listen();
@@ -52,179 +61,90 @@ class ImageSelector extends BaseFloat {
   listen() {
     super.listen();
     const { eventCenter } = this.muya;
-    eventCenter.on(
-      "muya-image-selector",
-      ({ block, reference, cb, imageInfo }) => {
-        if (reference) {
-          this.block = block;
+    eventCenter.on("muya-image-selector", ({ block, reference, imageInfo }) => {
+      if (reference) {
+        this.block = block;
 
-          Object.assign(this.state, imageInfo.token.attrs);
+        Object.assign(this.state, imageInfo.token.attrs);
 
-          // Remove file protocol to allow autocomplete.
-          const imageSrc = this.state.src;
-          if (imageSrc && /^file:\/\//.test(imageSrc)) {
-            let protocolLen = 7;
-            if (isWin && /^file:\/\/\//.test(imageSrc)) {
-              protocolLen = 8;
-            }
-            this.state.src = imageSrc.substring(protocolLen);
+        // Remove file protocol to allow autocomplete.
+        // TODO: @JOCS, we still need these codes bellow?
+        const imageSrc = this.state.src;
+        if (imageSrc && /^file:\/\//.test(imageSrc)) {
+          let protocolLen = 7;
+          if (isWin && /^file:\/\/\//.test(imageSrc)) {
+            protocolLen = 8;
           }
-
-          this.imageInfo = imageInfo;
-          this.show(reference, cb);
-          this.render();
-
-          // Auto focus and select all content of the `src.input` element.
-          const input = this.imageSelectorContainer.querySelector("input.src");
-          if (input) {
-            (input as HTMLInputElement).focus();
-            (input as HTMLInputElement).select();
-          }
-        } else {
-          this.hide();
+          this.state.src = imageSrc.substring(protocolLen);
         }
+
+        this.imageInfo = imageInfo;
+        this.show(reference);
+        this.render();
+
+        // Auto focus and select all content of the `src.input` element.
+        const input = this.container?.querySelector("input.src");
+        if (input) {
+          (input as HTMLInputElement).focus();
+          (input as HTMLInputElement).select();
+        }
+      } else {
+        this.hide();
       }
-    );
+    });
   }
 
-  tabClick(_event: Event, tab) {
-    const { value } = tab;
-    this.tab = value;
-
-    return this.render();
+  handleSrcInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.state.src = value;
   }
 
-  toggleMode() {
-    this.isFullMode = !this.isFullMode;
-
-    return this.render();
-  }
-
-  inputHandler(event, type) {
-    const value = event.target.value;
-    this.state[type] = value;
-  }
-
-  handleKeyDown(event) {
+  handleEnter(event: Event) {
+    if (!isKeyboardEvent(event)) {
+      return;
+    }
+    event.stopPropagation();
     if (event.key === EVENT_KEYS.Enter) {
-      event.stopPropagation();
-      this.handleLinkButtonClick();
+      this.handleConfirm();
     }
   }
 
-  srcInputKeyDown(event) {
-    const { imagePathPicker } = this.muya as any;
-    if (!imagePathPicker) {
-      return;
-    }
-
-    if (!imagePathPicker.status) {
-      if (event.key === EVENT_KEYS.Enter) {
-        event.stopPropagation();
-        this.handleLinkButtonClick();
-      }
-
-      return;
-    }
-
-    switch (event.key) {
-      case EVENT_KEYS.ArrowUp:
-        event.preventDefault();
-        imagePathPicker.step("previous");
-        break;
-
-      case EVENT_KEYS.ArrowDown:
-        // fall through
-      case EVENT_KEYS.Tab:
-        event.preventDefault();
-        imagePathPicker.step("next");
-        break;
-
-      case EVENT_KEYS.Enter:
-        event.preventDefault();
-        imagePathPicker.selectItem(imagePathPicker.activeItem);
-        break;
-      default:
-        break;
-    }
-  }
-
-  async handleKeyUp(event) {
-    const { key } = event;
-    if (
-      key === EVENT_KEYS.ArrowUp ||
-      key === EVENT_KEYS.ArrowDown ||
-      key === EVENT_KEYS.Tab ||
-      key === EVENT_KEYS.Enter
-    ) {
-      return;
-    }
-    const value = event.target.value;
-    const { eventCenter } = this.muya;
-    const reference: HTMLInputElement =
-      this.imageSelectorContainer.querySelector("input.src");
-    const cb = (item) => {
-      const { text } = item;
-
-      let basePath = "";
-      const pathSep = value.match(/(\/|\\)(?:[^/\\]+)$/);
-      if (pathSep && pathSep[0]) {
-        basePath = value.substring(0, pathSep.index + 1);
-      }
-
-      const newValue = basePath + text;
-      const len = newValue.length;
-      reference.value = newValue;
-      this.state.src = newValue;
-      reference.focus();
-      reference.setSelectionRange(len, len);
-    };
-
-    let list;
-    if (!value) {
-      list = [];
-    } else {
-      list = await this.muya.options.imagePathAutoComplete(value);
-    }
-    eventCenter.emit("muya-image-picker", { reference, list, cb });
-  }
-
-  handleLinkButtonClick() {
+  handleConfirm() {
     return this.replaceImageAsync(this.state);
   }
 
-  replaceImageAsync = async ({ alt, src, title }) => {
-    if (!this.muya.options.imageAction || URL_REG.test(src)) {
+  replaceImageAsync = async ({ alt, src, title }: State) => {
+    if (!this.options.imageAction || URL_REG.test(src)) {
       const {
         alt: oldAlt,
         src: oldSrc,
         title: oldTitle,
-      } = this.imageInfo.token.attrs;
+      } = this.imageInfo!.token.attrs;
       if (alt !== oldAlt || src !== oldSrc || title !== oldTitle) {
-        this.block.replaceImage(this.imageInfo, { alt, src, title });
+        this.block!.replaceImage(this.imageInfo!, { alt, src, title });
       }
       this.hide();
     } else {
       if (src) {
         const id = `loading-${getUniqueId()}`;
-        this.block.replaceImage(this.imageInfo, {
+        this.block!.replaceImage(this.imageInfo!, {
           alt: id,
           src,
           title,
         });
         this.hide();
-        const nSrc = await this.muya.options.imageAction({ src, id, alt });
+        const nSrc = await this.options.imageAction({ src, title, alt });
         const { src: localPath } = getImageSrc(src);
         if (localPath) {
           this.muya.editor.inlineRenderer.renderer.urlMap.set(nSrc, localPath);
         }
         const imageWrapper = this.muya.domNode.querySelector(
           `span[data-id=${id}]`
-        );
+        ) as HTMLElement;
 
         if (imageWrapper) {
           const imageInfo = getImageInfo(imageWrapper);
-          this.block.replaceImage(imageInfo, {
+          this.block!.replaceImage(imageInfo, {
             alt,
             src: nSrc,
             title,
@@ -236,181 +156,76 @@ class ImageSelector extends BaseFloat {
     }
   };
 
-  async handleSelectButtonClick() {
-    if (!this.muya.options.imagePathPicker) {
-      debug.warn("You need to add a imagePathPicker option");
-
+  async handleMoreClick() {
+    if (!this.options.imagePathPicker) {
       return;
     }
 
-    const path = await this.muya.options.imagePathPicker();
-    const { alt, title } = this.state;
+    const path = await this.options.imagePathPicker();
+    this.state.src = path;
 
-    return this.replaceImageAsync({
-      alt,
-      title,
-      src: path,
-    });
+    this.render();
   }
-
-  renderHeader(i18n) {
-    const tabs = [
-      {
-        label: i18n.t("Select"),
-        value: "select",
-      },
-      {
-        label: i18n.t("Embed link"),
-        value: "link",
-      },
-    ];
-
-    const children = tabs.map((tab) => {
-      const itemSelector = this.tab === tab.value ? "li.active" : "li";
-
-      return h(
-        itemSelector,
-        h(
-          "span",
-          {
-            on: {
-              click: (event) => {
-                this.tabClick(event, tab);
-              },
-            },
-          },
-          tab.label
-        )
-      );
-    });
-
-    return h("ul.header", children);
-  }
-
-  renderBody = (i18n) => {
-    const { tab, state, isFullMode } = this;
-    const { alt, title, src } = state;
-    let bodyContent = null;
-    if (tab === "select") {
-      bodyContent = [
-        h(
-          "button.mu-button.role-button.select",
-          {
-            on: {
-              click: (event) => {
-                this.handleSelectButtonClick();
-              },
-            },
-          },
-          i18n.t("Choose an Image")
-        ),
-        h("span.description", i18n.t("Choose image from your computer.")),
-      ];
-    } else if (tab === "link") {
-      const altInput = h("input.alt", {
-        props: {
-          placeholder: i18n.t("Alt text"),
-          value: alt,
-        },
-        on: {
-          input: (event) => {
-            this.inputHandler(event, "alt");
-          },
-          paste: (event) => {
-            this.inputHandler(event, "alt");
-          },
-          keydown: (event) => {
-            this.handleKeyDown(event);
-          },
-        },
-      });
-      const srcInput = h("input.src", {
-        props: {
-          placeholder: i18n.t("Image link or local path"),
-          value: src,
-        },
-        on: {
-          input: (event) => {
-            this.inputHandler(event, "src");
-          },
-          paste: (event) => {
-            this.inputHandler(event, "src");
-          },
-          keydown: (event) => {
-            this.srcInputKeyDown(event);
-          },
-          keyup: (event) => {
-            this.handleKeyUp(event);
-          },
-        },
-      });
-      const titleInput = h("input.title", {
-        props: {
-          placeholder: i18n.t("Image title"),
-          value: title,
-        },
-        on: {
-          input: (event) => {
-            this.inputHandler(event, "title");
-          },
-          paste: (event) => {
-            this.inputHandler(event, "title");
-          },
-          keydown: (event) => {
-            this.handleKeyDown(event);
-          },
-        },
-      });
-
-      const inputWrapper = isFullMode
-        ? h("div.input-container", [altInput, srcInput, titleInput])
-        : h("div.input-container", [srcInput]);
-
-      const embedButton = h(
-        "button.mu-button.role-button.link",
-        {
-          on: {
-            click: (event) => {
-              this.handleLinkButtonClick();
-            },
-          },
-        },
-        i18n.t("Embed Image")
-      );
-      const bottomDes = h("span.description", [
-        h("span", i18n.t("Paste web image or local image path. Use ")),
-        h(
-          "a",
-          {
-            on: {
-              click: (event) => {
-                this.toggleMode();
-              },
-            },
-          },
-          `${isFullMode ? i18n.t("simple mode") : i18n.t("full mode")}.`
-        ),
-      ]);
-      bodyContent = [inputWrapper, embedButton, bottomDes];
-    }
-
-    return h("div.image-select-body", bodyContent);
-  };
 
   render() {
     const { oldVNode, imageSelectorContainer } = this;
     const { i18n } = this.muya;
-    const selector = "div";
-    const vnode = h(selector, [this.renderHeader(i18n), this.renderBody(i18n)]);
+    const { src } = this.state;
+    console.log(this.options)
+    const moreButton = this.options.imagePathPicker
+      ? h(
+          "span.more",
+          {
+            on: {
+              click: () => {
+                this.handleMoreClick();
+              },
+            },
+          },
+          h("span.more-inner")
+        )
+      : null;
 
-    if (oldVNode) {
-      patch(oldVNode, vnode);
-    } else {
-      patch(imageSelectorContainer, vnode);
-    }
+    const srcInput = h("input.src", {
+      props: {
+        placeholder: i18n.t("Image src placeholder"),
+        value: src,
+      },
+      on: {
+        input: (event) => {
+          this.handleSrcInput(event);
+        },
+        paste: (event) => {
+          this.handleSrcInput(event);
+        },
+        keydown: (event) => {
+          this.handleEnter(event);
+        },
+      },
+    });
+
+    const confirmButton = h(
+      "span.confirm",
+      {
+        on: {
+          click: () => {
+            this.handleConfirm();
+          },
+        },
+      },
+      i18n.t("Confirm Text")
+    );
+
+    const vnode = h("div.image-edit-tool", [
+      moreButton,
+      srcInput,
+      confirmButton,
+    ]);
+
+    patch(oldVNode || imageSelectorContainer, vnode);
 
     this.oldVNode = vnode;
   }
 }
 
-export default ImageSelector;
+export default ImageEditTool;
