@@ -1,4 +1,5 @@
-export {};
+import type Content from "@muya/block/base/content";
+import type Parent from "@muya/block/base/parent";
 
 declare global {
   interface Window {
@@ -7,6 +8,6 @@ declare global {
   }
 
   interface Element {
-    __MUYA_BLOCK__: unknown;
+    __MUYA_BLOCK__: Content | Parent;
   }
 }

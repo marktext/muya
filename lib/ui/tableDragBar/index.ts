@@ -83,7 +83,7 @@ const bottomOptions = {
 
 class TableDragBar extends BaseFloat {
   static pluginName = "tableDragBar";
-  private oldVnode: any;
+  private oldVNode: any;
   private block: any;
   private mouseTimer: any;
   private dragEventIds: any[];
@@ -106,7 +106,7 @@ class TableDragBar extends BaseFloat {
     const name = "mu-table-drag-bar";
     const opts = Object.assign({}, bottomOptions, options);
     super(muya, name, opts);
-    this.oldVnode = null;
+    this.oldVNode = null;
     this.block = null;
     this.options = opts;
     this.floatBox.classList.add("mu-table-drag-container");

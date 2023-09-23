@@ -16,7 +16,7 @@ const defaultOptions = {
 
 class ImageToolbar extends BaseFloat {
   static pluginName = "imageToolbar";
-  private oldVnode: any;
+  private oldVNode: any;
   private imageInfo: any;
   private icons: { type: string; tooltip: string; icon: any; }[];
   private reference: any;
@@ -28,7 +28,7 @@ class ImageToolbar extends BaseFloat {
     const opts = Object.assign({}, defaultOptions, options);
 
     super(muya, name, opts);
-    this.oldVnode = null;
+    this.oldVNode = null;
     this.imageInfo = null;
     this.options = opts;
     this.icons = icons;
@@ -62,7 +62,7 @@ class ImageToolbar extends BaseFloat {
   }
 
   render() {
-    const { icons, oldVnode, toolbarContainer, imageInfo } = this;
+    const { icons, oldVNode, toolbarContainer, imageInfo } = this;
     const { i18n } = this.muya;
     const { attrs } = imageInfo.token;
     const dataAlign = attrs["data-align"];
@@ -114,12 +114,12 @@ class ImageToolbar extends BaseFloat {
 
     const vnode = h("ul", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(toolbarContainer, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
   selectItem(event, item) {

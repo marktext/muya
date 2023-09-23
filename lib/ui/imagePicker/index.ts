@@ -15,13 +15,13 @@ const iconhash = {
 
 class ImagePathPicker extends BaseScrollFloat {
   static pluginName = "imagePathPicker";
-  private oldVnode: any;
+  private oldVNode: any;
 
   constructor(muya) {
     const name = "mu-list-picker";
     super(muya, name);
     this.renderArray = [];
-    this.oldVnode = null;
+    this.oldVNode = null;
     this.activeItem = null;
     this.floatBox.classList.add("mu-image-picker-wrapper");
     this.listen();
@@ -43,7 +43,7 @@ class ImagePathPicker extends BaseScrollFloat {
   }
 
   render() {
-    const { renderArray, oldVnode, scrollElement, activeItem } = this;
+    const { renderArray, oldVNode, scrollElement, activeItem } = this;
     const children = renderArray.map((item) => {
       const { text, iconClass } = item;
       const icon = h(
@@ -91,12 +91,12 @@ class ImagePathPicker extends BaseScrollFloat {
 
     const vnode = h("ul", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(scrollElement, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
   getItemElement(item) {

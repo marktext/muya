@@ -7,7 +7,7 @@ import "./index.css";
 class EmojiPicker extends BaseScrollFloat {
   static pluginName = "emojiPicker";
   private _renderObj: any;
-  private oldVnode: any;
+  private oldVNode: any;
   private emoji: Emoji;
 
   constructor(muya) {
@@ -25,7 +25,7 @@ class EmojiPicker extends BaseScrollFloat {
     this._renderObj = null;
     this.renderArray = null;
     this.activeItem = null;
-    this.oldVnode = null;
+    this.oldVNode = null;
     this.emoji = new Emoji();
     this.listen();
   }
@@ -74,7 +74,7 @@ class EmojiPicker extends BaseScrollFloat {
   }
 
   render() {
-    const { scrollElement, _renderObj, activeItem, oldVnode } = this;
+    const { scrollElement, _renderObj, activeItem, oldVNode } = this;
     const { i18n } = this.muya;
     const children = Object.keys(_renderObj).map((category) => {
       const title = h("div.title", i18n.t(category) || category);
@@ -101,12 +101,12 @@ class EmojiPicker extends BaseScrollFloat {
 
     const vnode = h("div", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(scrollElement, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
   getItemElement(item) {

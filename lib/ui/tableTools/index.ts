@@ -16,7 +16,7 @@ const defaultOptions = {
 
 class TableBarTools extends BaseFloat {
   static pluginName = "tableBarTools";
-  private oldVnode: any;
+  private oldVNode: any;
   private tableInfo: any;
   private block: any;
   private tableBarContainer: HTMLDivElement;
@@ -26,7 +26,7 @@ class TableBarTools extends BaseFloat {
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
     this.options = opts;
-    this.oldVnode = null;
+    this.oldVNode = null;
     this.tableInfo = null;
     this.block = null;
     this.floatBox.classList.add("mu-table-bar-tools");
@@ -55,7 +55,7 @@ class TableBarTools extends BaseFloat {
   }
 
   render() {
-    const { tableInfo, oldVnode, tableBarContainer } = this;
+    const { tableInfo, oldVNode, tableBarContainer } = this;
     const { i18n } = this.muya;
     const renderArray = toolList[tableInfo.barType];
     const children = renderArray.map((item) => {
@@ -81,12 +81,12 @@ class TableBarTools extends BaseFloat {
 
     const vnode = h("ul", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(tableBarContainer, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
   selectItem(event, item) {

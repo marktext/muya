@@ -18,7 +18,7 @@ const checkCanInsertFrontMatter = (muya, block) => {
 };
 
 class QuickInsert extends BaseScrollFloat {
-  public oldVnode: any;
+  public oldVNode: any;
   public block: any;
   private _renderData: Array<any>;
 
@@ -28,7 +28,7 @@ class QuickInsert extends BaseScrollFloat {
     const name = "mu-quick-insert";
     super(muya, name);
     this.reference = null;
-    this.oldVnode = null;
+    this.oldVNode = null;
     this._renderData = null;
     this.renderArray = null;
     this.activeItem = null;
@@ -153,12 +153,12 @@ class QuickInsert extends BaseScrollFloat {
     }
     const vnode = h("div", children);
 
-    if (this.oldVnode) {
-      patch(this.oldVnode, vnode);
+    if (this.oldVNode) {
+      patch(this.oldVNode, vnode);
     } else {
       patch(scrollElement, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
   search(text) {

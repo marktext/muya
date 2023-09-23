@@ -1,12 +1,16 @@
 import BaseFloat, { IBaseFloatOptions } from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
-import icons, { IIcon } from "./config";
-import Format from "@muya/block/base/format";
+import icons, { FormatToolIcon } from "./config";
+import { isKeyboardEvent } from "@muya/utils";
 
 import "./index.css";
+import { VNode } from "snabbdom";
+import { Token } from "@muya/inlineRenderer/types";
+import Format from "@muya/block/base/format";
+import Muya from "@muya/index";
 
 const defaultOptions = {
-  placement: "top",
+  placement: "top" as const,
   modifiers: {
     offset: {
       offset: "0, 5",
@@ -17,26 +21,21 @@ const defaultOptions = {
 
 class FormatPicker extends BaseFloat {
   static pluginName = "formatPicker";
-  private oldVnode: any;
-  private block: any;
-  private formats: Array<any>;
+  private oldVNode: VNode | null = null;
+  private block: Format | null = null;
+  private formats: Token[] = [];
   public options: IBaseFloatOptions;
-  private icons: Array<IIcon>;
-  private formatContainer: HTMLDivElement;
+  private icons: FormatToolIcon[] = icons;
+  private formatContainer: HTMLDivElement = document.createElement("div");
 
-  constructor(muya, options = {}) {
+  constructor(muya: Muya, options = {}) {
     const name = "mu-format-picker";
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
-    this.oldVnode = null;
-    this.block = null;
-    this.formats = null;
     this.options = opts;
-    this.icons = icons;
-    const formatContainer = (this.formatContainer =
-      document.createElement("div"));
-    this.container.appendChild(formatContainer);
-    this.floatBox.classList.add("mu-format-picker-container");
+    // BaseFloat Class has `container` and `floatBox` properties.
+    this.container!.appendChild(this.formatContainer);
+    this.floatBox!.classList.add("mu-format-picker-container");
     this.listen();
   }
 
@@ -70,9 +69,13 @@ class FormatPicker extends BaseFloat {
       e: "inline_math",
       i: "image",
       r: "clear",
-    };
+    } as const;
 
-    const handleKeydown = (event) => {
+    const handleKeydown = (event: Event) => {
+      if (!isKeyboardEvent(event)) {
+        return;
+      }
+
       const { key, shiftKey, metaKey, ctrlKey } = event;
       const { anchorBlock, isSelectionInSameBlock } =
         editor.selection.getSelection();
@@ -83,12 +86,12 @@ class FormatPicker extends BaseFloat {
         if (shiftKey) {
           if (Object.keys(SHIFT_HASH).includes(key)) {
             event.preventDefault();
-            (anchorBlock as any).format(SHIFT_HASH[key]);
+            anchorBlock.format(SHIFT_HASH[key as keyof typeof SHIFT_HASH]);
           }
         } else {
           if (Object.keys(HASH).includes(key)) {
             event.preventDefault();
-            (anchorBlock as any).format(HASH[key]);
+            anchorBlock.format(HASH[key as keyof typeof HASH]);
           }
         }
       }
@@ -98,28 +101,23 @@ class FormatPicker extends BaseFloat {
   }
 
   render() {
-    const { icons, oldVnode, formatContainer, formats } = this;
+    const { icons, oldVNode, formatContainer, formats } = this;
     const { i18n } = this.muya;
     const children = icons.map((i) => {
-      let icon;
-      let iconWrapperSelector;
-      if (i.icon) {
-        // SVG icon Asset
-        iconWrapperSelector = "div.icon-wrapper";
-        icon = h(
-          "i.icon",
-          h(
-            "i.icon-inner",
-            {
-              style: {
-                background: `url(${i.icon}) no-repeat`,
-                "background-size": "100%",
-              },
+      const iconWrapperSelector = "div.icon-wrapper";
+      const icon = h(
+        "i.icon",
+        h(
+          "i.icon-inner",
+          {
+            style: {
+              background: `url(${i.icon}) no-repeat`,
+              "background-size": "100%",
             },
-            ""
-          )
-        );
-      }
+          },
+          ""
+        )
+      );
       const iconWrapper = h(iconWrapperSelector, icon);
 
       let itemSelector = `li.item.${i.type}`;
@@ -150,15 +148,15 @@ class FormatPicker extends BaseFloat {
 
     const vnode = h("ul", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(formatContainer, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
-  selectItem(event, item) {
+  selectItem(event: Event, item: FormatToolIcon) {
     event.preventDefault();
     event.stopPropagation();
     const { selection } = this.muya.editor;
@@ -173,11 +171,11 @@ class FormatPicker extends BaseFloat {
       focusPath,
     });
     const { block } = this;
-    block.format(item.type);
+    block!.format(item.type);
     if (/link|image/.test(item.type)) {
       this.hide();
     } else {
-      const { formats } = block.getFormatsInRange();
+      const { formats } = block!.getFormatsInRange();
       this.formats = formats;
       this.render();
     }

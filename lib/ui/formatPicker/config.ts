@@ -12,13 +12,6 @@ import clearIcon from "@muya/assets/icons/format_clear/2.png";
 
 const COMMAND_KEY = isOsx ? "⌘" : "Ctrl";
 
-export interface IIcon {
-  type: string;
-  tooltip: string;
-  shortcut: string;
-  icon: any;
-}
-
 const icons = [
   {
     type: "strong",
@@ -81,5 +74,7 @@ const icons = [
     icon: clearIcon,
   },
 ];
+
+export type FormatToolIcon = typeof icons[number];
 
 export default icons;

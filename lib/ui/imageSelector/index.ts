@@ -21,7 +21,7 @@ const toJson = (res) => {
 class ImageSelector extends BaseFloat {
   static pluginName = "imageSelector";
   private renderArray: any[];
-  private oldVnode: any;
+  private oldVNode: any;
   private imageInfo: any;
   private unsplash: any;
   private photoList: any[];
@@ -47,7 +47,7 @@ class ImageSelector extends BaseFloat {
     });
     super(muya, name, options);
     this.renderArray = [];
-    this.oldVnode = null;
+    this.oldVNode = null;
     this.imageInfo = null;
     if (!unsplashAccessKey) {
       this.unsplash = null;
@@ -550,18 +550,18 @@ class ImageSelector extends BaseFloat {
   };
 
   render() {
-    const { oldVnode, imageSelectorContainer } = this;
+    const { oldVNode, imageSelectorContainer } = this;
     const { i18n } = this.muya;
     const selector = "div";
     const vnode = h(selector, [this.renderHeader(i18n), this.renderBody(i18n)]);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(imageSelectorContainer, vnode);
     }
 
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 }
 

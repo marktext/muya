@@ -35,7 +35,7 @@ const defaultOptions = {
 
 class FrontMenu extends BaseFloat {
   static pluginName = "frontMenu";
-  private oldVnode: any;
+  private oldVNode: any;
   private block: any;
   private reference: any;
   private frontMenuContainer: HTMLDivElement;
@@ -44,7 +44,7 @@ class FrontMenu extends BaseFloat {
     const name = "mu-front-menu";
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
-    this.oldVnode = null;
+    this.oldVNode = null;
     this.block = null;
     this.options = opts;
     this.reference = null;
@@ -126,7 +126,7 @@ class FrontMenu extends BaseFloat {
   }
 
   render() {
-    const { oldVnode, frontMenuContainer, block } = this;
+    const { oldVNode, frontMenuContainer, block } = this;
     const { i18n } = this.muya;
     const { blockName } = block;
     const children = FRONT_MENU.map(({ icon, label, text, shortCut }) => {
@@ -164,12 +164,12 @@ class FrontMenu extends BaseFloat {
 
     const vnode = h("ul", children);
 
-    if (oldVnode) {
-      patch(oldVnode, vnode);
+    if (oldVNode) {
+      patch(oldVNode, vnode);
     } else {
       patch(frontMenuContainer, vnode);
     }
-    this.oldVnode = vnode;
+    this.oldVNode = vnode;
   }
 
   selectItem(event, { label }) {
