@@ -1,42 +1,44 @@
 import BaseScrollFloat from "@muya/ui/baseScrollFloat";
+import { h, patch } from "@muya/utils/snabbdom";
 import Emoji from "./emoji";
-import { patch, h } from "@muya/utils/snabbdom";
 
+import type { Emoji as EmojiType } from "@muya/config/emojis";
+import type Muya from "@muya/index";
+import type { VNode } from "snabbdom";
 import "./index.css";
 
-class EmojiPicker extends BaseScrollFloat {
-  static pluginName = "emojiPicker";
-  private _renderObj: any;
-  private oldVNode: any;
-  private emoji: Emoji;
+const defaultOptions = {
+  placement: "bottom" as const,
+  modifiers: {
+    offset: {
+      offset: "0, 12",
+    },
+  },
+  showArrow: false,
+};
 
-  constructor(muya) {
+class EmojiSelector extends BaseScrollFloat {
+  static pluginName = "emojiPicker";
+  private _renderObj: Record<string, EmojiType[]> | null = null;
+  private oldVNode: VNode | null = null;
+  private emoji: Emoji = new Emoji();
+  public renderArray: EmojiType[] = [];
+  public activeItem: EmojiType | null = null;
+
+  constructor(muya: Muya) {
     const name = "mu-emoji-picker";
-    const options = {
-      placement: "bottom",
-      modifiers: {
-        offset: {
-          offset: "0, 12",
-        },
-      },
-      showArrow: false,
-    };
-    super(muya, name, options);
-    this._renderObj = null;
-    this.renderArray = null;
-    this.activeItem = null;
-    this.oldVNode = null;
-    this.emoji = new Emoji();
+    super(muya, name, defaultOptions);
+
     this.listen();
   }
 
-  get renderObj() {
-    return this._renderObj;
+  get renderObj(): Record<string, EmojiType[]> {
+    return this._renderObj || {};
   }
 
-  set renderObj(obj) {
+  set renderObj(obj: Record<string, EmojiType[]>) {
     this._renderObj = obj;
-    const renderArray = [];
+    const renderArray: EmojiType[] = [];
     Object.keys(obj).forEach((key) => {
       renderArray.push(...obj[key]);
     });
@@ -55,9 +57,9 @@ class EmojiPicker extends BaseScrollFloat {
       if (!emojiText) return this.hide();
       const text = emojiText.trim();
       if (text) {
-        const renderObj = this.emoji.search(text);
-        this.renderObj = renderObj;
-        const cb = (item) => {
+        this.renderObj = this.emoji.search(text);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const cb: any = (item: EmojiType) => {
           if (block && block.setEmoji) {
             block.setEmoji(item.aliases[0]);
           }
@@ -74,11 +76,12 @@ class EmojiPicker extends BaseScrollFloat {
   }
 
   render() {
-    const { scrollElement, _renderObj, activeItem, oldVNode } = this;
+    const { scrollElement, renderObj, activeItem, oldVNode } = this;
     const { i18n } = this.muya;
-    const children = Object.keys(_renderObj).map((category) => {
+
+    const children = Object.keys(renderObj).map((category) => {
       const title = h("div.title", i18n.t(category) || category);
-      const emojis = _renderObj[category].map((e) => {
+      const emojis = renderObj[category].map((e: EmojiType) => {
         const selector = activeItem === e ? "div.item.active" : "div.item";
 
         return h(
@@ -104,15 +107,15 @@ class EmojiPicker extends BaseScrollFloat {
     if (oldVNode) {
       patch(oldVNode, vnode);
     } else {
-      patch(scrollElement, vnode);
+      patch(scrollElement!, vnode);
     }
     this.oldVNode = vnode;
   }
 
-  getItemElement(item) {
+  getItemElement(item: EmojiType) {
     const label = item.aliases[0];
 
-    return this.floatBox.querySelector(`[data-label="${label}"]`);
+    return this.floatBox!.querySelector(`[data-label="${label}"]`) as HTMLElement;
   }
 
   destroy() {
@@ -121,4 +124,4 @@ class EmojiPicker extends BaseScrollFloat {
   }
 }
 
-export default EmojiPicker;
+export default EmojiSelector;

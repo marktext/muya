@@ -1,7 +1,8 @@
 import Fuse from "fuse.js";
-import emojis from "@muya/config/emojis.json";
+import emojis from "@muya/config/emojis";
+import type { Emoji as EmojiType } from "@muya/config/emojis";
 
-const emojisForSearch = {};
+const emojisForSearch: Record<string, EmojiType[]> = {};
 
 for (const emoji of emojis) {
   if (emojisForSearch[emoji.category]) {
@@ -12,16 +13,15 @@ for (const emoji of emojis) {
 }
 
 class Emoji {
-  private cache: Map<string, any>;
+  // cache key is the search text, and the value is search results by category.
+  private cache: Map<string, Record<string, EmojiType[]>> = new Map();
 
-  constructor() {
-    this.cache = new Map();
-  }
-
-  search(text) {
+  search(text: string): Record<string, EmojiType[]> {
     const { cache } = this;
-    if (cache.has(text)) return cache.get(text);
-    const result = {};
+    if (cache.has(text)) {
+      return cache.get(text)!;
+    }
+    const result: Record<string, EmojiType[]> = {};
 
     Object.keys(emojisForSearch).forEach((category) => {
       const fuse = new Fuse(emojisForSearch[category], {

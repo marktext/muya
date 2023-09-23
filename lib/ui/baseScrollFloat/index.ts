@@ -66,7 +66,7 @@ abstract class BaseScrollFloat extends BaseFloat {
     this.reference = null;
   }
 
-  show(reference: Element | ReferenceObject, cb = noop) {
+  show(reference: Element | ReferenceObject, cb: (...args: unknown[]) => void = noop) {
     this.cb = cb;
 
     if (reference instanceof HTMLElement) {

@@ -1,4 +1,4 @@
-import emojis from "@muya/config/emojis.json";
+import emojis from "@muya/config/emojis";
 import { CLASS_NAMES } from "@muya/config";
 
 /**
