@@ -3,14 +3,16 @@ import type Format from "@muya/block/base/format";
 import type { ImageToken } from "@muya/inlineRenderer/types";
 
 import "./index.css";
+import { isMouseEvent } from "@muya/utils";
 
-const CIRCLES = ["top-left", "top-right", "bottom-left", "bottom-right"];
+const VERTICAL_BAR = ["left", "right"];
 
-const CIRCLE_RADIO = 6;
+const CIRCLE_RADIO = 5;
+const BAR_HEIGHT = 50;
 
-class Transformer {
+class ImageResizeBar {
   static pluginName = "transformer";
-  private reference: any = null;
+  private reference: HTMLElement | null = null;
   private block: Format | null = null;
   private imageInfo: {
     token: ImageToken;
@@ -36,20 +38,18 @@ class Transformer {
   listen() {
     const { eventCenter, domNode } = this.muya;
 
-    const scrollHandler = (event) => {
+    const scrollHandler = (event: Event) => {
       if (typeof this.lastScrollTop !== "number") {
-        this.lastScrollTop = event.target.scrollTop;
+        this.lastScrollTop = (event.target as HTMLElement).scrollTop;
 
         return;
       }
-
-      console.log(event.target.scrollTop)
 
       // only when scroll distance great than 50px, then hide the float box.
       if (
         !this.resizing &&
         this.status &&
-        Math.abs(event.target.scrollTop - this.lastScrollTop) > 50
+        Math.abs((event.target as HTMLElement).scrollTop - this.lastScrollTop) > 50
       ) {
         this.hide();
       }
@@ -69,7 +69,7 @@ class Transformer {
     });
 
     eventCenter.attachDOMEvent(document, "click", this.hide.bind(this));
-    eventCenter.attachDOMEvent(domNode, "scroll", scrollHandler);
+    eventCenter.attachDOMEvent(domNode.parentElement!, "scroll", scrollHandler);
     eventCenter.attachDOMEvent(this.container, "dragstart", (event) =>
       event.preventDefault()
     );
@@ -89,47 +89,37 @@ class Transformer {
   }
 
   createElements() {
-    CIRCLES.forEach((c) => {
-      const circle = document.createElement("div");
-      circle.classList.add("circle");
-      circle.classList.add(c);
-      circle.setAttribute("data-position", c);
-      this.container.appendChild(circle);
+    VERTICAL_BAR.forEach((c) => {
+      const bar = document.createElement("div");
+      bar.classList.add("bar");
+      bar.classList.add(c);
+      bar.setAttribute("data-position", c);
+      this.container.appendChild(bar);
     });
   }
 
   update() {
-    const rect = this.reference.getBoundingClientRect();
-    CIRCLES.forEach((c) => {
-      const circle: HTMLDivElement = this.container.querySelector(`.${c}`)!;
+    const rect = this.reference!.getBoundingClientRect();
+    VERTICAL_BAR.forEach((c) => {
+      const bar: HTMLDivElement = this.container.querySelector(`.${c}`)!;
 
       switch (c) {
-        case "top-left":
-          circle.style.left = `${rect.left - CIRCLE_RADIO}px`;
-          circle.style.top = `${rect.top - CIRCLE_RADIO}px`;
+        case "left":
+          bar.style.left = `${rect.left - CIRCLE_RADIO}px`;
+          bar.style.top = `${rect.top + rect.height / 2 - BAR_HEIGHT / 2}px`;
           break;
 
-        case "top-right":
-          circle.style.left = `${rect.left + rect.width - CIRCLE_RADIO}px`;
-          circle.style.top = `${rect.top - CIRCLE_RADIO}px`;
-          break;
-
-        case "bottom-left":
-          circle.style.left = `${rect.left - CIRCLE_RADIO}px`;
-          circle.style.top = `${rect.top + rect.height - CIRCLE_RADIO}px`;
-          break;
-
-        case "bottom-right":
-          circle.style.left = `${rect.left + rect.width - CIRCLE_RADIO}px`;
-          circle.style.top = `${rect.top + rect.height - CIRCLE_RADIO}px`;
+        case "right":
+          bar.style.left = `${rect.left + rect.width - CIRCLE_RADIO}px`;
+          bar.style.top = `${rect.top + rect.height / 2 - BAR_HEIGHT / 2}px`;
           break;
       }
     });
   }
 
-  mouseDown = (event) => {
-    const target = event.target;
-    if (!target.closest(".circle")) {
+  mouseDown = (event: Event) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest(".bar")) {
       return;
     }
 
@@ -151,31 +141,30 @@ class Transformer {
     this.eventId.push(mouseMoveId, mouseUpId);
   };
 
-  mouseMove = (event) => {
+  mouseMove = (event: Event) => {
+    if (!isMouseEvent(event)) {
+      return;
+    }
     event.preventDefault();
-    const clientX = event.clientX;
-    let width;
-    let relativeAnchor;
-    const image = this.reference.querySelector("img");
+    const { clientX } = event;
+    let width: number | string = "";
+    let relativeAnchor: HTMLDivElement;
+    const image = this.reference!.querySelector("img");
     if (!image) {
       return;
     }
 
     switch (this.movingAnchor) {
-      case "top-left":
-      // fallsthrough
-      case "bottom-left":
-        relativeAnchor = this.container.querySelector(".top-right");
+      case "left":
+        relativeAnchor = this.container.querySelector(".right")!;
         width = Math.max(
           relativeAnchor.getBoundingClientRect().left + CIRCLE_RADIO - clientX,
           50
         );
         break;
 
-      case "top-right":
-      // fallsthrough
-      case "bottom-right":
-        relativeAnchor = this.container.querySelector(".top-left");
+      case "right":
+        relativeAnchor = this.container.querySelector(".left")!;
         width = Math.max(
           clientX - relativeAnchor.getBoundingClientRect().left - CIRCLE_RADIO,
           50
@@ -183,13 +172,13 @@ class Transformer {
         break;
     }
     // Image width/height attribute must be an integer.
-    width = parseInt(width);
+    width = parseInt(String(width));
     this.width = width;
-    image.setAttribute("width", width);
+    image.setAttribute("width", String(width));
     this.update();
   };
 
-  mouseUp = (event) => {
+  mouseUp = (event: Event) => {
     event.preventDefault();
     const { eventCenter } = this.muya;
     if (this.eventId.length) {
@@ -211,11 +200,11 @@ class Transformer {
 
   hide() {
     const { eventCenter } = this.muya;
-    const circles = this.container.querySelectorAll(".circle");
+    const circles = this.container.querySelectorAll(".bar");
     Array.from(circles).forEach((c) => c.remove());
     this.status = false;
     eventCenter.emit("muya-float", this, false);
   }
 }
 
-export default Transformer;
+export default ImageResizeBar;
