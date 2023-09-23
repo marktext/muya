@@ -1,8 +1,13 @@
 import { patch, h } from "@muya/utils/snabbdom";
 import BaseFloat from "../baseFloat";
-import icons from "./config";
+import icons, { Icon } from "./config";
 
 import "./index.css";
+import { VNode } from "snabbdom";
+import { ImageToken } from "@muya/inlineRenderer/types";
+import type { ReferenceObject } from "popper.js";
+import Format from "@muya/block/base/format";
+import Muya from "@muya/index";
 
 const defaultOptions = {
   placement: "top",
@@ -16,29 +21,24 @@ const defaultOptions = {
 
 class ImageToolbar extends BaseFloat {
   static pluginName = "imageToolbar";
-  private oldVNode: any;
-  private imageInfo: any;
-  private icons: { type: string; tooltip: string; icon: any; }[];
-  private reference: any;
-  private block: any;
-  private toolbarContainer: HTMLDivElement;
+  private oldVNode: VNode | null = null;
+  private imageInfo: {
+    token: ImageToken;
+    imageId: string;
+  } | null = null;
+  private icons: Icon[] = icons;
+  private reference: ReferenceObject | null = null;
+  private block: Format | null = null;
+  private toolbarContainer: HTMLDivElement = document.createElement("div");
 
-  constructor(muya, options = {}) {
+  constructor(muya: Muya, options = {}) {
     const name = "mu-image-toolbar";
     const opts = Object.assign({}, defaultOptions, options);
 
     super(muya, name, opts);
-    this.oldVNode = null;
-    this.imageInfo = null;
-    this.options = opts;
-    this.icons = icons;
-    this.reference = null;
-    this.block = null;
 
-    const toolbarContainer = (this.toolbarContainer =
-      document.createElement("div"));
-    this.container.appendChild(toolbarContainer);
-    this.floatBox.classList.add("mu-image-toolbar-container");
+    this.container!.appendChild(this.toolbarContainer);
+    this.floatBox!.classList.add("mu-image-toolbar-container");
 
     this.listen();
   }
@@ -64,28 +64,23 @@ class ImageToolbar extends BaseFloat {
   render() {
     const { icons, oldVNode, toolbarContainer, imageInfo } = this;
     const { i18n } = this.muya;
-    const { attrs } = imageInfo.token;
+    const { attrs } = imageInfo!.token;
     const dataAlign = attrs["data-align"];
     const children = icons.map((i) => {
-      let icon;
-      let iconWrapperSelector;
-      if (i.icon) {
-        // SVG icon Asset
-        iconWrapperSelector = "div.icon-wrapper";
-        icon = h(
-          "i.icon",
-          h(
-            "i.icon-inner",
-            {
-              style: {
-                background: `url(${i.icon}) no-repeat`,
-                "background-size": "100%",
-              },
+      const iconWrapperSelector = "div.icon-wrapper";
+      const icon = h(
+        "i.icon",
+        h(
+          "i.icon-inner",
+          {
+            style: {
+              background: `url(${i.icon}) no-repeat`,
+              "background-size": "100%",
             },
-            ""
-          )
-        );
-      }
+          },
+          ""
+        )
+      );
       const iconWrapper = h(iconWrapperSelector, icon);
       let itemSelector = `li.item.${i.type}`;
 
@@ -122,7 +117,7 @@ class ImageToolbar extends BaseFloat {
     this.oldVNode = vnode;
   }
 
-  selectItem(event, item) {
+  selectItem(event: Event, item: Icon) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -131,7 +126,7 @@ class ImageToolbar extends BaseFloat {
     switch (item.type) {
       // Delete image.
       case "delete":
-        this.block.deleteImage(imageInfo);
+        this.block!.deleteImage(imageInfo!);
         // Hide image transformer
         this.muya.eventCenter.emit("muya-transformer", {
           reference: null,
@@ -141,7 +136,7 @@ class ImageToolbar extends BaseFloat {
 
       // Edit image, for example: editor alt and title, replace image.
       case "edit": {
-        const rect = this.reference.getBoundingClientRect();
+        const rect = this.reference!.getBoundingClientRect();
         const reference = {
           getBoundingClientRect() {
             rect.height = 0;
@@ -149,7 +144,7 @@ class ImageToolbar extends BaseFloat {
             return rect;
           },
         };
-        // Hide image transformer
+        // Hide image resize bar
         this.muya.eventCenter.emit("muya-transformer", {
           reference: null,
         });
@@ -164,13 +159,13 @@ class ImageToolbar extends BaseFloat {
       }
 
       case "inline":
-
+      // fall through
       case "left":
-
+      // fall through
       case "center":
-
+      // fall through
       case "right": {
-        this.block.updateImage(this.imageInfo, "data-align", item.type);
+        this.block!.updateImage(this.imageInfo!, "data-align", item.type);
 
         return this.hide();
       }
