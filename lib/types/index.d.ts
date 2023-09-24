@@ -9,3 +9,4 @@ declare module "*.css";
 declare module "joplin-turndown-plugin-gfm";
 declare module "prismjs/plugins/keep-markup/prism-keep-markup";
 declare module "prismjs/dependencies";
+declare module "@marktext/file-icons";

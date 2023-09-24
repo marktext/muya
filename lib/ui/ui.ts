@@ -1,14 +1,11 @@
 import Muya from "../index";
+import type BaseFloat from "./baseFloat";
 
 class Ui {
-  public muya: Muya;
-  public shownFloat: Set<any>;
-  public shownButton: Set<any>;
+  public shownFloat: Set<BaseFloat> = new Set();
+  public shownButton: Set<BaseFloat> = new Set();
 
-  constructor(muya) {
-    this.muya = muya;
-    this.shownFloat = new Set();
-    this.shownButton = new Set();
+  constructor(public muya: Muya) {
     this.listen();
   }
 

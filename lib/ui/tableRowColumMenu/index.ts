@@ -1,10 +1,12 @@
+import { h, patch } from "@muya/utils/snabbdom";
 import BaseFloat from "../baseFloat";
-import { patch, h } from "@muya/utils/snabbdom";
-import { toolList } from "./config";
+import { MenuItem, toolList } from "./config";
 
-import "./index.css";
-import { VNode } from "snabbdom";
+import TableBodyCell from "@muya/block/gfm/table/cell";
+import TableInner from "@muya/block/gfm/table/table";
 import Muya from "@muya/index";
+import { VNode } from "snabbdom";
+import "./index.css";
 
 const defaultOptions = {
   placement: "bottom-center",
@@ -16,19 +18,22 @@ const defaultOptions = {
   showArrow: false,
 };
 
+type TableInfo = {
+  barType: "bottom" | "right";
+};
+
 class TableBarTools extends BaseFloat {
   static pluginName = "tableBarTools";
   private oldVNode: VNode | null = null;
-  private tableInfo: any;
-  private block: any;
+  private tableInfo: TableInfo | null = null;
+  private block: TableBodyCell | null = null;
   private tableBarContainer: HTMLDivElement = document.createElement("div");
 
   constructor(muya: Muya, options = {}) {
     const name = "mu-table-bar-tools";
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
-    this.tableInfo = null;
-    this.block = null;
+
     this.floatBox!.classList.add("mu-table-bar-tools");
     this.container!.appendChild(this.tableBarContainer);
     this.listen();
@@ -55,7 +60,7 @@ class TableBarTools extends BaseFloat {
   render() {
     const { tableInfo, oldVNode, tableBarContainer } = this;
     const { i18n } = this.muya;
-    const renderArray = toolList[tableInfo.barType];
+    const renderArray: MenuItem[] = toolList[tableInfo!.barType];
     const children = renderArray.map((item) => {
       const { label } = item;
 
@@ -87,12 +92,12 @@ class TableBarTools extends BaseFloat {
     this.oldVNode = vnode;
   }
 
-  selectItem(event, item) {
+  selectItem(event: Event, item: MenuItem) {
     event.preventDefault();
     event.stopPropagation();
 
-    const { table, row } = this.block;
-    const rowCount = table.firstChild.offset(row);
+    const { table, row } = this.block!;
+    const rowCount = (table.firstChild as TableInner).offset(row);
     const columnCount = row.offset(this.block);
     const { location, action, target } = item;
 

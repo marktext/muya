@@ -19,7 +19,7 @@ export const toolList = {
       target: "row",
     },
   ],
-  top: [
+  bottom: [
     {
       label: "Insert Column Left",
       action: "insert",
@@ -40,3 +40,5 @@ export const toolList = {
     },
   ],
 };
+
+export type MenuItem = typeof toolList["right"][number];
