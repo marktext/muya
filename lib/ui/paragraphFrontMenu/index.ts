@@ -1,17 +1,20 @@
-import BaseFloat from "@muya/ui/baseFloat";
-import { patch, h } from "@muya/utils/snabbdom";
-import { deepClone } from "@muya/utils";
-import emptyStates from "@muya/config/emptyStates";
 import ScrollPage from "@muya/block/scrollPage";
-import { FRONT_MENU, canTurnIntoMenu, FrontMenuIcon } from "./config";
+import emptyStates from "@muya/config/emptyStates";
+import BaseFloat from "@muya/ui/baseFloat";
 import { replaceBlockByLabel } from "@muya/ui/paragraphQuickInsertMenu/config";
+import { deepClone } from "@muya/utils";
+import { h, patch } from "@muya/utils/snabbdom";
+import { FRONT_MENU, canTurnIntoMenu } from "./config";
 
+import type Parent from "@muya/block/base/parent";
+import AtxHeading from "@muya/block/commonMark/atxHeading";
+import type Muya from "@muya/index";
+import { IAtxHeadingState, IBulletListState, IOrderListState, ITaskListState } from "@muya/jsonState/types";
+import { QuickInsertMenuItem } from "@muya/ui/paragraphQuickInsertMenu/config";
+import type { VNode } from "snabbdom";
 import "./index.css";
-import { VNode } from "snabbdom";
-import Parent from "@muya/block/base/parent";
-import Muya from "@muya/index";
 
-const renderIcon = ({ label, icon }: FrontMenuIcon) =>
+const renderIcon = ({ label, icon }: { label: string; icon: string }) =>
   h(
     "i.icon",
     h(
@@ -72,12 +75,13 @@ class FrontMenu extends BaseFloat {
     const enterLeaveHandler = () => {
       this.hide();
       this.reference = null;
+      this.block = null;
     };
 
     eventCenter.attachDOMEvent(container!, "mouseleave", enterLeaveHandler);
   }
 
-  renderSubMenu(subMenu) {
+  renderSubMenu(subMenu: QuickInsertMenuItem["children"]) {
     const { block } = this;
     const { i18n } = this.muya;
     const children = subMenu.map((menuItem) => {
@@ -97,11 +101,11 @@ class FrontMenu extends BaseFloat {
       if (block?.blockName === "atx-heading") {
         if (
           label.startsWith(block.blockName) &&
-          label.endsWith(block.meta.level)
+          label.endsWith(String((block as AtxHeading).meta.level))
         ) {
           itemSelector += ".active";
         }
-      } else if (label === block.blockName) {
+      } else if (label === block?.blockName) {
         itemSelector += ".active";
       }
 
@@ -125,7 +129,7 @@ class FrontMenu extends BaseFloat {
   render() {
     const { oldVNode, frontMenuContainer, block } = this;
     const { i18n } = this.muya;
-    const { blockName } = block;
+    const { blockName } = block!;
     const children = FRONT_MENU.map(({ icon, label, text, shortCut }) => {
       const iconWrapperSelector = "div.icon-wrapper";
       const iconWrapper = h(iconWrapperSelector, renderIcon({ icon, label }));
@@ -152,7 +156,7 @@ class FrontMenu extends BaseFloat {
       children.splice(0, 1);
     }
 
-    const subMenu = canTurnIntoMenu(block);
+    const subMenu = canTurnIntoMenu(block!);
     if (subMenu.length) {
       const line = h("li.divider");
       children.unshift(line);
@@ -169,9 +173,12 @@ class FrontMenu extends BaseFloat {
     this.oldVNode = vnode;
   }
 
-  selectItem(event, { label }) {
+  selectItem(event: Event, { label }: { label: string }) {
     event.preventDefault();
     event.stopPropagation();
+    if (!this.block) {
+      return;
+    }
     const { block, muya } = this;
     const { editor } = muya;
     const oldState = block.getState();
@@ -184,7 +191,7 @@ class FrontMenu extends BaseFloat {
         case "duplicate": {
           state = deepClone(oldState);
           const dupBlock = ScrollPage.loadBlock(state.name).create(muya, state);
-          block.parent.insertAfter(dupBlock, block);
+          block.parent!.insertAfter(dupBlock, block);
           cursorBlock = dupBlock.lastContentInDescendant();
           break;
         }
@@ -195,7 +202,7 @@ class FrontMenu extends BaseFloat {
             muya,
             state
           );
-          block.parent.insertAfter(newBlock, block);
+          block.parent!.insertAfter(newBlock, block);
           cursorBlock = newBlock.lastContentInDescendant();
           break;
         }
@@ -211,7 +218,7 @@ class FrontMenu extends BaseFloat {
               muya,
               state
             );
-            block.parent.insertAfter(newBlock, block);
+            block.parent!.insertAfter(newBlock, block);
             cursorBlock = newBlock.lastContentInDescendant();
           }
           block.remove();
@@ -228,11 +235,11 @@ class FrontMenu extends BaseFloat {
 
           if (
             block.blockName === "atx-heading" &&
-            label.split(" ")[1] === String(oldState.meta.level)
+            label.split(" ")[1] === String((oldState as IAtxHeadingState).meta.level)
           ) {
             break;
           }
-          const rawText = oldState.text;
+          const rawText = (oldState as IAtxHeadingState).text;
           const text =
             block.blockName === "paragraph"
               ? rawText
@@ -254,22 +261,25 @@ class FrontMenu extends BaseFloat {
           if (block.blockName === label) {
             break;
           }
-          state = deepClone(oldState);
+          state = deepClone(oldState) as IOrderListState | ITaskListState | IBulletListState;
           if (block.blockName === "task-list") {
             state.children.forEach((listItem) => {
               listItem.name = "list-item";
-              delete listItem.meta;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              delete (listItem as any).meta;
             });
           }
           const {
             loose,
             delimiter = orderListDelimiter,
             marker = bulletListMarker,
-          } = state.meta;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } = state.meta as any;
           if (label === "task-list") {
             state.children.forEach((listItem) => {
               listItem.name = "task-list-item";
-              listItem.meta = {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (listItem as any).meta = {
                 checked: false,
               };
             });
@@ -278,7 +288,8 @@ class FrontMenu extends BaseFloat {
               loose,
             };
           } else if (label === "order-list") {
-            state.meta = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (state as any).meta = {
               delimiter,
               loose,
             };

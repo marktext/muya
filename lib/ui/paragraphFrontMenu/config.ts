@@ -1,12 +1,16 @@
 import copyIcon from "@muya/assets/icons/copy/2.png";
-import newIcon from "@muya/assets/icons/paragraph/2.png";
 import deleteIcon from "@muya/assets/icons/delete/2.png";
-import { MENU_CONFIG } from "@muya/ui/paragraphQuickInsertMenu/config";
+import newIcon from "@muya/assets/icons/paragraph/2.png";
+import Parent from "@muya/block/base/parent";
 import { isOsx } from "@muya/config";
+import {
+  MENU_CONFIG,
+  QuickInsertMenuItem,
+} from "@muya/ui/paragraphQuickInsertMenu/config";
 
 const ALL_MENU_CONFIG = MENU_CONFIG.reduce(
   (acc, section) => [...acc, ...section.children],
-  []
+  [] as QuickInsertMenuItem["children"]
 );
 
 const COMMAND_KEY = isOsx ? "⌘" : "⌃";
@@ -32,9 +36,9 @@ export const FRONT_MENU = [
   },
 ];
 
-export type FrontMenuIcon = typeof FRONT_MENU[number];
+export type FrontMenuIcon = (typeof FRONT_MENU)[number];
 
-export const canTurnIntoMenu = (block) => {
+export const canTurnIntoMenu = (block: Parent) => {
   const { blockName } = block;
 
   switch (blockName) {

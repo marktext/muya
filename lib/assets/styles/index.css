@@ -181,22 +181,3 @@ html, body {
 
   background: none;
 }
-
-.mu-button {
-  padding: 7px 14px;
-
-  color: var(--button-font-color);
-  text-decoration: none;
-
-  background: var(--button-bg-color);
-  border: var(--button-border);
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.mu-button:hover {
-  color: var(--button-font-color);
-
-  background: var(--button-bg-color-hover);
-  border: var(--button-border-hover);
-}
