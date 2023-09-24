@@ -1,46 +1,65 @@
-import BaseFloat from "../baseFloat";
-import { throttle } from "@muya/utils";
 import ScrollPage from "@muya/block/scrollPage";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
+import { isMouseEvent, throttle } from "@muya/utils";
+import BaseFloat from "../baseFloat";
 
+import Table from "@muya/block/gfm/table";
+import TableBodyCell from "@muya/block/gfm/table/cell";
+import TableInner from "@muya/block/gfm/table/table";
+import Muya from "@muya/index";
 import "./index.css";
 
-const calculateAspects = (tableBlock, barType) => {
-  const table = tableBlock.firstChild.domNode;
+type BarType = "bottom" | "right";
+
+type DragInfo = {
+  table: Table;
+  clientX: number;
+  clientY: number;
+  barType: BarType;
+  index: number;
+  curIndex: number;
+  dragCells: HTMLTableCellElement[];
+  cells: HTMLTableCellElement[][];
+  aspects: number[];
+  offset: number;
+};
+
+const calculateAspects = (tableBlock: Table, barType: BarType) => {
+  const table = tableBlock.firstChild!.domNode!;
 
   if (barType === "bottom") {
     const firstRow = table.querySelector("tr");
 
-    return Array.from(firstRow.children).map((cell) => (cell as any).clientWidth);
+    return Array.from(firstRow!.children).map((cell) => cell.clientWidth);
   } else {
     return Array.from(table.querySelectorAll("tr")).map(
-      (row) => (row as any).clientHeight
+      (row) => row.clientHeight
     );
   }
 };
 
-export const getAllTableCells = (tableBlock) => {
-  const table = tableBlock.firstChild.domNode;
+export const getAllTableCells = (tableBlock: Table) => {
+  const table = tableBlock.firstChild!.domNode!;
   const rows = table.querySelectorAll("tr");
   const cells = [];
 
   for (const row of Array.from(rows)) {
-    cells.push(Array.from((row as any).children));
+    cells.push(Array.from(row.children));
   }
 
-  return cells;
+  return cells as HTMLTableCellElement[][];
 };
 
-export const getIndex = (barType, cellBlock) => {
+export const getIndex = (barType: BarType, cellBlock: TableBodyCell) => {
   const { row, table } = cellBlock;
 
   return barType === "bottom"
     ? row.offset(cellBlock)
-    : table.firstChild.offset(row);
+    : (table.firstChild as TableInner).offset(row);
 };
 
-const getDragCells = (tableBlock, barType, index) => {
-  const table = tableBlock.firstChild.domNode;
+const getDragCells = (tableBlock: Table, barType: BarType, index: number) => {
+  const table = tableBlock.firstChild!.domNode!;
   const dragCells = [];
 
   if (barType === "right") {
@@ -56,13 +75,13 @@ const getDragCells = (tableBlock, barType, index) => {
     }
   }
 
-  return dragCells;
+  return dragCells as HTMLTableCellElement[];
 };
 
 const OFFSET = 20;
 
 const rightOptions = {
-  placement: "right-center",
+  placement: "right" as const,
   modifiers: {
     offset: {
       offset: "0, 0",
@@ -72,7 +91,7 @@ const rightOptions = {
 };
 
 const bottomOptions = {
-  placement: "bottom",
+  placement: "bottom" as const,
   modifiers: {
     offset: {
       offset: "0, 0",
@@ -83,36 +102,19 @@ const bottomOptions = {
 
 class TableDragBar extends BaseFloat {
   static pluginName = "tableDragBar";
-  private oldVNode: any;
-  private block: any;
-  private mouseTimer: any;
-  private dragEventIds: any[];
-  private isDragTableBar: boolean;
-  private barType: string;
-  private dragInfo: {
-    table: any;
-    clientX: any;
-    clientY: any;
-    barType: any;
-    index: any;
-    curIndex: any;
-    dragCells: any[];
-    cells: any[];
-    aspects: any[];
-    offset: number;
-  };
+  private block: TableBodyCell | null = null;
+  private mouseTimer: ReturnType<typeof setTimeout> | null = null;
+  private dragEventIds: string[] = [];
+  private isDragTableBar: boolean = false;
+  private barType: "bottom" | "right" | null = null;
+  private dragInfo: DragInfo | null = null;
 
-  constructor(muya, options = {}) {
+  constructor(muya: Muya, options = {}) {
     const name = "mu-table-drag-bar";
     const opts = Object.assign({}, bottomOptions, options);
     super(muya, name, opts);
-    this.oldVNode = null;
-    this.block = null;
-    this.options = opts;
-    this.floatBox.classList.add("mu-table-drag-container");
-    this.mouseTimer = null;
-    this.dragEventIds = [];
-    this.isDragTableBar = false;
+
+    this.floatBox!.classList.add("mu-table-drag-container");
     this.listen();
   }
 
@@ -121,14 +123,17 @@ class TableDragBar extends BaseFloat {
     const { container } = this;
     super.listen();
 
-    const handler = throttle((event) => {
+    const handler = throttle((event: Event) => {
+      if (!isMouseEvent(event)) {
+        return;
+      }
       const { x, y } = event;
-      const eles = [...document.elementsFromPoint(x, y)];
-      const aboveEles = [...document.elementsFromPoint(x, y - OFFSET)];
-      const leftEles = [...document.elementsFromPoint(x - OFFSET, y)];
+      const els = [...document.elementsFromPoint(x, y)];
+      const aboveEls = [...document.elementsFromPoint(x, y - OFFSET)];
+      const leftEls = [...document.elementsFromPoint(x - OFFSET, y)];
 
-      const hasTableCell = (eles) =>
-        eles.some(
+      const hasTableCell = (els: Element[]) =>
+        els.some(
           (ele) =>
             ele[BLOCK_DOM_PROPERTY] &&
             ele[BLOCK_DOM_PROPERTY].blockName === "table.cell"
@@ -136,16 +141,16 @@ class TableDragBar extends BaseFloat {
 
       if (
         !this.isDragTableBar &&
-        !hasTableCell(eles) &&
-        (hasTableCell(aboveEles) || hasTableCell(leftEles))
+        !hasTableCell(els) &&
+        (hasTableCell(aboveEls) || hasTableCell(leftEls))
       ) {
-        const tableCellEle = [...aboveEles, ...leftEles].find(
+        const tableCellEl = [...aboveEls, ...leftEls].find(
           (ele) =>
             ele[BLOCK_DOM_PROPERTY] &&
             ele[BLOCK_DOM_PROPERTY].blockName === "table.cell"
         );
-        const cellBlock = tableCellEle[BLOCK_DOM_PROPERTY];
-        const barType = hasTableCell(aboveEles) ? "bottom" : "right";
+        const cellBlock = tableCellEl![BLOCK_DOM_PROPERTY] as TableBodyCell;
+        const barType = hasTableCell(aboveEls) ? "bottom" : "right";
 
         this.options = Object.assign(
           {},
@@ -153,7 +158,7 @@ class TableDragBar extends BaseFloat {
         );
         this.barType = barType;
         this.block = cellBlock;
-        this.show(tableCellEle);
+        this.show(tableCellEl!);
         this.render(barType);
       } else {
         this.hide();
@@ -161,11 +166,11 @@ class TableDragBar extends BaseFloat {
     });
 
     eventCenter.attachDOMEvent(document.body, "mousemove", handler);
-    eventCenter.attachDOMEvent(container, "mousedown", this.mousedown);
-    eventCenter.attachDOMEvent(container, "mouseup", this.mouseup);
+    eventCenter.attachDOMEvent(container!, "mousedown", this.mousedown);
+    eventCenter.attachDOMEvent(container!, "mouseup", this.mouseup);
   }
 
-  mousedown = (event) => {
+  mousedown = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
     this.mouseTimer = setTimeout(() => {
@@ -174,11 +179,12 @@ class TableDragBar extends BaseFloat {
     }, 300);
   };
 
-  mouseup = (event) => {
+  mouseup = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
     const { container, barType } = this;
     const { eventCenter } = this.muya;
+
     if (this.mouseTimer) {
       clearTimeout(this.mouseTimer);
       this.mouseTimer = null;
@@ -194,8 +200,11 @@ class TableDragBar extends BaseFloat {
     }
   };
 
-  startDrag(event) {
+  startDrag(event: Event) {
     event.preventDefault();
+    if (!isMouseEvent(event) || !this.block || !this.barType) {
+      return;
+    }
     const { table } = this.block;
     const { eventCenter } = this.muya;
     const { clientX, clientY } = event;
@@ -229,8 +238,8 @@ class TableDragBar extends BaseFloat {
     );
   }
 
-  docMousemove = (event) => {
-    if (!this.dragInfo) {
+  docMousemove = (event: Event) => {
+    if (!this.dragInfo || !isMouseEvent(event)) {
       return;
     }
     const { barType } = this.dragInfo;
@@ -246,7 +255,7 @@ class TableDragBar extends BaseFloat {
     this.setSwitchStyle();
   };
 
-  docMouseup = (event) => {
+  docMouseup = (event: Event) => {
     event.preventDefault();
 
     const { eventCenter } = this.muya;
@@ -269,7 +278,11 @@ class TableDragBar extends BaseFloat {
   };
 
   calculateCurIndex = () => {
-    let { offset, aspects, index } = this.dragInfo;
+    if (!this.dragInfo) {
+      return;
+    }
+    const { aspects, index } = this.dragInfo;
+    let { offset } = this.dragInfo;
     let curIndex = index;
     const len = aspects.length;
     let i;
@@ -309,7 +322,7 @@ class TableDragBar extends BaseFloat {
   };
 
   setDragTargetStyle = () => {
-    const { offset, barType, dragCells } = this.dragInfo;
+    const { offset, barType, dragCells } = this.dragInfo!;
 
     for (const cell of dragCells) {
       if (!cell.classList.contains("mu-drag-cell")) {
@@ -322,6 +335,9 @@ class TableDragBar extends BaseFloat {
   };
 
   setSwitchStyle = () => {
+    if (!this.dragInfo) {
+      return;
+    }
     const { index, offset, curIndex, barType, aspects, cells } = this.dragInfo;
     const aspect = aspects[index];
     const len = aspects.length;
@@ -381,6 +397,9 @@ class TableDragBar extends BaseFloat {
   };
 
   setDropTargetStyle = () => {
+    if (!this.dragInfo) {
+      return;
+    }
     const { dragCells, barType, curIndex, index, aspects, offset } =
       this.dragInfo;
     let move = 0;
@@ -405,6 +424,9 @@ class TableDragBar extends BaseFloat {
   };
 
   switchTableData = () => {
+    if (!this.dragInfo) {
+      return;
+    }
     const { barType, index, curIndex, table, offset } = this.dragInfo;
     if (index === curIndex) {
       return;
@@ -421,8 +443,9 @@ class TableDragBar extends BaseFloat {
     if (table.active) {
       const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
         this.muya.editor.selection ?? {};
-      const { rowOffset, columnOffset } =
-        anchorBlock.closestBlock("table.cell") as any;
+      const { rowOffset, columnOffset } = anchorBlock.closestBlock(
+        "table.cell"
+      ) as TableBodyCell;
 
       startOffset = isSelectionInSameBlock
         ? Math.min(anchor.offset, focus.offset)
@@ -487,9 +510,8 @@ class TableDragBar extends BaseFloat {
     this.isDragTableBar = false;
   };
 
-  render(barType) {
-    const { container } = this;
-    container.dataset.drag = barType;
+  render(barType: BarType) {
+    this.container!.dataset.drag = barType;
   }
 }
 

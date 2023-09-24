@@ -37,22 +37,22 @@
 }
 
 .mu-table-drag-bar[data-drag="bottom"]::before {
-  top: 2px;
+  top: 3px;
   left: 4px;
 }
 
 .mu-table-drag-bar[data-drag="bottom"]::after {
-  top: 2px;
+  top: 3px;
   right: 4px;
 }
 
 .mu-table-drag-bar[data-drag="right"]::before {
   top: 4px;
-  right: 2px;
+  right: 3px;
 }
 
 .mu-table-drag-bar[data-drag="right"]::after {
-  right: 2px;
+  right: 3px;
   bottom: 4px;
 }
 

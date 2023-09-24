@@ -11,21 +11,21 @@ Support TypeScript
 
 Better Code Design
 
-- [ ] Patch the latest marked to muya
+- [ ] Patch the latest marked to muya(P0)
 - [x] Remove use axios and XMLHttpRequest etc
-- [ ] Use constructor mixin to replace property mixin
+- [x] Use constructor mixin to replace property mixin
 - [ ] Use DI?
 - [ ] Remove the dependence: diagram, file-icons, flowchart?
 - [ ] Use TSX to replace snabbdom(The ecology is better and easier to read)?
 
 Compatibility
 
-- [ ] Compatible with Firefox
-- [ ] Safari
+- [ ] Compatible with Firefox(P0)
+- [ ] Safari(P0)
 
 Documents
-- [ ] Website(docs, demo)
-- [ ] Documents
+- [ ] Website(docs, demo)(P0)
+- [ ] Documents(P0)
 - [ ] Comments
 
 CI and CD
@@ -34,8 +34,8 @@ CI and CD
 - [ ] Add and publish Github Action, modify the version number of the package.json, automatically tag and publish the new version to npm after merging or push to master
 
 Test
-- [ ] Unit test
-- [ ] e2e test
+- [ ] Unit test(Optional)
+- [ ] e2e test(Optional)
 
 **June 2020**
 

@@ -1,13 +1,13 @@
-import Fuse from "fuse.js";
-import { patch, h } from "@muya/utils/snabbdom";
-import { deepClone } from "@muya/utils";
-import BaseScrollFloat from "@muya/ui/baseScrollFloat";
 import ParagraphContent from "@muya/block/content/paragraphContent";
-import { MENU_CONFIG, replaceBlockByLabel, getLabelFromEvent } from "./config";
+import BaseScrollFloat from "@muya/ui/baseScrollFloat";
+import { deepClone } from "@muya/utils";
+import { h, patch } from "@muya/utils/snabbdom";
+import Fuse from "fuse.js";
+import { MENU_CONFIG, getLabelFromEvent, replaceBlockByLabel } from "./config";
 
-import "./index.css";
-import { VNode } from "snabbdom";
 import Muya from "@muya/index";
+import { VNode } from "snabbdom";
+import "./index.css";
 
 const checkCanInsertFrontMatter = (muya: Muya, block: ParagraphContent) => {
   const { frontMatter } = muya.options;

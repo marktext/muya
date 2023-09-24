@@ -72,7 +72,7 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
    * @param this
    * @returns boolean
    */
-  isContent(this: { text: string } & TreeNode): this is Content {
+  isContent(this: unknown): this is Content {
     return typeof this.text === "string";
   }
 
