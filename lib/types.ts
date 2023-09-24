@@ -14,7 +14,7 @@ export interface MuyaOptions {
   codeBlockLineNumbers: boolean;
   listIndentation: number;
   frontMatter: boolean;
-  frontmatterType: string;
+  frontmatterType: "-" | "+" | ";" | "{}";
   sequenceTheme: string;
   mermaidTheme: string;
   vegaTheme: string;
@@ -33,5 +33,4 @@ export interface MuyaOptions {
       [key: string]: string;
     }
   },
-  clipboardFilePath: () => any;
 }

@@ -297,7 +297,6 @@ export const MUYA_DEFAULT_OPTIONS = {
   // NOTE: The browser is not able to correct misspelled words words without a custom
   // implementation like in MarkText.
   spellcheckEnabled: false,
-  clipboardFilePath: () => {},
   // Markdown extensions
   superSubScript: false,
   footnote: false,

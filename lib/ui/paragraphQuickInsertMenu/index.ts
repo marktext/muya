@@ -3,7 +3,7 @@ import BaseScrollFloat from "@muya/ui/baseScrollFloat";
 import { deepClone } from "@muya/utils";
 import { h, patch } from "@muya/utils/snabbdom";
 import Fuse from "fuse.js";
-import { MENU_CONFIG, getLabelFromEvent, replaceBlockByLabel } from "./config";
+import { MENU_CONFIG, QuickInsertMenuItem, getLabelFromEvent, replaceBlockByLabel } from "./config";
 
 import Muya from "@muya/index";
 import { VNode } from "snabbdom";
@@ -24,14 +24,14 @@ class QuickInsert extends BaseScrollFloat {
 
   public oldVNode: VNode | null = null;
   public block: ParagraphContent | null = null;
-  private _renderData: Array<any>;
+  public activeItem: QuickInsertMenuItem["children"][number] | null = null;
+  private _renderData: QuickInsertMenuItem[]  = [];
+  // private renderArray: QuickInsertMenuItem["children"][number] = [];
 
   constructor(muya: Muya) {
     const name = "mu-quick-insert";
     super(muya, name);
-    this._renderData = null;
-    this.renderArray = null;
-    this.activeItem = null;
+    this.renderArray = [];
     this.renderData = MENU_CONFIG;
     this.render();
     this.listen();
@@ -46,7 +46,7 @@ class QuickInsert extends BaseScrollFloat {
 
     this.renderArray = data.flatMap((d) => d.children);
     if (this.renderArray.length > 0) {
-      this.activeItem = this.renderArray[0];
+      this.activeItem = this.renderArray[0] as QuickInsertMenuItem["children"][number];
       const activeEle = this.getItemElement(this.activeItem) as HTMLElement;
       this.activeEleScrollIntoView(activeEle);
     }
@@ -127,7 +127,7 @@ class QuickInsert extends BaseScrollFloat {
         ]);
         const shortCutVnode = h("div.short-cut", [h("span", shortCut)]);
         const selector =
-          activeItem.label === label ? "div.item.active" : "div.item";
+          activeItem!.label === label ? "div.item.active" : "div.item";
         items.push(
           h(
             selector,
@@ -160,16 +160,15 @@ class QuickInsert extends BaseScrollFloat {
     this.oldVNode = vnode;
   }
 
-  search(text) {
+  search(text: string) {
     const { muya, block } = this;
     const { i18n } = muya;
-    const canInsertFrontMatter = checkCanInsertFrontMatter(muya, block);
+    const canInsertFrontMatter = checkCanInsertFrontMatter(muya, block!);
     const menuConfig = deepClone(MENU_CONFIG);
 
     if (!canInsertFrontMatter) {
-      menuConfig
-        .find((menu) => menu.name === "basic blocks")
-        .children.splice(2, 1);
+      menuConfig.find((menu) => menu.name === "basic blocks")
+        ?.children.splice(2, 1);
     }
     let result = menuConfig;
     if (text !== "") {
@@ -185,7 +184,7 @@ class QuickInsert extends BaseScrollFloat {
         });
         const match = fuse
           .search(text)
-          .map((i) => ({ score: i.score, ...(i as any).item }));
+          .map((i) => ({ score: i.score, ...i.item }));
         if (match.length) {
           result.push({
             name: menu.name,
@@ -195,30 +194,30 @@ class QuickInsert extends BaseScrollFloat {
       }
 
       if (result.length) {
-        result.sort((a, b) =>
-          a.children[0].score < b.children[0].score ? -1 : 1
-        );
+        result.sort((a, b) => {
+          return a.children[0].score! < b.children[0].score! ? -1 : 1
+        });
       }
     }
     this.renderData = result;
     this.render();
   }
 
-  selectItem({ label }) {
+  selectItem({ label }: QuickInsertMenuItem["children"][number]) {
     const { block, muya } = this;
     replaceBlockByLabel({
       label,
-      block: block.parent,
+      block: block!.parent,
       muya,
     });
     // delay hide to avoid dispatch enter handler
     setTimeout(this.hide.bind(this));
   }
 
-  getItemElement(item) {
+  getItemElement(item: QuickInsertMenuItem["children"][number]) {
     const { label } = item;
 
-    return this.scrollElement!.querySelector(`[data-label="${label}"]`);
+    return this.scrollElement!.querySelector(`[data-label="${label}"]`) as HTMLElement;
   }
 }
 
