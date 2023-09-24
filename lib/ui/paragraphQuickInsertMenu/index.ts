@@ -6,33 +6,32 @@ import ParagraphContent from "@muya/block/content/paragraphContent";
 import { MENU_CONFIG, replaceBlockByLabel, getLabelFromEvent } from "./config";
 
 import "./index.css";
+import { VNode } from "snabbdom";
+import Muya from "@muya/index";
 
-const checkCanInsertFrontMatter = (muya, block) => {
+const checkCanInsertFrontMatter = (muya: Muya, block: ParagraphContent) => {
   const { frontMatter } = muya.options;
 
   return (
     frontMatter &&
     !block.parent.prev &&
-    block.parent.parent.blockName === "scrollpage"
+    block?.parent?.parent?.blockName === "scrollpage"
   );
 };
 
 class QuickInsert extends BaseScrollFloat {
-  public oldVNode: any;
-  public block: any;
-  private _renderData: Array<any>;
-
   static pluginName = "quickInsert";
 
-  constructor(muya) {
+  public oldVNode: VNode | null = null;
+  public block: ParagraphContent | null = null;
+  private _renderData: Array<any>;
+
+  constructor(muya: Muya) {
     const name = "mu-quick-insert";
     super(muya, name);
-    this.reference = null;
-    this.oldVNode = null;
     this._renderData = null;
     this.renderArray = null;
     this.activeItem = null;
-    this.block = null;
     this.renderData = MENU_CONFIG;
     this.render();
     this.listen();
@@ -48,7 +47,7 @@ class QuickInsert extends BaseScrollFloat {
     this.renderArray = data.flatMap((d) => d.children);
     if (this.renderArray.length > 0) {
       this.activeItem = this.renderArray[0];
-      const activeEle = this.getItemElement(this.activeItem);
+      const activeEle = this.getItemElement(this.activeItem) as HTMLElement;
       this.activeEleScrollIntoView(activeEle);
     }
   }
@@ -69,7 +68,7 @@ class QuickInsert extends BaseScrollFloat {
       }
     );
 
-    const handleKeydown = (event) => {
+    const handleKeydown = (event: Event) => {
       const { anchorBlock, isSelectionInSameBlock } =
         editor.selection.getSelection();
       if (isSelectionInSameBlock && anchorBlock instanceof ParagraphContent) {
@@ -156,7 +155,7 @@ class QuickInsert extends BaseScrollFloat {
     if (this.oldVNode) {
       patch(this.oldVNode, vnode);
     } else {
-      patch(scrollElement, vnode);
+      patch(scrollElement!, vnode);
     }
     this.oldVNode = vnode;
   }
@@ -164,10 +163,10 @@ class QuickInsert extends BaseScrollFloat {
   search(text) {
     const { muya, block } = this;
     const { i18n } = muya;
-    const canInserFrontMatter = checkCanInsertFrontMatter(muya, block);
+    const canInsertFrontMatter = checkCanInsertFrontMatter(muya, block);
     const menuConfig = deepClone(MENU_CONFIG);
 
-    if (!canInserFrontMatter) {
+    if (!canInsertFrontMatter) {
       menuConfig
         .find((menu) => menu.name === "basic blocks")
         .children.splice(2, 1);
@@ -212,14 +211,14 @@ class QuickInsert extends BaseScrollFloat {
       block: block.parent,
       muya,
     });
-    // delay hide to avoid dispatch enter hander
+    // delay hide to avoid dispatch enter handler
     setTimeout(this.hide.bind(this));
   }
 
   getItemElement(item) {
     const { label } = item;
 
-    return this.scrollElement.querySelector(`[data-label="${label}"]`);
+    return this.scrollElement!.querySelector(`[data-label="${label}"]`);
   }
 }
 

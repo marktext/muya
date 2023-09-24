@@ -444,7 +444,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }) => {
       break;
 
     default:
-      debug.log("Unknow label in quick insert");
+      debug.log("Unknown label in quick insert");
       break;
   }
 

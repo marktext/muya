@@ -13,13 +13,17 @@ import bulletListIcon from "@muya/assets/icons/bullet_list/2.png";
 import codeIcon from "@muya/assets/icons/code/2.png";
 import quoteIcon from "@muya/assets/icons/quote_block/2.png";
 import taskListIcon from "@muya/assets/icons/todolist/2.png";
-import mathblockIcon from "@muya/assets/icons/math/2.png";
+import mathBlockIcon from "@muya/assets/icons/math/2.png";
 import orderListIcon from "@muya/assets/icons/order_list/2.png";
 import flowchartIcon from "@muya/assets/icons/flowchart/2.png";
 import sequenceIcon from "@muya/assets/icons/sequence/2.png";
 import mermaidIcon from "@muya/assets/icons/mermaid/2.png";
 import plantumlIcon from "@muya/assets/icons/plantuml/2.png";
 import vegaIcon from "@muya/assets/icons/chart/2.png";
+import Parent from "@muya/block/base/parent";
+import AtxHeading from "@muya/block/commonMark/atxHeading";
+import SetextHeading from "@muya/block/commonMark/setextHeading";
+import DiagramBlock from "@muya/block/extra/diagram";
 
 const HEADING_ICONS = [
   header1Icon,
@@ -38,7 +42,7 @@ const DIAGRAM_ICONS = {
   "vega-lite": vegaIcon,
 };
 
-export const getIcon = (block) => {
+export const getIcon = (block: Parent) => {
   const { blockName } = block;
   switch (blockName) {
     case "frontmatter":
@@ -63,10 +67,10 @@ export const getIcon = (block) => {
       return codeIcon;
 
     case "atx-heading":
-      return HEADING_ICONS[block.meta.level - 1];
+      return HEADING_ICONS[(block as AtxHeading).meta.level - 1];
 
     case "setext-heading":
-      return HEADING_ICONS[block.meta.level - 1];
+      return HEADING_ICONS[(block as SetextHeading).meta.level - 1];
 
     case "thematic-break":
       return thematicBreakIcon;
@@ -78,10 +82,10 @@ export const getIcon = (block) => {
       return htmlIcon;
 
     case "math-block":
-      return mathblockIcon;
+      return mathBlockIcon;
 
     case "diagram":
-      return DIAGRAM_ICONS[block.meta.type];
+      return DIAGRAM_ICONS[(block as DiagramBlock).meta.type];
 
     default:
       return paragraphIcon;

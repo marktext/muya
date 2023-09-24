@@ -3,6 +3,8 @@ import { patch, h } from "@muya/utils/snabbdom";
 import { toolList } from "./config";
 
 import "./index.css";
+import { VNode } from "snabbdom";
+import Muya from "@muya/index";
 
 const defaultOptions = {
   placement: "bottom-center",
@@ -16,23 +18,19 @@ const defaultOptions = {
 
 class TableBarTools extends BaseFloat {
   static pluginName = "tableBarTools";
-  private oldVNode: any;
+  private oldVNode: VNode | null = null;
   private tableInfo: any;
   private block: any;
-  private tableBarContainer: HTMLDivElement;
+  private tableBarContainer: HTMLDivElement = document.createElement("div");
 
-  constructor(muya, options = {}) {
+  constructor(muya: Muya, options = {}) {
     const name = "mu-table-bar-tools";
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
-    this.options = opts;
-    this.oldVNode = null;
     this.tableInfo = null;
     this.block = null;
-    this.floatBox.classList.add("mu-table-bar-tools");
-    const tableBarContainer = (this.tableBarContainer =
-      document.createElement("div"));
-    this.container.appendChild(tableBarContainer);
+    this.floatBox!.classList.add("mu-table-bar-tools");
+    this.container!.appendChild(this.tableBarContainer);
     this.listen();
   }
 

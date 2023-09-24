@@ -1,8 +1,9 @@
-import BaseFloat, { IBaseFloatOptions } from "../baseFloat";
+import BaseFloat from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import { EVENT_KEYS, URL_REG, isWin } from "@muya/config";
 import { getUniqueId, isKeyboardEvent } from "@muya/utils";
 import { getImageInfo, getImageSrc } from "@muya/utils/image";
+import type { BaseOptions } from "../types";
 
 import "./index.css";
 import { VNode } from "snabbdom";
@@ -19,7 +20,7 @@ type State = {
 type Options = {
   imagePathPicker?: () => Promise<string>;
   imageAction?: (state: State) => Promise<string>;
-} & IBaseFloatOptions;
+} & BaseOptions;
 
 const defaultOptions = {
   placement: "bottom" as const,

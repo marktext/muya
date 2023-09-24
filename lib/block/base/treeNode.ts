@@ -1,11 +1,11 @@
 import LinkedNode from "@muya/block/base/linkedList/linkedNode";
-import { createDomNode } from "@muya/utils/dom";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
-import Parent from "./parent";
-import Content from "./content";
-import type { Attributes, Datasets } from "../../utils/types";
+import { createDomNode } from "@muya/utils/dom";
 import type { TState } from "../../jsonState/types";
+import type { Attributes, Datasets } from "../../utils/types";
+import Content from "./content";
+import Parent from "./parent";
 
 interface IConstructor<T> {
   blockName: string;
@@ -72,7 +72,7 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
    * @param this
    * @returns boolean
    */
-  isContent(this: any): this is Content {
+  isContent(this: { text: string } & TreeNode): this is Content {
     return typeof this.text === "string";
   }
 
@@ -217,7 +217,7 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
     return popItem ? popItem : null;
   }
 
-  insertInto(parent: Parent, refBlock: TreeNode) {
+  insertInto(parent: Parent, refBlock: Parent | null = null) {
     if (this.parent === parent && this.next === refBlock) {
       return;
     }

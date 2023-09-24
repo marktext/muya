@@ -1,20 +1,22 @@
-import Popper from "popper.js";
-import { throttle, verticalPositionInRect, isMouseEvent } from "@muya/utils";
-import { patch, h } from "@muya/utils/snabbdom";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
+import { isMouseEvent, throttle, verticalPositionInRect } from "@muya/utils";
+import { h, patch } from "@muya/utils/snabbdom";
+import Popper from "popper.js";
 import { getIcon } from "./config";
-import Muya from "@muya/index";
 
-import "./index.css";
 import dragIcon from "@muya/assets/icons/drag/2.png";
-import type { VNode } from "snabbdom";
 import type Parent from "@muya/block/base/parent";
-import type { Placement } from "popper.js";
+import BulletList from "@muya/block/commonMark/bulletList";
+import OrderList from "@muya/block/commonMark/orderList";
+import type Muya from "@muya/index";
+import type { VNode } from "snabbdom";
+import type { BaseOptions } from "../types";
+import "./index.css";
 
 const LEFT_OFFSET = 100;
 
 const defaultOptions = () => ({
-  placement: "left-start",
+  placement: "left-start" as const,
   modifiers: {
     offset: {
       offset: "0, 8",
@@ -38,14 +40,14 @@ const renderIcon = (i: string, className: string) =>
     )
   );
 
+function isOrderOrBulletList(block: Parent): block is OrderList | BulletList {
+  return block instanceof OrderList || block instanceof BulletList;
+}
+
 class FrontButton {
   public name: string = "mu-front-button";
   public resizeObserver: ResizeObserver | null = null;
-  private options: {
-    placement: Placement;
-    modifiers: { offset: { offset: string } };
-    showArrow: boolean;
-  };
+  private options: BaseOptions;
   private block: Parent | null = null;
   private oldVNode: VNode | null = null;
   private status: boolean = false;
@@ -53,11 +55,11 @@ class FrontButton {
   private container: HTMLDivElement = document.createElement("div");
   private iconWrapper: HTMLDivElement = document.createElement("div");
   private popper: Popper | null = null;
-  private dragTimer: string | number | Timeout | null = null;
+  private dragTimer: ReturnType<typeof setTimeout> | null = null;
   private dragInfo: {
     block: Parent;
-    target: Parent | null;
-    position: "down" | "up" | null;
+    target?: Parent | null;
+    position?: "down" | "up" | null;
   } | null = null;
   private ghost: HTMLDivElement | null = null;
   private shadow: HTMLDivElement | null = null;
@@ -104,11 +106,11 @@ class FrontButton {
         return;
       }
       const { x, y } = event;
-      const eles = [
+      const els = [
         ...document.elementsFromPoint(x, y),
         ...document.elementsFromPoint(x + LEFT_OFFSET, y),
       ];
-      const outMostElement = eles.find(
+      const outMostElement = els.find(
         (ele) =>
           ele[BLOCK_DOM_PROPERTY] &&
           (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock
@@ -138,7 +140,7 @@ class FrontButton {
     event.preventDefault();
     event.stopPropagation();
     this.dragTimer = setTimeout(() => {
-      this.startDrag(event);
+      this.startDrag();
       this.dragTimer = null;
     }, 300);
   };
@@ -158,11 +160,11 @@ class FrontButton {
     event.preventDefault();
 
     const { x, y } = event;
-    const eles = [
+    const els = [
       ...document.elementsFromPoint(x, y),
       ...document.elementsFromPoint(x + LEFT_OFFSET, y),
     ];
-    const outMostElement = eles.find(
+    const outMostElement = els.find(
       (ele) =>
         ele[BLOCK_DOM_PROPERTY] &&
         (ele[BLOCK_DOM_PROPERTY] as Parent).isOutMostBlock
@@ -242,7 +244,7 @@ class FrontButton {
   startDrag = () => {
     const { block } = this;
     // Frontmatter should not be drag.
-    if (block && block.blockName === "frontmatter") {
+    if (!block || (block && block.blockName === "frontmatter")) {
       return;
     }
     this.disableListen = true;
@@ -265,7 +267,7 @@ class FrontButton {
     ];
   };
 
-  createStyledGhost(rect, position) {
+  createStyledGhost(rect: DOMRect, position: "down" | "up") {
     let ghost = this.ghost;
     if (!ghost) {
       ghost = document.createElement("div");
@@ -282,8 +284,8 @@ class FrontButton {
   }
 
   createStyledShadow() {
-    const { domNode } = this.block;
-    const { width, top, left } = domNode.getBoundingClientRect();
+    const { domNode } = this.block!;
+    const { width, top, left } = domNode!.getBoundingClientRect();
     const shadow = document.createElement("div");
     shadow.classList.add("mu-shadow");
     Object.assign(shadow.style, {
@@ -291,15 +293,15 @@ class FrontButton {
       top: `${top}px`,
       left: `${left}px`,
     });
-    shadow.appendChild(domNode.cloneNode(true));
+    shadow.appendChild(domNode!.cloneNode(true));
     document.body.appendChild(shadow);
     this.shadow = shadow;
   }
 
-  moveShadow(event) {
+  moveShadow(event: Event) {
     const { shadow } = this;
     // The shadow already be removed.
-    if (!shadow) {
+    if (!shadow || !isMouseEvent(event)) {
       return;
     }
     const { y } = event;
@@ -320,7 +322,7 @@ class FrontButton {
     const { container, iconWrapper, block, oldVNode } = this;
 
     const iconWrapperSelector = "div.mu-icon-wrapper";
-    const i = getIcon(block);
+    const i = getIcon(block!);
     const iconParagraph = renderIcon(i, "paragraph");
     const iconDrag = renderIcon(dragIcon, "drag");
 
@@ -367,8 +369,9 @@ class FrontButton {
     }
 
     const styles = window.getComputedStyle(domNode!);
-    const paddingTop = parseFloat(styles["padding-top"]);
-    const isLooseList = /^(?:ul|ol)$/.test(block.tagName) && block.meta.loose;
+    const paddingTop = parseFloat(styles["paddingTop"]);
+
+    const isLooseList = isOrderOrBulletList(block) && block.meta.loose;
     modifiers.offset.offset = `${isLooseList ? paddingTop * 2 : paddingTop}, 8`;
 
     this.popper = new Popper(domNode!, floatBox, {

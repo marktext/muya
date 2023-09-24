@@ -8,6 +8,7 @@ const ALL_MENU_CONFIG = MENU_CONFIG.reduce(
   (acc, section) => [...acc, ...section.children],
   []
 );
+
 const COMMAND_KEY = isOsx ? "⌘" : "⌃";
 
 export const FRONT_MENU = [
@@ -30,6 +31,8 @@ export const FRONT_MENU = [
     shortCut: `⇧${COMMAND_KEY}D`,
   },
 ];
+
+export type FrontMenuIcon = typeof FRONT_MENU[number];
 
 export const canTurnIntoMenu = (block) => {
   const { blockName } = block;
@@ -56,9 +59,9 @@ export const canTurnIntoMenu = (block) => {
     }
 
     case "order-list":
-
+    // fall through
     case "bullet-list":
-
+    // fall through
     case "task-list": {
       return ALL_MENU_CONFIG.filter((item) =>
         /order-list|bullet-list|task-list/.test(item.label)

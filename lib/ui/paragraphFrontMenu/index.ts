@@ -3,12 +3,15 @@ import { patch, h } from "@muya/utils/snabbdom";
 import { deepClone } from "@muya/utils";
 import emptyStates from "@muya/config/emptyStates";
 import ScrollPage from "@muya/block/scrollPage";
-import { FRONT_MENU, canTurnIntoMenu } from "./config";
+import { FRONT_MENU, canTurnIntoMenu, FrontMenuIcon } from "./config";
 import { replaceBlockByLabel } from "@muya/ui/paragraphQuickInsertMenu/config";
 
 import "./index.css";
+import { VNode } from "snabbdom";
+import Parent from "@muya/block/base/parent";
+import Muya from "@muya/index";
 
-const renderIcon = ({ label, icon }) =>
+const renderIcon = ({ label, icon }: FrontMenuIcon) =>
   h(
     "i.icon",
     h(
@@ -35,25 +38,19 @@ const defaultOptions = {
 
 class FrontMenu extends BaseFloat {
   static pluginName = "frontMenu";
-  private oldVNode: any;
-  private block: any;
-  private reference: any;
-  private frontMenuContainer: HTMLDivElement;
+  public reference: HTMLDivElement | null = null;
+  private oldVNode: VNode | null = null;
+  private block: Parent | null = null;
+  private frontMenuContainer: HTMLDivElement = document.createElement("div");
 
-  constructor(muya, options = {}) {
+  constructor(muya: Muya, options = {}) {
     const name = "mu-front-menu";
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
-    this.oldVNode = null;
-    this.block = null;
-    this.options = opts;
-    this.reference = null;
-    const frontMenuContainer = (this.frontMenuContainer =
-      document.createElement("div"));
-    Object.assign((this.container.parentNode as any).style, {
+    Object.assign((this.container!.parentNode as HTMLElement).style, {
       overflow: "visible",
     });
-    this.container.appendChild(frontMenuContainer);
+    this.container!.appendChild(this.frontMenuContainer);
     this.listen();
   }
 
@@ -72,19 +69,19 @@ class FrontMenu extends BaseFloat {
       }
     });
 
-    const enterLeaveHandler = (event) => {
+    const enterLeaveHandler = () => {
       this.hide();
       this.reference = null;
     };
 
-    eventCenter.attachDOMEvent(container, "mouseleave", enterLeaveHandler);
+    eventCenter.attachDOMEvent(container!, "mouseleave", enterLeaveHandler);
   }
 
   renderSubMenu(subMenu) {
     const { block } = this;
     const { i18n } = this.muya;
     const children = subMenu.map((menuItem) => {
-      const { title, label, shortCut, subTitle } = menuItem;
+      const { title, label, subTitle } = menuItem;
       const iconWrapperSelector = "div.icon-wrapper";
       const iconWrapper = h(
         iconWrapperSelector,
@@ -97,7 +94,7 @@ class FrontMenu extends BaseFloat {
       );
 
       let itemSelector = `div.turn-into-item.${label}`;
-      if (block.blockName === "atx-heading") {
+      if (block?.blockName === "atx-heading") {
         if (
           label.startsWith(block.blockName) &&
           label.endsWith(block.meta.level)
@@ -223,7 +220,7 @@ class FrontMenu extends BaseFloat {
     } else {
       switch (block.blockName) {
         case "paragraph":
-
+        // fall through
         case "atx-heading": {
           if (block.blockName === "paragraph" && block.blockName === label) {
             break;
@@ -250,9 +247,9 @@ class FrontMenu extends BaseFloat {
         }
 
         case "order-list":
-
+        // fall through
         case "bullet-list":
-
+        // fall through
         case "task-list": {
           if (block.blockName === label) {
             break;
@@ -314,7 +311,7 @@ class FrontMenu extends BaseFloat {
       // mock cursorBlock focus
       cursorBlock.setCursor(0, 0, true);
     }
-    // Delay hide to avoid dispatch enter hander
+    // Delay hide to avoid dispatch enter handler
     setTimeout(this.hide.bind(this));
   }
 }

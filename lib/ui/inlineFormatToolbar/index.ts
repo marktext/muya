@@ -1,4 +1,4 @@
-import BaseFloat, { IBaseFloatOptions } from "../baseFloat";
+import BaseFloat from "../baseFloat";
 import { patch, h } from "@muya/utils/snabbdom";
 import icons, { FormatToolIcon } from "./config";
 import { isKeyboardEvent } from "@muya/utils";
@@ -8,6 +8,7 @@ import { VNode } from "snabbdom";
 import { Token } from "@muya/inlineRenderer/types";
 import Format from "@muya/block/base/format";
 import Muya from "@muya/index";
+import type { BaseOptions } from "../types";
 
 const defaultOptions = {
   placement: "top" as const,
@@ -24,7 +25,7 @@ class FormatPicker extends BaseFloat {
   private oldVNode: VNode | null = null;
   private block: Format | null = null;
   private formats: Token[] = [];
-  public options: IBaseFloatOptions;
+  public options: BaseOptions;
   private icons: FormatToolIcon[] = icons;
   private formatContainer: HTMLDivElement = document.createElement("div");
 

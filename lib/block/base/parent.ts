@@ -1,10 +1,10 @@
-import TreeNode from "@muya/block/base/treeNode";
 import LinkedList from "@muya/block/base/linkedList/linkedList";
-import { operateClassName } from "@muya/utils/dom";
+import TreeNode from "@muya/block/base/treeNode";
 import { CLASS_NAMES } from "@muya/config";
+import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
-import Content from "./content/index";
 import { TState } from "../../jsonState/types";
+import Content from "./content/index";
 
 const debug = logger("parent:");
 
@@ -160,7 +160,7 @@ abstract class Parent extends TreeNode {
     return block;
   }
 
-  insertBefore(newNode, refNode, source = "user") {
+  insertBefore(newNode, refNode?, source = "user") {
     newNode.parent = this;
     this.children.insertBefore(newNode, refNode);
     this.domNode.insertBefore(

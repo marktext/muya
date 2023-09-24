@@ -2,19 +2,10 @@ import Popper from "popper.js";
 import { noop, isKeyboardEvent } from "@muya/utils";
 import { EVENT_KEYS } from "@muya/config";
 import type Muya from "@muya/index";
-import type { ReferenceObject, Placement } from "popper.js";
+import type { ReferenceObject } from "popper.js";
+import type { BaseOptions } from "../types";
 
 import "./index.css";
-
-export interface IBaseFloatOptions {
-  placement: Placement;
-  modifiers: {
-    offset: {
-      offset: string;
-    };
-  };
-  showArrow: boolean;
-}
 
 const defaultOptions = () => ({
   placement: "bottom-start" as const,
@@ -29,7 +20,7 @@ const defaultOptions = () => ({
 const BUTTON_GROUP = ["mu-table-drag-bar", "mu-front-button"];
 
 abstract class BaseFloat {
-  public options: IBaseFloatOptions;
+  public options: BaseOptions;
   public status: boolean = false;
   public floatBox: HTMLElement | null = null;
   public container: HTMLElement | null = null;
