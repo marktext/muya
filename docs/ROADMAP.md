@@ -1,13 +1,13 @@
 ### MUYA
 
-**2023**
+**2023 version 1.0.0 released**
 
 Optimization:
 
 Support TypeScript
 
 - [x] Convert JS code to TS code
-- [ ] Complete all missing types(no any) and support strict mode for TS compilation(eslint --fix and no error)
+- [ ] Complete all missing types(no any) and support strict mode for TS compilation(eslint --fix and no error)(P0)
 
 Better Code Design
 
