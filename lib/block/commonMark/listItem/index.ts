@@ -1,9 +1,9 @@
 import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { IListItemState } from "../../../jsonState/types";
+import ScrollPage from "@muya/block/scrollPage";
 import Muya from "@muya/index";
+import { mixins } from "@muya/utils";
+import { IListItemState } from "../../../state/types";
 
 @mixins(ContainerQueryBlock)
 class ListItem extends Parent {

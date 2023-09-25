@@ -45,6 +45,8 @@
     "intl-segmenter-polyfill": "^0.4.4",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.16.8",
+    "marked": "^9.0.3",
+    "marked-katex-extension": "^3.0.6",
     "mermaid": "10.4.0",
     "ot-json1": "^1.0.2",
     "ot-text-unicode": "^4.0.0",

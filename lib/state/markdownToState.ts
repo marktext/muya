@@ -1,5 +1,6 @@
-import { Lexer } from "@muya/utils/marked";
+import { Lexer } from "@muya/utils/depMarked";
 import logger from "@muya/utils/logger";
+import { lexBlock } from "@muya/utils/marked";
 import { TState } from "./types";
 
 const debug = logger("import markdown: ");
@@ -44,6 +45,8 @@ class MarkdownToState {
       frontMatter = true,
     } = this.options;
 
+    lexBlock(markdown, { frontMatter });
+
     const tokens = new Lexer({
       disableInline: true,
       footnote,
@@ -51,6 +54,8 @@ class MarkdownToState {
       superSubScript,
       frontMatter,
     }).lex(markdown);
+
+    // console.log(JSON.stringify(tokens, null, 1))
 
     let token;
     let state;

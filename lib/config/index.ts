@@ -298,14 +298,13 @@ export const MUYA_DEFAULT_OPTIONS = {
   // implementation like in MarkText.
   spellcheckEnabled: false,
   // Markdown extensions
-  superSubScript: false,
+  superSubScript: true,
   footnote: false,
   isGitlabCompatibilityEnabled: false,
   // Move checked task list item to the end of task list.
-  autoMoveCheckedToEnd: true,
-
+  autoMoveCheckedToEnd: false,
   // Whether HTML rendering is disabled or not.
-  disableHtml: true,
+  disableHtml: false,
   locale: en,
 };
 

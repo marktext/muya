@@ -28,7 +28,7 @@ import { deepClone } from "@muya/utils";
 
 import Parent from "@muya/block/base/parent";
 import Muya from "@muya/index";
-import { IAtxHeadingState, IBlockQuoteState, IFrontmatterState, IParagraphState } from "@muya/jsonState/types";
+import { IAtxHeadingState, IBlockQuoteState, IFrontmatterState, IParagraphState } from "@muya/state/types";
 import logger from "@muya/utils/logger";
 const debug = logger("quickInsert:");
 

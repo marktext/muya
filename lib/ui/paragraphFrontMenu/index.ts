@@ -9,7 +9,7 @@ import { FRONT_MENU, canTurnIntoMenu } from "./config";
 import type Parent from "@muya/block/base/parent";
 import AtxHeading from "@muya/block/commonMark/atxHeading";
 import type Muya from "@muya/index";
-import { IAtxHeadingState, IBulletListState, IOrderListState, ITaskListState } from "@muya/jsonState/types";
+import { IAtxHeadingState, IBulletListState, IOrderListState, ITaskListState } from "@muya/state/types";
 import { QuickInsertMenuItem } from "@muya/ui/paragraphQuickInsertMenu/config";
 import type { VNode } from "snabbdom";
 import "./index.css";

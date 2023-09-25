@@ -1,7 +1,7 @@
-import marked from "@muya/utils/marked";
-import StateToMarkdown from "../jsonState/stateToMarkdown";
-import Base from "./base";
 import Parent from "@muya/block/base/parent";
+import marked from "@muya/utils/depMarked";
+import StateToMarkdown from "../state/stateToMarkdown";
+import Base from "./base";
 
 class Copy extends Base {
   public copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`

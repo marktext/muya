@@ -1,13 +1,13 @@
 import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { ITableCellMeta, ITableCellState } from "../../../jsonState/types";
-import Muya from "@muya/index";
 import TableCellContent from "@muya/block/content/tableCell";
-import TableInner from "./table";
+import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
+import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
+import { mixins } from "@muya/utils";
 import Table from ".";
+import { ITableCellMeta, ITableCellState } from "../../../state/types";
 import Row from "./row";
+import TableInner from "./table";
 
 @mixins(LeafQueryBlock)
 class TableBodyCell extends Parent {

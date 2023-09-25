@@ -2,7 +2,7 @@ import LinkedNode from "@muya/block/base/linkedList/linkedNode";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
 import { createDomNode } from "@muya/utils/dom";
-import type { TState } from "../../jsonState/types";
+import type { TState } from "../../state/types";
 import type { Attributes, Datasets } from "../../utils/types";
 import Content from "./content";
 import Parent from "./parent";

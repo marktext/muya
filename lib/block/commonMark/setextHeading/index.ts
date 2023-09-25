@@ -1,10 +1,10 @@
 import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { ISetextHeadingState } from "../../../jsonState/types";
 import SetextHeadingContent from "@muya/block/content/setextHeadingContent";
+import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
+import ScrollPage from "@muya/block/scrollPage";
 import Muya from "@muya/index";
+import { mixins } from "@muya/utils";
+import { ISetextHeadingState } from "../../../state/types";
 
 interface ISetextHeadingMeta {
   level: number;

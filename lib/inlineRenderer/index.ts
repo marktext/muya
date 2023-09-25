@@ -1,13 +1,13 @@
-import Renderer from "@muya/inlineRenderer/renderer";
-import { tokenizer } from "@muya/inlineRenderer/lexer";
-import logger from "@muya/utils/logger";
-import { beginRules } from "@muya/inlineRenderer/rules";
-import Muya from "@muya/index";
 import Format from "@muya/block/base/format";
 import ParagraphContent from "@muya/block/content/paragraphContent";
-import { TState, IParagraphState, TContainerState } from "../jsonState/types";
-import type { Highlight, Labels } from "./types";
+import Muya from "@muya/index";
+import { tokenizer } from "@muya/inlineRenderer/lexer";
+import Renderer from "@muya/inlineRenderer/renderer";
+import { beginRules } from "@muya/inlineRenderer/rules";
+import logger from "@muya/utils/logger";
 import type { Cursor } from "../selection/types";
+import { IParagraphState, TContainerState, TState } from "../state/types";
+import type { Highlight, Labels } from "./types";
 
 const debug = logger("inlineRenderer:");
 

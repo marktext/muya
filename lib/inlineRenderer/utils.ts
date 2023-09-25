@@ -1,4 +1,4 @@
-import { findClosingBracket } from "@muya/utils/marked/utils";
+import { findClosingBracket } from "@muya/utils/depMarked/utils";
 import type { Rules } from "./types";
 
 // ASCII PUNCTUATION character

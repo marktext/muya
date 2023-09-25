@@ -1,23 +1,23 @@
 import Muya from "../lib/index";
+import zh from "../lib/locales/zh";
+import MD2Html from "../lib/state/markdownToHtml";
+import { TState } from "../lib/state/types";
 import {
-  EmojiSelector,
-  InlineFormatToolbar,
-  ImageEditTool,
-  ImageToolBar,
-  ImageResizeBar,
   CodeBlockLanguageSelector,
-  TableColumnToolbar,
-  ParagraphQuickInsertMenu,
-  TableDragBar,
-  TableRowColumMenu,
-  PreviewToolBar,
+  EmojiSelector,
+  ImageEditTool,
+  ImageResizeBar,
+  ImageToolBar,
+  InlineFormatToolbar,
   ParagraphFrontButton,
   ParagraphFrontMenu,
+  ParagraphQuickInsertMenu,
+  PreviewToolBar,
+  TableColumnToolbar,
+  TableDragBar,
+  TableRowColumMenu,
 } from "../lib/ui/index";
-import zh from "../lib/locales/zh";
-import MD2Html from "../lib/jsonState/markdownToHtml";
-import { DEFAULT_STATE, DEFAULT_MARKDOWN } from "./mock";
-import { TState } from "../lib/jsonState/types";
+import { DEFAULT_MARKDOWN } from "./mock";
 
 import "./style.css";
 
@@ -68,8 +68,7 @@ const selectAllBtn: HTMLButtonElement = document.querySelector("#select-all")!;
 
 
 const muya = new Muya(container, {
-  json: DEFAULT_STATE,
-  disableHtml: true,
+  markdown: DEFAULT_MARKDOWN,
 });
 
 muya.locale(zh);
@@ -123,7 +122,7 @@ setContentBtn.addEventListener("click", () => {
 
 muya.on("json-change", (_changes) => {
   // console.log(JSON.stringify(muya.getState(), null, 2))
-  // console.log(muya.getMarkdown())
+  console.log(muya.getMarkdown())
   // console.log(JSON.stringify(changes, null, 2));
 });
 

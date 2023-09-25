@@ -1,10 +1,10 @@
+import copyIcon from "@muya/assets/icons/copy/2.png";
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { h, toHTML } from "@muya/utils/snabbdom";
-import copyIcon from "@muya/assets/icons/copy/2.png";
 import logger from "@muya/utils/logger";
+import { h, toHTML } from "@muya/utils/snabbdom";
+import { TState } from "../../../state/types";
 import CodeBlock from "./index";
-import { TState } from "../../../jsonState/types";
 
 const debug = logger("code:");
 

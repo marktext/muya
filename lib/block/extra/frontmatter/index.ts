@@ -5,7 +5,7 @@ import ScrollPage from "@muya/block/scrollPage";
 import { loadLanguage } from "@muya/utils/prism";
 // import { operateClassName } from '@muya/utils/dom'
 import logger from "@muya/utils/logger";
-import { IFrontmatterMeta, IFrontmatterState } from "../../../jsonState/types";
+import { IFrontmatterMeta, IFrontmatterState } from "../../../state/types";
 
 const debug = logger("frontmatter:");
 

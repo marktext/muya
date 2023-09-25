@@ -1,8 +1,8 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { loadLanguage } from "@muya/utils/prism";
 import logger from "@muya/utils/logger";
-import { IDiagramMeta, IDiagramState } from "../../../jsonState/types";
+import { loadLanguage } from "@muya/utils/prism";
+import { IDiagramMeta, IDiagramState } from "../../../state/types";
 
 const debug = logger("diagram:");
 

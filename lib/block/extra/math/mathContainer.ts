@@ -1,7 +1,7 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import logger from "@muya/utils/logger";
-import { TState } from "../../../jsonState/types";
+import { TState } from "../../../state/types";
 
 const debug = logger("mathContainer:");
 

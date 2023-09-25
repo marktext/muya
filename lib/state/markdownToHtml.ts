@@ -1,18 +1,18 @@
-import marked from "../utils/marked";
-import Prism from "prismjs";
 import katex from "katex";
 import "katex/dist/contrib/mhchem.min.js";
+import Prism from "prismjs";
 import { EXPORT_DOMPURIFY_CONFIG } from "../config";
-import { validEmoji } from "../utils/emoji";
-import { sanitize, unescapeHTML } from "../utils";
 import Muya from "../index";
+import { sanitize, unescapeHTML } from "../utils";
+import marked from "../utils/depMarked";
 import loadRenderer from "../utils/diagram";
+import { validEmoji } from "../utils/emoji";
 
 import githubMarkdownCss from "github-markdown-css/github-markdown.css?inline";
-import highlightCss from "prismjs/themes/prism.css?inline";
 import katexCss from "katex/dist/katex.css?inline";
-import footerHeaderCss from "../assets/styles/headerFooterStyle.css?inline";
+import highlightCss from "prismjs/themes/prism.css?inline";
 import exportStyle from "../assets/styles/exportStyle.css?inline";
+import footerHeaderCss from "../assets/styles/headerFooterStyle.css?inline";
 
 const DIAGRAM_TYPE = [
   "mermaid",

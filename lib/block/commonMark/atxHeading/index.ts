@@ -1,10 +1,10 @@
-import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { IAtxHeadingState } from "../../../jsonState/types";
-import Muya from "@muya/index";
 import Content from "@muya/block/base/content";
+import Parent from "@muya/block/base/parent";
+import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
+import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
+import { mixins } from "@muya/utils";
+import { IAtxHeadingState } from "../../../state/types";
 
 interface IAtxHeadingMeta {
   level: number;

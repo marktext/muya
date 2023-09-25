@@ -1,10 +1,10 @@
 import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { IParagraphState } from "../../../jsonState/types";
-import Muya from "@muya/index";
 import ParagraphContent from "@muya/block/content/paragraphContent";
+import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
+import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
+import { mixins } from "@muya/utils";
+import { IParagraphState } from "../../../state/types";
 
 @mixins(LeafQueryBlock)
 class Paragraph extends Parent {

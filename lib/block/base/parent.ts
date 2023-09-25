@@ -3,7 +3,7 @@ import TreeNode from "@muya/block/base/treeNode";
 import { CLASS_NAMES } from "@muya/config";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
-import { TState } from "../../jsonState/types";
+import { TState } from "../../state/types";
 import Content from "./content/index";
 
 const debug = logger("parent:");

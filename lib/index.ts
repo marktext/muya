@@ -1,23 +1,23 @@
-import EventCenter from "@muya/event/index";
-import Editor from "@muya/editor/index";
-import Ui from "@muya/ui/ui";
-import I18n from "@muya/i18n/index";
 import {
   BLOCK_DOM_PROPERTY,
-  MUYA_DEFAULT_OPTIONS,
   CLASS_NAMES,
+  MUYA_DEFAULT_OPTIONS,
 } from "@muya/config/index";
+import Editor from "@muya/editor/index";
+import EventCenter from "@muya/event/index";
+import I18n from "@muya/i18n/index";
+import Ui from "@muya/ui/ui";
 
-import { MuyaOptions } from "./types";
 import Search from "@muya/search";
+import { MuyaOptions } from "./types";
 
-import { TState } from "./jsonState/types";
 import { ISearchOption } from "./search/types";
+import { TState } from "./state/types";
 
-import "./assets/styles/index.css";
-import "./assets/styles/prismjs/light.theme.css";
-import "./assets/styles/inlineSyntax.css";
 import "./assets/styles/blockSyntax.css";
+import "./assets/styles/index.css";
+import "./assets/styles/inlineSyntax.css";
+import "./assets/styles/prismjs/light.theme.css";
 
 // Fix Intl.Segmenter is not work on firefox.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
