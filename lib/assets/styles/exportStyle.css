@@ -59,7 +59,7 @@
 
 .markdown-body div.plantuml,
 .markdown-body div.mermaid,
-.markdown-body div.sequence {
+.markdown-body div.vega-lite {
   display: block;
   text-align: center;
   padding: 20px 0;

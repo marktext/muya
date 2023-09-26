@@ -1,8 +1,8 @@
-import { resolve } from "path";
-import dts from "vite-plugin-dts";
 import libAssetsPlugin from "@laynezh/vite-plugin-lib-assets";
-import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
+import { resolve } from "path";
+import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
 
 export default defineConfig({
   resolve: {
@@ -35,9 +35,9 @@ export default defineConfig({
         "locales/en": resolve(__dirname, "lib/locales/en.ts"),
         "locales/ja": resolve(__dirname, "lib/locales/ja.ts"),
         "locales/zh": resolve(__dirname, "lib/locales/zh.ts"),
-        "jsonState/markdownToHtml": resolve(
+        "state/markdownToHtml": resolve(
           __dirname,
-          "lib/jsonState/markdownToHtml.ts"
+          "lib/state/markdownToHtml.ts"
         ),
         "ui/index": resolve(__dirname, "lib/ui/index.ts"),
       },

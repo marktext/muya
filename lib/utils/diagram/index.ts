@@ -1,24 +1,14 @@
 const rendererCache = new Map();
 /**
  *
- * @param {string} name the renderer name: sequence, plantuml, flowchart, mermaid, vega-lite
+ * @param {string} name the renderer name:plantuml, mermaid, vega-lite
  */
 const loadRenderer = async (name: string) => {
   if (!rendererCache.has(name)) {
     let m;
     switch (name) {
-      case "sequence":
-        m = await import("./sequence");
-        rendererCache.set(name, m.default);
-        break;
-
       case "plantuml":
         m = await import("./plantuml");
-        rendererCache.set(name, m.default);
-        break;
-
-      case "flowchart":
-        m = await import("flowchart.js");
         rendererCache.set(name, m.default);
         break;
 
@@ -31,6 +21,7 @@ const loadRenderer = async (name: string) => {
         m = await import("vega-embed");
         rendererCache.set(name, m.default);
         break;
+
       default:
         throw new Error(`Unknown diagram name ${name}`);
     }

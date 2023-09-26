@@ -178,10 +178,10 @@ const doc = [
       style: "-", // `-` for yaml | `+` for toml | `;;;` and `{}` for json
     },
   },
-  // Diagram: flowchart | sequence | mermaid | plantuml | vega-lite
+  // Diagram: mermaid | plantuml | vega-lite
   {
     name: "diagram",
-    text: `flowchart TD
+    text: `plantuml TD
   A[Hard] -->|Text| B(Round)
   B --> C{Decision}
   C -->|One| D[Result 1]

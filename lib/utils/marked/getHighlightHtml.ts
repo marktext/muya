@@ -11,8 +11,6 @@ import walkTokens from "./walkTokens";
 
 const DIAGRAM_TYPE = [
   "mermaid",
-  "flowchart",
-  "sequence",
   "plantuml",
   "vega-lite",
 ];
