@@ -1,6 +1,6 @@
 import katex from "katex";
 
-type MathToken = {
+export type MathToken = {
   type: "inlineMath" | "multiplemath";
   raw: string;
   text: string;
@@ -56,7 +56,7 @@ function createRenderer(options: Options, newlineAfter: boolean) {
 function inlineKatex(renderer: (token: MathToken) => string) {
   return {
     name: "inlineMath",
-    level: "inline",
+    level: "inline" as const,
     start(src: string) {
       const match = src.match(inlineStartRule);
       if (!match) {
@@ -88,7 +88,7 @@ function inlineKatex(renderer: (token: MathToken) => string) {
 function blockKatex(renderer: (token: MathToken) => string) {
   return {
     name: "multiplemath",
-    level: "block",
+    level: "block" as const,
     start(src: string) {
       return src.indexOf("\n$");
     },

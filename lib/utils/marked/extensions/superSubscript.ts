@@ -30,7 +30,7 @@ export default function () {
 function getExtension(name: "superscript" | "subscript") {
   return {
     name: name,
-    level: "inline",
+    level: "inline" as const,
     start(src: string) {
       const match = src.match(START_HASH[name]);
       if (!match) {

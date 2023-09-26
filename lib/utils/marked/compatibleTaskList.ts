@@ -1,25 +1,41 @@
+import type { Token, Tokens } from "marked";
+
+type ListItemToken = Tokens.ListItem & {
+  listItemType: "order" | "bullet" | "task";
+  bulletMarkerOrDelimiter: "." | ")" | "*" | "+" | "-" | "";
+};
+
+type ListToken = Tokens.List & {
+  listType: "order" | "bullet" | "task";
+  items: ListItemToken[];
+};
+
+function isListToken (token: Token | ListToken): token is ListToken {
+  return token.type === "list";
+}
+
 const BULL_REG = /^ {0,3}([*+-]|\d{1,9}(?:\.|\)))/;
 
 // If bullet list contains task list items, split the bullet list into bullet lists and task lists.
 // Add `listType` to token, it's type: "order" | "bullet" | "task".
 // Add `listItemType` to list_item token. it's type: "order" | "bullet" | "task".
 // Add `bulletMarkerOrDelimiter` to list_item token. it's type: "." | ")" | "*" | "+" | "-"
-const compatibleTaskList = (tokens) => {
+const compatibleTaskList = (tokens: (Token | ListToken | ListItemToken)[] = []) => {
   const results = [];
 
   for (const token of tokens) {
-    if (token.type === "list") {
+    if (isListToken(token)) {
       if (token.ordered === true) {
         token.listType = "order";
         for (const item of token.items) {
           item.tokens = compatibleTaskList(item.tokens);
           item.listItemType = "order";
           const matches = BULL_REG.exec(item.raw);
-          item.bulletMarkerOrDelimiter = matches ? matches[1].slice(-1) : "";
+          item.bulletMarkerOrDelimiter = matches ? matches[1].slice(-1) as ListItemToken["bulletMarkerOrDelimiter"] : "";
         }
         results.push(token);
       } else {
-        const { type, raw, ordered, start, loose } = token;
+        const { type, raw, ordered, loose } = token;
         let cache: {
           type: "list";
           listType: "bullet" | "task";
@@ -27,7 +43,7 @@ const compatibleTaskList = (tokens) => {
           ordered: false;
           start: "";
           loose: boolean;
-          items: any[];
+          items: ListItemToken[];
         } | null = null;
 
         for (const item of token.items) {
@@ -35,14 +51,14 @@ const compatibleTaskList = (tokens) => {
           const listItemType = item.task ? "task" : "bullet";
           item.listItemType = listItemType;
           const matches = BULL_REG.exec(item.raw);
-          item.bulletMarkerOrDelimiter = matches ? matches[1] : "";
+          item.bulletMarkerOrDelimiter = matches ? matches[1] as ListItemToken["bulletMarkerOrDelimiter"] : "";
 
           if (!cache) {
             cache = {
               type,
               raw,
               ordered,
-              start,
+              start: "",
               loose,
               listType: listItemType,
               items: [item],
@@ -56,7 +72,7 @@ const compatibleTaskList = (tokens) => {
                 type,
                 raw,
                 ordered,
-                start,
+                start: "",
                 loose,
                 listType: listItemType,
                 items: [item],

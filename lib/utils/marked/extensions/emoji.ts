@@ -30,7 +30,7 @@ export default function (options: Options = {}) {
 function getExtension(opts: Options) {
   return {
     name: "emoji",
-    level: "inline",
+    level: "inline" as const,
     start(src: string) {
       const match = src.match(START_REG);
       if (!match) {
