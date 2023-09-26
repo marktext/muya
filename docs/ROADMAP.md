@@ -14,14 +14,17 @@ Better Code Design
 - [x] Patch the latest marked to muya(P0)
 - [x] Remove use axios and XMLHttpRequest etc
 - [x] Use constructor mixin to replace property mixin
+- [x] diagram: sequence and flowchart are deprecated
+- [ ] Optimization of turndown service for better paste
+- [ ] Optimization of markdownToHtml UI style, remove unused codes
 - [ ] Use DI?
-- [ ] Remove the dependence: diagram, file-icons, flowchart?
 - [ ] Use TSX to replace snabbdom(The ecology is better and easier to read)?
 
 Compatibility
 
 - [ ] Compatible with Firefox(P0)
 - [ ] Safari(P0)
+- [ ] Edge(P0)
 
 Documents
 - [ ] Website(docs, demo)(P0)
