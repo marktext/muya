@@ -32,8 +32,6 @@ const locale = {
     'Bullet List': '无序列表',
     'To-do List': '任务列表',
     'Vega Chart': 'Vega 图',
-    'Flow Chart': '流程图',
-    'Sequence': '序列图',
     'Mermaid': 'Mermaid',
     'Plantuml': 'Plantuml',
     'basic blocks': '基础块',

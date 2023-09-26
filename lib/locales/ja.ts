@@ -32,8 +32,6 @@ const locale = {
     'Bullet List': '無秩序リスト',
     'To-do List': 'タスクリスト',
     'Vega Chart': 'Vegaチャート',
-    'Flow Chart': 'フローチャット',
-    'Sequence': '秩序チャート',
     'Mermaid': 'Mermaid',
     'Plantuml': 'Plantuml',
     'basic blocks': '基礎ブロック',

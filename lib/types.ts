@@ -15,7 +15,6 @@ export interface MuyaOptions {
   listIndentation: number;
   frontMatter: boolean;
   frontmatterType: "-" | "+" | ";" | "{}";
-  sequenceTheme: string;
   mermaidTheme: string;
   vegaTheme: string;
   hideQuickInsertHint: boolean;

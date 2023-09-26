@@ -32,8 +32,6 @@ const locale = {
     'Bullet List': 'Bullet List',
     'To-do List': 'To-do List',
     'Vega Chart': 'Vega Chart',
-    'Flow Chart': 'Flow Chart',
-    'Sequence': 'Sequence',
     'Mermaid': 'Mermaid',
     'Plantuml': 'Plantuml',
     'basic blocks': 'basic blocks',

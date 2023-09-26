@@ -74,8 +74,8 @@ Test
 
 - [x] Math formula block
 - [x] mermaid
-- [x] flowchart
-- [x] sequence
+- [x] ~~flowchart~~
+- [x] ~~sequence~~
 - [ ] footnote
 - [x] front matter
 - [x] Superscripts, subscripts, mathematical formulas, etc.
