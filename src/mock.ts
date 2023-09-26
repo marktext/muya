@@ -293,7 +293,7 @@ const b = "foo"
 \`\`\`
 
 \`\`\`math
-a \ne b
+a \\ne b
 \`\`\`
 
 \`\`\`sequence
@@ -347,5 +347,5 @@ foo bar
 > foo
 > bar
 
-![](https://jingan2.guankou.net/haopic/jj20/389023/010323033238341796.jpg)`;
+![](https://jingan2.guankou.net/haopic/jj20/389023/010323033238341796.jpg)IMAGE`;
 

@@ -1,4 +1,6 @@
-const walkTokens = (options: LexBlockOption) => (token) => {
+import type { LexOption } from "./types";
+
+const walkTokens = (options: LexOption) => (token) => {
   const { math, isGitlabCompatibilityEnabled } = options;
   // marked mixes atx and setext headers, which we distinguish by headingStyle,
   // and markers are unique to setext heading
@@ -6,11 +8,6 @@ const walkTokens = (options: LexBlockOption) => (token) => {
     const matches = /\n {0,3}(=+|-+)/.exec(token.raw);
     token.headingStyle = matches ? "setext" : "atx";
     token.marker = matches ? matches[1] : "";
-  }
-  // Rename blockKatex to multiplemath, as multiplemath may be more accurate
-  if (token.type === "blockKatex") {
-    token.type = "multiplemath";
-    token.mathStyle = "";
   }
 
   if (token.type === "code") {
@@ -22,6 +19,7 @@ const walkTokens = (options: LexBlockOption) => (token) => {
     if (token.lang === "math" && math && isGitlabCompatibilityEnabled) {
       token.type = "multiplemath";
       token.mathStyle = "gitlab";
+      token.displayMode = true;
       delete token.lang;
       delete token.codeBlockStyle;
     }

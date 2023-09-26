@@ -1,30 +1,13 @@
-import katex from "katex";
-import "katex/dist/contrib/mhchem.min.js";
-import Prism from "prismjs";
+import { getHighlightHtml } from "@muya/utils/marked";
 import { EXPORT_DOMPURIFY_CONFIG } from "../config";
 import Muya from "../index";
 import { sanitize, unescapeHTML } from "../utils";
-import marked from "../utils/depMarked";
 import loadRenderer from "../utils/diagram";
-import { validEmoji } from "../utils/emoji";
 
-import githubMarkdownCss from "github-markdown-css/github-markdown.css?inline";
-import katexCss from "katex/dist/katex.css?inline";
-import highlightCss from "prismjs/themes/prism.css?inline";
 import exportStyle from "../assets/styles/exportStyle.css?inline";
-import footerHeaderCss from "../assets/styles/headerFooterStyle.css?inline";
-
-const DIAGRAM_TYPE = [
-  "mermaid",
-  "flowchart",
-  "sequence",
-  "plantuml",
-  "vega-lite",
-];
 
 class MarkdownToHtml {
-  private exportContainer: HTMLDivElement = null;
-  private mathRendererCalled: boolean = false;
+  private exportContainer: HTMLDivElement | null = null;
 
   constructor(public markdown: string, public muya?: Muya) {}
 
@@ -122,63 +105,17 @@ class MarkdownToHtml {
     }
   }
 
-  mathRenderer = (math, displayMode) => {
-    this.mathRendererCalled = true;
-
-    try {
-      return katex.renderToString(math, {
-        displayMode,
-      });
-    } catch (err) {
-      return displayMode
-        ? `<pre class="multiple-math invalid">\n${math}</pre>\n`
-        : `<span class="inline-math invalid" title="invalid math">${math}</span>`;
-    }
-  };
-
   // render pure html by marked
-  async renderHtml(toc) {
-    this.mathRendererCalled = false;
-    let html = marked(this.markdown, {
-      superSubScript: this.muya?.options?.superSubScript ?? false,
+  async renderHtml() {
+    let html = getHighlightHtml(this.markdown, {
+      superSubScript: this.muya?.options?.superSubScript ?? true,
       footnote: this.muya?.options?.footnote ?? false,
       isGitlabCompatibilityEnabled:
-        this.muya?.options?.isGitlabCompatibilityEnabled ?? false,
-      highlight(code, lang) {
-        // Language may be undefined (GH#591)
-        if (!lang) {
-          return code;
-        }
-
-        if (DIAGRAM_TYPE.includes(lang)) {
-          return code;
-        }
-
-        const grammar = Prism.languages[lang];
-        if (!grammar) {
-          console.warn(`Unable to find grammar for "${lang}".`);
-          return code;
-        }
-        return Prism.highlight(code, grammar, lang);
-      },
-      emojiRenderer(emoji) {
-        const validate = validEmoji(emoji);
-        if (validate) {
-          return validate.emoji;
-        } else {
-          return `:${emoji}:`;
-        }
-      },
-      mathRenderer: this.mathRenderer,
-      tocRenderer() {
-        if (!toc) {
-          return "";
-        }
-        return toc;
-      },
+        this.muya?.options?.isGitlabCompatibilityEnabled ?? true,
+      math: this.muya?.options?.math ?? true,
     });
 
-    html = sanitize(html, EXPORT_DOMPURIFY_CONFIG, false);
+    html = sanitize(html, EXPORT_DOMPURIFY_CONFIG, false) as string;
 
     const exportContainer = (this.exportContainer =
       document.createElement("div"));
@@ -204,7 +141,8 @@ class MarkdownToHtml {
     });
 
     this.exportContainer = null;
-    return result;
+
+    return `<article class="markdown-body">${result}</article>`
   }
 
   /**
@@ -213,15 +151,7 @@ class MarkdownToHtml {
    * @param {*} options Document options
    */
   async generate(options) {
-    const { printOptimization } = options;
-
-    // WORKAROUND: Hide Prism.js style when exporting or printing. Otherwise the background color is white in the dark theme.
-    const highlightCssStyle = printOptimization
-      ? `@media print { ${highlightCss} }`
-      : highlightCss;
-    const html = this._prepareHtml(await this.renderHtml(options.toc), options);
-    const katexCssStyle = this.mathRendererCalled ? katexCss : "";
-    this.mathRendererCalled = false;
+    const html = await this.renderHtml();
 
     // `extraCss` may changed in the mean time.
     const { title = "", extraCss = "" } = options;
@@ -231,78 +161,12 @@ class MarkdownToHtml {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${sanitize(title, EXPORT_DOMPURIFY_CONFIG, true)}</title>
-  <style>
-  ${githubMarkdownCss}
-  </style>
-  <style>
-  ${highlightCssStyle}
-  </style>
-  <style>
-  ${katexCssStyle}
-  </style>
-  <style>
-    .markdown-body {
-      font-family: -apple-system,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
-      box-sizing: border-box;
-      min-width: 200px;
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 45px;
-    }
-
-    @media not print {
-      .markdown-body {
-        padding: 45px;
-      }
-
-      @media (max-width: 767px) {
-        .markdown-body {
-          padding: 15px;
-        }
-      }
-    }
-
-    .hf-container {
-      color: #24292e;
-      line-height: 1.3;
-    }
-
-    .markdown-body .highlight pre,
-    .markdown-body pre {
-      white-space: pre-wrap;
-    }
-    .markdown-body table {
-      display: table;
-    }
-    .markdown-body img[data-align="center"] {
-      display: block;
-      margin: 0 auto;
-    }
-    .markdown-body img[data-align="right"] {
-      display: block;
-      margin: 0 0 0 auto;
-    }
-    .markdown-body li.task-list-item {
-      list-style-type: none;
-    }
-    .markdown-body li > [type=checkbox] {
-      margin: 0 0 0 -1.3em;
-    }
-    .markdown-body input[type="checkbox"] ~ p {
-      margin-top: 0;
-      display: inline-block;
-    }
-    .markdown-body ol ol,
-    .markdown-body ul ol {
-      list-style-type: decimal;
-    }
-    .markdown-body ol ol ol,
-    .markdown-body ol ul ol,
-    .markdown-body ul ol ol,
-    .markdown-body ul ul ol {
-      list-style-type: decimal;
-    }
-  </style>
+  <!-- https://cdnjs.com/libraries/github-markdown-css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.css" integrity="sha512-n5zPz6LZB0QV1eraRj4OOxRbsV7a12eAGfFcrJ4bBFxxAwwYDp542z5M0w24tKPEhKk2QzjjIpR5hpOjJtGGoA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- https://katex.org/docs/browser -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
+  <!-- https://cdnjs.com/libraries/prism -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism.min.css" integrity="sha512-/mZ1FHPkg6EKcxo0fKXF51ak6Cr2ocgDi5ytaTBjsQZIH/RNs6GF6+oId/vPe3eJB836T36nXwVh/WBl/cWT4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>${exportStyle}</style>
   <style>${extraCss}</style>
 </head>
@@ -311,101 +175,6 @@ class MarkdownToHtml {
 </body>
 </html>`;
   }
-
-  /**
-   * @private
-   *
-   * @param {string} html The converted HTML text.
-   * @param {*} options The export options.
-   */
-  private _prepareHtml(html, options) {
-    const { header, footer } = options;
-    const appendHeaderFooter = !!header || !!footer;
-    if (!appendHeaderFooter) {
-      return createMarkdownArticle(html);
-    }
-
-    if (!options.extraCss) {
-      options.extraCss = footerHeaderCss;
-    } else {
-      options.extraCss = footerHeaderCss + options.extraCss;
-    }
-
-    let output = HF_TABLE_START;
-    if (header) {
-      output += createTableHeader(options);
-    }
-
-    if (footer) {
-      output += HF_TABLE_FOOTER;
-      output = createRealFooter(options) + output;
-    }
-
-    output = output + createTableBody(html) + HF_TABLE_END;
-    return sanitize(output, EXPORT_DOMPURIFY_CONFIG, false);
-  }
 }
-
-// Variables and function to generate the header and footer.
-const HF_TABLE_START = '<table class="page-container">';
-const createTableBody = (html) => {
-  return `<tbody><tr><td>
-  <div class="main-container">
-    ${createMarkdownArticle(html)}
-  </div>
-</td></tr></tbody>`;
-};
-const HF_TABLE_END = "</table>";
-
-/// The header at is shown at the top.
-const createTableHeader = (options) => {
-  const { header, headerFooterStyled } = options;
-  const { type, left, center, right } = header;
-  let headerClass = type === 1 ? "single" : "";
-  headerClass += getHeaderFooterStyledClass(headerFooterStyled);
-  return `<thead class="page-header ${headerClass}"><tr><th>
-  <div class="hf-container">
-    <div class="header-content-left">${left}</div>
-    <div class="header-content">${center}</div>
-    <div class="header-content-right">${right}</div>
-  </div>
-</th></tr></thead>`;
-};
-
-/// Fake footer to reserve space.
-const HF_TABLE_FOOTER = `<tfoot class="page-footer-fake"><tr><td>
-  <div class="hf-container">
-    &nbsp;
-  </div>
-</td></tr></tfoot>`;
-
-/// The real footer at is shown at the bottom.
-const createRealFooter = (options) => {
-  const { footer, headerFooterStyled } = options;
-  const { type, left, center, right } = footer;
-  let footerClass = type === 1 ? "single" : "";
-  footerClass += getHeaderFooterStyledClass(headerFooterStyled);
-  return `<div class="page-footer ${footerClass}">
-  <div class="hf-container">
-    <div class="footer-content-left">${left}</div>
-    <div class="footer-content">${center}</div>
-    <div class="footer-content-right">${right}</div>
-  </div>
-</div>`;
-};
-
-/// Generate the markdown article HTML.
-const createMarkdownArticle = (html) => {
-  return `<article class="markdown-body">${html}</article>`;
-};
-
-/// Return the class whether a header/footer should be styled.
-const getHeaderFooterStyledClass = (value) => {
-  if (value === undefined) {
-    // Prefer theme settings.
-    return "";
-  }
-  return !value ? " simple" : " styled";
-};
 
 export default MarkdownToHtml;

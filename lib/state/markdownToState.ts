@@ -1,4 +1,3 @@
-import marked from "@muya/utils/depMarked";
 import logger from "@muya/utils/logger";
 import { lexBlock } from "@muya/utils/marked";
 import { TState } from "./types";
@@ -21,7 +20,7 @@ type MarkdownToStateOptions = {
 const DEFAULT_OPTIONS = {
   footnote: false,
   math: true,
-  isGitlabCompatibilityEnabled: false,
+  isGitlabCompatibilityEnabled: true,
   trimUnnecessaryCodeBlockEmptyLines: false,
   frontMatter: true,
 };
@@ -37,7 +36,7 @@ class MarkdownToState {
     const {
       footnote = false,
       math = true,
-      isGitlabCompatibilityEnabled = false,
+      isGitlabCompatibilityEnabled = true,
       trimUnnecessaryCodeBlockEmptyLines = false,
       frontMatter = true,
     } = this.options;
@@ -48,8 +47,6 @@ class MarkdownToState {
       frontMatter,
       isGitlabCompatibilityEnabled,
     });
-
-    console.log(marked(markdown, { frontMatter }));
 
     const states: TState[] = [];
     let token;

@@ -1,5 +1,5 @@
 import Parent from "@muya/block/base/parent";
-import marked from "@muya/utils/depMarked";
+import { getClipBoardHtml } from "@muya/utils/marked";
 import StateToMarkdown from "../state/stateToMarkdown";
 import Base from "./base";
 
@@ -26,14 +26,28 @@ class Copy extends Base {
       return { html, text };
     }
 
-    const { frontMatter = true } = this.muya.options;
+    const {
+      frontMatter = true,
+      math,
+      isGitlabCompatibilityEnabled,
+      superSubScript,
+    } = this.muya.options;
+    console.log(frontMatter,
+      math,
+      isGitlabCompatibilityEnabled,
+      superSubScript)
     // Handler copy/cut in one block.
     if (isSelectionInSameBlock) {
       const begin = Math.min(anchor.offset, focus.offset);
       const end = Math.max(anchor.offset, focus.offset);
 
       text = anchorBlock.text.substring(begin, end);
-      html = marked(text, { frontMatter });
+      html = getClipBoardHtml(text, {
+        frontMatter,
+        math,
+        isGitlabCompatibilityEnabled,
+        superSubScript,
+      });
 
       return { html, text };
     }
@@ -119,8 +133,12 @@ class Copy extends Base {
           anchorBlock.farthestBlock(listItemBlockName);
         const focusFarthestListItem =
           focusBlock.farthestBlock(listItemBlockName);
-        const anchorOffset = (anchorOutMostBlock as Parent).offset(anchorFarthestListItem);
-        const focusOffset = (anchorOutMostBlock as Parent).offset(focusFarthestListItem);
+        const anchorOffset = (anchorOutMostBlock as Parent).offset(
+          anchorFarthestListItem
+        );
+        const focusOffset = (anchorOutMostBlock as Parent).offset(
+          focusFarthestListItem
+        );
         const minOffset = Math.min(anchorOffset, focusOffset);
         const maxOffset = Math.max(anchorOffset, focusOffset);
         const { name, meta, children } = (anchorOutMostBlock as any).getState();
@@ -128,7 +146,8 @@ class Copy extends Base {
           name,
           meta,
           children: children.filter(
-            (_: unknown, index: number) => index >= minOffset && index <= maxOffset
+            (_: unknown, index: number) =>
+              index >= minOffset && index <= maxOffset
           ),
         });
       }
@@ -146,7 +165,12 @@ class Copy extends Base {
     const mdGenerator = new StateToMarkdown();
 
     text = mdGenerator.generate(copyState);
-    html = marked(text, { frontMatter });
+    html = getClipBoardHtml(text, {
+      frontMatter,
+      math,
+      isGitlabCompatibilityEnabled,
+      superSubScript,
+    });
 
     return { html, text };
   }
