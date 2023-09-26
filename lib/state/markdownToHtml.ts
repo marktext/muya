@@ -47,13 +47,8 @@ class MarkdownToHtml {
   async renderDiagram() {
     const selector =
       "code.language-vega-lite, code.language-flowchart, code.language-sequence, code.language-plantuml";
-    const RENDER_MAP = {
-      flowchart: await loadRenderer("flowchart"),
-      sequence: await loadRenderer("sequence"),
-      plantuml: await loadRenderer("plantuml"),
-      "vega-lite": await loadRenderer("vega-lite"),
-    };
     const codes = this.exportContainer.querySelectorAll(selector);
+
     for (const code of codes) {
       const rawCode = unescapeHTML(code.innerHTML);
       const functionType = (() => {
@@ -67,7 +62,7 @@ class MarkdownToHtml {
           return "vega-lite";
         }
       })();
-      const render = RENDER_MAP[functionType];
+      const render = await loadRenderer(functionType);
       const preParent = code.parentNode;
       const diagramContainer = document.createElement("div");
       diagramContainer.classList.add(functionType);
@@ -75,7 +70,7 @@ class MarkdownToHtml {
       const options = {};
       if (functionType === "sequence") {
         Object.assign(options, {
-          theme: this.muya?.options?.sequenceTheme || "simple",
+          theme: this.muya?.options?.sequenceTheme || "hand",
         });
       } else if (functionType === "vega-lite") {
         Object.assign(options, {
@@ -142,7 +137,7 @@ class MarkdownToHtml {
 
     this.exportContainer = null;
 
-    return `<article class="markdown-body">${result}</article>`
+    return `<article class="markdown-body">${result}</article>`;
   }
 
   /**
