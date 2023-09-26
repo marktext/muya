@@ -24,6 +24,7 @@ export interface MuyaOptions {
   spellcheckEnabled: boolean;
   superSubScript: boolean;
   footnote: boolean;
+  math: boolean;
   isGitlabCompatibilityEnabled: boolean;
   autoMoveCheckedToEnd: boolean;
   disableHtml: boolean;

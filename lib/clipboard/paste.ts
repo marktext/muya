@@ -22,7 +22,7 @@ class Paste extends Base {
       bulletListMarker,
       footnote,
       isGitlabCompatibilityEnabled,
-      superSubScript,
+      math,
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
     } = muya.options;
@@ -73,8 +73,8 @@ class Paste extends Base {
         // Has multiple paragraphs.
         const states = new MarkdownToState({
           footnote,
+          math,
           isGitlabCompatibilityEnabled,
-          superSubScript,
           trimUnnecessaryCodeBlockEmptyLines,
           frontMatter,
         }).generate(markdown);

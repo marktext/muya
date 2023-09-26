@@ -300,6 +300,8 @@ export const MUYA_DEFAULT_OPTIONS = {
   // Markdown extensions
   superSubScript: true,
   footnote: false,
+  // Whether math block is supported.
+  math: true,
   isGitlabCompatibilityEnabled: false,
   // Move checked task list item to the end of task list.
   autoMoveCheckedToEnd: false,

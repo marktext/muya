@@ -1,19 +1,19 @@
-import { beginRules, inlineRules, validateRules } from "./rules";
 import { isLengthEven, union } from "@muya/utils";
-import {
-  getAttributes,
-  parseSrcAndTitle,
-  validateEmphasize,
-  lowerPriority,
-  correctUrl,
-} from "./utils";
 import type { BeginRules, InlineRules } from "./rules";
+import { beginRules, inlineRules, validateRules } from "./rules";
 import type {
   Labels,
-  TokenizerOptions,
-  TokenizerFacOptions,
   Token,
+  TokenizerFacOptions,
+  TokenizerOptions,
 } from "./types";
+import {
+  correctUrl,
+  getAttributes,
+  lowerPriority,
+  parseSrcAndTitle,
+  validateEmphasize,
+} from "./utils";
 
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html

@@ -58,17 +58,17 @@ class JSONState {
     const {
       footnote,
       isGitlabCompatibilityEnabled,
-      superSubScript,
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
+      math,
     } = this.muya.options;
 
     this.state = new MarkdownToState({
       footnote,
       isGitlabCompatibilityEnabled,
-      superSubScript,
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
+      math,
     }).generate(markdown);
   }
 
