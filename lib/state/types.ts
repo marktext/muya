@@ -137,7 +137,7 @@ export interface IFrontmatterState {
 
 export interface IDiagramMeta {
   lang: "yaml";
-  type: "flowchart" | "sequence" | "mermaid" | "plantuml" | "vega-lite";
+  type: "mermaid" | "plantuml" | "vega-lite";
 }
 
 export interface IDiagramState {

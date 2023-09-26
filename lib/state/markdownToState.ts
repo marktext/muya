@@ -137,7 +137,7 @@ class MarkdownToState {
             value = value.replace(/\n+$/, "").replace(/^\n+/, "");
           }
 
-          if (/mermaid|flowchart|vega-lite|sequence|plantuml/.test(lang)) {
+          if (/mermaid|vega-lite|plantuml/.test(lang)) {
             state = {
               name: "diagram",
               text: value,

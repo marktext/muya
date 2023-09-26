@@ -1,5 +1,4 @@
 docs
-lib/assets/libs/sequence
 src
 commitlint.config.js
 jest.config.js

@@ -38,7 +38,6 @@
     "dompurify": "^3.0.5",
     "execall": "^3.0.0",
     "fast-diff": "^1.3.0",
-    "flowchart.js": "^1.17.1",
     "fuse.js": "^6.6.2",
     "html-tags": "^3.3.1",
     "intl-segmenter-polyfill": "^0.4.4",
@@ -54,13 +53,10 @@
     "prismjs": "^1.29.0",
     "snabbdom": "^3.5.1",
     "snabbdom-to-html": "^7.1.0",
-    "snapsvg-cjs": "^0.0.6",
     "turndown": "^7.1.2",
-    "underscore": "^1.13.6",
     "vega": "^5.25.0",
     "vega-embed": "^6.22.2",
-    "vega-lite": "^5.15.0",
-    "webfontloader": "^1.6.28"
+    "vega-lite": "^5.15.0"
   },
   "devDependencies": {
     "@laynezh/vite-plugin-lib-assets": "0.5.2",

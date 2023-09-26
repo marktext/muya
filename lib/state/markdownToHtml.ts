@@ -46,18 +46,14 @@ class MarkdownToHtml {
 
   async renderDiagram() {
     const selector =
-      "code.language-vega-lite, code.language-flowchart, code.language-sequence, code.language-plantuml";
+      "code.language-vega-lite, code.language-plantuml";
     const codes = this.exportContainer.querySelectorAll(selector);
 
     for (const code of codes) {
       const rawCode = unescapeHTML(code.innerHTML);
       const functionType = (() => {
-        if (/sequence/.test(code.className)) {
-          return "sequence";
-        } else if (/plantuml/.test(code.className)) {
+        if (/plantuml/.test(code.className)) {
           return "plantuml";
-        } else if (/flowchart/.test(code.className)) {
-          return "flowchart";
         } else {
           return "vega-lite";
         }
@@ -68,11 +64,7 @@ class MarkdownToHtml {
       diagramContainer.classList.add(functionType);
       (preParent as HTMLElement).replaceWith(diagramContainer);
       const options = {};
-      if (functionType === "sequence") {
-        Object.assign(options, {
-          theme: this.muya?.options?.sequenceTheme || "hand",
-        });
-      } else if (functionType === "vega-lite") {
+      if (functionType === "vega-lite") {
         Object.assign(options, {
           actions: false,
           tooltip: false,
@@ -81,11 +73,6 @@ class MarkdownToHtml {
         });
       }
       try {
-        if (functionType === "flowchart" || functionType === "sequence") {
-          const diagram = render.parse(rawCode);
-          diagramContainer.innerHTML = "";
-          diagram.drawSVG(diagramContainer, options);
-        }
         if (functionType === "plantuml") {
           const diagram = render.parse(rawCode);
           diagramContainer.innerHTML = "";

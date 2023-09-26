@@ -17,9 +17,7 @@ const renderDiagram = async ({
 }) => {
   const render = await loadRenderer(type);
   const options = {};
-  if (type === "sequence") {
-    Object.assign(options, { theme: sequenceTheme });
-  } else if (type === "vega-lite") {
+  if (type === "vega-lite") {
     Object.assign(options, {
       actions: false,
       tooltip: false,
@@ -28,7 +26,7 @@ const renderDiagram = async ({
     });
   }
 
-  if (type === "flowchart" || type === "sequence") {
+  if (type === "flowchart") {
     const diagram = render.parse(code);
     target.innerHTML = "";
     diagram.drawSVG(target, options);

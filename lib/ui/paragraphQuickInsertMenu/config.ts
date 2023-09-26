@@ -1,7 +1,6 @@
 import bulletListIcon from "@muya/assets/icons/bullet_list/2.png";
 import vegaIcon from "@muya/assets/icons/chart/2.png";
 import codeIcon from "@muya/assets/icons/code/2.png";
-import flowchartIcon from "@muya/assets/icons/flowchart/2.png";
 import frontMatterIcon from "@muya/assets/icons/front_matter/2.png";
 import header1Icon from "@muya/assets/icons/heading_1/2.png";
 import header2Icon from "@muya/assets/icons/heading_2/2.png";
@@ -18,7 +17,6 @@ import orderListIcon from "@muya/assets/icons/order_list/2.png";
 import paragraphIcon from "@muya/assets/icons/paragraph/2.png";
 import plantumlIcon from "@muya/assets/icons/plantuml/2.png";
 import quoteIcon from "@muya/assets/icons/quote_block/2.png";
-import sequenceIcon from "@muya/assets/icons/sequence/2.png";
 import todoListIcon from "@muya/assets/icons/todolist/2.png";
 import { isOsx } from "@muya/config";
 
@@ -316,18 +314,6 @@ export const MENU_CONFIG: QuickInsertMenuItem[] = [
         icon: vegaIcon,
       },
       {
-        title: "Flow Chart",
-        subTitle: "By flowchart.js",
-        label: "diagram flowchart",
-        icon: flowchartIcon,
-      },
-      {
-        title: "Sequence",
-        subTitle: "By js-sequence",
-        label: "diagram sequence",
-        icon: sequenceIcon,
-      },
-      {
         title: "Mermaid",
         subTitle: "By mermaid",
         label: "diagram mermaid",
@@ -454,10 +440,6 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }: {
       break;
 
     case "diagram vega-lite":
-    // fall through
-    case "diagram flowchart":
-    // fall through
-    case "diagram sequence":
     // fall through
     case "diagram mermaid":
     // fall through

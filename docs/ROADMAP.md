@@ -11,7 +11,7 @@ Support TypeScript
 
 Better Code Design
 
-- [ ] Patch the latest marked to muya(P0)
+- [x] Patch the latest marked to muya(P0)
 - [x] Remove use axios and XMLHttpRequest etc
 - [x] Use constructor mixin to replace property mixin
 - [ ] Use DI?
