@@ -148,7 +148,6 @@ export const CLASS_NAMES = genUpper2LowerKeyHash([
   "MU_RUBY_RENDER",
   "MU_RUBY_TEXT",
   "MU_SELECTION",
-  "MU_SEQUENCE",
   "MU_SHOW_PREVIEW",
   "MU_SOFT_LINE_BREAK",
   "MU_TASK_LIST",
@@ -285,7 +284,6 @@ export const MUYA_DEFAULT_OPTIONS = {
   // bullet/list marker width + listIndentation, tab or Daring Fireball Markdown (4 spaces) --> list indentation
   listIndentation: 1,
   frontmatterType: "-",
-  sequenceTheme: "hand", // hand or simple
   mermaidTheme: "default", // dark / forest / default
   vegaTheme: "latimes", // excel / ggplot2 / quartz / vox / fivethirtyeight / dark / latimes
   hideQuickInsertHint: false,

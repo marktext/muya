@@ -11,7 +11,6 @@ const renderDiagram = async ({
   type,
   code,
   target,
-  sequenceTheme,
   vegaTheme,
   mermaidTheme,
 }) => {
@@ -26,11 +25,7 @@ const renderDiagram = async ({
     });
   }
 
-  if (type === "flowchart") {
-    const diagram = render.parse(code);
-    target.innerHTML = "";
-    diagram.drawSVG(target, options);
-  } else if (type === "plantuml") {
+  if (type === "plantuml") {
     const diagram = render.parse(code);
     target.innerHTML = "";
     diagram.insertImgElement(target);
@@ -113,7 +108,7 @@ class DiagramPreview extends Parent {
 
     if (code) {
       this.domNode.innerHTML = i18n.t("Loading...");
-      const { mermaidTheme, sequenceTheme, vegaTheme } = this.muya.options;
+      const { mermaidTheme, vegaTheme } = this.muya.options;
       const { type } = this;
 
       try {
@@ -122,7 +117,6 @@ class DiagramPreview extends Parent {
           code,
           type,
           mermaidTheme,
-          sequenceTheme,
           vegaTheme,
         });
       } catch (err) {
