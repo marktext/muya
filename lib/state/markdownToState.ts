@@ -1,64 +1,77 @@
-import { Lexer } from "@muya/utils/marked";
 import logger from "@muya/utils/logger";
+import { lexBlock } from "@muya/utils/marked";
 import { TState } from "./types";
 
 const debug = logger("import markdown: ");
-const restoreTableEscapeCharacters = (text) => {
+const restoreTableEscapeCharacters = (text: string) => {
   // NOTE: markedjs replaces all escaped "|" ("\|") characters inside a cell with "|".
   //       We have to re-escape the character to not break the table.
   return text.replace(/\|/g, "\\|");
 };
 
-export interface IMarkdownToStateOptions {
+type MarkdownToStateOptions = {
   footnote: boolean;
+  math: boolean;
   isGitlabCompatibilityEnabled: boolean;
-  superSubScript: boolean;
   trimUnnecessaryCodeBlockEmptyLines: boolean;
   frontMatter: boolean;
-}
+};
 
 const DEFAULT_OPTIONS = {
   footnote: false,
-  isGitlabCompatibilityEnabled: false,
-  superSubScript: false,
+  math: true,
+  isGitlabCompatibilityEnabled: true,
   trimUnnecessaryCodeBlockEmptyLines: false,
   frontMatter: true,
 };
 
 class MarkdownToState {
-  constructor(
-    private options: IMarkdownToStateOptions = DEFAULT_OPTIONS
-  ) {}
+  constructor(private options: MarkdownToStateOptions = DEFAULT_OPTIONS) {}
 
   generate(markdown: string): TState[] {
     return this.convertMarkdownToState(markdown);
   }
 
   convertMarkdownToState(markdown: string): TState[] {
-    const states = [];
     const {
       footnote = false,
-      isGitlabCompatibilityEnabled = false,
-      superSubScript = false,
+      math = true,
+      isGitlabCompatibilityEnabled = true,
       trimUnnecessaryCodeBlockEmptyLines = false,
       frontMatter = true,
     } = this.options;
 
-    const tokens = new Lexer({
-      disableInline: true,
+    const tokens = lexBlock(markdown, {
       footnote,
-      isGitlabCompatibilityEnabled,
-      superSubScript,
+      math,
       frontMatter,
-    }).lex(markdown);
+      isGitlabCompatibilityEnabled,
+    });
 
+    const states: TState[] = [];
     let token;
     let state;
     let value;
-    const parentList = [states];
+    const parentList: TState[][] = [states];
 
     while ((token = tokens.shift())) {
       switch (token.type) {
+        // Marks the end of the children's traversal and a return to the previous level
+        case "block-end": {
+          // Fix #1735 the blockquote maybe empty. like bellow:
+          // >
+          // bar
+          if (parentList[0].length === 0 && token.tokenType === "blockquote") {
+            state = {
+              name: "paragraph",
+              text: "",
+            };
+            parentList[0].push(state);
+          }
+          parentList.shift();
+          break;
+        }
+
         case "frontmatter": {
           const { lang, style, text } = token;
           value = text.replace(/^\s+/, "").replace(/\s$/, "");
@@ -79,7 +92,7 @@ class MarkdownToState {
         case "hr": {
           state = {
             name: "thematic-break",
-            text: token.marker,
+            text: token.raw.replace(/\n+$/, ""),
           };
 
           parentList[0].push(state);
@@ -110,10 +123,10 @@ class MarkdownToState {
         }
 
         case "code": {
-          const { codeBlockStyle, text, lang: infostring = "" } = token;
+          const { codeBlockStyle, text, lang: infoString = "" } = token;
 
           // GH#697, markedjs#1387
-          const lang = (infostring || "").match(/\S*/)[0];
+          const lang = (infoString || "").match(/\S*/)[0];
 
           value = text;
           // Fix: #1265.
@@ -148,7 +161,7 @@ class MarkdownToState {
         }
 
         case "table": {
-          const { header, align, cells } = token;
+          const { header, align, rows } = token;
 
           state = {
             name: "table",
@@ -160,17 +173,17 @@ class MarkdownToState {
             children: header.map((h, i) => ({
               name: "table.cell",
               meta: { align: align[i] || "none" },
-              text: restoreTableEscapeCharacters(h),
+              text: restoreTableEscapeCharacters(h.text),
             })),
           });
 
           state.children.push(
-            ...cells.map((row) => ({
+            ...rows.map((row) => ({
               name: "table.row",
               children: row.map((c, i) => ({
                 name: "table.cell",
                 meta: { align: align[i] || "none" },
-                text: restoreTableEscapeCharacters(c),
+                text: restoreTableEscapeCharacters(c.text),
               })),
             }))
           );
@@ -235,44 +248,30 @@ class MarkdownToState {
           break;
         }
 
-        case "blockquote_start": {
+        case "blockquote": {
           state = {
             name: "block-quote",
             children: [],
           };
           parentList[0].push(state);
           parentList.unshift(state.children);
+          tokens.unshift({ type: "block-end", tokenType: "blockquote" });
+          tokens.unshift(...token.tokens);
           break;
         }
 
-        case "blockquote_end": {
-          // Fix #1735 the blockquote maybe empty.
-          if (parentList[0].length === 0) {
-            state = {
-              name: "paragraph",
-              text: "",
-            };
-            parentList[0].push(state);
-          }
-          parentList.shift();
-          break;
-        }
-
-        case "list_start": {
-          const { listType, start } = token;
-          const { bulletMarkerOrDelimiter, type } = tokens.find(
-            (t) => t.type === "loose_item_start" || t.type === "list_item_start"
-          );
+        case "list": {
+          const { listType, loose, start } = token;
+          const bulletMarkerOrDelimiter = token.items[0].bulletMarkerOrDelimiter;
           const meta: any = {
-            loose: type === "loose_item_start",
-          };
+            loose,
+          }
           if (listType === "order") {
             meta.start = /^\d+$/.test(start) ? start : 1;
             meta.delimiter = bulletMarkerOrDelimiter || ".";
           } else {
             meta.marker = bulletMarkerOrDelimiter || "-";
           }
-
           state = {
             name: `${listType}-list`,
             meta,
@@ -281,35 +280,27 @@ class MarkdownToState {
 
           parentList[0].push(state);
           parentList.unshift(state.children);
+          tokens.unshift({ type: "block-end", tokenType: "list" });
+          tokens.unshift(...token.items);
           break;
         }
 
-        case "list_end": {
-          parentList.shift();
-          break;
-        }
-
-        case "loose_item_start":
-
-        case "list_item_start": {
-          const { checked } = token;
+        case "list_item": {
+          const { checked, listItemType } = token;
 
           state = {
-            name: checked !== undefined ? "task-list-item" : "list-item",
+            name: listItemType === "task" ? "task-list-item" : "list-item",
             children: [],
           };
 
-          if (checked !== undefined) {
+          if (listItemType === "task") {
             state.meta = { checked };
           }
 
           parentList[0].push(state);
           parentList.unshift(state.children);
-          break;
-        }
-
-        case "list_item_end": {
-          parentList.shift();
+          tokens.unshift({ type: "block-end", tokenType: "list-item" });
+          tokens.unshift(...token.tokens);
           break;
         }
 

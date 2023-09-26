@@ -1,8 +1,8 @@
 import Parent from "@muya/block/base/parent";
+import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixins } from "@muya/utils";
-import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { ITaskListItemMeta, ITaskListItemState } from "../../../jsonState/types";
+import { ITaskListItemMeta, ITaskListItemState } from "../../../state/types";
 
 @mixins(ContainerQueryBlock)
 class TaskListItem extends Parent {

@@ -1,6 +1,6 @@
 import ScrollPage from "@muya/block";
 import { PARAGRAPH_STATE, THEMATIC_BREAK_STATE } from "@muya/config";
-import { IOrderListState, IBulletListState } from "../../../jsonState/types";
+import { IBulletListState, IOrderListState } from "../../../state/types";
 
 const INLINE_UPDATE_FRAGMENTS = [
   "(?:^|\n) {0,3}([*+-] {1,4})", // Bullet list

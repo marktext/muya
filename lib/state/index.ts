@@ -1,11 +1,11 @@
-import * as json1 from "ot-json1";
-import logger from "@muya/utils/logger";
-import StateToMarkdown from "./stateToMarkdown";
-import MarkdownToState from "./markdownToState";
-import { deepClone } from "@muya/utils";
 import Muya from "@muya/index";
+import { deepClone } from "@muya/utils";
+import logger from "@muya/utils/logger";
+import * as json1 from "ot-json1";
+import MarkdownToState from "./markdownToState";
+import StateToMarkdown from "./stateToMarkdown";
 
-import type { JSONOpList, Doc, Path } from "ot-json1";
+import type { Doc, JSONOpList, Path } from "ot-json1";
 import type { TState } from "./types";
 
 const debug = logger("jsonState:");
@@ -58,17 +58,17 @@ class JSONState {
     const {
       footnote,
       isGitlabCompatibilityEnabled,
-      superSubScript,
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
+      math,
     } = this.muya.options;
 
     this.state = new MarkdownToState({
       footnote,
       isGitlabCompatibilityEnabled,
-      superSubScript,
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
+      math,
     }).generate(markdown);
   }
 

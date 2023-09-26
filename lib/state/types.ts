@@ -126,7 +126,7 @@ export interface IMathBlockState {
 
 export interface IFrontmatterMeta {
   lang: "yaml" | "toml" | "json";
-  style: "-" | "+" | ";" | "{}";
+  style: "-" | "+" | ";" | "{";
 }
 
 export interface IFrontmatterState {

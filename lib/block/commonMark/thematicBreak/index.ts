@@ -1,10 +1,10 @@
 import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import { IThematicBreakState } from "../../../jsonState/types";
-import Muya from "@muya/index";
 import ThematicBreakContent from "@muya/block/content/thematicBreakContent";
+import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
+import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
+import { mixins } from "@muya/utils";
+import { IThematicBreakState } from "../../../state/types";
 
 @mixins(LeafQueryBlock)
 class ThematicBreak extends Parent {

@@ -1,7 +1,7 @@
 import Parent from "@muya/block/base/parent";
-import logger from "@muya/utils/logger";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
-import { TState } from "../../jsonState/types";
+import logger from "@muya/utils/logger";
+import { TState } from "../../state/types";
 
 const debug = logger("scrollpage:");
 

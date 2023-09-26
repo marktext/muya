@@ -285,7 +285,6 @@ export const MUYA_DEFAULT_OPTIONS = {
   codeBlockLineNumbers: false,
   // bullet/list marker width + listIndentation, tab or Daring Fireball Markdown (4 spaces) --> list indentation
   listIndentation: 1,
-  frontMatter: true, // Whether to support frontmatter.
   frontmatterType: "-",
   sequenceTheme: "hand", // hand or simple
   mermaidTheme: "default", // dark / forest / default
@@ -298,14 +297,16 @@ export const MUYA_DEFAULT_OPTIONS = {
   // implementation like in MarkText.
   spellcheckEnabled: false,
   // Markdown extensions
-  superSubScript: false,
+  frontMatter: true, // Whether to support frontmatter.
+  superSubScript: true,
   footnote: false,
-  isGitlabCompatibilityEnabled: false,
+  // Whether math block is supported.
+  math: true,
+  isGitlabCompatibilityEnabled: true,
   // Move checked task list item to the end of task list.
-  autoMoveCheckedToEnd: true,
-
+  autoMoveCheckedToEnd: false,
   // Whether HTML rendering is disabled or not.
-  disableHtml: true,
+  disableHtml: false,
   locale: en,
 };
 

@@ -1,9 +1,9 @@
 import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { IBulletListState, IListItemState } from "@muya/jsonState/types";
+import ScrollPage from "@muya/block/scrollPage";
 import Muya from "@muya/index";
+import { IBulletListState, IListItemState } from "@muya/state/types";
+import { mixins } from "@muya/utils";
 
 interface IBulletListMeta {
   marker: "-" | "+" | "*";

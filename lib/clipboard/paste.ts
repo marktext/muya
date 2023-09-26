@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import { normalizePastedHTML, getCopyTextType } from "@muya/utils/paste";
+import CodeBlockContent from "@muya/block/content/codeBlockContent";
 import ScrollPage from "@muya/block/scrollPage";
 import { URL_REG } from "@muya/config";
-import HtmlToMarkdown from "@muya/jsonState/htmlToMarkdown";
-import MarkdownToState from "@muya/jsonState/markdownToState";
+import HtmlToMarkdown from "@muya/state/htmlToMarkdown";
+import MarkdownToState from "@muya/state/markdownToState";
+import { getCopyTextType, normalizePastedHTML } from "@muya/utils/paste";
 import Base from "./base";
 import Cut from "./cut";
-import CodeBlockContent from "@muya/block/content/codeBlockContent";
 
 interface Paste extends Cut {}
 
@@ -22,7 +22,7 @@ class Paste extends Base {
       bulletListMarker,
       footnote,
       isGitlabCompatibilityEnabled,
-      superSubScript,
+      math,
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
     } = muya.options;
@@ -73,8 +73,8 @@ class Paste extends Base {
         // Has multiple paragraphs.
         const states = new MarkdownToState({
           footnote,
+          math,
           isGitlabCompatibilityEnabled,
-          superSubScript,
           trimUnnecessaryCodeBlockEmptyLines,
           frontMatter,
         }).generate(markdown);

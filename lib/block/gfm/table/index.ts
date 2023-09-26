@@ -1,9 +1,9 @@
-import diff from "fast-diff";
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { diffToTextOp } from "@muya/utils";
 import logger from "@muya/utils/logger";
-import { ITableState } from "../../../jsonState/types";
+import diff from "fast-diff";
+import { ITableState } from "../../../state/types";
 
 const debug = logger("table:");
 

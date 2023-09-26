@@ -1,11 +1,11 @@
-import diff from "fast-diff";
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import { diffToTextOp } from "@muya/utils";
-import { loadLanguage } from "@muya/utils/prism";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
-import { ICodeBlockState } from "../../../jsonState/types";
+import { loadLanguage } from "@muya/utils/prism";
+import diff from "fast-diff";
+import { ICodeBlockState } from "../../../state/types";
 
 const debug = logger("codeblock:");
 

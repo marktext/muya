@@ -1,12 +1,12 @@
 import Format from "@muya/block/base/format";
-import { methodMixins, isLengthEven } from "@muya/utils";
+import Paragraph from "@muya/block/commonMark/paragraph";
+import ScrollPage from "@muya/block/scrollPage";
+import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
+import { isLengthEven, methodMixins } from "@muya/utils";
+import logger from "@muya/utils/logger";
+import { ITaskListItemState } from "../../../state/types";
 import backspaceHandler from "./backspace";
 import tabHandler from "./tab";
-import ScrollPage from "@muya/block/scrollPage";
-import logger from "@muya/utils/logger";
-import { VOID_HTML_TAGS, HTML_TAGS } from "@muya/config";
-import Paragraph from "@muya/block/commonMark/paragraph";
-import { ITaskListItemState } from "../../../jsonState/types";
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
 const checkQuickInsert = (text) => /^[\/、]\S*$/.test(text);

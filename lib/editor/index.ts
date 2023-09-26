@@ -1,16 +1,16 @@
 import ScrollPage from "@muya/block";
-import Selection from "@muya/selection";
-import Search from "@muya/search";
-import History from "@muya/history";
-import Clipboard from "@muya/clipboard";
-import JSONState from "@muya/jsonState";
-import InlineRenderer from "@muya/inlineRenderer";
-import { hasPick } from "@muya/utils";
-import * as otText from "ot-text-unicode";
-import logger from "@muya/utils/logger";
-import Muya from "../index";
 import Content from "@muya/block/base/content";
 import Format from "@muya/block/base/format";
+import Clipboard from "@muya/clipboard";
+import History from "@muya/history";
+import InlineRenderer from "@muya/inlineRenderer";
+import Search from "@muya/search";
+import Selection from "@muya/selection";
+import JSONState from "@muya/state";
+import { hasPick } from "@muya/utils";
+import logger from "@muya/utils/logger";
+import * as otText from "ot-text-unicode";
+import Muya from "../index";
 
 const debug = logger("editor:");
 

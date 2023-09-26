@@ -1,8 +1,8 @@
 import Parent from "@muya/block/base/parent";
+import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import ScrollPage from "@muya/block/scrollPage";
 import { mixins } from "@muya/utils";
-import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import { ITableRowState } from "../../../jsonState/types";
+import { ITableRowState } from "../../../state/types";
 
 @mixins(ContainerQueryBlock)
 class TableRow extends Parent {

@@ -1,7 +1,7 @@
 import ScrollPage from "@muya/block";
 import emptyStates from "@muya/config/emptyStates";
 import { deepClone } from "@muya/utils";
-import { IBlockQuoteState, IParagraphState } from "../jsonState/types";
+import { IBlockQuoteState, IParagraphState } from "../state/types";
 import Base from "./base";
 
 class Cut extends Base {

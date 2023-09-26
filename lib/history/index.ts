@@ -1,8 +1,8 @@
-import * as json1 from "ot-json1";
 import Muya from "@muya/index";
+import type { Doc, JSONOpList } from "ot-json1";
+import * as json1 from "ot-json1";
 import { ISelection } from "../selection/types";
-import type { JSONOpList, Doc } from "ot-json1";
-import type { TState } from "../jsonState/types";
+import type { TState } from "../state/types";
 
 interface IOptions {
   delay: number;

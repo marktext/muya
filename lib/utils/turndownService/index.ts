@@ -1,15 +1,16 @@
-import TurndownService from "turndown";
 import { identity } from "@muya/utils";
 import * as turndownPluginGfm from "joplin-turndown-plugin-gfm";
 import type { Filter, Node } from "turndown";
+import TurndownService from "turndown";
 
 export const usePluginsAddRules = (
   turndownService: TurndownService,
   keeps: Filter
 ) => {
   // Use the gfm plugin
-  const { gfm } = turndownPluginGfm;
-  turndownService.use(gfm);
+  const { strikethrough, tables  } = turndownPluginGfm;
+  turndownService.use(strikethrough);
+  turndownService.use(tables);
 
   // We need a extra strikethrough rule because the strikethrough rule in gfm is single `~`.
   turndownService.addRule("strikethrough", {
@@ -18,6 +19,15 @@ export const usePluginsAddRules = (
       return "~~" + content + "~~";
     },
   });
+
+  turndownService.addRule('taskListItems', {
+    filter: function (node) {
+      return (node as HTMLInputElement).type === 'checkbox' && node.parentNode?.nodeName === 'P'
+    },
+    replacement: function (_content, node) {
+      return ((node as HTMLInputElement).checked ? '[x]' : '[ ]') + ' '
+    }
+  })
 
   turndownService.addRule("paragraph", {
     filter: "p",
@@ -28,11 +38,9 @@ export const usePluginsAddRules = (
     ) {
       const isTaskListItemParagraph =
         node instanceof HTMLElement &&
-        node.previousElementSibling &&
-        node.previousElementSibling.tagName === "INPUT";
-
+        node.firstElementChild?.tagName === "INPUT";
       return isTaskListItemParagraph
-        ? content + "\n\n"
+        ? content.replace(/\]\s+\n/, "] ") + "\n\n"
         : "\n\n" + content + "\n\n";
     },
   });

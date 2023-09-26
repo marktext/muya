@@ -2,8 +2,8 @@ import Parent from "@muya/block/base/parent";
 import { PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
 import { sanitize } from "@muya/utils";
 import loadRenderer from "@muya/utils/diagram";
-import { IDiagramState, TState } from "../../../jsonState/types";
 import logger from "@muya/utils/logger";
+import { IDiagramState, TState } from "../../../state/types";
 
 const debug = logger("diagramPreview:");
 
