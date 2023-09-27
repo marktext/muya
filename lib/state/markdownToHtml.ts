@@ -134,7 +134,7 @@ class MarkdownToHtml {
    *
    * @param {*} options Document options
    */
-  async generate(options: { title: string; extraCss: string }) {
+  async generate(options: { title?: string; extraCss?: string } = {}) {
     const html = await this.renderHtml();
 
     // `extraCss` may changed in the mean time.

@@ -140,7 +140,7 @@ muya.on("json-change", (_changes) => {
 // })
 
 const md2Html = new MD2Html(DEFAULT_MARKDOWN);
-md2Html.generate({ printOptimization: false }).then((_html) => {
+md2Html.generate().then((_html) => {
   // const container = document.createElement("div");
   // container.innerHTML = _html;
   // document.body.appendChild(container);

@@ -341,12 +341,13 @@ class CodeBlockContent extends Content {
     // and the cursor is right after it, pressing the backspace key should work properly.
     if (
       start.offset === end.offset &&
-      start.offset === 1 &&
-      this.text === "\n"
+      this.text[start.offset - 1] === "\n"
     ) {
       event.preventDefault();
-      this.text = "";
-      return this.setCursor(0, 0, true);
+      const { text } = this;
+      this.text = text.substring(0, start.offset - 1) + text.substring(start.offset);
+
+      return this.setCursor(--start.offset, --end.offset, true);
     }
     // The following code is aimed at ensuring compatibility with Firefox. 
     // If the preceding character is the end of a token or the second preceding 
@@ -366,11 +367,9 @@ class CodeBlockContent extends Content {
         walkTokens(tokens, token => {
           if (offset === 1 && token.type === "temp-text" && typeof token.content === "string") {
             token.content = token.content.substring(1);
-            token.length--;
             needRender = true;
           } else if (offset === token.length && token.type !== "temp-text" && typeof token.content === "string") {
             token.content = token.content.substring(0, token.length - 1);
-            token.length--;
             needRender = true;
           }
           code += token.content;
@@ -381,11 +380,8 @@ class CodeBlockContent extends Content {
         if (needRender) {
           event.preventDefault();
           this.text = code;
-    
-          start.offset--;
-          end.offset--;
 
-          return this.setCursor(start.offset, end.offset, true);
+          return this.setCursor(--start.offset, --end.offset, true);
         }
       }
     }
