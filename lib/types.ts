@@ -14,7 +14,7 @@ export interface MuyaOptions {
   codeBlockLineNumbers: boolean;
   listIndentation: number;
   frontMatter: boolean;
-  frontmatterType: "-" | "+" | ";" | "{}";
+  frontmatterType: "-" | "+" | ";" | "{";
   mermaidTheme: string;
   vegaTheme: string;
   hideQuickInsertHint: boolean;
