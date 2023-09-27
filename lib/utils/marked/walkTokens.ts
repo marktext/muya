@@ -1,11 +1,6 @@
 import type { Token, Tokens } from "marked";
 import type { MathToken } from "./extensions/math";
-import type { LexOption } from "./types";
-
-type Heading = Tokens.Heading & {
-  headingStyle: "setext" | "atx";
-  marker: string;
-};
+import type { Heading, LexOption } from "./types";
 
 function isHeadingToken(token: Token | Heading): token is Heading {
   return token.type === "heading";

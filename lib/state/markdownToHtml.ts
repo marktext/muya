@@ -12,7 +12,7 @@ class MarkdownToHtml {
   constructor(public markdown: string, public muya?: Muya) {}
 
   async renderMermaid() {
-    const codes = this.exportContainer.querySelectorAll(
+    const codes = this.exportContainer!.querySelectorAll(
       "code.language-mermaid"
     );
     for (const code of codes) {
@@ -22,7 +22,7 @@ class MarkdownToHtml {
         unescapeHTML(code.innerHTML),
         EXPORT_DOMPURIFY_CONFIG,
         true
-      );
+      ) as string;
       mermaidContainer.classList.add("mermaid");
       preEle.replaceWith(mermaidContainer);
     }
@@ -34,7 +34,7 @@ class MarkdownToHtml {
       theme: "default",
     });
     await mermaid.run({
-      nodes: [...this.exportContainer.querySelectorAll("div.mermaid")],
+      nodes: [...this.exportContainer!.querySelectorAll("div.mermaid")],
     });
     if (this.muya) {
       mermaid.initialize({
@@ -47,7 +47,7 @@ class MarkdownToHtml {
   async renderDiagram() {
     const selector =
       "code.language-vega-lite, code.language-plantuml";
-    const codes = this.exportContainer.querySelectorAll(selector);
+    const codes = this.exportContainer!.querySelectorAll(selector);
 
     for (const code of codes) {
       const rawCode = unescapeHTML(code.innerHTML);
@@ -72,6 +72,7 @@ class MarkdownToHtml {
           theme: "latimes", // only render light theme
         });
       }
+
       try {
         if (functionType === "plantuml") {
           const diagram = render.parse(rawCode);
@@ -112,6 +113,7 @@ class MarkdownToHtml {
     exportContainer.remove();
 
     // hack to add arrow marker to output html
+    // TODO: JOCS, are these codes still needed?
     const paths = document.querySelectorAll("path[id^=raphael-marker-]");
     const def = '<defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">';
     result = result.replace(def, () => {
@@ -132,7 +134,7 @@ class MarkdownToHtml {
    *
    * @param {*} options Document options
    */
-  async generate(options) {
+  async generate(options: { title: string; extraCss: string }) {
     const html = await this.renderHtml();
 
     // `extraCss` may changed in the mean time.

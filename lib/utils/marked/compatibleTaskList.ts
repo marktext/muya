@@ -1,14 +1,5 @@
-import type { Token, Tokens } from "marked";
-
-type ListItemToken = Tokens.ListItem & {
-  listItemType: "order" | "bullet" | "task";
-  bulletMarkerOrDelimiter: "." | ")" | "*" | "+" | "-" | "";
-};
-
-type ListToken = Tokens.List & {
-  listType: "order" | "bullet" | "task";
-  items: ListItemToken[];
-};
+import type { Token } from "marked";
+import { ListItemToken, ListToken } from "./types";
 
 function isListToken (token: Token | ListToken): token is ListToken {
   return token.type === "list";

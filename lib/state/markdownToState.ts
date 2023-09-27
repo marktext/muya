@@ -63,7 +63,7 @@ class MarkdownToState {
           // bar
           if (parentList[0].length === 0 && token.tokenType === "blockquote") {
             state = {
-              name: "paragraph",
+              name: "paragraph" as const,
               text: "",
             };
             parentList[0].push(state);
@@ -77,7 +77,7 @@ class MarkdownToState {
           value = text.replace(/^\s+/, "").replace(/\s$/, "");
 
           state = {
-            name: "frontmatter",
+            name: "frontmatter" as const,
             meta: {
               lang,
               style,
@@ -91,7 +91,7 @@ class MarkdownToState {
 
         case "hr": {
           state = {
-            name: "thematic-break",
+            name: "thematic-break" as const,
             text: token.raw.replace(/\n+$/, ""),
           };
 
@@ -139,7 +139,7 @@ class MarkdownToState {
 
           if (/mermaid|vega-lite|plantuml/.test(lang)) {
             state = {
-              name: "diagram",
+              name: "diagram" as const,
               text: value,
               meta: {
                 type: lang,
@@ -148,7 +148,7 @@ class MarkdownToState {
             };
           } else {
             state = {
-              name: "code-block",
+              name: "code-block" as const,
               meta: {
                 type: codeBlockStyle === "fenced" ? "fenced" : "indented",
                 lang,
