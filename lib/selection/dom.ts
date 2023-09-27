@@ -1,5 +1,6 @@
 // utils used in selection/index.js
 import { CLASS_NAMES } from "@muya/config";
+import { isElement } from "@muya/utils";
 
 export const isContentDOM = (element: HTMLElement) => {
   return (
@@ -24,20 +25,24 @@ export const findContentDOM = (node: Node | null) => {
   return null;
 };
 
-export const compareParagraphsOrder = (paragraph1: HTMLElement, paragraph2: HTMLElement) => {
+export const compareParagraphsOrder = (
+  paragraph1: HTMLElement,
+  paragraph2: HTMLElement
+) => {
   return (
     paragraph1.compareDocumentPosition(paragraph2) &
     Node.DOCUMENT_POSITION_FOLLOWING
   );
 };
 
-export const getTextContent = (node: Node, blackList: string[]) => {
-  if (node.nodeType === 3 || !blackList) {
-    return node.textContent;
+export const getTextContent = (node: Node, blackList: string[] = []) => {
+  if (node.nodeType === 3 || blackList.length === 0) {
+    return node.textContent!;
   }
 
   let text = "";
   if (
+    isElement(node) &&
     blackList.some(
       (className) => node.classList && node.classList.contains(className)
     )
@@ -48,7 +53,7 @@ export const getTextContent = (node: Node, blackList: string[]) => {
   if (node.nodeType === 3) {
     text += node.textContent;
   } else if (
-    node.nodeType === 1 &&
+    isElement(node) &&
     node.classList.contains(`${CLASS_NAMES.MU_INLINE_IMAGE}`)
   ) {
     // handle inline image
@@ -56,8 +61,8 @@ export const getTextContent = (node: Node, blackList: string[]) => {
     const imageContainer = node.querySelector(
       `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`
     );
-    const hasImg = imageContainer.querySelector("img");
-    const childNodes = imageContainer.childNodes;
+    const hasImg = imageContainer!.querySelector("img");
+    const childNodes = imageContainer!.childNodes;
     if (childNodes.length && hasImg) {
       for (const child of childNodes) {
         if (child.nodeType === 1 && child.nodeName === "IMG") {
@@ -80,9 +85,9 @@ export const getTextContent = (node: Node, blackList: string[]) => {
   return text;
 };
 
-export const getOffsetOfParagraph = (node: Node, paragraph: HTMLElement) => {
+export const getOffsetOfParagraph = (node: Node, paragraph: HTMLElement): number => {
   let offset = 0;
-  let preSibling = node;
+  let preSibling: Node | null = node;
 
   if (node === paragraph) return offset;
 
@@ -90,13 +95,13 @@ export const getOffsetOfParagraph = (node: Node, paragraph: HTMLElement) => {
     preSibling = preSibling.previousSibling;
     if (preSibling) {
       offset += getTextContent(preSibling, [
-        CLASS_NAMES.MU_MATH_RENDER,
-        CLASS_NAMES.MU_RUBY_RENDER,
+        "CLASS_NAMES.MU_MATH_RENDER",
+        "CLASS_NAMES.MU_RUBY_RENDER",
       ]).length;
     }
   } while (preSibling);
 
   return node === paragraph || node.parentNode === paragraph
     ? offset
-    : offset + getOffsetOfParagraph(node.parentNode, paragraph);
+    : offset + getOffsetOfParagraph(node.parentNode!, paragraph);
 };

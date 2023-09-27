@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import runSanitize, { Config } from "./dompurify";
-import Selection from "@muya/selection";
-import { EVENT_KEYS } from "@muya/config";
 import Content from "@muya/block/base/content";
+import { EVENT_KEYS } from "@muya/config";
+import Selection from "@muya/selection";
 import type { Diff } from "fast-diff";
+import runSanitize, { Config } from "./dompurify";
 
 type Union = {
   start: number;
@@ -367,4 +367,9 @@ export function isKeyboardEvent(event: Event): event is KeyboardEvent {
 // narrowing Event type to MouseEvent.
 export function isMouseEvent(event: Event): event is MouseEvent {
   return "x" in event;
+}
+
+// narrowing Note type to Element.
+export function isElement(node: Node): node is Element {
+  return node.nodeType === 1;
 }

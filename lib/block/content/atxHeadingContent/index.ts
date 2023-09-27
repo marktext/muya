@@ -2,6 +2,7 @@ import ScrollPage from "@muya/block";
 import Format from "@muya/block/base/format";
 import AtxHeading from "@muya/block/commonMark/atxHeading";
 import Muya from "@muya/index";
+import { Cursor } from "@muya/selection/types";
 
 class AtxHeadingContent extends Format {
   public parent: AtxHeading | null = null;
@@ -24,13 +25,13 @@ class AtxHeadingContent extends Format {
     return this.parent;
   }
 
-  update(cursor, highlights = []) {
+  update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
-  enterHandler(event) {
-    const { start, end } = this.getCursor();
-    const { level } = this.parent.meta;
+  enterHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
+    const { level } = this.parent!.meta;
 
     if (start.offset === end.offset && start.offset <= level + 1) {
       const newNodeState = {
@@ -42,7 +43,7 @@ class AtxHeadingContent extends Format {
         this.muya,
         newNodeState
       );
-      this.parent.parent.insertBefore(newParagraphBlock, this.parent);
+      this.parent!.parent!.insertBefore(newParagraphBlock, this.parent);
       this.setCursor(start.offset, end.offset, true);
     } else {
       super.enterHandler(event);
