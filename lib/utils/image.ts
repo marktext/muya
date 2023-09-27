@@ -4,7 +4,7 @@ import type { ImageToken } from "@muya/inlineRenderer/types";
 import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
 
 export const getImageInfo = (image: HTMLElement) => {
-  const paragraph = findContentDOM(image);
+  const paragraph = findContentDOM(image)!;
   const raw = image.getAttribute("data-raw")!;
   const offset = getOffsetOfParagraph(image, paragraph);
   const tokens = tokenizer(raw);
