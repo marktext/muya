@@ -57,6 +57,6 @@ const search = (text: string) => {
 loadLanguage("latex");
 loadLanguage("yaml");
 
-export { tokensToCode, walkTokens } from "./walkToken";
+export { walkTokens } from "./walkToken";
 export { loadLanguage, loadedLanguages, search, transformAliasToOrigin };
 export default prism;

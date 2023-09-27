@@ -23,12 +23,3 @@ export function walkTokens(
     }
   }
 }
-
-export function tokensToCode(tokens: (string | Token)[]) {
-  let code = "";
-  walkTokens(tokens, (token) => {
-    code += token.content;
-  });
-
-  return code;
-}
