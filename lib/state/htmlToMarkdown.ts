@@ -69,11 +69,11 @@ export default class HtmlToMarkdown {
     );
   }
 
-  generate(html: string, keeps = []): string {
+  generate(html: string): string {
     // turn html to markdown
     const { options } = this;
     const turndownService = new TurndownService(options);
-    usePluginsAddRules(turndownService, keeps);
+    usePluginsAddRules(turndownService);
 
     // fix #752, but I don't know why the &nbsp; vanished.
     html = html.replace(/<span>&nbsp;<\/span>/g, String.fromCharCode(160));
