@@ -23,6 +23,14 @@ import "./style.css";
 
 // import "../lib/assets/style.css";
 
+// Fix Intl.Segmenter is not work on firefox.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+if (!(Intl as any).Segmenter) {
+  const polyfill = await import("intl-segmenter-polyfill/dist/bundled");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (Intl as any).Segmenter = await polyfill.createIntlSegmenterPolyfill();
+}
+
 const imagePathPicker = async () => {
   return "https://pics.ettoday.net/images/2253/d2253152.jpg";
 };
@@ -122,7 +130,7 @@ setContentBtn.addEventListener("click", () => {
 
 muya.on("json-change", (_changes) => {
   // console.log(JSON.stringify(muya.getState(), null, 2))
-  console.log(muya.getMarkdown())
+  // console.log(muya.getMarkdown())
   // console.log(JSON.stringify(changes, null, 2));
 });
 
@@ -136,5 +144,5 @@ md2Html.generate({ printOptimization: false }).then((_html) => {
   // const container = document.createElement("div");
   // container.innerHTML = _html;
   // document.body.appendChild(container);
-  console.log(_html);
+  // console.log(_html);
 });

@@ -1,16 +1,16 @@
+import ContentBlock from "@muya/block/base/content";
+import type Format from "@muya/block/base/format";
+import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from "@muya/config";
+import Muya from "@muya/index";
+import type { ImageToken } from "@muya/inlineRenderer/types";
+import { getImageInfo } from "@muya/utils/image";
 import {
+  compareParagraphsOrder,
+  findContentDOM,
   getOffsetOfParagraph,
   getTextContent,
-  findContentDOM,
-  compareParagraphsOrder,
 } from "./dom";
-import { CLASS_NAMES, BLOCK_DOM_PROPERTY } from "@muya/config";
-import Muya from "@muya/index";
-import ContentBlock from "@muya/block/base/content";
-import { NodeOffset, Cursor, ISelection } from "./types";
-import { getImageInfo } from "@muya/utils/image";
-import type { ImageToken } from "@muya/inlineRenderer/types";
-import type Format from "@muya/block/base/format";
+import { Cursor, NodeOffset, TSelection } from "./types";
 
 class Selection {
   /**
@@ -489,14 +489,14 @@ class Selection {
    * Return the current selection of doc.
    * @returns
    */
-  getSelection(): ISelection {
+  getSelection(): TSelection {
     const { anchorNode, anchorOffset, focusNode, focusOffset } =
       document.getSelection();
     const anchorDomNode = findContentDOM(anchorNode);
     const focusDomNode = findContentDOM(focusNode);
 
     if (!anchorDomNode || !focusDomNode) {
-      return {} as ISelection;
+      return {} as TSelection;
     }
 
     const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY];

@@ -34,10 +34,10 @@ export type TokenizerFacOptions = {
 };
 
 export type TokenizerOptions = {
-  highlights: Highlight[];
-  hasBeginRules: boolean;
-  labels: Labels;
-  options: TokenizerFacOptions;
+  highlights?: Highlight[];
+  hasBeginRules?: boolean;
+  labels?: Labels;
+  options?: TokenizerFacOptions;
 };
 
 export type TokenRange = {

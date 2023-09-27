@@ -19,14 +19,6 @@ import "./assets/styles/index.css";
 import "./assets/styles/inlineSyntax.css";
 import "./assets/styles/prismjs/light.theme.css";
 
-// Fix Intl.Segmenter is not work on firefox.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-if (!(Intl as any).Segmenter) {
-  const polyfill = await import("intl-segmenter-polyfill/dist/bundled");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (Intl as any).Segmenter = await polyfill.createIntlSegmenterPolyfill();
-}
-
 class Muya {
   static plugins = [];
 

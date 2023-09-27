@@ -1,10 +1,10 @@
-import Prism from "prismjs";
 import Fuse from "fuse.js";
+import Prism from "prismjs";
+import { languages } from "prismjs/components.js";
 import initLoadLanguage, {
   loadedLanguages,
   transformAliasToOrigin,
 } from "./loadLanguage";
-import { languages } from "prismjs/components.js";
 
 const prism = Prism;
 window.Prism = Prism;
@@ -57,6 +57,6 @@ const search = (text: string) => {
 loadLanguage("latex");
 loadLanguage("yaml");
 
-export { search, loadLanguage, loadedLanguages, transformAliasToOrigin };
-
+export { walkTokens } from "./walkToken";
+export { loadLanguage, loadedLanguages, search, transformAliasToOrigin };
 export default prism;

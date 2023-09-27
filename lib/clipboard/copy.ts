@@ -32,10 +32,6 @@ class Copy extends Base {
       isGitlabCompatibilityEnabled,
       superSubScript,
     } = this.muya.options;
-    console.log(frontMatter,
-      math,
-      isGitlabCompatibilityEnabled,
-      superSubScript)
     // Handler copy/cut in one block.
     if (isSelectionInSameBlock) {
       const begin = Math.min(anchor.offset, focus.offset);

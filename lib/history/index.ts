@@ -1,7 +1,7 @@
 import Muya from "@muya/index";
 import type { Doc, JSONOpList } from "ot-json1";
 import * as json1 from "ot-json1";
-import { ISelection } from "../selection/types";
+import { TSelection } from "../selection/types";
 import type { TState } from "../state/types";
 
 interface IOptions {
@@ -12,7 +12,7 @@ interface IOptions {
 
 interface IOperation {
   operation: JSONOpList;
-  selection: ISelection | null;
+  selection: TSelection | null;
 }
 
 interface Stack {
@@ -31,7 +31,7 @@ const DEFAULT_OPTIONS = {
 class History {
   private lastRecorded: number = 0;
   private ignoreChange: boolean = false;
-  private selectionStack: Array<ISelection> = [];
+  private selectionStack: Array<TSelection> = [];
   private stack: Stack = {
     undo: [],
     redo: [],

@@ -1,21 +1,31 @@
 import Content from "@muya/block/base/content";
+import Code from "@muya/block/commonMark/codeBlock/code";
+import type HTMLPreview from "@muya/block/commonMark/html/htmlPreview";
+import ScrollPage from "@muya/block/scrollPage";
+import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
+import Muya from "@muya/index";
+import type { Cursor } from "@muya/selection/types";
+import {
+  CodeContentState,
+  ICodeBlockState,
+  IDiagramState,
+  IFrontmatterState,
+} from "@muya/state/types";
+import { adjustOffset, escapeHTML } from "@muya/utils";
+import { MARKER_HASH, getHighlightHtml } from "@muya/utils/highlightHTML";
 import prism, {
   loadedLanguages,
   transformAliasToOrigin,
+  walkTokens
 } from "@muya/utils/prism/";
-import ScrollPage from "@muya/block/scrollPage";
-import { escapeHTML, adjustOffset } from "@muya/utils";
-import { getHighlightHtml, MARKER_HASH } from "@muya/utils/highlightHTML";
-import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
-import Code from "@muya/block/commonMark/codeBlock/code";
 
-const checkAutoIndent = (text, offset) => {
+const checkAutoIndent = (text: string, offset: number) => {
   const pairStr = text.substring(offset - 1, offset + 1);
 
   return /^(\{\}|\[\]|\(\)|><)$/.test(pairStr);
 };
 
-const getIndentSpace = (text) => {
+const getIndentSpace = (text: string) => {
   const match = /^(\s*)\S/.exec(text);
 
   return match ? match[1] : "";
@@ -40,7 +50,9 @@ const parseSelector = (str = "") => {
       (!str[tagName.length] || /#|\./.test(str[tagName.length]))
     ) {
       tag = tagName;
-      if (VOID_HTML_TAGS.indexOf(tagName as any) > -1) isVoid = true;
+      if (VOID_HTML_TAGS.some((voidTag) => voidTag === tagName)) {
+        isVoid = true;
+      }
       str = str.substring(tagName.length);
     }
   }
@@ -63,15 +75,22 @@ const parseSelector = (str = "") => {
 
 const LANG_HASH = {
   "html-block": "html",
+  "math-block": "latex",
 };
+
+function hasStateMeta(
+  state: CodeContentState
+): state is ICodeBlockState | IDiagramState | IFrontmatterState {
+  return /code-block|diagram|frontmatter/.test(state.name);
+}
 
 class CodeBlockContent extends Content {
   public initialLang: string;
-  public parent: Code;
+  public parent: Code | null = null;
 
   static blockName = "codeblock.content";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: CodeContentState) {
     const content = new CodeBlockContent(muya, state);
 
     return content;
@@ -93,15 +112,21 @@ class CodeBlockContent extends Content {
   get outContainer() {
     const { codeContainer } = this;
 
-    return /code-block|frontmatter/.test(codeContainer.blockName)
+    return /code-block|frontmatter/.test(codeContainer!.blockName)
       ? codeContainer
-      : codeContainer.parent;
+      : codeContainer!.parent;
   }
 
-  constructor(muya, state) {
+  constructor(muya: Muya, state: CodeContentState) {
     super(muya, state.text);
-    this.initialLang = state.meta?.lang ?? LANG_HASH[state.name];
+    if (hasStateMeta(state)) {
+      this.initialLang = state.meta.lang;
+    } else {
+      this.initialLang = LANG_HASH[state.name];
+    }
+
     this.classList = [...this.classList, "mu-codeblock-content"];
+    // Used for empty status prompts
     this.attributes.frontMatter = muya.i18n.t("Input Front Matter...");
     this.attributes.math = muya.i18n.t("Input Mathematical Formula...");
     this.createDomNode();
@@ -111,11 +136,11 @@ class CodeBlockContent extends Content {
     return this.outContainer;
   }
 
-  update(_, highlights = []) {
+  update(_cursor: Cursor, highlights = []) {
     const { lang, text } = this;
     // transform alias to original language
     const fullLengthLang = transformAliasToOrigin([lang])[0];
-    const domNode = this.domNode;
+    const domNode = this.domNode!;
     const code = escapeHTML(getHighlightHtml(text, highlights, true, true))
       .replace(new RegExp(MARKER_HASH["<"], "g"), "<")
       .replace(new RegExp(MARKER_HASH[">"], "g"), ">")
@@ -130,7 +155,7 @@ class CodeBlockContent extends Content {
       const wrapper = document.createElement("div");
       wrapper.classList.add(`language-${fullLengthLang}`);
       wrapper.innerHTML = code;
-      prism.highlightElement(wrapper, false, function () {
+      prism.highlightElement(wrapper, false, function (this: HTMLElement) {
         domNode.innerHTML = this.innerHTML;
       });
     } else {
@@ -143,8 +168,8 @@ class CodeBlockContent extends Content {
       return;
     }
 
-    const textContent = this.domNode.textContent;
-    const { start, end } = this.getCursor();
+    const textContent = this.domNode!.textContent;
+    const { start, end } = this.getCursor()!;
     const { needRender, text } = this.autoPair(
       event,
       textContent,
@@ -157,15 +182,15 @@ class CodeBlockContent extends Content {
     this.text = text;
 
     // Update html preview if the out container is `html-block`
-    if (/html-block|math-block|diagram/.test(this.outContainer.blockName)) {
-      (this.outContainer.attachments.head as any).update(text);
+    if (/html-block|math-block|diagram/.test(this.outContainer!.blockName)) {
+      (this.outContainer?.attachments?.head as HTMLPreview).update(text);
     }
 
     if (needRender) {
-      this.setCursor(start.offset, end.offset, true);
+      this.setCursor(start!.offset, end!.offset, true);
     } else {
       // TODO: throttle render
-      this.setCursor(start.offset, end.offset, true);
+      this.setCursor(start!.offset, end!.offset, true);
     }
   }
 
@@ -197,7 +222,7 @@ class CodeBlockContent extends Content {
     }
 
     const { tabSize } = this.muya.options;
-    const { start } = this.getCursor();
+    const { start } = this.getCursor()!;
     const { text } = this;
     const autoIndent = checkAutoIndent(text, start.offset);
     const indent = getIndentSpace(text);
@@ -220,15 +245,13 @@ class CodeBlockContent extends Content {
 
   tabHandler(event: KeyboardEvent): void {
     event.preventDefault();
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
     const { lang, text } = this;
     const isMarkupCodeContent = /markup|html|xml|svg|mathml/.test(lang);
 
     if (isMarkupCodeContent) {
-      const lastWordBeforeCursor = text
-        .substring(0, start.offset)
-        .split(/\s+/)
-        .pop();
+      const lastWordBeforeCursor =
+        text.substring(0, start.offset).split(/\s+/).pop() ?? "";
       const { tag, isVoid, id, className } =
         parseSelector(lastWordBeforeCursor);
 
@@ -298,7 +321,9 @@ class CodeBlockContent extends Content {
   }
 
   backspaceHandler(event: KeyboardEvent): void {
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
+    // If the cursor is in the first position of the code block text, 
+    // when backspace is pressed, this time the code block should be converted to a normal paragraph
     if (start.offset === end.offset && start.offset === 0) {
       event.preventDefault();
       const { text, muya } = this;
@@ -307,26 +332,71 @@ class CodeBlockContent extends Content {
         text,
       };
       const newNode = ScrollPage.loadBlock(state.name).create(muya, state);
-      this.outContainer.replaceWith(newNode);
+      this.outContainer!.replaceWith(newNode);
       const cursorBlock = newNode.lastContentInDescendant();
-      cursorBlock.setCursor(0, 0, true);
-    } else if (
+      return cursorBlock.setCursor(0, 0, true);
+    }
+    // The following code should fix a certain bug: 
+    // when there is only one newline character in a code block 
+    // and the cursor is right after it, pressing the backspace key should work properly.
+    if (
       start.offset === end.offset &&
       start.offset === 1 &&
       this.text === "\n"
     ) {
       event.preventDefault();
       this.text = "";
-      this.setCursor(0, 0, true);
+      return this.setCursor(0, 0, true);
+    }
+    // The following code is aimed at ensuring compatibility with Firefox. 
+    // If the preceding character is the end of a token or the second preceding 
+    // character is the end of a token, the cursor may become dislocated when 
+    // the backspace key is pressed in Firefox. Therefore, we need to manually 
+    // simulate the backspace key in order to set the cursor position correctly.
+    if (start.offset === end.offset) {
+      const { lang, text } = this;
+          // transform alias to original language
+      const fullLengthLang = transformAliasToOrigin([lang])[0];
+      if (fullLengthLang && /\S/.test(text) && loadedLanguages.has(fullLengthLang)) {
+        const tokens = prism.tokenize(text, prism.languages[lang]);
+        let offset = start.offset;
+        let code = "";
+        let needRender = false;
+
+        walkTokens(tokens, token => {
+          if (offset === 1 && token.type === "temp-text" && typeof token.content === "string") {
+            token.content = token.content.substring(1);
+            token.length--;
+            needRender = true;
+          } else if (offset === token.length && token.type !== "temp-text" && typeof token.content === "string") {
+            token.content = token.content.substring(0, token.length - 1);
+            token.length--;
+            needRender = true;
+          }
+          code += token.content;
+          // string and Token both has length property...
+          offset -= token.length;
+        });
+
+        if (needRender) {
+          event.preventDefault();
+          this.text = code;
+    
+          start.offset--;
+          end.offset--;
+
+          return this.setCursor(start.offset, end.offset, true);
+        }
+      }
     }
   }
 
-  keyupHandler(event: KeyboardEvent): void {
+  keyupHandler(): void {
     if (this.isComposed) {
       return;
     }
 
-    const { anchor, focus } = this.getCursor();
+    const { anchor, focus } = this.getCursor()!;
     const { anchor: oldAnchor, focus: oldFocus } = this.selection;
 
     if (
