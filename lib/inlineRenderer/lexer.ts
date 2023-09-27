@@ -634,7 +634,7 @@ export const tokenizer = (
     hasBeginRules = true,
     labels = new Map(),
     options = {
-      superSubScript: false,
+      superSubScript: true,
       footnote: false,
     },
   }: TokenizerOptions = {} as TokenizerOptions

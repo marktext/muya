@@ -4,7 +4,7 @@ export type NodeOffset = {
   offset: number;
 };
 
-// TODO: @JOCS, merge Cursor and ISelection into one typescript type???
+// TODO: @JOCS, merge Cursor and TSelection into one typescript type???
 export type Cursor = {
   anchor?: NodeOffset;
   focus?: NodeOffset;
@@ -20,7 +20,7 @@ export type Cursor = {
   isSelectionInSameBlock?: boolean;
 };
 
-export type ISelection = {
+export type TSelection = {
   anchor: NodeOffset;
   focus: NodeOffset;
   anchorBlock: ContentBlock;

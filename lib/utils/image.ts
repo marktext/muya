@@ -1,13 +1,14 @@
 import { isWin } from "@muya/config/index";
-import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
+import type { ImageToken } from "@muya/inlineRenderer/types";
+import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
 
 export const getImageInfo = (image: HTMLElement) => {
   const paragraph = findContentDOM(image);
   const raw = image.getAttribute("data-raw")!;
   const offset = getOffsetOfParagraph(image, paragraph);
   const tokens = tokenizer(raw);
-  const token = tokens[0];
+  const token = tokens[0] as ImageToken;
   token.range = {
     start: offset,
     end: offset + raw.length,

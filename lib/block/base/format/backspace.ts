@@ -1,41 +1,44 @@
-import { tokenizer, generator } from "@muya/inlineRenderer/lexer";
 import { CLASS_NAMES } from "@muya/config";
+import { generator, tokenizer } from "@muya/inlineRenderer/lexer";
 import { getImageInfo } from "@muya/utils/image";
+import type Format from "./index";
 
 export default {
-  backspaceHandler(event: KeyboardEvent): void {
-    const { start, end } = this.getCursor();
+  backspaceHandler(this: Format, event: KeyboardEvent): void {
+    const { start, end } = this.getCursor() ?? {};
     // Let input handler to handle this case.
-    if (start.offset !== end.offset) {
+    if (!start || !end || start?.offset !== end?.offset) {
       return;
     }
 
     // fix: #897 in marktext repo
     const { text } = this;
+    const { footnote, superSubScript } = this.muya.options;
     const tokens = tokenizer(text, {
-      options: this.muya.options,
+      options: { footnote, superSubScript },
     });
     let needRender = false;
     let preToken = null;
     let needSelectImage = false;
 
     for (const token of tokens) {
-      // handle delete the second $ in inline_math.
-      if (token.range.end === start.offset && token.type === "inline_math") {
+      // handle delete the second marker(et:*、$) in inline syntax.(Firefox compatible)
+      // Fix: https://github.com/marktext/muya/issues/113
+      // for example: foo **strong**|
+      if (token.range.end === start.offset) {
         needRender = true;
-        token.raw = token.raw.substr(0, token.raw.length - 1);
+        token.raw = token.raw.substring(0, token.raw.length - 1);
         break;
       }
 
-      // handle pre token is a <ruby> html tag, need preventdefault.
+      // If preToken is a syntax token, the the cursor is at offset 1, need to set the cursor manually.(Firefox compatible)
+      // // Fix: https://github.com/marktext/muya/issues/113
+      // for example: foo **strong**w|
       if (
-        token.range.start + 1 === start.offset &&
-        preToken &&
-        preToken.type === "html_tag" &&
-        preToken.tag === "ruby"
+        token.range.start + 1 === start.offset
       ) {
         needRender = true;
-        token.raw = token.raw.substr(1);
+        token.raw = token.raw.substring(1);
         break;
       }
 
@@ -47,7 +50,7 @@ export default {
       ) {
         needSelectImage = true;
         needRender = true;
-        token.raw = token.raw.substr(1);
+        token.raw = token.raw.substring(1);
         break;
       }
 
@@ -65,7 +68,7 @@ export default {
 
     if (needSelectImage) {
       event.stopPropagation();
-      const images = this.domNode.querySelectorAll(
+      const images: NodeListOf<HTMLImageElement> = this.domNode!.querySelectorAll(
         `.${CLASS_NAMES.MU_INLINE_IMAGE}`
       );
       const imageWrapper = images[images.length - 1];

@@ -31,10 +31,8 @@ export const compareParagraphsOrder = (paragraph1: HTMLElement, paragraph2: HTML
   );
 };
 
-export const getTextContent = (node, blackList) => {
-  if (node.nodeType === 3) {
-    return node.textContent;
-  } else if (!blackList) {
+export const getTextContent = (node: Node, blackList: string[]) => {
+  if (node.nodeType === 3 || !blackList) {
     return node.textContent;
   }
 
@@ -82,7 +80,7 @@ export const getTextContent = (node, blackList) => {
   return text;
 };
 
-export const getOffsetOfParagraph = (node, paragraph) => {
+export const getOffsetOfParagraph = (node: Node, paragraph: HTMLElement) => {
   let offset = 0;
   let preSibling = node;
 

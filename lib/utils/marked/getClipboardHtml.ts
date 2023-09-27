@@ -39,6 +39,5 @@ export function getClipBoardHtml(src: string, options: LexOption = {}) {
 
   html += marked(src);
 
-  console.log(html);
   return html;
 }

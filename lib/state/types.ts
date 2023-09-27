@@ -171,6 +171,8 @@ export type TContainerState =
 
 export type TState = TLeafState | TContainerState;
 
+export type CodeContentState = ICodeBlockState | IHtmlBlockState | IDiagramState | IMathBlockState | IFrontmatterState
+
 export interface ITurnoverOptions {
   headingStyle: "atx" | "setext"; // setext or atx
   hr: "---";
