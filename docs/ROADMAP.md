@@ -15,7 +15,7 @@ Better Code Design
 - [x] Remove use axios and XMLHttpRequest etc
 - [x] Use constructor mixin to replace property mixin
 - [x] diagram: sequence and flowchart are deprecated
-- [ ] Optimization of turndown service for better paste
+- [x] Optimization of turndown service for better paste
 - [ ] Optimization of markdownToHtml UI style, remove unused codes
 - [ ] Use DI?
 - [ ] Use TSX to replace snabbdom(The ecology is better and easier to read)?

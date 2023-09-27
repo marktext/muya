@@ -1,5 +1,7 @@
 import { DEFAULT_TURNDOWN_CONFIG } from "@muya/config";
-import TurndownService, { usePluginsAddRules } from "@muya/utils/turndownService";
+import TurndownService, {
+  usePluginsAddRules,
+} from "@muya/utils/turndownService";
 import { ITurnoverOptions } from "./types";
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
@@ -10,22 +12,24 @@ const turnSoftBreakToSpan = (html: string) => {
     "text/html"
   );
   const root = doc.querySelector("#turn-root");
-  const travel = (childNodes) => {
+  const travel = (childNodes: NodeListOf<ChildNode>) => {
     for (const node of childNodes) {
-      if (node.nodeType === 3 && node.parentNode.tagName !== "CODE") {
+      if (node.nodeType === 3 && node.parentElement?.tagName !== "CODE") {
         let startLen = 0;
         let endLen = 0;
-        const text = node.nodeValue
-          .replace(/^(\n+)/, (_, p) => {
-            startLen = p.length;
+        const text =
+          node.nodeValue ??
+          ""
+            .replace(/^(\n+)/, (_, p) => {
+              startLen = p.length;
 
-            return "";
-          })
-          .replace(/(\n+)$/, (_, p) => {
-            endLen = p.length;
+              return "";
+            })
+            .replace(/(\n+)$/, (_, p) => {
+              endLen = p.length;
 
-            return "";
-          });
+              return "";
+            });
         if (/\n/.test(text)) {
           const tokens = text.split("\n");
           const params = [];
@@ -53,9 +57,9 @@ const turnSoftBreakToSpan = (html: string) => {
       }
     }
   };
-  travel(root.childNodes);
+  travel(root!.childNodes);
 
-  return root.innerHTML.trim();
+  return root!.innerHTML.trim();
 };
 
 export default class HtmlToMarkdown {
