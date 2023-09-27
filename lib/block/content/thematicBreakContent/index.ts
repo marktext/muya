@@ -1,16 +1,18 @@
 import Format from "@muya/block/base/format";
 import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
+import { Cursor } from "@muya/selection/types";
 
 class ThematicBreakContent extends Format {
   static blockName = "thematicbreak.content";
 
-  static create(muya, text) {
+  static create(muya: Muya, text: string) {
     const content = new ThematicBreakContent(muya, text);
 
     return content;
   }
 
-  constructor(muya, text) {
+  constructor(muya: Muya, text: string) {
     super(muya, text);
     this.classList = [...this.classList, "mu-thematic-break-content"];
     this.createDomNode();
@@ -20,7 +22,7 @@ class ThematicBreakContent extends Format {
     return this.parent;
   }
 
-  update(cursor, highlights = []) {
+  update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
@@ -28,9 +30,9 @@ class ThematicBreakContent extends Format {
    * Create an empty paragraph bellow.
    * @param {*} event
    */
-  enterHandler(event) {
+  enterHandler(event: Event) {
     const { text, muya } = this;
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
     if (start.offset === end.offset && start.offset === 0) {
       const newState = {
         name: "paragraph",
@@ -41,7 +43,7 @@ class ThematicBreakContent extends Format {
         newState
       );
       const thematicBreak = this.parent;
-      thematicBreak.parent.insertBefore(emptyParagraph, thematicBreak);
+      thematicBreak!.parent!.insertBefore(emptyParagraph, thematicBreak);
     } else {
       const offset = text.length;
       this.setCursor(offset, offset);
@@ -49,8 +51,8 @@ class ThematicBreakContent extends Format {
     }
   }
 
-  backspaceHandler(event) {
-    const { start, end } = this.getCursor();
+  backspaceHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       // Remove the text content and convert it to paragraph
       this.text = "";

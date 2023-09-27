@@ -1,16 +1,19 @@
-import Format from "@muya/block/base/format";
 import ScrollPage from "@muya/block";
+import Format from "@muya/block/base/format";
+import Muya from "@muya/index";
+import { Cursor } from "@muya/selection/types";
+import { isKeyboardEvent } from "@muya/utils";
 
 class SetextHeadingContent extends Format {
   static blockName = "setextheading.content";
 
-  static create(muya, text) {
+  static create(muya: Muya, text: string) {
     const content = new SetextHeadingContent(muya, text);
 
     return content;
   }
 
-  constructor(muya, text) {
+  constructor(muya: Muya, text: string) {
     super(muya, text);
     this.classList = [...this.classList, "mu-setextheading-content"];
     this.createDomNode();
@@ -20,11 +23,14 @@ class SetextHeadingContent extends Format {
     return this.parent;
   }
 
-  update(cursor, highlights = []) {
+  update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
-  enterHandler(event) {
+  enterHandler(event: Event) {
+    if(!isKeyboardEvent(event)) {
+      return;
+    }
     if (event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
@@ -40,7 +46,7 @@ class SetextHeadingContent extends Format {
       return this.convertToParagraph(true);
     }
 
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
 
     if (start.offset === 0 && end.offset === 0) {
       event.preventDefault();
@@ -55,15 +61,15 @@ class SetextHeadingContent extends Format {
         this.muya,
         newNodeState
       );
-      this.parent.parent.insertBefore(newParagraphBlock, this.parent);
+      this.parent!.parent!.insertBefore(newParagraphBlock, this.parent);
       this.setCursor(start.offset, end.offset, true);
     } else {
       super.enterHandler(event);
     }
   }
 
-  backspaceHandler(event) {
-    const { start, end } = this.getCursor();
+  backspaceHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       this.convertToParagraph(true);
     } else {

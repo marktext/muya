@@ -1,15 +1,18 @@
-import Format from "@muya/block/base/format";
 import ScrollPage from "@muya/block";
-import { EVENT_KEYS, isOsx } from "@muya/config";
-import TableInner from "@muya/block/gfm/table/table";
+import Format from "@muya/block/base/format";
 import Table from "@muya/block/gfm/table";
-import Row from "@muya/block/gfm/table/row";
 import Cell from "@muya/block/gfm/table/cell";
+import Row from "@muya/block/gfm/table/row";
+import TableInner from "@muya/block/gfm/table/table";
+import { EVENT_KEYS, isOsx } from "@muya/config";
+import Muya from "@muya/index";
+import { Cursor } from "@muya/selection/types";
+import { isKeyboardEvent } from "@muya/utils";
 
 class TableCellContent extends Format {
   static blockName = "table.cell.content";
 
-  static create(muya, text) {
+  static create(muya: Muya, text: string) {
     const content = new TableCellContent(muya, text);
 
     return content;
@@ -31,7 +34,7 @@ class TableCellContent extends Format {
     return this.closestBlock("table.cell") as Cell;
   }
 
-  constructor(muya, text) {
+  constructor(muya: Muya, text: string) {
     super(muya, text);
     this.classList = [...this.classList, "mu-table-cell-content"];
     this.createDomNode();
@@ -41,7 +44,7 @@ class TableCellContent extends Format {
     return this.table;
   }
 
-  update(cursor, highlights = []) {
+  update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
@@ -57,10 +60,10 @@ class TableCellContent extends Format {
     return row.prev || null;
   }
 
-  shiftEnter(event) {
+  shiftEnter(event: Event) {
     event.preventDefault();
 
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
     const { text } = this;
 
     const br = "<br/>";
@@ -71,7 +74,7 @@ class TableCellContent extends Format {
     this.setCursor(offset, offset, true);
   }
 
-  commandEnter(event) {
+  commandEnter(event: Event) {
     event.preventDefault();
 
     const offset = this.tableInner.offset(this.row);
@@ -81,7 +84,7 @@ class TableCellContent extends Format {
     cursorBlock.setCursor(0, 0);
   }
 
-  normalEnter(event) {
+  normalEnter(event: Event) {
     event.preventDefault();
 
     const nextRow = this.findNextRow();
@@ -112,7 +115,10 @@ class TableCellContent extends Format {
     cursorBlock.setCursor(0, 0, true);
   }
 
-  enterHandler(event) {
+  enterHandler(event: Event) {
+    if (!isKeyboardEvent(event)) {
+      return;
+    }
     if (event.shiftKey) {
       return this.shiftEnter(event);
     } else if ((isOsx && event.metaKey) || (!isOsx && event.ctrlKey)) {
@@ -122,7 +128,10 @@ class TableCellContent extends Format {
     }
   }
 
-  arrowHandler(event) {
+  arrowHandler(event: Event) {
+    if (!isKeyboardEvent(event)) {
+      return;
+    }
     const previousRow = this.findPreviousRow();
     const nextRow = this.findNextRow();
     const { table, cell, row } = this;
@@ -175,12 +184,12 @@ class TableCellContent extends Format {
     }
   }
 
-  backspaceHandler(event) {
-    const { start, end } = this.getCursor();
+  backspaceHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
     const previousContentBlock = this.previousContentInContext();
 
     if (start.offset !== 0 || start.offset !== end.offset) {
-      return;
+      return super.backspaceHandler(event);
     }
 
     event.preventDefault();
@@ -207,7 +216,7 @@ class TableCellContent extends Format {
     }
   }
 
-  tabHandler(event) {
+  tabHandler(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 

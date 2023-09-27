@@ -368,8 +368,8 @@ class ParagraphContent extends Format {
     }
   }
 
-  backspaceHandler(event) {
-    const { start, end } = this.getCursor();
+  backspaceHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
 
     if (start.offset === 0 && end.offset === 0) {
       event.preventDefault();
@@ -383,7 +383,7 @@ class ParagraphContent extends Format {
           return this.handleBackspaceInBlockQuote();
 
         case "list-item":
-
+        // fall through
         case "task-list-item":
           return this.handleBackspaceInList();
 

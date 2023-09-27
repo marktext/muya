@@ -1,7 +1,7 @@
 import ScrollPage from "@muya/block";
 
 export default {
-  shiftEnterHandler(event: KeyboardEvent): void {
+  shiftEnterHandler(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
 

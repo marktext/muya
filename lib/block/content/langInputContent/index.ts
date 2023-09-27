@@ -1,19 +1,22 @@
 import Content from "@muya/block/base/content";
-import { getHighlightHtml } from "@muya/utils/highlightHTML";
 import CodeBlock from "@muya/block/commonMark/codeBlock";
+import Muya from "@muya/index";
+import { Cursor } from "@muya/selection/types";
+import { ICodeBlockState } from "@muya/state/types";
+import { getHighlightHtml } from "@muya/utils/highlightHTML";
 
 class LangInputContent extends Content {
-  public parent: CodeBlock;
+  public parent: CodeBlock | null = null;
 
   static blockName = "language-input";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: ICodeBlockState) {
     const content = new LangInputContent(muya, state);
 
     return content;
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: ICodeBlockState) {
     super(muya, meta.lang);
     this.classList = [...this.classList, "mu-language-input"];
     this.attributes.hint = muya.i18n.t("Input Language Identifier...");
@@ -24,16 +27,16 @@ class LangInputContent extends Content {
     return this.parent;
   }
 
-  update(_, highlights = []) {
-    this.domNode.innerHTML = getHighlightHtml(this.text, highlights);
+  update(_cursor: Cursor, highlights = []) {
+    this.domNode!.innerHTML = getHighlightHtml(this.text, highlights);
   }
 
   inputHandler() {
-    const { start, end } = this.getCursor();
-    const textContent = this.domNode.textContent;
+    const { start, end } = this.getCursor()!;
+    const textContent = this.domNode!.textContent ?? "";
     const lang = textContent.split(/\s+/)[0];
     this.text = lang;
-    this.parent.lang = lang;
+    this.parent!.lang = lang;
     const startOffset = Math.min(lang.length, start.offset);
     const endOffset = Math.min(lang.length, end.offset);
     this.setCursor(startOffset, endOffset, true);
@@ -50,20 +53,23 @@ class LangInputContent extends Content {
     }
   }
 
-  enterHandler(event) {
+  enterHandler(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
     const { parent } = this;
-    parent.lastContentInDescendant().setCursor(0, 0);
+    parent!.lastContentInDescendant().setCursor(0, 0);
   }
 
   backspaceHandler() {
-    const { start } = this.getCursor();
+    const { start } = this.getCursor()!;
     if (start.offset === 0) {
       const cursorBlock = this.previousContentInContext();
-      const offset = cursorBlock.text.length;
-      cursorBlock.setCursor(offset, offset, true);
+      // The cursorBlock will be null, if the code block is the first block in doc.
+      if (cursorBlock) {
+        const offset = cursorBlock.text.length;
+        cursorBlock.setCursor(offset, offset, true);
+      }
     }
   }
 }

@@ -1,19 +1,20 @@
-import Format from "@muya/block/base/format";
 import ScrollPage from "@muya/block";
+import Format from "@muya/block/base/format";
 import AtxHeading from "@muya/block/commonMark/atxHeading";
+import Muya from "@muya/index";
 
 class AtxHeadingContent extends Format {
-  public parent: AtxHeading;
+  public parent: AtxHeading | null = null;
 
   static blockName = "atxheading.content";
 
-  static create(muya, text) {
+  static create(muya: Muya, text: string) {
     const content = new AtxHeadingContent(muya, text);
 
     return content;
   }
 
-  constructor(muya, text) {
+  constructor(muya: Muya, text: string) {
     super(muya, text);
     this.classList = [...this.classList, "mu-atxheading-content"];
     this.createDomNode();
@@ -48,8 +49,8 @@ class AtxHeadingContent extends Format {
     }
   }
 
-  backspaceHandler(event) {
-    const { start, end } = this.getCursor();
+  backspaceHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       event.preventDefault();
       this.text = this.text.replace(/^ {0,3}#{1,6} */, "");

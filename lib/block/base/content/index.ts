@@ -1,10 +1,9 @@
-import diff from "fast-diff";
-import { BRACKET_HASH, BACK_HASH, EVENT_KEYS } from "@muya/config";
-import { diffToTextOp } from "@muya/utils";
-import TreeNode from "@muya/block/base/treeNode";
-import Selection from "@muya/selection";
 import ScrollPage from "@muya/block";
-import { adjustOffset } from "@muya/utils";
+import TreeNode from "@muya/block/base/treeNode";
+import { BACK_HASH, BRACKET_HASH, EVENT_KEYS } from "@muya/config";
+import Selection from "@muya/selection";
+import { adjustOffset, diffToTextOp } from "@muya/utils";
+import diff from "fast-diff";
 
 // import logger from '@muya/utils/logger'
 
@@ -98,10 +97,10 @@ abstract class Content extends TreeNode {
   inputHandler(event: InputEvent): void {
     // Do nothing.
   }
-  backspaceHandler(event: KeyboardEvent): void {
+  backspaceHandler(event: Event): void {
     // Do nothing.
   }
-  enterHandler(event: KeyboardEvent): void {
+  enterHandler(event: Event): void {
     // Do nothing.
   }
 

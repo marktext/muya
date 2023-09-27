@@ -4,7 +4,7 @@ import { getImageInfo } from "@muya/utils/image";
 import type Format from "./index";
 
 export default {
-  backspaceHandler(this: Format, event: KeyboardEvent): void {
+  backspaceHandler(this: Format, event: Event): void {
     const { start, end } = this.getCursor() ?? {};
     // Let input handler to handle this case.
     if (!start || !end || start?.offset !== end?.offset) {

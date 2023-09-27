@@ -337,8 +337,8 @@ class CodeBlockContent extends Content {
       return cursorBlock.setCursor(0, 0, true);
     }
     // The following code should fix a certain bug: 
-    // when there is only one newline character in a code block 
-    // and the cursor is right after it, pressing the backspace key should work properly.
+    // when there is one newline(\n) character before cursor. 
+    // pressing the backspace key should work properly.(compatibility with Firefox)
     if (
       start.offset === end.offset &&
       this.text[start.offset - 1] === "\n"
