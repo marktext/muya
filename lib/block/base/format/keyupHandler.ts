@@ -17,14 +17,14 @@ export default {
       return;
     }
 
-    const { anchor, focus } = this.getCursor();
+    const { anchor, focus } = this.getCursor()!;
 
     if (
-      anchor.offset !== oldAnchor.offset ||
-      focus.offset !== oldFocus.offset
+      anchor.offset !== oldAnchor?.offset ||
+      focus.offset !== oldFocus?.offset
     ) {
       const needUpdate =
-        this.checkNeedRender({ anchor, focus }) || this.checkNeedRender();
+        this.checkNeedRender({ anchor, focus });
       const cursor = { anchor, focus, block: this, path: this.path };
 
       if (needUpdate) {

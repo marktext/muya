@@ -182,7 +182,7 @@ class Selection {
     };
 
     const handleMousemoveOrClick = (event: Event) => {
-      if(!isMouseEvent(event)) {
+      if (!isMouseEvent(event)) {
         return;
       }
       const { type, shiftKey } = event;
@@ -265,7 +265,9 @@ class Selection {
           anchorOutMostBlock.blockName === "task-list"
             ? "task-list-item"
             : "list-item";
-        const listItem = anchorBlock.farthestBlock(listItemBlockName) as ListItem | TaskListItem;
+        const listItem = anchorBlock.farthestBlock(listItemBlockName) as
+          | ListItem
+          | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
         const lastContent = listItem.lastContentInDescendant();
         if (direction === "forward") {
@@ -286,7 +288,9 @@ class Selection {
           focusOutMostBlock.blockName === "task-list"
             ? "task-list-item"
             : "list-item";
-        const listItem = focusBlock.farthestBlock(listItemBlockName) as ListItem | TaskListItem;
+        const listItem = focusBlock.farthestBlock(listItemBlockName) as
+          | ListItem
+          | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
         const lastContent = listItem.lastContentInDescendant();
         if (direction === "forward") {
@@ -409,8 +413,6 @@ class Selection {
       this.setSelection({
         anchor: null,
         focus: null,
-        block: contentBlock,
-        path: contentBlock.path,
       });
 
       return;
@@ -513,7 +515,8 @@ class Selection {
     const anchorPath = anchorBlock.path;
     const focusPath = focusBlock.path;
 
-    const aOffset = getOffsetOfParagraph(anchorNode, anchorDomNode) + anchorOffset;
+    const aOffset =
+      getOffsetOfParagraph(anchorNode, anchorDomNode) + anchorOffset;
     const fOffset = getOffsetOfParagraph(focusNode, focusDomNode) + focusOffset;
     const anchor = { offset: aOffset };
     const focus = { offset: fOffset };

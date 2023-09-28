@@ -2,6 +2,7 @@ import Format from "@muya/block/base/format";
 import Paragraph from "@muya/block/commonMark/paragraph";
 import ScrollPage from "@muya/block/scrollPage";
 import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
+import { Cursor } from "@muya/selection/types";
 import { isLengthEven, methodMixins } from "@muya/utils";
 import logger from "@muya/utils/logger";
 import { ITaskListItemState } from "../../../state/types";
@@ -64,7 +65,7 @@ class ParagraphContent extends Format {
     return this.parent;
   }
 
-  update(cursor?, highlights = []) {
+  update(cursor?: Cursor, highlights = []) {
     this.inlineRenderer.patch(this, cursor, highlights);
     const { label } = this.inlineRenderer.getLabelInfo(this);
     if (this.scrollPage && label) {
