@@ -131,7 +131,7 @@ setContentBtn.addEventListener("click", () => {
 muya.on("json-change", (_changes) => {
   // console.log(JSON.stringify(muya.getState(), null, 2))
   // console.log(muya.getMarkdown())
-  // console.log(JSON.stringify(changes, null, 2));
+  // console.log(JSON.stringify(_changes, null, 2));
 });
 
 // muya.on('selection-change', changes => {

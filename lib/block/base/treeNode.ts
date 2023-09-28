@@ -230,15 +230,13 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
   /**
    * Remove the current block in the block tree.
    */
-  remove(this: Parent | Content): Parent | Content {
+  remove(this: Parent | Content) {
     if (!this.parent) {
-      return this;
+      return;
     }
     this.parent.children.remove(this);
     this.parent = null;
     this.domNode?.remove();
-
-    return this;
   }
 }
 
