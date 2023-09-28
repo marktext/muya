@@ -1,15 +1,15 @@
-import BaseFloat from "../baseFloat";
-import { patch, h } from "@muya/utils/snabbdom";
 import { EVENT_KEYS, URL_REG, isWin } from "@muya/config";
 import { getUniqueId, isKeyboardEvent } from "@muya/utils";
 import { getImageInfo, getImageSrc } from "@muya/utils/image";
+import { h, patch } from "@muya/utils/snabbdom";
+import BaseFloat from "../baseFloat";
 import type { BaseOptions } from "../types";
 
-import "./index.css";
-import { VNode } from "snabbdom";
-import Muya from "@muya/index";
 import Format from "@muya/block/base/format";
+import Muya from "@muya/index";
 import { ImageToken } from "@muya/inlineRenderer/types";
+import { VNode } from "snabbdom";
+import "./index.css";
 
 type State = {
   src: string;
@@ -172,7 +172,7 @@ class ImageEditTool extends BaseFloat {
     const { oldVNode, imageSelectorContainer } = this;
     const { i18n } = this.muya;
     const { src } = this.state;
-    console.log(this.options)
+
     const moreButton = this.options.imagePathPicker
       ? h(
           "span.more",

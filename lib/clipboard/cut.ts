@@ -6,6 +6,11 @@ import Base from "./base";
 
 class Cut extends Base {
   cutHandler() {
+    const selection = this.selection.getSelection();
+    if (!selection) {
+      return;
+    }
+
     const {
       isSelectionInSameBlock,
       anchor,
@@ -13,11 +18,7 @@ class Cut extends Base {
       focus,
       focusBlock,
       direction,
-    } = this.selection.getSelection();
-
-    if (!anchorBlock) {
-      return;
-    }
+    } = selection;
 
     // Handler `cut` event in the same block.
     if (isSelectionInSameBlock) {

@@ -14,7 +14,7 @@ const turnSoftBreakToSpan = (html: string) => {
   const root = doc.querySelector("#turn-root");
   const travel = (childNodes: NodeListOf<ChildNode>) => {
     for (const node of childNodes) {
-      if (node.nodeType === 3 && node.parentElement?.tagName !== "CODE") {
+      if (node.nodeType === Node.TEXT_NODE && node.parentElement?.tagName !== "CODE") {
         let startLen = 0;
         let endLen = 0;
         const text =
@@ -52,7 +52,7 @@ const turnSoftBreakToSpan = (html: string) => {
           }
           node.replaceWith(...params);
         }
-      } else if (node.nodeType === 1) {
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
         travel(node.childNodes);
       }
     }

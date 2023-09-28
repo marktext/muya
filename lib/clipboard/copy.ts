@@ -19,12 +19,12 @@ class Copy extends Base {
     let text = "";
     let html = "";
 
-    const { isSelectionInSameBlock, anchor, anchorBlock, focus, focusBlock } =
-      this.selection.getSelection();
-
-    if (!anchorBlock) {
+    const selection = this.selection.getSelection();
+    if (!selection) {
       return { html, text };
     }
+
+    const { isSelectionInSameBlock, anchor, anchorBlock, focus, focusBlock } = selection;
 
     const {
       frontMatter = true,

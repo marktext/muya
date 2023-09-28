@@ -1,6 +1,6 @@
+import { CLASS_NAMES } from "@muya/config";
 import { getTextContent } from "@muya/selection/dom";
 import { getCursorReference } from "@muya/utils";
-import { CLASS_NAMES } from "@muya/config";
 
 export default {
   inputHandler(event: InputEvent): void {
@@ -43,10 +43,10 @@ export default {
     const cursor = {
       path: this.path,
       block: this,
-      start: {
+      anchor: {
         offset: start.offset,
       },
-      end: {
+      focus: {
         offset: end.offset,
       },
     };

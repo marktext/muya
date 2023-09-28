@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import { mixins } from "@muya/utils";
 import Muya from "@muya/index";
+import { mixins } from "@muya/utils";
 import Base from "./base";
 import Copy from "./copy";
 import Cut from "./cut";
@@ -40,7 +40,7 @@ class Clipboard extends Base {
     const keydownHandler = (event: KeyboardEvent): void => {
       const { key, metaKey } = event;
 
-      const { isSelectionInSameBlock } = this.selection.getSelection();
+      const { isSelectionInSameBlock } = this.selection.getSelection() ?? {};
       if (isSelectionInSameBlock) {
         return;
       }

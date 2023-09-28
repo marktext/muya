@@ -31,7 +31,7 @@ const DEFAULT_OPTIONS = {
 class History {
   private lastRecorded: number = 0;
   private ignoreChange: boolean = false;
-  private selectionStack: Array<TSelection> = [];
+  private selectionStack: (TSelection | null)[] = [];
   private stack: Stack = {
     undo: [],
     redo: [],

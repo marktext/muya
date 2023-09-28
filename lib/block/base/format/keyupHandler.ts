@@ -5,6 +5,7 @@ export default {
     if (this.isComposed) {
       return;
     }
+    // TODO: @JOCS remove use this.selection directly
     const {
       anchor: oldAnchor,
       focus: oldFocus,

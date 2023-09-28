@@ -3,7 +3,12 @@ import BaseScrollFloat from "@muya/ui/baseScrollFloat";
 import { deepClone } from "@muya/utils";
 import { h, patch } from "@muya/utils/snabbdom";
 import Fuse from "fuse.js";
-import { MENU_CONFIG, QuickInsertMenuItem, getLabelFromEvent, replaceBlockByLabel } from "./config";
+import {
+  MENU_CONFIG,
+  QuickInsertMenuItem,
+  getLabelFromEvent,
+  replaceBlockByLabel,
+} from "./config";
 
 import Muya from "@muya/index";
 import { VNode } from "snabbdom";
@@ -25,7 +30,7 @@ class QuickInsert extends BaseScrollFloat {
   public oldVNode: VNode | null = null;
   public block: ParagraphContent | null = null;
   public activeItem: QuickInsertMenuItem["children"][number] | null = null;
-  private _renderData: QuickInsertMenuItem[]  = [];
+  private _renderData: QuickInsertMenuItem[] = [];
   // private renderArray: QuickInsertMenuItem["children"][number] = [];
 
   constructor(muya: Muya) {
@@ -46,7 +51,8 @@ class QuickInsert extends BaseScrollFloat {
 
     this.renderArray = data.flatMap((d) => d.children);
     if (this.renderArray.length > 0) {
-      this.activeItem = this.renderArray[0] as QuickInsertMenuItem["children"][number];
+      this.activeItem = this
+        .renderArray[0] as QuickInsertMenuItem["children"][number];
       const activeEle = this.getItemElement(this.activeItem) as HTMLElement;
       this.activeEleScrollIntoView(activeEle);
     }
@@ -70,7 +76,7 @@ class QuickInsert extends BaseScrollFloat {
 
     const handleKeydown = (event: Event) => {
       const { anchorBlock, isSelectionInSameBlock } =
-        editor.selection.getSelection();
+        editor.selection.getSelection() ?? {};
       if (isSelectionInSameBlock && anchorBlock instanceof ParagraphContent) {
         if (anchorBlock.text) {
           return;
@@ -167,7 +173,8 @@ class QuickInsert extends BaseScrollFloat {
     const menuConfig = deepClone(MENU_CONFIG);
 
     if (!canInsertFrontMatter) {
-      menuConfig.find((menu) => menu.name === "basic blocks")
+      menuConfig
+        .find((menu) => menu.name === "basic blocks")
         ?.children.splice(2, 1);
     }
     let result = menuConfig;
@@ -195,7 +202,7 @@ class QuickInsert extends BaseScrollFloat {
 
       if (result.length) {
         result.sort((a, b) => {
-          return a.children[0].score! < b.children[0].score! ? -1 : 1
+          return a.children[0].score! < b.children[0].score! ? -1 : 1;
         });
       }
     }
@@ -217,7 +224,9 @@ class QuickInsert extends BaseScrollFloat {
   getItemElement(item: QuickInsertMenuItem["children"][number]) {
     const { label } = item;
 
-    return this.scrollElement!.querySelector(`[data-label="${label}"]`) as HTMLElement;
+    return this.scrollElement!.querySelector(
+      `[data-label="${label}"]`
+    ) as HTMLElement;
   }
 }
 

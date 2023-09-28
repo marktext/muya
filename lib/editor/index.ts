@@ -64,9 +64,9 @@ class Editor {
     const { eventCenter } = this.muya;
     const { domNode } = this.muya;
 
-    const eventHandler = (event) => {
+    const eventHandler = (event: Event) => {
       const { anchorBlock, isSelectionInSameBlock } =
-        this.selection.getSelection();
+        this.selection.getSelection() ?? {};
 
       if (!isSelectionInSameBlock || !anchorBlock) {
         this.activeContentBlock = null;

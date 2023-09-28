@@ -1,8 +1,15 @@
-import ContentBlock from "@muya/block/base/content";
+import {
+  default as Content,
+  default as ContentBlock,
+} from "@muya/block/base/content";
 import type Format from "@muya/block/base/format";
+import Parent from "@muya/block/base/parent";
+import ListItem from "@muya/block/commonMark/listItem";
+import TaskListItem from "@muya/block/gfm/taskListItem";
 import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from "@muya/config";
 import Muya from "@muya/index";
 import type { ImageToken } from "@muya/inlineRenderer/types";
+import { isElement, isKeyboardEvent, isMouseEvent } from "@muya/utils";
 import { getImageInfo } from "@muya/utils/image";
 import {
   compareParagraphsOrder,
@@ -18,7 +25,7 @@ class Selection {
    * @param {*} paragraph
    */
   static getCursorYOffset(paragraph: HTMLElement) {
-    const { y } = this.getCursorCoords();
+    const { y } = this.getCursorCoords()!;
     const { height, top } = paragraph.getBoundingClientRect();
     const lineHeight = parseFloat(getComputedStyle(paragraph).lineHeight);
     const topOffset = Math.floor((y - top) / lineHeight);
@@ -41,16 +48,15 @@ class Selection {
       range = sel.getRangeAt(0).cloneRange();
       if (range.getClientRects) {
         // range.collapse(true)
-        let rects = range.getClientRects();
+        let rects: DOMRectList | null = range.getClientRects();
         if (rects.length === 0) {
           rects =
-            range.startContainer &&
-            range.startContainer.nodeType === Node.ELEMENT_NODE
+            range.startContainer && isElement(range.startContainer)
               ? range.startContainer.getClientRects()
-              : [];
+              : null;
         }
 
-        if (rects.length) {
+        if (rects?.length) {
           rect = rects[0];
         }
       }
@@ -63,8 +69,9 @@ class Selection {
   // how-can-i-get-the-element-the-caret-is-in-with-javascript-when-using-contenteditable
   // by You
   static getSelectionStart() {
-    const node = document.getSelection().anchorNode;
-    const startNode = node && node.nodeType === 3 ? node.parentNode : node;
+    const node = document.getSelection()!.anchorNode;
+    const startNode =
+      node && node.nodeType === Node.TEXT_NODE ? node.parentNode : node;
 
     return startNode;
   }
@@ -76,7 +83,7 @@ class Selection {
   get isCollapsed() {
     const { anchorBlock, focusBlock, anchor, focus } = this;
 
-    if (anchor.offset === null) {
+    if (anchor === null || focus === null) {
       return false;
     }
 
@@ -86,7 +93,7 @@ class Selection {
   get isSelectionInSameBlock() {
     const { anchorBlock, focusBlock, anchor } = this;
 
-    if (anchor.offset === null) {
+    if (anchor === null || focus === null) {
       return false;
     }
 
@@ -102,7 +109,7 @@ class Selection {
       isSelectionInSameBlock,
       isCollapsed,
     } = this;
-    if (anchor.offset === null) {
+    if (anchor === null || focus === null || !anchorBlock || !focusBlock) {
       return "none";
     }
 
@@ -113,8 +120,8 @@ class Selection {
     if (isSelectionInSameBlock) {
       return anchor.offset < focus.offset ? "forward" : "backward";
     } else {
-      const aDom = anchorBlock.domNode;
-      const fDom = focusBlock.domNode;
+      const aDom = anchorBlock.domNode!;
+      const fDom = focusBlock.domNode!;
       const order = compareParagraphsOrder(aDom, fDom);
 
       return order ? "forward" : "backward";
@@ -131,12 +138,12 @@ class Selection {
   }
 
   public doc: Document = document;
-  public anchorPath: Array<string | number>;
-  public anchorBlock: ContentBlock;
-  public focusPath: Array<string | number>;
-  public focusBlock: ContentBlock;
-  public anchor: NodeOffset;
-  public focus: NodeOffset;
+  public anchorPath: Array<string | number> = [];
+  public anchorBlock: ContentBlock | null = null;
+  public focusPath: Array<string | number> = [];
+  public focusBlock: ContentBlock | null = null;
+  public anchor: NodeOffset | null = null;
+  public focus: NodeOffset | null = null;
   public selectedImage: {
     token: ImageToken;
     imageId: string;
@@ -144,29 +151,13 @@ class Selection {
   } | null = null;
   private selectInfo: {
     isSelect: boolean;
-    selection: any;
+    selection: Cursor | null;
   } = {
     isSelect: false,
     selection: null,
   };
 
-  constructor(
-    public muya: Muya,
-    {
-      anchor,
-      focus,
-      anchorBlock,
-      anchorPath,
-      focusBlock,
-      focusPath,
-    }: Cursor = {}
-  ) {
-    this.anchorPath = anchorPath;
-    this.anchorBlock = anchorBlock;
-    this.focusPath = focusPath;
-    this.focusBlock = focusBlock;
-    this.anchor = anchor;
-    this.focus = focus;
+  constructor(public muya: Muya) {
     this.listenSelectActions();
   }
 
@@ -190,12 +181,20 @@ class Selection {
       };
     };
 
-    const handleMousemoveOrClick = (event) => {
+    const handleMousemoveOrClick = (event: Event) => {
+      if(!isMouseEvent(event)) {
+        return;
+      }
       const { type, shiftKey } = event;
       if (type === "mousemove" && !this.selectInfo.isSelect) {
         return;
       }
       if (type === "click" && !shiftKey) {
+        return;
+      }
+      const selection = this.getSelection();
+      // The cursor is not in editor
+      if (!selection) {
         return;
       }
       const {
@@ -205,12 +204,7 @@ class Selection {
         focusBlock,
         isSelectionInSameBlock,
         direction,
-      } = this.getSelection();
-
-      if (!anchorBlock || !focusBlock) {
-        // The cursor is not in editor
-        return;
-      }
+      } = selection;
 
       if (isSelectionInSameBlock) {
         // No need to handle this case
@@ -226,19 +220,15 @@ class Selection {
         focusPath: focusBlock.path,
       };
 
-      const anchorOutMostBlock = anchorBlock.outMostBlock;
-      const focusOutMostBlock = focusBlock.outMostBlock;
+      const anchorOutMostBlock = anchorBlock.outMostBlock as Parent;
+      const focusOutMostBlock = focusBlock.outMostBlock as Parent;
       if (
         /block-quote|code-block|html-block|table|math-block|frontmatter|diagram/.test(
-          anchorOutMostBlock.blockName
+          anchorOutMostBlock!.blockName
         )
       ) {
-        const firstContent = (
-          anchorOutMostBlock as any
-        ).firstContentInDescendant();
-        const lastContent = (
-          anchorOutMostBlock as any
-        ).lastContentInDescendant();
+        const firstContent = anchorOutMostBlock.firstContentInDescendant();
+        const lastContent = anchorOutMostBlock.lastContentInDescendant();
         if (direction === "forward") {
           newSelection.anchorBlock = firstContent;
           newSelection.anchorPath = firstContent.path;
@@ -255,12 +245,8 @@ class Selection {
           focusOutMostBlock.blockName
         )
       ) {
-        const firstContent = (
-          focusOutMostBlock as any
-        ).firstContentInDescendant();
-        const lastContent = (
-          focusOutMostBlock as any
-        ).lastContentInDescendant();
+        const firstContent = focusOutMostBlock.firstContentInDescendant();
+        const lastContent = focusOutMostBlock.lastContentInDescendant();
         if (direction === "forward") {
           newSelection.focusBlock = lastContent;
           newSelection.focusPath = lastContent.path;
@@ -279,7 +265,7 @@ class Selection {
           anchorOutMostBlock.blockName === "task-list"
             ? "task-list-item"
             : "list-item";
-        const listItem = anchorBlock.farthestBlock(listItemBlockName);
+        const listItem = anchorBlock.farthestBlock(listItemBlockName) as ListItem | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
         const lastContent = listItem.lastContentInDescendant();
         if (direction === "forward") {
@@ -300,7 +286,7 @@ class Selection {
           focusOutMostBlock.blockName === "task-list"
             ? "task-list-item"
             : "list-item";
-        const listItem = focusBlock.farthestBlock(listItemBlockName);
+        const listItem = focusBlock.farthestBlock(listItemBlockName) as ListItem | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
         const lastContent = listItem.lastContentInDescendant();
         if (direction === "forward") {
@@ -321,20 +307,25 @@ class Selection {
       }
     };
 
-    const docHandlerClick = (event) => {
+    const docHandlerClick = () => {
       this.selectedImage = null;
     };
 
-    const handleClick = (event) => {
+    const handleClick = (event: Event) => {
       const { target } = event;
-      const imageWrapper = target.closest(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
+      const imageWrapper = (target as HTMLElement)?.closest(
+        `.${CLASS_NAMES.MU_INLINE_IMAGE}`
+      );
       this.selectedImage = null;
       if (imageWrapper) {
-        return this.handleClickInlineImage(event, imageWrapper);
+        return this.handleClickInlineImage(event, imageWrapper as HTMLElement);
       }
     };
 
-    const handleKeydown = (event) => {
+    const handleKeydown = (event: Event) => {
+      if (!isKeyboardEvent(event)) {
+        return;
+      }
       const { key } = event;
       const { selectedImage } = this;
       if (selectedImage && /Backspace|Enter/.test(key)) {
@@ -356,20 +347,22 @@ class Selection {
   }
 
   // Handle click inline image.
-  handleClickInlineImage(event, imageWrapper) {
+  private handleClickInlineImage(event: Event, imageWrapper: HTMLElement) {
     event.preventDefault();
     event.stopPropagation();
     const { eventCenter } = this.muya;
     const imageInfo = getImageInfo(imageWrapper);
     const { target } = event;
-    const deleteContainer = target.closest(".mu-image-icon-close");
-    const contentDom = findContentDOM(target);
+    const deleteContainer = (target as HTMLElement).closest(
+      ".mu-image-icon-close"
+    );
+    const contentDom = findContentDOM(target as Node);
 
     if (!contentDom) {
       return;
     }
 
-    const contentBlock = contentDom[BLOCK_DOM_PROPERTY];
+    const contentBlock = contentDom[BLOCK_DOM_PROPERTY] as Format;
 
     if (deleteContainer) {
       contentBlock.deleteImage(imageInfo);
@@ -378,11 +371,11 @@ class Selection {
     }
 
     // Handle image click, to select the current image
-    if (target.tagName === "IMG") {
+    if ((target as HTMLElement)?.tagName === "IMG") {
       // Handle show image toolbar
       const rect = imageWrapper
         .querySelector(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)
-        .getBoundingClientRect();
+        ?.getBoundingClientRect();
       const reference = {
         getBoundingClientRect: () => rect,
         width: imageWrapper.offsetWidth,
@@ -409,11 +402,13 @@ class Selection {
         imageInfo,
       });
 
-      this.selectedImage = Object.assign({}, imageInfo, { block: contentBlock });
+      this.selectedImage = Object.assign({}, imageInfo, {
+        block: contentBlock,
+      });
       this.muya.editor.activeContentBlock = null;
       this.setSelection({
-        anchor: { offset: null },
-        focus: { offset: null },
+        anchor: null,
+        focus: null,
         block: contentBlock,
         path: contentBlock.path,
       });
@@ -451,8 +446,12 @@ class Selection {
       scrollPage,
     } = this;
     // Select all in one content block.
+    // Can use getSelection here?
     if (
       isSelectionInSameBlock &&
+      anchor &&
+      focus &&
+      anchorBlock &&
       Math.abs(focus.offset - anchor.offset) < anchorBlock.text.length
     ) {
       const cursor: Cursor = {
@@ -466,8 +465,8 @@ class Selection {
       return;
     }
     // Select all content in all blocks.
-    const aBlock: any = scrollPage.firstContentInDescendant();
-    const fBlock: any = scrollPage.lastContentInDescendant();
+    const aBlock: Content = scrollPage.firstContentInDescendant();
+    const fBlock: Content = scrollPage.lastContentInDescendant();
 
     const cursor: Cursor = {
       anchor: { offset: 0 },
@@ -486,21 +485,31 @@ class Selection {
   }
 
   /**
-   * Return the current selection of doc.
+   * Return the current selection of doc or null if has no selection.
    * @returns
    */
-  getSelection(): TSelection {
-    const { anchorNode, anchorOffset, focusNode, focusOffset } =
-      document.getSelection();
+  getSelection(): TSelection | null {
+    const selection = document.getSelection();
+
+    if (!selection) {
+      return null;
+    }
+
+    const { anchorNode, anchorOffset, focusNode, focusOffset } = selection;
+
+    if (!anchorNode || !focusNode) {
+      return null;
+    }
+
     const anchorDomNode = findContentDOM(anchorNode);
     const focusDomNode = findContentDOM(focusNode);
 
     if (!anchorDomNode || !focusDomNode) {
-      return {} as TSelection;
+      return null;
     }
 
-    const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY];
-    const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY];
+    const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
+    const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
     const anchorPath = anchorBlock.path;
     const focusPath = focusBlock.path;
 
@@ -513,17 +522,20 @@ class Selection {
       anchorBlock === focusBlock && anchor.offset === focus.offset;
     const isSelectionInSameBlock = anchorBlock === focusBlock;
     let direction = "none";
+    let type = "None";
     if (isCollapsed) {
       direction = "none";
     }
     if (isSelectionInSameBlock) {
       direction = anchor.offset < focus.offset ? "forward" : "backward";
     } else {
-      const aDom = anchorBlock.domNode;
-      const fDom = focusBlock.domNode;
+      const aDom = anchorBlock.domNode!;
+      const fDom = focusBlock.domNode!;
       const order = compareParagraphsOrder(aDom, fDom);
       direction = order ? "forward" : "backward";
     }
+
+    type = isCollapsed ? "Caret" : "Range";
 
     return {
       anchor,
@@ -535,14 +547,13 @@ class Selection {
       isCollapsed,
       isSelectionInSameBlock,
       direction,
+      type,
     };
   }
 
   setSelection({
     anchor,
     focus,
-    start,
-    end,
     block,
     path,
     anchorBlock,
@@ -550,15 +561,22 @@ class Selection {
     focusBlock,
     focusPath,
   }: Cursor) {
-    this.anchor = anchor ?? start;
-    this.focus = focus ?? end;
-    this.anchorBlock = anchorBlock ?? block;
-    this.anchorPath = anchorPath ?? path;
-    this.focusBlock = focusBlock ?? block;
-    this.focusPath = focusPath ?? path;
+    this.anchor = anchor ?? null;
+    this.focus = focus ?? null;
+    this.anchorBlock = anchorBlock ?? block ?? null;
+    this.anchorPath = anchorPath ?? path ?? [];
+    this.focusBlock = focusBlock ?? block ?? null;
+    this.focusPath = focusPath ?? path ?? [];
+    // Update cursor.
     this.setCursor();
 
-    const { isCollapsed, isSelectionInSameBlock, direction, type, selectedImage } = this;
+    const {
+      isCollapsed,
+      isSelectionInSameBlock,
+      direction,
+      type,
+      selectedImage,
+    } = this;
 
     this.muya.eventCenter.emit("selection-change", {
       anchor,
@@ -575,17 +593,24 @@ class Selection {
     });
   }
 
-  selectRange(range) {
+  private selectRange(range: Range) {
     const selection = this.doc.getSelection();
 
-    selection.removeAllRanges();
-    selection.addRange(range);
+    if (selection) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   }
 
-  select(startNode, startOffset, endNode?, endOffset?) {
+  select(
+    startNode: Node,
+    startOffset: number,
+    endNode?: Node,
+    endOffset?: number
+  ) {
     const range = this.doc.createRange();
     range.setStart(startNode, startOffset);
-    if (endNode) {
+    if (endNode && typeof endOffset === "number") {
       range.setEnd(endNode, endOffset);
     } else {
       range.collapse(true);
@@ -595,12 +620,14 @@ class Selection {
     return range;
   }
 
-  setFocus(focusNode, focusOffset) {
+  setFocus(focusNode: Node, focusOffset: number) {
     const selection = this.doc.getSelection();
-    selection.extend(focusNode, focusOffset);
+    if (selection) {
+      selection.extend(focusNode, focusOffset);
+    }
   }
 
-  setCursor() {
+  private setCursor() {
     const {
       anchor,
       focus,
@@ -609,17 +636,17 @@ class Selection {
       focusBlock,
       focusPath,
       scrollPage,
-      type,
     } = this;
 
     // Remove the selection when type is `None`.
-    if (!anchor || anchor.offset === null) {
+    if (!anchor || !focus) {
       const selection = this.doc.getSelection();
-
-      selection.removeAllRanges();
-      return 
+      if (selection) {
+        selection.removeAllRanges();
+      }
+      return;
     }
-    
+
     const anchorParagraph = anchorBlock
       ? anchorBlock.domNode
       : scrollPage.queryBlock(anchorPath);
@@ -627,8 +654,11 @@ class Selection {
       ? focusBlock.domNode
       : scrollPage.queryBlock(focusPath);
 
-    const getNodeAndOffset = (node, offset) => {
-      if (node.nodeType === 3) {
+    const getNodeAndOffset = (
+      node: Node,
+      offset: number
+    ): { node: Node; offset: number } => {
+      if (node.nodeType === Node.TEXT_NODE) {
         return {
           node,
           offset,
@@ -655,12 +685,13 @@ class Selection {
             : count + textLength >= offset
         ) {
           if (
+            isElement(child) &&
             child.classList &&
             child.classList.contains(`${CLASS_NAMES.MU_INLINE_IMAGE}`)
           ) {
             const imageContainer = child.querySelector(
               `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`
-            );
+            )!;
             const hasImg = imageContainer.querySelector("img");
 
             if (!hasImg) {

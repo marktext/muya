@@ -79,8 +79,8 @@ export default {
       });
       this.muya.editor.activeContentBlock = null;
       this.muya.editor.selection.setSelection({
-        anchor: { offset: null },
-        focus: { offset: null },
+        anchor: null,
+        focus: null,
         block: this,
         path: this.path,
       });
