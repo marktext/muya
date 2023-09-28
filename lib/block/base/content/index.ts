@@ -292,11 +292,12 @@ abstract class Content extends TreeNode {
     // TODO: @JOCS, remove use this selection directly.
     const { anchor, focus } = this.selection;
     const oldStart = anchor!.offset <= focus!.offset ? anchor : focus;
-    if (!isInputEvent(event) || !oldStart) {
-      return;
-    }
-
     let needRender = false;
+
+    // The event will not be input event, when click task list item input element.
+    if (!isInputEvent(event) || !oldStart) {
+      return { text, needRender };
+    }
 
     if (this.text !== text) {
       if (start.offset === end.offset && event.type === "input") {

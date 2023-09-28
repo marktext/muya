@@ -4,7 +4,7 @@ import { getCursorReference } from "@muya/utils";
 import Format from "./index";
 
 export default {
-  inputHandler(this: Format, event: InputEvent): void {
+  inputHandler(this: Format, event: Event): void {
     if (this.isComposed || /historyUndo|historyRedo/.test(event.inputType)) {
       return;
     }
@@ -25,6 +25,7 @@ export default {
       "inline_code"
     );
 
+    // eslint-disable-next-line prefer-const
     let { needRender, text } = this.autoPair(
       event,
       textContent,
