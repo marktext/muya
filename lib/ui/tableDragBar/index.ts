@@ -444,15 +444,15 @@ class TableDragBar extends BaseFloat {
       // TODO: @JOCS remove use this.selection directly
       const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
         this.muya.editor.selection ?? {};
-      const { rowOffset, columnOffset } = anchorBlock.closestBlock(
+      const { rowOffset, columnOffset } = anchorBlock?.closestBlock(
         "table.cell"
       ) as TableBodyCell;
 
       startOffset = isSelectionInSameBlock
-        ? Math.min(anchor.offset, focus.offset)
+        ? Math.min(anchor!.offset, focus!.offset)
         : 0;
       endOffset = isSelectionInSameBlock
-        ? Math.max(anchor.offset, focus.offset)
+        ? Math.max(anchor!.offset, focus!.offset)
         : 0;
       if (barType === "bottom") {
         cursorRowOffset = rowOffset;

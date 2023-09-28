@@ -224,6 +224,7 @@ class FrontButton {
         block.insertInto(block.parent!, target.next);
       }
 
+      // TODO: @JOCS, remove use this.selection directly.
       const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
         block.muya.editor.selection ?? {};
 
@@ -232,8 +233,8 @@ class FrontButton {
         anchorBlock &&
         anchorBlock.isInBlock(block)
       ) {
-        const begin = Math.min(anchor.offset, focus.offset);
-        const end = Math.max(anchor.offset, focus.offset);
+        const begin = Math.min(anchor!.offset, focus!.offset);
+        const end = Math.max(anchor!.offset, focus!.offset);
         anchorBlock.setCursor(begin, end);
       }
     }

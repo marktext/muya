@@ -299,6 +299,7 @@ class FrontMenu extends BaseFloat {
               loose,
             };
           }
+          // TODO: @JOCS, remove use this.selection directly.
           const { anchorPath, anchor, focus, isSelectionInSameBlock } =
             editor.selection;
           const listBlock = ScrollPage.loadBlock(label).create(muya, state);
@@ -306,8 +307,8 @@ class FrontMenu extends BaseFloat {
           const guessCursorBlock =
             muya.editor.scrollPage.queryBlock(anchorPath);
           if (guessCursorBlock && isSelectionInSameBlock) {
-            const begin = Math.min(anchor.offset, focus.offset);
-            const end = Math.max(anchor.offset, focus.offset);
+            const begin = Math.min(anchor!.offset, focus!.offset);
+            const end = Math.max(anchor!.offset, focus!.offset);
             // Make guessCursorBlock active
             guessCursorBlock.setCursor(begin, end, true);
           } else {

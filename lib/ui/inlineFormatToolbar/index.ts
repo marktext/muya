@@ -165,14 +165,15 @@ class FormatPicker extends BaseFloat {
     event.preventDefault();
     event.stopPropagation();
     const { selection } = this.muya.editor;
+    // TODO: @JOCS, remove use this.selection directly.
     const { anchor, focus, anchorBlock, anchorPath, focusBlock, focusPath } =
       selection;
     selection.setSelection({
       anchor,
       focus,
-      anchorBlock,
+      anchorBlock: anchorBlock!,
       anchorPath,
-      focusBlock,
+      focusBlock: focusBlock!,
       focusPath,
     });
     const { block } = this;
