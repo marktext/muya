@@ -1,11 +1,18 @@
 import ScrollPage from "@muya/block";
 import TreeNode from "@muya/block/base/treeNode";
 import { BACK_HASH, BRACKET_HASH, EVENT_KEYS, isFirefox } from "@muya/config";
+import Muya from "@muya/index";
 import { Highlight } from "@muya/inlineRenderer/types";
 import Selection from "@muya/selection";
-import { Cursor } from "@muya/selection/types";
-import { adjustOffset, diffToTextOp } from "@muya/utils";
+import { Cursor, NodeOffset } from "@muya/selection/types";
+import {
+  adjustOffset,
+  diffToTextOp,
+  isInputEvent,
+  isKeyboardEvent,
+} from "@muya/utils";
 import diff from "fast-diff";
+import Parent from "../parent";
 
 // import logger from '@muya/utils/logger'
 
@@ -30,7 +37,7 @@ abstract class Content extends TreeNode {
   }
 
   get path() {
-    const { path: pPath } = this.parent as any;
+    const { path: pPath } = this.parent as Parent;
 
     return [...pPath, "text"];
   }
@@ -70,7 +77,7 @@ abstract class Content extends TreeNode {
     return false;
   }
 
-  constructor(muya, text) {
+  constructor(muya: Muya, text: string) {
     super(muya);
     this.tagName = "span";
     this.classList = ["mu-content"];
@@ -81,33 +88,38 @@ abstract class Content extends TreeNode {
     this.isComposed = false;
   }
 
-  getAnchor(): Parent {
+  getAnchor(): void {
     // Do nothing.
   }
 
-  clickHandler(event): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  clickHandler(_event: Event): void {
     // Do nothing.
   }
 
-  tabHandler(event: Event): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tabHandler(_event: Event): void {
     // Do nothing.
   }
-  keyupHandler(event: Event): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  keyupHandler(_event: Event): void {
     // Do nothing.
   }
-
-  inputHandler(event: Event): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  inputHandler(_event: Event): void {
     // Do nothing.
   }
-  backspaceHandler(event: Event): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  backspaceHandler(_event: Event): void {
     // Do nothing.
   }
-  enterHandler(event: Event): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  enterHandler(_event: Event): void {
     // Do nothing.
   }
 
   deleteHandler(event: Event): void {
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
     const { text } = this;
     // Only `languageInputContent` and `codeBlockContent` will call this method.
     if (start.offset === end.offset && start.offset === text.length) {
@@ -116,12 +128,15 @@ abstract class Content extends TreeNode {
     }
   }
 
-  arrowHandler(event) {
+  arrowHandler(event: Event) {
+    if(!isKeyboardEvent(event)) {
+      return;
+    }
     const previousContentBlock = this.previousContentInContext();
     const nextContentBlock = this.nextContentInContext();
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
     const { topOffset, bottomOffset } = Selection.getCursorYOffset(
-      this.domNode
+      this.domNode!
     );
 
     // Just do nothing if the cursor is not collapsed or `shiftKey` pressed
@@ -251,7 +266,7 @@ abstract class Content extends TreeNode {
     this.domNode!.innerHTML = `<span class="mu-syntax-text">${text}</span>`;
   }
 
-  composeHandler = (event) => {
+  composeHandler = (event: Event) => {
     if (event.type === "compositionstart") {
       this.isComposed = true;
     } else if (event.type === "compositionend") {
@@ -266,17 +281,20 @@ abstract class Content extends TreeNode {
    * @param {input event} event
    */
   autoPair(
-    event,
-    text,
-    start,
-    end,
+    event: Event,
+    text: string,
+    start: NodeOffset,
+    end: NodeOffset,
     isInInlineMath = false,
     isInInlineCode = false,
     type = "format"
   ) {
     // TODO: @JOCS, remove use this selection directly.
     const { anchor, focus } = this.selection;
-    const oldStart = anchor.offset <= focus.offset ? anchor : focus;
+    const oldStart = anchor!.offset <= focus!.offset ? anchor : focus;
+    if (!isInputEvent(event) || !oldStart) {
+      return;
+    }
 
     let needRender = false;
 
@@ -315,7 +333,7 @@ abstract class Content extends TreeNode {
           inputChar === postInputChar &&
           ((autoPairQuote && /[']{1}/.test(inputChar)) ||
             (autoPairQuote && /["]{1}/.test(inputChar)) ||
-            (autoPairBracket && /[\}\]\)]{1}/.test(inputChar)) ||
+            (autoPairBracket && /[}\])]{1}/.test(inputChar)) ||
             (autoPairMarkdownSyntax && /[$]{1}/.test(inputChar)) ||
             (autoPairMarkdownSyntax &&
               /[*$`~_]{1}/.test(inputChar) &&
@@ -332,7 +350,7 @@ abstract class Content extends TreeNode {
               /[']{1}/.test(inputChar) &&
               !/[a-zA-Z\d]{1}/.test(preInputChar)) ||
               (autoPairQuote && /["]{1}/.test(inputChar)) ||
-              (autoPairBracket && /[\{\[\(]{1}/.test(inputChar)) ||
+              (autoPairBracket && /[{[(]{1}/.test(inputChar)) ||
               (type === "format" &&
                 !isInInlineMath &&
                 !isInInlineCode &&
@@ -341,7 +359,7 @@ abstract class Content extends TreeNode {
                 /[*$`~_]{1}/.test(inputChar)))
           ) {
             needRender = true;
-            text = BRACKET_HASH[event.data]
+            text = typeof event.data === "string" && BRACKET_HASH[event.data]
               ? text.substring(0, offset) +
                 BRACKET_HASH[inputChar] +
                 text.substring(offset)
@@ -351,6 +369,7 @@ abstract class Content extends TreeNode {
           // Delete the last `*` of `**` when you insert one space between `**` to create a bullet list.
           if (
             type === "format" &&
+            typeof event.data === "string" &&
             /\s/.test(event.data) &&
             /^\* /.test(text) &&
             preInputChar === "*" &&
@@ -393,7 +412,7 @@ abstract class Content extends TreeNode {
     const { muya, text } = this;
     const { tabSize } = muya.options;
     const tabCharacter = String.fromCharCode(160).repeat(tabSize);
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
 
     if (this.isCollapsed) {
       this.text =
@@ -406,7 +425,10 @@ abstract class Content extends TreeNode {
     }
   }
 
-  keydownHandler = (event) => {
+  keydownHandler = (event: Event) => {
+    if (!isKeyboardEvent(event)) {
+      return;
+    }
     // TODO: move codes bellow to muya.ui ?
     if (
       this.muya.ui.shownFloat.size > 0 &&
@@ -497,7 +519,7 @@ abstract class Content extends TreeNode {
     return ancestors;
   }
 
-  getCommonAncestors(block) {
+  getCommonAncestors(block: Content) {
     const myAncestors = this.getAncestors();
     const blockAncestors = block.getAncestors();
 
@@ -514,7 +536,9 @@ abstract class Content extends TreeNode {
 
   remove() {
     super.remove();
-    this.domNode.remove();
+    if (this.domNode) {
+      this.domNode.remove();
+    }
     this.domNode = null;
 
     return this;

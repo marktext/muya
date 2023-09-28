@@ -97,11 +97,9 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
       datasets,
     });
 
-    domNode[BLOCK_DOM_PROPERTY] = this;
+    domNode[BLOCK_DOM_PROPERTY] = this as unknown as Parent | Content;
 
     this.domNode = domNode;
-
-    return domNode;
   }
 
   // Get previous content block in block tree.

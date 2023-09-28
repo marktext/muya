@@ -242,7 +242,7 @@ export const BLOCK_TYPE6 = [
   "ul",
 ];
 
-export const BRACKET_HASH = {
+export const BRACKET_HASH: Record<string, string> = {
   "{": "}",
   "[": "]",
   "(": ")",
@@ -254,7 +254,7 @@ export const BRACKET_HASH = {
   "~": "~",
 };
 
-export const BACK_HASH = {
+export const BACK_HASH: Record<string, string> = {
   "}": "{",
   "]": "[",
   ")": "(",

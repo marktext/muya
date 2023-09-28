@@ -369,6 +369,10 @@ export function isMouseEvent(event: Event): event is MouseEvent {
   return "x" in event;
 }
 
+export function isInputEvent(event: Event): event is InputEvent {
+  return "inputType" in event;
+}
+
 // narrowing Note type to Element.
 export function isElement(node: Node): node is Element {
   return node.nodeType === Node.ELEMENT_NODE;
