@@ -397,8 +397,8 @@ class CodeBlockContent extends Content {
     const { anchor: oldAnchor, focus: oldFocus } = this.selection;
 
     if (
-      anchor.offset !== oldAnchor.offset ||
-      focus.offset !== oldFocus.offset
+      anchor.offset !== oldAnchor?.offset ||
+      focus.offset !== oldFocus?.offset
     ) {
       const cursor = { anchor, focus, block: this, path: this.path };
 

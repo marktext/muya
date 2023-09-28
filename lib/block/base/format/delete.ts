@@ -1,6 +1,8 @@
+import Format from "./index";
+
 export default {
-  deleteHandler(event: KeyboardEvent): void {
-    const { start, end } = this.getCursor();
+  deleteHandler(this: Format, event: KeyboardEvent): void {
+    const { start, end } = this.getCursor()!;
     const { text } = this;
     // Let input handler to handle this case.
     if (start.offset !== end.offset || start.offset !== text.length) {

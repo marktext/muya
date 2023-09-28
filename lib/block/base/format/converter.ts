@@ -1,6 +1,7 @@
 import ScrollPage from "@muya/block";
 import { PARAGRAPH_STATE, THEMATIC_BREAK_STATE } from "@muya/config";
 import { IBulletListState, IOrderListState } from "../../../state/types";
+import type Format from "./index";
 
 const INLINE_UPDATE_FRAGMENTS = [
   "(?:^|\n) {0,3}([*+-] {1,4})", // Bullet list
@@ -17,7 +18,7 @@ const INLINE_UPDATE_FRAGMENTS = [
 const INLINE_UPDATE_REG = new RegExp(INLINE_UPDATE_FRAGMENTS.join("|"), "i");
 
 export default {
-  convertIfNeeded() {
+  convertIfNeeded(this: Format) {
     const { text } = this;
 
     const [
@@ -74,9 +75,9 @@ export default {
   },
 
   // Thematic Break
-  convertToThematicBreak() {
+  convertToThematicBreak(this: Format) {
     // If the block is already thematic break, no need to update.
-    if (this.parent.blockName === "thematic-break") {
+    if (this.parent?.blockName === "thematic-break") {
       return;
     }
     const { hasSelection } = this;
@@ -145,7 +146,7 @@ export default {
     }
   },
 
-  convertToList() {
+  convertToList(this: Format) {
     const { text, parent, muya, hasSelection } = this;
     const { preferLooseListItem } = muya.options;
     const matches = text.match(
@@ -206,7 +207,7 @@ export default {
     }
   },
 
-  convertToTaskList() {
+  convertToTaskList(this: Format) {
     const { text, parent, muya, hasSelection } = this;
     const { preferLooseListItem } = muya.options;
     const listItem = parent.parent;
@@ -295,7 +296,7 @@ export default {
   },
 
   // ATX Heading
-  convertToAtxHeading(atxHeading) {
+  convertToAtxHeading(this: Format, atxHeading) {
     const level = atxHeading.length;
     if (
       this.parent.blockName === "atx-heading" &&
@@ -374,7 +375,7 @@ export default {
   },
 
   // Setext Heading
-  convertToSetextHeading(setextHeading) {
+  convertToSetextHeading(this: Format, setextHeading) {
     const level = /=/.test(setextHeading) ? 2 : 1;
     if (
       this.parent.blockName === "setext-heading" &&
@@ -438,7 +439,7 @@ export default {
   },
 
   // Block Quote
-  convertToBlockQuote() {
+  convertToBlockQuote(this: Format) {
     const { text, muya, hasSelection } = this;
     const { start, end } = this.getCursor();
     const lines = text.split("\n");
@@ -515,7 +516,7 @@ export default {
   },
 
   // Indented Code Block
-  convertToIndentedCodeBlock() {
+  convertToIndentedCodeBlock(this: Format) {
     const { text, muya, hasSelection } = this;
     const lines = text.split("\n");
     const codeLines = [];
@@ -565,7 +566,7 @@ export default {
   },
 
   // Paragraph
-  convertToParagraph(force = false) {
+  convertToParagraph(this: Format, force = false) {
     if (
       !force &&
       (this.parent.blockName === "setext-heading" ||

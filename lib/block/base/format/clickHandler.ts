@@ -1,8 +1,9 @@
 import { CLASS_NAMES } from "@muya/config";
 import { getCursorReference } from "@muya/utils";
+import type Format from "./index";
 
 export default {
-  handleClickInlineRuleRender(event, inlineRuleRenderEle) {
+  handleClickInlineRuleRender(this: Format, event, inlineRuleRenderEle) {
     event.preventDefault();
     event.stopPropagation();
     const startOffset = +inlineRuleRenderEle.getAttribute("data-start");
@@ -11,7 +12,7 @@ export default {
     return this.setCursor(startOffset, endOffset, true);
   },
 
-  clickHandler(event): void {
+  clickHandler(this: Format, event: Event): void {
     // Handler click inline math and inline ruby html.
     const { target } = event;
     const inlineRuleRenderEle =

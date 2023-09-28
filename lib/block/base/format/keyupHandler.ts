@@ -1,7 +1,8 @@
 import { getCursorReference } from "@muya/utils";
+import Format from "./index";
 
 export default {
-  keyupHandler(event: KeyboardEvent): void {
+  keyupHandler(this: Format): void {
     if (this.isComposed) {
       return;
     }

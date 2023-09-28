@@ -1,8 +1,9 @@
-import Selection from "@muya/selection";
-import { tokenizer, generator } from "@muya/inlineRenderer/lexer";
 import { FORMAT_MARKER_MAP, FORMAT_TYPES } from "@muya/config";
+import { generator, tokenizer } from "@muya/inlineRenderer/lexer";
+import Selection from "@muya/selection";
 import { getImageInfo } from "@muya/utils/image";
 import logger from "@muya/utils/logger";
+import Format from "./index";
 
 const debug = logger("block.format:");
 
@@ -191,7 +192,7 @@ const checkTokenIsInlineFormat = (token) => {
 };
 
 export default {
-  getFormatsInRange({ start, end } = this.getCursor()) {
+  getFormatsInRange(this: Format, { start, end } = this.getCursor()) {
     if (!start || !end) {
       return { formats: [], tokens: [], neighbors: [] };
     }
@@ -234,7 +235,7 @@ export default {
     return { formats, tokens, neighbors };
   },
 
-  format(type, { start, end } = this.getCursor()) {
+  format(this: Format, type, { start, end } = this.getCursor()) {
     if (!start || !end) {
       return debug.warn("You need to special the range you want to format.");
     }

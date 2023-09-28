@@ -1,9 +1,10 @@
 import { CLASS_NAMES } from "@muya/config";
 import { getTextContent } from "@muya/selection/dom";
 import { getCursorReference } from "@muya/utils";
+import Format from "./index";
 
 export default {
-  inputHandler(event: InputEvent): void {
+  inputHandler(this: Format, event: InputEvent): void {
     if (this.isComposed || /historyUndo|historyRedo/.test(event.inputType)) {
       return;
     }

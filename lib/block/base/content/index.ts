@@ -1,6 +1,7 @@
 import ScrollPage from "@muya/block";
 import TreeNode from "@muya/block/base/treeNode";
-import { BACK_HASH, BRACKET_HASH, EVENT_KEYS } from "@muya/config";
+import { BACK_HASH, BRACKET_HASH, EVENT_KEYS, isFirefox } from "@muya/config";
+import { Highlight } from "@muya/inlineRenderer/types";
 import Selection from "@muya/selection";
 import { Cursor } from "@muya/selection/types";
 import { adjustOffset, diffToTextOp } from "@muya/utils";
@@ -188,7 +189,7 @@ abstract class Content extends TreeNode {
   /**
    * Get cursor if selection is in this block.
    */
-  getCursor(): Cursor | null {
+  getCursor() {
     const selection = this.selection.getSelection();
     if (!selection) {
       return null;
@@ -245,9 +246,9 @@ abstract class Content extends TreeNode {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(cursor?, highlights: Array<any> = []) {
+  update(_cursor?: Cursor, _highlights: Highlight[] = []) {
     const { text } = this;
-    this.domNode.innerHTML = `<span class="mu-syntax-text">${text}</span>`;
+    this.domNode!.innerHTML = `<span class="mu-syntax-text">${text}</span>`;
   }
 
   composeHandler = (event) => {
@@ -368,8 +369,12 @@ abstract class Content extends TreeNode {
         (event.inputType === "insertText" || event.type === "compositionend")
       ) {
         text = this.text + event.data;
-        start.offset++;
-        end.offset++;
+        // I don't know why firefox don't need to offset++
+        // For more info: https://github.com/marktext/muya/issues/130
+        if (!isFirefox) {
+          start.offset++;
+          end.offset++;
+        }
       } else if (
         this.text.length === oldStart.offset &&
         this.text[oldStart.offset - 2] === "\n" &&

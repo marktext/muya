@@ -343,8 +343,9 @@ export const punctuation = [
 ];
 // export const isInElectron = (window.process as any)?.type === "renderer";
 export const IMAGE_EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
+export const isFirefox = (navigator.userAgent.indexOf('Firefox') !== -1);
 export const isOsx =
-  window && window.navigator && /Mac/.test(window.navigator.platform);
+  window && window.navigator && /Mac/.test(window.navigator.userAgent);
 export const isWin =
   window &&
   window.navigator.userAgent &&
