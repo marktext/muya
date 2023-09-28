@@ -74,6 +74,7 @@ class Editor {
       }
 
       this.activeContentBlock = anchorBlock;
+ 
       switch (event.type) {
         case "click": {
           anchorBlock.clickHandler(event);

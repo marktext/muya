@@ -163,12 +163,12 @@ class CodeBlockContent extends Content {
     }
   }
 
-  inputHandler(event: InputEvent): void {
+  inputHandler(event: Event): void {
     if (this.isComposed) {
       return;
     }
 
-    const textContent = this.domNode!.textContent;
+    const textContent = this.domNode!.textContent!;
     const { start, end } = this.getCursor()!;
     const { needRender, text } = this.autoPair(
       event,

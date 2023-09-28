@@ -1,21 +1,28 @@
 import Format from "@muya/block/base/format";
+import Parent from "@muya/block/base/parent";
+import BulletList from "@muya/block/commonMark/bulletList";
+import ListItem from "@muya/block/commonMark/listItem";
+import OrderList from "@muya/block/commonMark/orderList";
 import Paragraph from "@muya/block/commonMark/paragraph";
+import TaskList from "@muya/block/gfm/taskList";
+import TaskListItem from "@muya/block/gfm/taskListItem";
 import ScrollPage from "@muya/block/scrollPage";
 import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
+import Muya from "@muya/index";
 import { Cursor } from "@muya/selection/types";
-import { isLengthEven, methodMixins } from "@muya/utils";
+import { isKeyboardEvent, isLengthEven, methodMixins } from "@muya/utils";
 import logger from "@muya/utils/logger";
-import { ITaskListItemState } from "../../../state/types";
+import { IBlockQuoteState, ITaskListItemState } from "../../../state/types";
 import backspaceHandler from "./backspace";
 import tabHandler from "./tab";
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
-const checkQuickInsert = (text) => /^[\/、]\S*$/.test(text);
-const checkShowPlaceholder = (text) => /^[\/、]$/.test(text);
+const checkQuickInsert = (text: string) => /^[/、]\S*$/.test(text);
+const checkShowPlaceholder = (text: string) => /^[/、]$/.test(text);
 
-const debug = logger("paragraph:content");
+const debug = logger("paragraphContent");
 
-const parseTableHeader = (text) => {
+const parseTableHeader = (text: string) => {
   const rowHeader = [];
   const len = text.length;
   let i;
@@ -44,17 +51,17 @@ interface ParagraphContent extends BackspaceHandler {}
 
 @methodMixins(backspaceHandler, tabHandler)
 class ParagraphContent extends Format {
-  public parent: Paragraph;
+  public parent: Paragraph | null = null;
 
   static blockName = "paragraph.content";
 
-  static create(muya, text) {
+  static create(muya: Muya, text: string) {
     const content = new ParagraphContent(muya, text);
 
     return content;
   }
 
-  constructor(muya, text) {
+  constructor(muya: Muya, text: string) {
     super(muya, text);
     this.classList = [...this.classList, "mu-paragraph-content"];
     this.attributes["empty-hint"] = muya.i18n.t("Type / to insert...");
@@ -73,7 +80,7 @@ class ParagraphContent extends Format {
     }
   }
 
-  inputHandler(event) {
+  inputHandler(event: Event) {
     super.inputHandler(event);
     const { text, domNode } = this;
     const { eventCenter, i18n } = this.muya;
@@ -92,9 +99,9 @@ class ParagraphContent extends Format {
     const needToShowQuickInsert = checkQuickInsert(text);
     const needToShowPlaceholder = checkShowPlaceholder(text);
     if (needToShowPlaceholder) {
-      domNode.setAttribute("placeholder", i18n.t("Search keyword..."));
+      domNode!.setAttribute("placeholder", i18n.t("Search keyword..."));
     } else {
-      domNode.removeAttribute("placeholder");
+      domNode!.removeAttribute("placeholder");
     }
 
     eventCenter.emit("muya-quick-insert", {
@@ -104,7 +111,7 @@ class ParagraphContent extends Format {
     });
   }
 
-  enterConvert(event) {
+  enterConvert(event: Event) {
     event.preventDefault();
     event.stopPropagation();
     const TABLE_BLOCK_REG = /^\|.*?(\\*)\|.*?(\\*)\|/;
@@ -129,7 +136,7 @@ class ParagraphContent extends Format {
         this.muya,
         state
       );
-      this.parent.replaceWith(mathBlock);
+      this.parent!.replaceWith(mathBlock);
       mathBlock.firstContentInDescendant().setCursor(0, 0);
     } else if (codeBlockToken) {
       // Convert to code block
@@ -147,7 +154,7 @@ class ParagraphContent extends Format {
         state
       );
 
-      this.parent.replaceWith(codeBlock);
+      this.parent!.replaceWith(codeBlock);
 
       codeBlock.lastContentInDescendant().setCursor(0, 0);
     } else if (
@@ -161,14 +168,14 @@ class ParagraphContent extends Format {
         tableHeader
       );
 
-      this.parent.replaceWith(tableBlock);
+      this.parent!.replaceWith(tableBlock);
 
       // Set cursor at the first cell of second row.
       tableBlock.firstChild
         .find(1)
         .firstContentInDescendant()
         .setCursor(0, 0, true);
-    } else if (VOID_HTML_TAGS.indexOf(tagName as any) === -1 && tagName) {
+    } else if (tagName && VOID_HTML_TAGS.every(tag => tag !== tagName)) {
       const state = {
         name: "html-block",
         text: `<${tagName}>\n\n</${tagName}>`,
@@ -177,7 +184,7 @@ class ParagraphContent extends Format {
         this.muya,
         state
       );
-      this.parent.replaceWith(htmlBlock);
+      this.parent!.replaceWith(htmlBlock);
       const offset = tagName.length + 3;
       htmlBlock.firstContentInDescendant().setCursor(offset, offset);
     } else {
@@ -185,7 +192,7 @@ class ParagraphContent extends Format {
     }
   }
 
-  enterInBlockQuote(event) {
+  enterInBlockQuote(event: Event) {
     const { text, parent } = this;
     if (text.length !== 0) {
       return super.enterHandler(event);
@@ -194,32 +201,32 @@ class ParagraphContent extends Format {
     event.preventDefault();
     event.stopPropagation();
 
-    const newNode = parent.clone() as Paragraph;
-    const blockQuote = parent.parent;
+    const newNode = parent!.clone() as Paragraph;
+    const blockQuote = parent!.parent;
 
     switch (true) {
-      case parent.isOnlyChild():
-        blockQuote.parent.insertBefore(newNode, blockQuote);
-        blockQuote.remove();
+      case parent!.isOnlyChild():
+        blockQuote!.parent!.insertBefore(newNode, blockQuote);
+        blockQuote!.remove();
         break;
 
-      case parent.isFirstChild():
-        blockQuote.parent.insertBefore(newNode, blockQuote);
-        parent.remove();
+      case parent!.isFirstChild():
+        blockQuote!.parent!.insertBefore(newNode, blockQuote);
+        parent!.remove();
         break;
 
-      case parent.isLastChild():
-        blockQuote.parent.insertAfter(newNode, blockQuote);
-        parent.remove();
+      case parent!.isLastChild():
+        blockQuote!.parent!.insertAfter(newNode, blockQuote);
+        parent!.remove();
         break;
 
       default: {
-        const newBlockState = {
+        const newBlockState: IBlockQuoteState = {
           name: "block-quote",
           children: [],
         };
-        const offset = blockQuote.offset(parent);
-        blockQuote.forEachAt(offset + 1, undefined, (node) => {
+        const offset = blockQuote!.offset(parent);
+        blockQuote!.forEachAt(offset + 1, undefined, (node: Parent) => {
           newBlockState.children.push(node.getState());
           node.remove();
         });
@@ -227,9 +234,9 @@ class ParagraphContent extends Format {
           this.muya,
           newBlockState
         );
-        blockQuote.parent.insertAfter(newNode, blockQuote);
-        blockQuote.parent.insertAfter(newBlockQuote, newNode);
-        parent.remove();
+        blockQuote!.parent!.insertAfter(newNode, blockQuote);
+        blockQuote!.parent!.insertAfter(newBlockQuote, newNode);
+        parent!.remove();
         break;
       }
     }
@@ -237,50 +244,51 @@ class ParagraphContent extends Format {
     (newNode.children.head as ParagraphContent).setCursor(0, 0, true);
   }
 
-  enterInListItem(event) {
+  enterInListItem(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
     const { text, parent, muya } = this;
-    const { start, end } = this.getCursor();
-    const listItem = parent.parent;
-    const list = listItem.parent;
+    const { start, end } = this.getCursor()!;
+    const listItem = parent!.parent!;
+    const list = listItem!.parent! as BulletList | OrderList | TaskList;
 
     if (text.length === 0) {
-      if (parent.isOnlyChild()) {
+      if (parent!.isOnlyChild()) {
         switch (true) {
           case listItem.isOnlyChild(): {
-            const newParagraph = parent.clone() as Paragraph;
+            const newParagraph = parent!.clone() as Paragraph;
             list.replaceWith(newParagraph);
             newParagraph.firstContentInDescendant().setCursor(0, 0);
             break;
           }
 
           case listItem.isFirstChild(): {
-            const newParagraph = parent.clone() as Paragraph;
+            const newParagraph = parent!.clone() as Paragraph;
             listItem.remove();
-            list.parent.insertBefore(newParagraph, list);
+            list.parent!.insertBefore(newParagraph, list);
             newParagraph.firstContentInDescendant().setCursor(0, 0);
             break;
           }
 
           case listItem.isLastChild(): {
-            const newParagraph = parent.clone() as Paragraph;
+            const newParagraph = parent!.clone() as Paragraph;
             listItem.remove();
-            list.parent.insertAfter(newParagraph, list);
+            list.parent!.insertAfter(newParagraph, list);
             newParagraph.firstContentInDescendant().setCursor(0, 0);
             break;
           }
 
           default: {
-            const newParagraph = parent.clone() as Paragraph;
+            const newParagraph = parent!.clone() as Paragraph;
             const newListState = {
               name: list.blockName,
-              meta: { ...(list as any).meta },
-              children: [],
+              meta: { ...list.meta },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              children: [] as any,
             };
             const offset = list.offset(listItem);
-            list.forEachAt(offset + 1, undefined, (node) => {
+            list.forEachAt(offset + 1, undefined, (node: TaskListItem | ListItem) => {
               newListState.children.push(node.getState());
               node.remove();
             });
@@ -288,8 +296,8 @@ class ParagraphContent extends Format {
               this.muya,
               newListState
             );
-            list.parent.insertAfter(newParagraph, list);
-            list.parent.insertAfter(newList, newParagraph);
+            list.parent!.insertAfter(newParagraph, list);
+            list.parent!.insertAfter(newList, newParagraph);
             listItem.remove();
             newParagraph.firstContentInDescendant().setCursor(0, 0);
             break;
@@ -297,16 +305,17 @@ class ParagraphContent extends Format {
         }
       } else {
         const newListItemState = {
-          name: listItem.blockName as any,
-          children: [],
+          name: listItem.blockName,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          children: [] as any,
         };
 
         if (listItem.blockName === "task-list-item") {
-          (newListItemState as ITaskListItemState).meta = { checked: false };
+          (newListItemState as unknown as ITaskListItemState).meta = { checked: false };
         }
 
         const offset = listItem.offset(parent);
-        listItem.forEachAt(offset, undefined, (node) => {
+        listItem.forEachAt(offset, undefined, (node: TaskListItem | ListItem) => {
           newListItemState.children.push(node.getState());
           node.remove();
         });
@@ -320,7 +329,7 @@ class ParagraphContent extends Format {
         newListItem.firstContentInDescendant().setCursor(0, 0);
       }
     } else {
-      if (parent.isOnlyChild()) {
+      if (parent!.isOnlyChild()) {
         this.text = text.substring(0, start.offset);
         const newNodeState = {
           name: listItem.blockName,
@@ -353,7 +362,10 @@ class ParagraphContent extends Format {
     }
   }
 
-  enterHandler(event) {
+  enterHandler(event: Event) {
+    if (!isKeyboardEvent(event)) {
+      return;
+    }
     if (event.shiftKey) {
       return this.shiftEnterHandler(event);
     }
