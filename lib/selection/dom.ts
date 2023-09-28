@@ -10,7 +10,7 @@ export const isContentDOM = (element: HTMLElement) => {
   );
 };
 
-export const findContentDOM = (node: Node | null) => {
+export const findContentDOM = (node: Node | null | undefined) => {
   if (!node) {
     return null;
   }
@@ -36,7 +36,7 @@ export const compareParagraphsOrder = (
 };
 
 export const getTextContent = (node: Node, blackList: string[] = []) => {
-  if (node.nodeType === 3 || blackList.length === 0) {
+  if (node.nodeType === Node.TEXT_NODE || blackList.length === 0) {
     return node.textContent!;
   }
 
@@ -50,7 +50,7 @@ export const getTextContent = (node: Node, blackList: string[] = []) => {
     return text;
   }
 
-  if (node.nodeType === 3) {
+  if (node.nodeType === Node.TEXT_NODE) {
     text += node.textContent;
   } else if (
     isElement(node) &&
@@ -65,9 +65,9 @@ export const getTextContent = (node: Node, blackList: string[] = []) => {
     const childNodes = imageContainer!.childNodes;
     if (childNodes.length && hasImg) {
       for (const child of childNodes) {
-        if (child.nodeType === 1 && child.nodeName === "IMG") {
+        if (child.nodeType === Node.ELEMENT_NODE && child.nodeName === "IMG") {
           text += raw;
-        } else if (child.nodeType === 3) {
+        } else if (child.nodeType === Node.TEXT_NODE) {
           text += child.textContent;
         }
       }

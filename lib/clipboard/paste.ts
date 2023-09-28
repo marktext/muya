@@ -26,7 +26,11 @@ class Paste extends Base {
       trimUnnecessaryCodeBlockEmptyLines,
       frontMatter,
     } = muya.options;
-    const { isSelectionInSameBlock, anchorBlock } = this.selection.getSelection();
+    const selection = this.selection.getSelection();
+    if (!selection) {
+      return;
+    }
+    const { isSelectionInSameBlock, anchorBlock } = selection;
 
     if (!isSelectionInSameBlock) {
       this.cutHandler();

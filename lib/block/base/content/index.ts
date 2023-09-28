@@ -87,14 +87,14 @@ abstract class Content extends TreeNode {
     // Do nothing.
   }
 
-  tabHandler(event: KeyboardEvent): void {
+  tabHandler(event: Event): void {
     // Do nothing.
   }
-  keyupHandler(event: KeyboardEvent): void {
+  keyupHandler(event: Event): void {
     // Do nothing.
   }
 
-  inputHandler(event: InputEvent): void {
+  inputHandler(event: Event): void {
     // Do nothing.
   }
   backspaceHandler(event: Event): void {
@@ -104,7 +104,7 @@ abstract class Content extends TreeNode {
     // Do nothing.
   }
 
-  deleteHandler(event: KeyboardEvent): void {
+  deleteHandler(event: Event): void {
     const { start, end } = this.getCursor();
     const { text } = this;
     // Only `languageInputContent` and `codeBlockContent` will call this method.
@@ -188,7 +188,11 @@ abstract class Content extends TreeNode {
    * Get cursor if selection is in this block.
    */
   getCursor() {
-    const { selection } = this;
+    const selection = this.selection.getSelection();
+    if (!selection) {
+      return null;
+    }
+
     const {
       anchor,
       focus,
@@ -196,7 +200,7 @@ abstract class Content extends TreeNode {
       focusBlock,
       isCollapsed,
       isSelectionInSameBlock,
-    } = selection.getSelection();
+    } = selection;
 
     if (anchorBlock !== this || focusBlock !== this) {
       return null;

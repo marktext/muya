@@ -1,14 +1,14 @@
-import BaseFloat from "../baseFloat";
-import { patch, h } from "@muya/utils/snabbdom";
-import icons, { FormatToolIcon } from "./config";
 import { isKeyboardEvent } from "@muya/utils";
+import { h, patch } from "@muya/utils/snabbdom";
+import BaseFloat from "../baseFloat";
+import icons, { FormatToolIcon } from "./config";
 
-import "./index.css";
-import { VNode } from "snabbdom";
-import { Token } from "@muya/inlineRenderer/types";
 import Format from "@muya/block/base/format";
 import Muya from "@muya/index";
+import { Token } from "@muya/inlineRenderer/types";
+import { VNode } from "snabbdom";
 import type { BaseOptions } from "../types";
+import "./index.css";
 
 const defaultOptions = {
   placement: "top" as const,
@@ -78,8 +78,12 @@ class FormatPicker extends BaseFloat {
       }
 
       const { key, shiftKey, metaKey, ctrlKey } = event;
-      const { anchorBlock, isSelectionInSameBlock } =
-        editor.selection.getSelection();
+      const selection = editor.selection.getSelection();
+      if (!selection) {
+        return;
+      }
+      const { anchorBlock, isSelectionInSameBlock } = selection;
+
       if (isSelectionInSameBlock) {
         if (!(anchorBlock instanceof Format) || (!metaKey && !ctrlKey)) {
           return;

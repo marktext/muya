@@ -6,16 +6,16 @@ export type NodeOffset = {
 
 // TODO: @JOCS, merge Cursor and TSelection into one typescript type???
 export type Cursor = {
-  anchor?: NodeOffset;
-  focus?: NodeOffset;
-  start?: NodeOffset;
-  end?: NodeOffset;
+  anchor?: NodeOffset | null;
+  focus?: NodeOffset | null;
+  start?: NodeOffset | null;
+  end?: NodeOffset | null;
   block?: ContentBlock;
-  path?: Array<string | number>;
+  path?: (string | number)[];
   anchorBlock?: ContentBlock;
-  anchorPath?: Array<string | number>;
+  anchorPath?: (string | number)[];
   focusBlock?: ContentBlock;
-  focusPath?: Array<string | number>;
+  focusPath?: (string | number)[];
   isCollapsed?: boolean;
   isSelectionInSameBlock?: boolean;
 };
@@ -24,9 +24,9 @@ export type TSelection = {
   anchor: NodeOffset;
   focus: NodeOffset;
   anchorBlock: ContentBlock;
-  anchorPath: Array<string | number>;
+  anchorPath: (string | number)[];
   focusBlock: ContentBlock;
-  focusPath: Array<string | number>;
+  focusPath: (string | number)[];
   isCollapsed: boolean;
   isSelectionInSameBlock: boolean;
   direction: string;
