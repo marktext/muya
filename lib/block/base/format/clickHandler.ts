@@ -23,6 +23,7 @@ export default {
     }
 
     requestAnimationFrame(() => {
+      // TODO: @JOCS, remove use this.selection directly.
       if (event.shiftKey && this.selection.anchorBlock !== this) {
         // TODO: handle select multiple paragraphs
         return;
@@ -39,7 +40,7 @@ export default {
         path: this.path,
       });
 
-      // TODO: The codes bellow maybe is wrong?
+      // TODO: The codes bellow maybe is wrong? and remove use this.selection directly
       const needRender =
         this.selection.anchorBlock === this
           ? this.checkNeedRender(cursor) || this.checkNeedRender()

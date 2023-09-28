@@ -393,6 +393,7 @@ class CodeBlockContent extends Content {
     }
 
     const { anchor, focus } = this.getCursor()!;
+    // TODO: @JOCS remove use this.selection directly
     const { anchor: oldAnchor, focus: oldFocus } = this.selection;
 
     if (

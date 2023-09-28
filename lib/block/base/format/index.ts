@@ -1,17 +1,17 @@
 import Content from "@muya/block/base/content";
-import { methodMixins, conflict } from "@muya/utils";
+import { tokenizer } from "@muya/inlineRenderer/lexer";
+import { ImageToken } from "@muya/inlineRenderer/types";
+import { Cursor } from "@muya/selection/types";
+import { conflict, methodMixins } from "@muya/utils";
 import { correctImageSrc } from "@muya/utils/image";
-import formatMethods from "./format";
+import backspaceHandler from "./backspace";
 import clickHandler from "./clickHandler";
+import converter from "./converter";
+import deleteHandler from "./delete";
 import enterHandler from "./enterHandler";
+import formatMethods from "./format";
 import inputHandler from "./inputHandler";
 import keyupHandler from "./keyupHandler";
-import backspaceHandler from "./backspace";
-import deleteHandler from "./delete";
-import converter from "./converter";
-import { tokenizer } from "@muya/inlineRenderer/lexer";
-import { Cursor } from "../../../selection/types";
-import { ImageToken } from "@muya/inlineRenderer/types";
 
 type FormatMethods = typeof formatMethods;
 type ClickHandler = typeof clickHandler;
@@ -117,7 +117,7 @@ abstract class Format extends Content {
 
     return false;
   }
-
+  // TODO: @JOCS remove use this.selection directly
   checkNeedRender(cursor: Cursor = this.selection) {
     const { labels } = this.inlineRenderer;
     const { text } = this;
@@ -163,6 +163,7 @@ abstract class Format extends Content {
    * @param {string} text emoji text
    */
   setEmoji(text) {
+    // TODO: @JOCS remove use this.selection directly
     const { anchor } = this.selection;
     const editEmoji = this.checkCursorInTokenType(
       this.text,

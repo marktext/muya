@@ -2,6 +2,7 @@ import ScrollPage from "@muya/block";
 import TreeNode from "@muya/block/base/treeNode";
 import { BACK_HASH, BRACKET_HASH, EVENT_KEYS } from "@muya/config";
 import Selection from "@muya/selection";
+import { Cursor } from "@muya/selection/types";
 import { adjustOffset, diffToTextOp } from "@muya/utils";
 import diff from "fast-diff";
 
@@ -187,7 +188,7 @@ abstract class Content extends TreeNode {
   /**
    * Get cursor if selection is in this block.
    */
-  getCursor() {
+  getCursor(): Cursor | null {
     const selection = this.selection.getSelection();
     if (!selection) {
       return null;
@@ -199,7 +200,9 @@ abstract class Content extends TreeNode {
       anchorBlock,
       focusBlock,
       isCollapsed,
-      isSelectionInSameBlock,
+      isSelectionInSameBlock, // This is always be true.
+      direction,
+      type,
     } = selection;
 
     if (anchorBlock !== this || focusBlock !== this) {
@@ -213,6 +216,8 @@ abstract class Content extends TreeNode {
       focus,
       isCollapsed,
       isSelectionInSameBlock,
+      direction,
+      type,
     };
   }
 
@@ -224,10 +229,10 @@ abstract class Content extends TreeNode {
    */
   setCursor(begin: number, end: number, needUpdate = false) {
     const cursor = {
+      anchor: { offset: begin },
+      focus: { offset: end },
       block: this,
       path: this.path,
-      start: { offset: begin },
-      end: { offset: end },
     };
 
     if (needUpdate) {
@@ -268,6 +273,7 @@ abstract class Content extends TreeNode {
     isInInlineCode = false,
     type = "format"
   ) {
+    // TODO: @JOCS, remove use this selection directly.
     const { anchor, focus } = this.selection;
     const oldStart = anchor.offset <= focus.offset ? anchor : focus;
 

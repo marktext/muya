@@ -95,8 +95,8 @@ export const getOffsetOfParagraph = (node: Node, paragraph: HTMLElement): number
     preSibling = preSibling.previousSibling;
     if (preSibling) {
       offset += getTextContent(preSibling, [
-        "CLASS_NAMES.MU_MATH_RENDER",
-        "CLASS_NAMES.MU_RUBY_RENDER",
+        CLASS_NAMES.MU_MATH_RENDER,
+        CLASS_NAMES.MU_RUBY_RENDER,
       ]).length;
     }
   } while (preSibling);

@@ -441,6 +441,7 @@ class TableDragBar extends BaseFloat {
 
     // Find the new cursor position in table.
     if (table.active) {
+      // TODO: @JOCS remove use this.selection directly
       const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
         this.muya.editor.selection ?? {};
       const { rowOffset, columnOffset } = anchorBlock.closestBlock(

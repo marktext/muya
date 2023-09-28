@@ -554,8 +554,6 @@ class Selection {
   setSelection({
     anchor,
     focus,
-    start,
-    end,
     block,
     path,
     anchorBlock,
@@ -563,8 +561,8 @@ class Selection {
     focusBlock,
     focusPath,
   }: Cursor) {
-    this.anchor = anchor ?? start ?? null;
-    this.focus = focus ?? end ?? null;
+    this.anchor = anchor ?? null;
+    this.focus = focus ?? null;
     this.anchorBlock = anchorBlock ?? block ?? null;
     this.anchorPath = anchorPath ?? path ?? [];
     this.focusBlock = focusBlock ?? block ?? null;
