@@ -2,6 +2,7 @@ import ScrollPage from "@muya/block";
 import Content from "@muya/block/base/content";
 import Format from "@muya/block/base/format";
 import Clipboard from "@muya/clipboard";
+import { BLOCK_DOM_PROPERTY, isFirefox } from "@muya/config";
 import History from "@muya/history";
 import InlineRenderer from "@muya/inlineRenderer";
 import Search from "@muya/search";
@@ -67,6 +68,20 @@ class Editor {
     const eventHandler = (event: Event) => {
       const { anchorBlock, isSelectionInSameBlock } =
         this.selection.getSelection() ?? {};
+      // Fix issue that language input can not get focus when it's empty(Firefox only)
+      if (
+        event.type === "click" &&
+        isFirefox &&
+        (event.target as HTMLElement).textContent === "" &&
+        (event.target as HTMLElement).classList.contains("mu-language-input")
+      ) {
+        ((event.target as Element)[BLOCK_DOM_PROPERTY] as Content)?.setCursor(
+          0,
+          0,
+          true
+        );
+        return;
+      }
 
       if (!isSelectionInSameBlock || !anchorBlock) {
         this.activeContentBlock = null;
@@ -74,7 +89,7 @@ class Editor {
       }
 
       this.activeContentBlock = anchorBlock;
- 
+
       switch (event.type) {
         case "click": {
           anchorBlock.clickHandler(event);

@@ -61,9 +61,17 @@ class LangInputContent extends Content {
     parent!.lastContentInDescendant().setCursor(0, 0);
   }
 
-  backspaceHandler() {
-    const { start } = this.getCursor()!;
-    if (start.offset === 0) {
+  backspaceHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
+    const { text } = this;
+    // The next if statement is used to fix Firefox compatibility issues
+    if (start.offset === 1 && end.offset === 1 && text.length === 1) {
+      event.preventDefault();
+      this.text = "";
+      this.setCursor(0, 0, true);
+    }
+    if (start.offset === 0 && end.offset === 0) {
+      event.preventDefault();
       const cursorBlock = this.previousContentInContext();
       // The cursorBlock will be null, if the code block is the first block in doc.
       if (cursorBlock) {
