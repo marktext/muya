@@ -1,9 +1,9 @@
 import LinkedNode from "@muya/block/base/linkedList/linkedNode";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
+import type { TState } from "@muya/state/types";
 import { createDomNode } from "@muya/utils/dom";
-import type { TState } from "../../state/types";
-import type { Attributes, Datasets } from "../../utils/types";
+import type { Attributes, Datasets } from "@muya/utils/types";
 import Content from "./content";
 import Parent from "./parent";
 
@@ -17,11 +17,11 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
   public parent: Parent | null = null;
   public domNode: HTMLElement | null = null;
   public tagName: string = "";
-  public classList: Array<string> = [];
+  public classList: string[] = [];
   public attributes: Attributes = {};
   public datasets: Datasets = {};
 
-  abstract get path(): Array<number | string>;
+  abstract get path(): (number | string)[];
   abstract get isContainerBlock(): boolean;
 
   static blockName = "tree.node";

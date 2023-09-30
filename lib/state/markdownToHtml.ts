@@ -1,10 +1,10 @@
+import { EXPORT_DOMPURIFY_CONFIG } from "@muya/config";
+import Muya from "@muya/index";
+import { sanitize, unescapeHTML } from "@muya/utils";
+import loadRenderer from "@muya/utils/diagram";
 import { getHighlightHtml } from "@muya/utils/marked";
-import { EXPORT_DOMPURIFY_CONFIG } from "../config";
-import Muya from "../index";
-import { sanitize, unescapeHTML } from "../utils";
-import loadRenderer from "../utils/diagram";
 
-import exportStyle from "../assets/styles/exportStyle.css?inline";
+import exportStyle from "@muya/assets/styles/exportStyle.css?inline";
 
 class MarkdownToHtml {
   private exportContainer: HTMLDivElement | null = null;

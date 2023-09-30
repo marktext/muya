@@ -9,8 +9,9 @@ import Content from "./content/index";
 const debug = logger("parent:");
 
 abstract class Parent extends TreeNode {
-  public attachments: LinkedList<Parent>;
-  public children: LinkedList<Parent | Content>;
+  // Used to store icon, checkbox(span) etc. these blocks are not in children properties in json state.
+  public attachments: LinkedList<Parent> = new LinkedList();
+  public children: LinkedList<Parent | Content> = new LinkedList();
   public prev: Parent | null;
   public next: Parent | null;
 
@@ -45,9 +46,6 @@ abstract class Parent extends TreeNode {
 
   constructor(muya) {
     super(muya);
-    // Used to store icon, checkbox etc. these blocks are not in children properties in json state.
-    this.attachments = new LinkedList();
-    this.children = new LinkedList();
   }
 
   abstract getState(): TState;
