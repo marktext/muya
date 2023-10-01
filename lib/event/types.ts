@@ -10,8 +10,8 @@ export interface Event {
 }
 
 export interface Listeners {
-  [key: string]: Array<{
+  [key: string]: {
     listener: Listener;
     once: boolean;
-  }>;
+  }[];
 }

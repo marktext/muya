@@ -15,7 +15,7 @@ class LinkedList<T extends LinkedNode<T>> {
     }
   }
 
-  append(...nodes: Array<T>) {
+  append(...nodes: T[]) {
     for (const node of nodes) {
       this.insertBefore(node);
     }
@@ -103,8 +103,8 @@ class LinkedList<T extends LinkedNode<T>> {
     });
   }
 
-  map<M>(callback: (cur: T, i: number) => M): Array<M> {
-    return this.reduce((acc: Array<M>, node: T, i: number) => {
+  map<M>(callback: (cur: T, i: number) => M): M[] {
+    return this.reduce((acc: M[], node: T, i: number) => {
       return [...acc, callback(node, i)];
     }, []);
   }

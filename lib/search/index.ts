@@ -1,13 +1,13 @@
-import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
-import { matchString, buildRegexValue } from "@muya/utils/search";
-import Muya from "@muya/index";
-import { IMatch } from "./types";
 import Content from "@muya/block/base/content";
+import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
+import Muya from "@muya/index";
+import { buildRegexValue, matchString } from "@muya/utils/search";
 import { Highlight } from "../inlineRenderer/types";
+import { IMatch } from "./types";
 
 class Search {
   public value: string = "";
-  public matches: Array<IMatch> = [];
+  public matches: IMatch[] = [];
   public index: number = -1;
 
   get scrollPage() {
@@ -20,7 +20,7 @@ class Search {
     const { matches, index } = this;
     let i;
     const len = matches.length;
-    const matchesMap = new Map<Content, Array<Highlight>>();
+    const matchesMap = new Map<Content, Highlight[]>();
 
     for (i = 0; i < len; i++) {
       const { block, start, end } = matches[i];
@@ -51,7 +51,7 @@ class Search {
     }
   }
 
-  private innerReplace(matches: Array<IMatch>, value: string) {
+  private innerReplace(matches: IMatch[], value: string) {
     if (!matches.length) {
       return;
     }
@@ -144,7 +144,7 @@ class Search {
    * @param {object} opts
    */
   search(value: string, opts = {}) {
-    const matches: Array<IMatch> = [];
+    const matches: IMatch[] = [];
     const options = Object.assign({}, DEFAULT_SEARCH_OPTIONS, opts);
     const { highlightIndex } = options;
     let index = -1;

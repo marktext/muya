@@ -27,7 +27,7 @@ class JSONState {
     return json1.type.transform(op, otherOp, type);
   }
 
-  public operationCache: Array<JSONOpList> = [];
+  public operationCache: JSONOpList[] = [];
   private isGoing: boolean = false;
   private state: TState[] = [];
 

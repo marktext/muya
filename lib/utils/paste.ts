@@ -1,5 +1,5 @@
+import { PARAGRAPH_TYPES, PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
 import { sanitize } from "@muya/utils";
-import { PREVIEW_DOMPURIFY_CONFIG, PARAGRAPH_TYPES } from "@muya/config";
 
 const TIMEOUT = 1500;
 
@@ -86,7 +86,7 @@ export const normalizePastedHTML = async function (html: string) {
   }
 
   // Prevent it parse into a link if copy a url.
-  const links: Array<HTMLElement> = Array.from(
+  const links: HTMLElement[] = Array.from(
     tempWrapper.querySelectorAll("a")
   );
 

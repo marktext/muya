@@ -9,27 +9,27 @@
  * Pandoc Markdown: https://pandoc.org/MANUAL.html#pandocs-markdown
  * The output markdown needs to obey the standards of these Spec.
  */
-import logger from "@muya/utils/logger";
 import { deepClone } from "@muya/utils";
+import logger from "@muya/utils/logger";
 
 import type {
-  TState,
-  IBulletListState,
-  IOrderListState,
-  IFrontmatterState,
-  IParagraphState,
   IAtxHeadingState,
-  ISetextHeadingState,
-  ICodeBlockState,
-  IHtmlBlockState,
-  IMathBlockState,
-  IDiagramState,
   IBlockQuoteState,
-  ITableState,
-  ITaskListState,
-  ITaskListItemState,
+  IBulletListState,
+  ICodeBlockState,
+  IDiagramState,
+  IFrontmatterState,
+  IHtmlBlockState,
   IListItemState,
+  IMathBlockState,
+  IOrderListState,
+  IParagraphState,
+  ISetextHeadingState,
+  ITableState,
+  ITaskListItemState,
+  ITaskListState,
   IThematicBreakState,
+  TState,
 } from "./types";
 
 const debug = logger("export markdown: ");
@@ -42,7 +42,7 @@ export interface IExportMarkdownOptions {
 }
 
 export default class ExportMarkdown {
-  private listType: Array<any>;
+  private listType: any[];
   private isLooseParentList: boolean;
   private listIndentation: string;
   private listIndentationCount: number;

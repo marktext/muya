@@ -38,9 +38,9 @@ class Muya {
   public editor: Editor;
   public ui: Ui;
   public i18n: I18n;
-  public on: (event: string, listener: (...args: Array<any>) => void) => void;
-  public off: (event: string, listener: (...args: Array<any>) => void) => void;
-  public once: (event: string, listener: (...args: Array<any>) => void) => void;
+  public on: (event: string, listener: (...args: any[]) => void) => void;
+  public off: (event: string, listener: (...args: any[]) => void) => void;
+  public once: (event: string, listener: (...args: any[]) => void) => void;
   public getState: () => TState[];
   public getMarkdown: () => string;
   public setContent: (content: string | TState[]) => void;

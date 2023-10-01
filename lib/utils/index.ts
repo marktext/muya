@@ -181,7 +181,7 @@ export const wordCount = (markdown: string) => {
  * also translate `_` to `-`]
  */
 export const genUpper2LowerKeyHash = (
-  keys: Array<string>
+  keys: string[]
 ): Record<string, string> => {
   return keys.reduce((acc, key) => {
     const value = key.toLowerCase().replace(/_/g, "-");
@@ -194,7 +194,7 @@ export const genUpper2LowerKeyHash = (
  * generate constants map, the value is the key.
  */
 export const generateKeyHash = (
-  keys: Array<string>
+  keys: string[]
 ): Record<string, string> => {
   return keys.reduce((acc, key) => {
     return Object.assign(acc, { [key]: key });
@@ -240,7 +240,7 @@ function visibleLength(str: string) {
  * transform diff to text-unicode op
  * @param {array} diffs
  */
-export const diffToTextOp = (diffs: Array<Diff>) => {
+export const diffToTextOp = (diffs: Diff[]) => {
   const op = [];
 
   for (const diff of diffs) {

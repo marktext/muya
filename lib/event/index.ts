@@ -1,4 +1,4 @@
-import type { Event, Listeners, Listener } from "./types";
+import type { Event, Listener, Listeners } from "./types";
 
 // TODO: @Jocs use the same name function in utils.
 const uniqueIdGenerator = function* () {
@@ -12,7 +12,7 @@ const PREFIX = "event-";
 const idIterator = uniqueIdGenerator();
 
 class EventCenter {
-  public events: Array<Event> = [];
+  public events: Event[] = [];
   public listeners: Listeners = {};
 
   get eventId() {

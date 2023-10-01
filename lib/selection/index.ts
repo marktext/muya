@@ -138,9 +138,9 @@ class Selection {
   }
 
   public doc: Document = document;
-  public anchorPath: Array<string | number> = [];
+  public anchorPath: (string | number)[] = [];
   public anchorBlock: ContentBlock | null = null;
-  public focusPath: Array<string | number> = [];
+  public focusPath: (string | number)[] = [];
   public focusBlock: ContentBlock | null = null;
   public anchor: NodeOffset | null = null;
   public focus: NodeOffset | null = null;

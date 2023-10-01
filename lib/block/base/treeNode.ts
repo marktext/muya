@@ -196,7 +196,7 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
   }
 
   farthestBlock(blockName: string): TreeNode | null {
-    const results: Array<TreeNode> = [];
+    const results: TreeNode[] = [];
     if (this.blockName === blockName) {
       results.push(this);
     }

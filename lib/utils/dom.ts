@@ -1,7 +1,7 @@
 import type { Attributes, Datasets } from "./types";
 
 type TCreateDomOptions = {
-  classList: Array<string>;
+  classList: string[];
   attributes: Attributes;
   datasets: Datasets;
 };

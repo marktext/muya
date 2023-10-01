@@ -61,7 +61,7 @@ export interface IOrderListState {
     loose: boolean;
     delimiter: "." | ")";
   };
-  children: Array<IListItemState>;
+  children: IListItemState[];
 }
 
 export interface IBulletListState {
@@ -70,12 +70,12 @@ export interface IBulletListState {
     marker: "-" | "+" | "*";
     loose: boolean;
   };
-  children: Array<IListItemState>;
+  children: IListItemState[];
 }
 
 export interface ITableRowState {
   name: "table.row";
-  children: Array<ITableCellState>;
+  children: ITableCellState[];
 }
 
 export interface ITableCellMeta {
@@ -90,7 +90,7 @@ export interface ITableCellState {
 
 export interface ITableState {
   name: "table";
-  children: Array<ITableRowState>;
+  children: ITableRowState[];
 }
 
 export interface ITaskListItemMeta {
@@ -111,7 +111,7 @@ export interface ITaskListMeta {
 export interface ITaskListState {
   name: "task-list";
   meta: ITaskListMeta;
-  children: Array<ITaskListItemState>;
+  children: ITaskListItemState[];
 }
 
 export interface IMathMeta {

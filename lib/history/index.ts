@@ -16,8 +16,8 @@ interface IOperation {
 }
 
 interface Stack {
-  undo: Array<IOperation>;
-  redo: Array<IOperation>;
+  undo: IOperation[];
+  redo: IOperation[];
 }
 
 type HistoryAction = "undo" | "redo";
