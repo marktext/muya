@@ -4,6 +4,7 @@ import Muya from "@muya/index";
 import type { TState } from "@muya/state/types";
 import { createDomNode } from "@muya/utils/dom";
 import type { Attributes, Datasets } from "@muya/utils/types";
+import type { Path } from "../types";
 import Content from "./content";
 import Parent from "./parent";
 
@@ -21,7 +22,7 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
   public attributes: Attributes = {};
   public datasets: Datasets = {};
 
-  abstract get path(): (number | string)[];
+  abstract get path(): Path;
   abstract get isContainerBlock(): boolean;
 
   static blockName = "tree.node";

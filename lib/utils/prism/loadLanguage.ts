@@ -1,6 +1,11 @@
 import components from "prismjs/components.js";
 import getLoader from "prismjs/dependencies";
 import { getDefer } from "../index";
+
+type LangLoadStatus = {
+  lang: string;
+  status: "noexist" | "cached" | "loaded";
+};
 /**
  * The set of all languages which have been loaded using the below function.
  *
@@ -67,12 +72,12 @@ function initLoadLanguage(Prism: any) {
       langs = [langs];
     }
 
-    const promises: Promise<unknown>[] = [];
+    const promises: Promise<LangLoadStatus>[] = [];
     // The user might have loaded languages via some other way or used `prism.js` which already includes some
     // We don't need to validate the ids because `getLoader` will ignore invalid ones
     const loaded = [...loadedLanguages, ...Object.keys(Prism.languages)];
     getLoader(components, langs, loaded).load(async (lang: string) => {
-      const defer = getDefer();
+      const defer = getDefer<LangLoadStatus>();
       promises.push(defer.promise);
       if (!(lang in components.languages)) {
         defer.resolve({
@@ -86,7 +91,9 @@ function initLoadLanguage(Prism: any) {
         });
       } else {
         delete Prism.languages[lang];
-        await import(`../../../node_modules/prismjs/components/prism-${lang}.js`);
+        await import(
+          `../../../node_modules/prismjs/components/prism-${lang}.js`
+        );
         defer.resolve({
           lang,
           status: "loaded",

@@ -6,12 +6,12 @@ Optimization:
 
 Support TypeScript
 
-- [x] Convert JS code to TS code
-- [ ] Complete all missing types(no any) and support strict mode for TS compilation(eslint --fix and no error)(P0)
+- [x] Convert JS code to TS code.**(P0)**
+- [ ] Complete all missing types(no any) and support strict mode for TS compilation(eslint --fix and no error).**(P0)**
 
 Better Code Design
 
-- [x] Patch the latest marked to muya(P0)
+- [x] Patch the latest marked to muya.**(P0)**
 - [x] Remove use axios and XMLHttpRequest etc
 - [x] Use constructor mixin to replace property mixin
 - [x] diagram: sequence and flowchart are deprecated
@@ -22,13 +22,13 @@ Better Code Design
 
 Compatibility
 
-- [ ] Compatible with Firefox(P0)
-- [ ] Safari(P0)
-- [ ] Edge(P0)
+- [x] Compatible with Firefox.**(P0)**
+- [ ] Safari.**(P0)**
+- [ ] Edge.**(P0)**
 
 Documents
-- [ ] Website(docs, demo)(P0)
-- [ ] Documents(P0)
+- [ ] Website(docs, demo)**(P0)**
+- [ ] Documents.**(P0)**
 - [ ] Comments
 
 CI and CD

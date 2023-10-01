@@ -1,11 +1,13 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
 import { diffToTextOp } from "@muya/utils";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
 import { loadLanguage } from "@muya/utils/prism";
 import diff from "fast-diff";
 import { ICodeBlockState } from "../../../state/types";
+import { Path } from "../../types";
 
 const debug = logger("codeblock:");
 
@@ -18,7 +20,7 @@ class CodeBlock extends Parent {
   public meta: ICodeBlockMeta;
   static blockName = "code-block";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: ICodeBlockState) {
     const codeBlock = new CodeBlock(muya, state);
     const { lang } = state.meta;
 
@@ -59,8 +61,8 @@ class CodeBlock extends Parent {
         "text-unicode",
         diffToTextOp(diffs)
       );
-      operateClassName(this.domNode, "remove", "mu-indented-code");
-      operateClassName(this.domNode, "add", "mu-fenced-code");
+      operateClassName(this.domNode!, "remove", "mu-indented-code");
+      operateClassName(this.domNode!, "add", "mu-fenced-code");
     }
 
     !!value &&
@@ -82,14 +84,14 @@ class CodeBlock extends Parent {
         });
   }
 
-  get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+  get path(): Path {
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: ICodeBlockState) {
     super(muya);
     this.tagName = "pre";
     this.meta = meta;
@@ -97,7 +99,7 @@ class CodeBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path) {
+  queryBlock(path: Path) {
     if (path.length === 0) {
       return this;
     } else {

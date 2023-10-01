@@ -14,10 +14,10 @@ type Union = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Constructor = new (...args: any[]) => {};
 
-type Defer = {
-  resolve: (value: unknown) => void;
+type Defer<T> = {
+  resolve: (value: T) => void;
   reject: (reason?: unknown) => void;
-  promise: Promise<unknown>;
+  promise: Promise<T>;
 };
 
 export const uniqueIdGenerator = function* () {
@@ -315,9 +315,9 @@ export const verticalPositionInRect = (event: MouseEvent, rect: DOMRect) => {
 
 export const hasPick = (c: any) => c && (c.p != null || c.r !== undefined);
 
-export const getDefer = () => {
-  const defer: Defer = {} as Defer;
-  const promise = new Promise((resolve, reject) => {
+export const getDefer = <T>() => {
+  const defer: Defer<T> = {} as Defer<T>;
+  const promise = new Promise<T>((resolve, reject) => {
     defer.resolve = resolve;
     defer.reject = reject;
   });
