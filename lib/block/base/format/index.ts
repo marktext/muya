@@ -1,5 +1,6 @@
 import Content from "@muya/block/base/content";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
+import type { Token } from "@muya/inlineRenderer/types";
 import { ImageToken } from "@muya/inlineRenderer/types";
 import { Cursor } from "@muya/selection/types";
 import { conflict, methodMixins } from "@muya/utils";
@@ -45,7 +46,7 @@ interface Format
 abstract class Format extends Content {
   static blockName = "format";
 
-  checkCursorInTokenType(text, offset, type) {
+  checkCursorInTokenType(text: string, offset: number, type: Token["type"]): Token | null {
     const tokens = tokenizer(text, {
       hasBeginRules: false,
       options: this.muya.options,
@@ -53,7 +54,7 @@ abstract class Format extends Content {
 
     let result = null;
 
-    const travel = (tokens) => {
+    const travel = (tokens: Token[]) => {
       for (const token of tokens) {
         if (token.range.start > offset) {
           break;
@@ -77,7 +78,7 @@ abstract class Format extends Content {
     return result;
   }
 
-  checkNotSameToken(oldText, text) {
+  checkNotSameToken(oldText: string, text: string) {
     const { options } = this.muya;
     const oldTokens = tokenizer(oldText, {
       options,
@@ -86,8 +87,8 @@ abstract class Format extends Content {
       options,
     });
 
-    const oldCache = {};
-    const cache = {};
+    const oldCache: Record<string, number> = {};
+    const cache: Record<string, number> = {};
 
     for (const { type } of oldTokens) {
       if (oldCache[type]) {
@@ -117,6 +118,7 @@ abstract class Format extends Content {
 
     return false;
   }
+
   // TODO: @JOCS remove use this.selection directly
   checkNeedRender(cursor: Cursor = this.selection) {
     const { labels } = this.inlineRenderer;

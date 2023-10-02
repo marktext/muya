@@ -1,25 +1,31 @@
 import { CLASS_NAMES } from "@muya/config";
+import { CodeEmojiMathToken, Token } from "@muya/inlineRenderer/types";
 import { getTextContent } from "@muya/selection/dom";
 import { getCursorReference } from "@muya/utils";
 import Format from "./index";
 
+function isEmojiToken(token: Token): token is CodeEmojiMathToken {
+  return token.type === "emoji";
+}
+
 export default {
   inputHandler(this: Format, event: Event): void {
-    if (this.isComposed || /historyUndo|historyRedo/.test(event.inputType)) {
+    // Do not use `isInputEvent` util, because compositionEnd event also invoke this method.
+    if (this.isComposed || /historyUndo|historyRedo/.test((event as InputEvent).inputType)) {
       return;
     }
     const { domNode } = this;
-    const { start, end } = this.getCursor();
-    const textContent = getTextContent(domNode, [
+    const { start, end } = this.getCursor()!;
+    const textContent = getTextContent(domNode!, [
       CLASS_NAMES.MU_MATH_RENDER,
       CLASS_NAMES.MU_RUBY_RENDER,
     ]);
-    const isInInlineMath = this.checkCursorInTokenType(
+    const isInInlineMath = !!this.checkCursorInTokenType(
       textContent,
       start.offset,
       "inline_math"
     );
-    const isInInlineCode = this.checkCursorInTokenType(
+    const isInInlineCode = !!this.checkCursorInTokenType(
       textContent,
       start.offset,
       "inline_code"
@@ -62,16 +68,16 @@ export default {
     this.selection.setSelection(cursor);
     // check edit emoji
     if (
-      event.inputType !== "insertFromPaste" &&
-      event.inputType !== "deleteByCut"
+      (event as InputEvent).inputType !== "insertFromPaste" &&
+      (event as InputEvent).inputType !== "deleteByCut"
     ) {
-      const editEmoji = this.checkCursorInTokenType(
+      const emojiToken = this.checkCursorInTokenType(
         this.text,
         start.offset,
         "emoji"
       );
-      if (editEmoji) {
-        const { content: emojiText } = editEmoji;
+      if (emojiToken && isEmojiToken(emojiToken)) {
+        const { content: emojiText } = emojiToken;
         const reference = getCursorReference();
 
         this.muya.eventCenter.emit("muya-emoji-picker", {

@@ -1,23 +1,28 @@
 import { CLASS_NAMES } from "@muya/config";
-import { getCursorReference } from "@muya/utils";
+import { getCursorReference, isMouseEvent } from "@muya/utils";
 import type Format from "./index";
 
 export default {
-  handleClickInlineRuleRender(this: Format, event, inlineRuleRenderEle) {
+  // Click the rendering of inline syntax, such as Inline Math, and select the math formula.
+  handleClickInlineRuleRender(this: Format, event: Event, inlineRuleRenderEle: Element) {
     event.preventDefault();
     event.stopPropagation();
-    const startOffset = +inlineRuleRenderEle.getAttribute("data-start");
-    const endOffset = +inlineRuleRenderEle.getAttribute("data-end");
+
+    const startOffset = +inlineRuleRenderEle.getAttribute("data-start")!;
+    const endOffset = +inlineRuleRenderEle.getAttribute("data-end")!;
 
     return this.setCursor(startOffset, endOffset, true);
   },
 
   clickHandler(this: Format, event: Event): void {
+    if (!isMouseEvent(event)) {
+      return;
+    }
     // Handler click inline math and inline ruby html.
     const { target } = event;
     const inlineRuleRenderEle =
-      target.closest(`.${CLASS_NAMES.MU_MATH_RENDER}`) ||
-      target.closest(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
+      (target as HTMLElement).closest(`.${CLASS_NAMES.MU_MATH_RENDER}`) ||
+      (target as HTMLElement).closest(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
 
     if (inlineRuleRenderEle) {
       return this.handleClickInlineRuleRender(event, inlineRuleRenderEle);

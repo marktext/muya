@@ -28,6 +28,6 @@ export default {
 
     this.text = text + nextBlock.text;
     this.setCursor(start.offset, end.offset, true);
-    needRemovedBlock.remove();
+    needRemovedBlock!.remove();
   },
 };
