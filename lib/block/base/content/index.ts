@@ -266,7 +266,7 @@ abstract class Content extends TreeNode {
     this.domNode!.innerHTML = `<span class="mu-syntax-text">${text}</span>`;
   }
 
-  composeHandler = (event: Event) => {
+  composeHandler (event: Event) {
     if (event.type === "compositionstart") {
       this.isComposed = true;
     } else if (event.type === "compositionend") {
@@ -274,7 +274,7 @@ abstract class Content extends TreeNode {
       // Because the compose event will not cause `input` event, So need call `inputHandler` by ourself
       this.inputHandler(event);
     }
-  };
+  }
 
   /**
    * used in input handler

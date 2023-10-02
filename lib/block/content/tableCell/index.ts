@@ -10,6 +10,8 @@ import { Cursor } from "@muya/selection/types";
 import { isKeyboardEvent } from "@muya/utils";
 
 class TableCellContent extends Format {
+  public hasZeroWidthSpaceAtBeginning: boolean = false;
+
   static blockName = "table.cell.content";
 
   static create(muya: Muya, text: string) {
@@ -146,7 +148,9 @@ class TableCellContent extends Format {
     if (event.key === EVENT_KEYS.ArrowUp) {
       event.preventDefault();
       if (previousRow) {
-        const cursorBlock = (previousRow.find(offset) as Cell).firstContentInDescendant();
+        const cursorBlock = (
+          previousRow.find(offset) as Cell
+        ).firstContentInDescendant();
         const cursorOffset = cursorBlock.text.length;
         cursorBlock.setCursor(cursorOffset, cursorOffset, true);
       } else if (tablePrevContent) {
@@ -157,7 +161,9 @@ class TableCellContent extends Format {
       event.preventDefault();
 
       if (nextRow) {
-        const cursorBlock = (nextRow.find(offset) as Cell).firstContentInDescendant();
+        const cursorBlock = (
+          nextRow.find(offset) as Cell
+        ).firstContentInDescendant();
         cursorBlock.setCursor(0, 0, true);
       } else {
         let cursorBlock = null;
@@ -224,6 +230,25 @@ class TableCellContent extends Format {
 
     if (nextContentBlock) {
       nextContentBlock.setCursor(0, 0, true);
+    }
+  }
+
+  // The following code is used to fix a bug in Safari, 
+  // entering Chinese in an empty table cell will cause 
+  // the table to be messed up, so we insert a zero-width
+  // character before entering the Chinese, and remove the 
+  // zero-width character after entering the Chinese.
+  composeHandler(event: Event) {
+    super.composeHandler(event);
+    if (event.type === "compositionstart" && this.text === "") {
+      this.hasZeroWidthSpaceAtBeginning = true;
+      this.domNode!.innerText = "\u200b";
+    } else if (event.type === "compositionend" && this.hasZeroWidthSpaceAtBeginning) {
+      this.hasZeroWidthSpaceAtBeginning = false;
+      const { text } = this;
+      const offset = text.length - 1;
+      this.text = text.substring(0, offset);
+      this.setCursor(offset, offset, true);
     }
   }
 }
