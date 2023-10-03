@@ -1,7 +1,8 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
 import logger from "@muya/utils/logger";
-import { IDiagramMeta, TState } from "../../../state/types";
+import { IDiagramMeta, IDiagramState, TState } from "../../../state/types";
 
 const debug = logger("diagramContainer:");
 
@@ -9,7 +10,7 @@ class DiagramContainer extends Parent {
   public meta: IDiagramMeta;
   static blockName = "diagram-container";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IDiagramState) {
     const diagramContainer = new DiagramContainer(muya, state);
 
     const code = ScrollPage.loadBlock("code").create(muya, state);
@@ -24,12 +25,12 @@ class DiagramContainer extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
+    const { path: pPath } = this.parent!;
 
     return [...pPath];
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: IDiagramState) {
     super(muya);
     this.tagName = "pre";
     this.meta = meta;
@@ -39,7 +40,7 @@ class DiagramContainer extends Parent {
 
   getState(): TState {
     debug.warn("You can never call `getState` in diagramContainer");
-    return;
+    return {} as TState;
   }
 }
 

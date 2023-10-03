@@ -1,6 +1,7 @@
 import Parent from "@muya/block/base/parent";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
 import { mixins } from "@muya/utils";
 import { ITaskListItemMeta, ITaskListItemState } from "../../../state/types";
 
@@ -10,7 +11,7 @@ class TaskListItem extends Parent {
 
   static blockName = "task-list-item";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: ITaskListItemState) {
     const listItem = new TaskListItem(muya, state);
 
     listItem.appendAttachment(
@@ -26,8 +27,8 @@ class TaskListItem extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset, "children"];
   }
@@ -48,7 +49,7 @@ class TaskListItem extends Parent {
     }
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: ITaskListItemState) {
     super(muya);
     this.tagName = "li";
     this.meta = meta;
@@ -56,7 +57,7 @@ class TaskListItem extends Parent {
     this.createDomNode();
   }
 
-  find(key) {
+  find(key: number | string) {
     if (typeof key === "number") {
       return super.find(key);
     } else if (typeof key === "string") {
@@ -70,7 +71,7 @@ class TaskListItem extends Parent {
     const state: ITaskListItemState = {
       name: "task-list-item",
       meta: { ...this.meta },
-      children: this.children.map((child) => child.getState()),
+      children: this.children.map((child) => (child as Parent).getState()),
     };
 
     return state;

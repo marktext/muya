@@ -1,5 +1,7 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
+import { Path } from "@muya/block/types";
+import Muya from "@muya/index";
 import { IMathBlockState, IMathMeta } from "../../../state/types";
 
 class MathBlock extends Parent {
@@ -7,7 +9,7 @@ class MathBlock extends Parent {
 
   static blockName = "math-block";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IMathBlockState) {
     const mathBlock = new MathBlock(muya, state);
 
     const mathPreview = ScrollPage.loadBlock("math-preview").create(
@@ -26,13 +28,13 @@ class MathBlock extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: IMathBlockState) {
     super(muya);
     this.tagName = "figure";
     this.meta = meta;
@@ -40,7 +42,7 @@ class MathBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path) {
+  queryBlock(path: Path) {
     return path.length && path[0] === "text"
       ? this.firstContentInDescendant()
       : this;

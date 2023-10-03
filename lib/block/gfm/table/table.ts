@@ -4,6 +4,8 @@ import ScrollPage from "@muya/block/scrollPage";
 import { mixins } from "@muya/utils";
 import { ITableState } from "../../../state/types";
 
+interface TableInner extends ContainerQueryBlock {}
+
 @mixins(ContainerQueryBlock)
 class TableInner extends Parent {
   static blockName = "table.inner";

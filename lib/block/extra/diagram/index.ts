@@ -1,5 +1,7 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
+import { Path } from "@muya/block/types";
+import Muya from "@muya/index";
 import logger from "@muya/utils/logger";
 import { loadLanguage } from "@muya/utils/prism";
 import { IDiagramMeta, IDiagramState } from "../../../state/types";
@@ -10,7 +12,7 @@ class DiagramBlock extends Parent {
   public meta: IDiagramMeta;
   static blockName = "diagram";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IDiagramState) {
     const diagramBlock = new DiagramBlock(muya, state);
     const { lang } = state.meta;
     const diagramPreview = ScrollPage.loadBlock("diagram-preview").create(
@@ -47,13 +49,13 @@ class DiagramBlock extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: IDiagramState) {
     super(muya);
     this.tagName = "figure";
     this.meta = meta;
@@ -61,7 +63,7 @@ class DiagramBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path) {
+  queryBlock(path: Path) {
     return path.length && path[0] === "text"
       ? this.firstContentInDescendant()
       : this;

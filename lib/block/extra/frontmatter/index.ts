@@ -4,6 +4,8 @@ import ScrollPage from "@muya/block/scrollPage";
 // import { diffToTextOp } from '@muya/utils'
 import { loadLanguage } from "@muya/utils/prism";
 // import { operateClassName } from '@muya/utils/dom'
+import { Path } from "@muya/block/types";
+import Muya from "@muya/index";
 import logger from "@muya/utils/logger";
 import { IFrontmatterMeta, IFrontmatterState } from "../../../state/types";
 
@@ -14,7 +16,7 @@ class Frontmatter extends Parent {
 
   static blockName = "frontmatter";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IFrontmatterState) {
     const frontmatter = new Frontmatter(muya, state);
     const { lang } = state.meta;
     const code = ScrollPage.loadBlock("code").create(muya, state);
@@ -67,13 +69,13 @@ class Frontmatter extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: IFrontmatterState) {
     super(muya);
     this.tagName = "pre";
     this.meta = meta;
@@ -81,7 +83,7 @@ class Frontmatter extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path) {
+  queryBlock(path: Path) {
     if (path.length === 0) {
       return this;
     } else {

@@ -1,8 +1,10 @@
 import Parent from "@muya/block/base/parent";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import ScrollPage from "@muya/block/scrollPage";
+import Muya from "@muya/index";
 import { mixins } from "@muya/utils";
 import { ITaskListMeta, ITaskListState } from "../../../state/types";
+import TaskListItem from "../taskListItem";
 
 @mixins(ContainerQueryBlock)
 class TaskList extends Parent {
@@ -10,7 +12,7 @@ class TaskList extends Parent {
 
   static blockName = "task-list";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: ITaskListState) {
     const taskList = new TaskList(muya, state);
 
     taskList.append(
@@ -23,13 +25,13 @@ class TaskList extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset, "children"];
   }
 
-  constructor(muya, { meta }) {
+  constructor(muya: Muya, { meta }: ITaskListState) {
     super(muya);
     this.tagName = "ul";
     this.meta = meta;
@@ -52,8 +54,8 @@ class TaskList extends Parent {
       return;
     }
 
-    let first: any = this.firstChild;
-    let last: any = this.lastChild;
+    let first = this.firstChild;
+    let last = this.lastChild;
     let anchor = first;
 
     while (first !== last) {
@@ -75,7 +77,7 @@ class TaskList extends Parent {
     const state: ITaskListState = {
       name: "task-list",
       meta: { ...this.meta },
-      children: this.children.map((child) => child.getState()),
+      children: this.children.map((child) => (child as TaskListItem).getState()),
     };
 
     return state;

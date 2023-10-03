@@ -1,12 +1,14 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
+import { Path } from "@muya/block/types";
 import { CLASS_NAMES } from "@muya/config";
+import Muya from "@muya/index";
 import { IHtmlBlockState } from "../../../state/types";
 
 class HTMLBlock extends Parent {
   static blockName = "html-block";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IHtmlBlockState) {
     const htmlBlock = new HTMLBlock(muya);
 
     const htmlPreview = ScrollPage.loadBlock("html-preview").create(
@@ -25,13 +27,13 @@ class HTMLBlock extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
   }
 
-  constructor(muya) {
+  constructor(muya: Muya) {
     super(muya);
     this.tagName = "figure";
     this.classList = [CLASS_NAMES.MU_HTML_BLOCK];
@@ -42,7 +44,7 @@ class HTMLBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path) {
+  queryBlock(path: Path) {
     return path.length && path[0] === "text"
       ? this.firstContentInDescendant()
       : this;

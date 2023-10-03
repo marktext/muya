@@ -1,9 +1,10 @@
 import Parent from "@muya/block/base/parent";
 import { PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
+import Muya from "@muya/index";
 import { sanitize } from "@muya/utils";
 import { getImageSrc } from "@muya/utils/image";
 import logger from "@muya/utils/logger";
-import { TState } from "../../../state/types";
+import { IHtmlBlockState, TState } from "../../../state/types";
 
 const debug = logger("htmlPreview:");
 
@@ -12,7 +13,7 @@ class HTMLPreview extends Parent {
 
   static blockName = "html-preview";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IHtmlBlockState) {
     const htmlBlock = new HTMLPreview(muya, state);
 
     return htmlBlock;
@@ -23,7 +24,7 @@ class HTMLPreview extends Parent {
     return [];
   }
 
-  constructor(muya, { text }) {
+  constructor(muya: Muya, { text }: IHtmlBlockState) {
     super(muya);
     this.tagName = "div";
     this.html = text;
@@ -42,11 +43,11 @@ class HTMLPreview extends Parent {
     }
 
     const { disableHtml } = this.muya.options;
-    const htmlContent = sanitize(html, PREVIEW_DOMPURIFY_CONFIG, disableHtml);
+    const htmlContent = sanitize(html, PREVIEW_DOMPURIFY_CONFIG, disableHtml) as string;
 
     // handle empty html bock
     if (/^<([a-z][a-z\d]*)[^>]*?>(\s*)<\/\1>$/.test(htmlContent.trim())) {
-      this.domNode.innerHTML =
+      this.domNode!.innerHTML =
         '<div class="mu-empty">&lt;Empty HTML Block&gt;</div>';
     } else {
       const parser = new DOMParser();
@@ -59,14 +60,14 @@ class HTMLPreview extends Parent {
         img.setAttribute("src", imageSrc.src);
       }
 
-      this.domNode.innerHTML =
-        doc.documentElement.querySelector("body").innerHTML;
+      this.domNode!.innerHTML =
+        doc.documentElement!.querySelector("body")!.innerHTML;
     }
   }
 
   getState(): TState {
     debug.warn("You can never call `getState` in htmlPreview");
-    return;
+    return {} as TState;
   }
 }
 

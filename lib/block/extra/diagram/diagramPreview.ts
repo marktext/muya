@@ -1,5 +1,6 @@
 import Parent from "@muya/block/base/parent";
 import { PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
+import Muya from "@muya/index";
 import { sanitize } from "@muya/utils";
 import loadRenderer from "@muya/utils/diagram";
 import logger from "@muya/utils/logger";
@@ -7,13 +8,21 @@ import { IDiagramState, TState } from "../../../state/types";
 
 const debug = logger("diagramPreview:");
 
+type RenderOptions = {
+  type: string;
+  code: string;
+  target: HTMLElement;
+  vegaTheme: string;
+  mermaidTheme: string;
+};
+
 const renderDiagram = async ({
   type,
   code,
   target,
   vegaTheme,
   mermaidTheme,
-}) => {
+}: RenderOptions) => {
   const render = await loadRenderer(type);
   const options = {};
   if (type === "vega-lite") {
@@ -38,7 +47,7 @@ const renderDiagram = async ({
       theme: mermaidTheme,
     });
     await render.parse(code);
-    target.innerHTML = sanitize(code, PREVIEW_DOMPURIFY_CONFIG, true);
+    target.innerHTML = sanitize(code, PREVIEW_DOMPURIFY_CONFIG, true) as string;
     target.removeAttribute("data-processed");
     await render.run({
       nodes: [target],
@@ -51,7 +60,7 @@ class DiagramPreview extends Parent {
   public type: string;
   static blockName = "diagram-preview";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IDiagramState) {
     const diagramPreview = new DiagramPreview(muya, state);
 
     return diagramPreview;
@@ -62,7 +71,7 @@ class DiagramPreview extends Parent {
     return [];
   }
 
-  constructor(muya, { text, meta }: IDiagramState) {
+  constructor(muya: Muya, { text, meta }: IDiagramState) {
     super(muya);
     this.tagName = "div";
     this.code = text;
@@ -79,24 +88,24 @@ class DiagramPreview extends Parent {
 
   getState(): TState {
     debug.warn("You can never call `getState` in diagramPreview");
-    return;
+    return {} as TState;
   }
 
   attachDOMEvents() {
     const { eventCenter } = this.muya;
 
     eventCenter.attachDOMEvent(
-      this.domNode,
+      this.domNode!,
       "click",
       this.clickHandler.bind(this)
     );
   }
 
-  clickHandler(event) {
+  clickHandler(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
-    const cursorBlock = this.parent.firstContentInDescendant();
+    const cursorBlock = this.parent!.firstContentInDescendant();
     cursorBlock.setCursor(0, 0);
   }
 
@@ -107,25 +116,25 @@ class DiagramPreview extends Parent {
     }
 
     if (code) {
-      this.domNode.innerHTML = i18n.t("Loading...");
+      this.domNode!.innerHTML = i18n.t("Loading...");
       const { mermaidTheme, vegaTheme } = this.muya.options;
       const { type } = this;
 
       try {
         await renderDiagram({
-          target: this.domNode,
+          target: this.domNode!,
           code,
           type,
           mermaidTheme,
           vegaTheme,
         });
       } catch (err) {
-        this.domNode.innerHTML = `<div class="mu-diagram-error">&lt; ${i18n.t(
+        this.domNode!.innerHTML = `<div class="mu-diagram-error">&lt; ${i18n.t(
           "Invalid Diagram Code"
         )} &gt;</div>`;
       }
     } else {
-      this.domNode.innerHTML = `<div class="mu-empty">&lt; ${i18n.t(
+      this.domNode!.innerHTML = `<div class="mu-empty">&lt; ${i18n.t(
         "Empty Diagram"
       )} &gt;</div>`;
     }

@@ -1,29 +1,33 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
+import { Path } from "@muya/block/types";
+import Muya from "@muya/index";
 import { diffToTextOp } from "@muya/utils";
 import logger from "@muya/utils/logger";
 import diff from "fast-diff";
 import { ITableState } from "../../../state/types";
+import TableRow from "./row";
+import TableInner from "./table";
 
 const debug = logger("table:");
 
 class Table extends Parent {
   static blockName = "table";
 
-  static create(muya, state) {
-    const table = new Table(muya, state);
+  static create(muya: Muya, state: ITableState) {
+    const table = new Table(muya);
 
     table.append(ScrollPage.loadBlock("table.inner").create(muya, state));
 
     return table;
   }
 
-  static createWithRowAndColumn(muya, row, column) {
-    // TODO
-  }
+  // static createWithRowAndColumn(muya, row, column) {
+  //   // TODO
+  // }
 
-  static createWithHeader(muya, header) {
-    const state = {
+  static createWithHeader(muya: Muya, header: string[]) {
+    const state: ITableState = {
       name: "table",
       children: [
         {
@@ -36,7 +40,7 @@ class Table extends Parent {
         },
         {
           name: "table.row",
-          children: header.map((_) => ({
+          children: header.map(() => ({
             name: "table.cell",
             meta: { align: "none" },
             text: "",
@@ -49,8 +53,8 @@ class Table extends Parent {
   }
 
   get path() {
-    const { path: pPath } = this.parent;
-    const offset = this.parent.offset(this);
+    const { path: pPath } = this.parent!;
+    const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
   }
@@ -64,14 +68,14 @@ class Table extends Parent {
   }
 
   get rowCount() {
-    return (this.firstChild as any).length();
+    return (this.firstChild as TableInner).length();
   }
 
   get columnCount() {
-    return (this.firstChild as any).firstChild.length();
+    return ((this.firstChild as TableInner).firstChild as TableRow).length();
   }
 
-  constructor(muya, state?) {
+  constructor(muya: Muya) {
     super(muya);
     this.tagName = "figure";
 
@@ -85,7 +89,7 @@ class Table extends Parent {
     const { domNode } = this;
 
     // Fix: prevent cursor present at the end of table.
-    const clickHandler = (event) => {
+    const clickHandler = (event: Event) => {
       if (event.target === domNode) {
         event.preventDefault();
         const cursorBlock = this.lastContentInDescendant();
@@ -93,11 +97,11 @@ class Table extends Parent {
         cursorBlock.setCursor(offset, offset, true);
       }
     };
-    eventCenter.attachDOMEvent(domNode, "mousedown", clickHandler);
+    eventCenter.attachDOMEvent(domNode!, "mousedown", clickHandler);
   }
 
-  queryBlock(path) {
-    return (this.firstChild as any).queryBlock(path);
+  queryBlock(path: Path) {
+    return (this.firstChild as TableInner).queryBlock(path);
   }
 
   empty() {
@@ -106,7 +110,7 @@ class Table extends Parent {
       return;
     }
 
-    const table: any = this.firstChild;
+    const table = this.firstChild as TableInner;
     table.forEach((row) => {
       row.forEach((cell) => {
         cell.firstChild.text = "";

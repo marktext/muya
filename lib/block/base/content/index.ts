@@ -12,7 +12,6 @@ import {
   isKeyboardEvent,
 } from "@muya/utils";
 import diff from "fast-diff";
-import Parent from "../parent";
 
 // import logger from '@muya/utils/logger'
 
@@ -37,7 +36,7 @@ abstract class Content extends TreeNode {
   }
 
   get path() {
-    const { path: pPath } = this.parent as Parent;
+    const { path: pPath } = this.parent!;
 
     return [...pPath, "text"];
   }

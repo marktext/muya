@@ -10,7 +10,7 @@ import Parent from "./parent";
 
 interface IConstructor<T> {
   blockName: string;
-  create: (muya: Muya, state: TState[]) => T;
+  create: (muya: Muya, state: TState) => T;
   new (muya: Muya): T;
 }
 

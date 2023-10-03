@@ -1,6 +1,7 @@
 import LinkedList from "@muya/block/base/linkedList/linkedList";
 import TreeNode from "@muya/block/base/treeNode";
 import { CLASS_NAMES } from "@muya/config";
+import Muya from "@muya/index";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
 import { TState } from "../../state/types";
@@ -12,8 +13,8 @@ abstract class Parent extends TreeNode {
   // Used to store icon, checkbox(span) etc. these blocks are not in children properties in json state.
   public attachments: LinkedList<Parent> = new LinkedList();
   public children: LinkedList<Parent | Content> = new LinkedList();
-  public prev: Parent | null;
-  public next: Parent | null;
+  public prev: Parent | null = null;
+  public next: Parent | null = null;
 
   private _active: boolean = false;
 
@@ -24,9 +25,9 @@ abstract class Parent extends TreeNode {
   set active(value) {
     this._active = value;
     if (value) {
-      operateClassName(this.domNode, "add", CLASS_NAMES.MU_ACTIVE);
+      operateClassName(this.domNode!, "add", CLASS_NAMES.MU_ACTIVE);
     } else {
-      operateClassName(this.domNode, "remove", CLASS_NAMES.MU_ACTIVE);
+      operateClassName(this.domNode!, "remove", CLASS_NAMES.MU_ACTIVE);
     }
   }
 
@@ -44,7 +45,7 @@ abstract class Parent extends TreeNode {
     );
   }
 
-  constructor(muya) {
+  constructor(muya: Muya) {
     super(muya);
   }
 
@@ -80,7 +81,7 @@ abstract class Parent extends TreeNode {
     return this.children.offset(node);
   }
 
-  find(offset) {
+  find(offset: number) {
     return this.children.find(offset);
   }
 
@@ -95,7 +96,7 @@ abstract class Parent extends TreeNode {
     args.forEach((node) => {
       node.parent = this;
       const { domNode } = node;
-      this.domNode.appendChild(domNode);
+      this.domNode!.appendChild(domNode);
     });
 
     this.children.append(...args);
@@ -118,13 +119,13 @@ abstract class Parent extends TreeNode {
     nodes.forEach((node) => {
       node.parent = this;
       const { domNode } = node;
-      this.domNode.appendChild(domNode);
+      this.domNode!.appendChild(domNode);
     });
 
     this.attachments.append(...nodes);
   }
 
-  forEachAt(index, length, callback) {
+  forEachAt(index: number, length: number, callback) {
     return this.children.forEachAt(index, length, callback);
   }
 
@@ -144,7 +145,7 @@ abstract class Parent extends TreeNode {
    * Use the `block` to replace the current block(this)
    * @param {TreeNode} block
    */
-  replaceWith(block, source = "user") {
+  replaceWith(block: Parent, source = "user") {
     if (!this.parent) {
       debug.warn("Call replaceWith need has a parent block");
 

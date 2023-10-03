@@ -1,8 +1,9 @@
 import Parent from "@muya/block/base/parent";
+import Muya from "@muya/index";
 import logger from "@muya/utils/logger";
 import katex from "katex";
 import "katex/dist/contrib/mhchem.min.js";
-import { TState } from "../../../state/types";
+import { IMathBlockState, TState } from "../../../state/types";
 
 const debug = logger("mathPreview:");
 
@@ -11,7 +12,7 @@ class MathPreview extends Parent {
 
   static blockName = "math-preview";
 
-  static create(muya, state) {
+  static create(muya: Muya, state: IMathBlockState) {
     const mathBlock = new MathPreview(muya, state);
 
     return mathBlock;
@@ -22,7 +23,7 @@ class MathPreview extends Parent {
     return [];
   }
 
-  constructor(muya, { text }) {
+  constructor(muya: Muya, { text }: IMathBlockState) {
     super(muya);
     this.tagName = "div";
     this.math = text;
@@ -38,24 +39,24 @@ class MathPreview extends Parent {
 
   getState(): TState {
     debug.warn("You can never call `getState` in mathPreview");
-    return;
+    return {} as TState;
   }
 
   attachDOMEvents() {
     const { eventCenter } = this.muya;
 
     eventCenter.attachDOMEvent(
-      this.domNode,
+      this.domNode!,
       "click",
       this.clickHandler.bind(this)
     );
   }
 
-  clickHandler(event) {
+  clickHandler(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
-    const cursorBlock = this.parent.firstContentInDescendant();
+    const cursorBlock = this.parent!.firstContentInDescendant();
     cursorBlock.setCursor(0, 0);
   }
 
@@ -71,14 +72,14 @@ class MathPreview extends Parent {
         const html = katex.renderToString(math, {
           displayMode: true,
         });
-        this.domNode.innerHTML = html;
+        this.domNode!.innerHTML = html;
       } catch (err) {
-        this.domNode.innerHTML = `<div class="mu-math-error">&lt; ${i18n.t(
+        this.domNode!.innerHTML = `<div class="mu-math-error">&lt; ${i18n.t(
           "Invalid Mathematical Formula"
         )} &gt;</div>`;
       }
     } else {
-      this.domNode.innerHTML = `<div class="mu-empty">&lt; ${i18n.t(
+      this.domNode!.innerHTML = `<div class="mu-empty">&lt; ${i18n.t(
         "Empty Mathematical Formula"
       )} &gt;</div>`;
     }
