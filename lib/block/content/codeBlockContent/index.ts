@@ -136,6 +136,13 @@ class CodeBlockContent extends Content {
     return this.outContainer;
   }
 
+  // Some block has a preview container, like math, diagram, html, should update the preview if the text changed.
+  updatePreviewIfHave(text: string) {
+    if (this.outContainer?.attachments?.length) {
+      (this.outContainer?.attachments?.head as HTMLPreview).update(text);
+    }
+  }
+
   update(_cursor: Cursor, highlights = []) {
     const { lang, text } = this;
     // transform alias to original language
@@ -181,10 +188,7 @@ class CodeBlockContent extends Content {
     );
     this.text = text;
 
-    // Update html preview if the out container is `html-block`
-    if (/html-block|math-block|diagram/.test(this.outContainer!.blockName)) {
-      (this.outContainer?.attachments?.head as HTMLPreview).update(text);
-    }
+    this.updatePreviewIfHave(text);
 
     if (needRender) {
       this.setCursor(start!.offset, end!.offset, true);
@@ -334,6 +338,7 @@ class CodeBlockContent extends Content {
       const newNode = ScrollPage.loadBlock(state.name).create(muya, state);
       this.outContainer!.replaceWith(newNode);
       const cursorBlock = newNode.lastContentInDescendant();
+
       return cursorBlock.setCursor(0, 0, true);
     }
     // The following code should fix a certain bug: 
@@ -346,7 +351,7 @@ class CodeBlockContent extends Content {
       event.preventDefault();
       const { text } = this;
       this.text = text.substring(0, start.offset - 1) + text.substring(start.offset);
-
+      this.updatePreviewIfHave(this.text);
       return this.setCursor(--start.offset, --end.offset, true);
     }
     // The following code is aimed at ensuring compatibility with Firefox. 
@@ -380,7 +385,7 @@ class CodeBlockContent extends Content {
         if (needRender) {
           event.preventDefault();
           this.text = code;
-
+          this.updatePreviewIfHave(this.text);
           return this.setCursor(--start.offset, --end.offset, true);
         }
       }
