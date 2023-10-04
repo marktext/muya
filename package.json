@@ -42,10 +42,10 @@
     "html-tags": "^3.3.1",
     "intl-segmenter-polyfill": "^0.4.4",
     "joplin-turndown-plugin-gfm": "^1.0.12",
-    "katex": "0.16.8",
+    "katex": "0.16.9",
     "marked": "^9.0.3",
     "marked-highlight": "^2.0.6",
-    "mermaid": "10.4.0",
+    "mermaid": "10.5.0",
     "ot-json1": "^1.0.2",
     "ot-text-unicode": "^4.0.0",
     "plantuml-encoder": "^1.4.0",
@@ -56,7 +56,7 @@
     "turndown": "^7.1.2",
     "vega": "^5.25.0",
     "vega-embed": "^6.23.0",
-    "vega-lite": "^5.15.0"
+    "vega-lite": "^5.15.1"
   },
   "devDependencies": {
     "@laynezh/vite-plugin-lib-assets": "0.5.2",
@@ -66,8 +66,8 @@
     "@types/popper.js": "^1.11.0",
     "@types/prismjs": "^1.26.1",
     "@types/turndown": "^5.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
     "commitlint": "^17.7.2",
     "eslint": "^8.50.0",
     "husky": "8.0.3",
@@ -80,7 +80,7 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-order": "^6.0.3",
     "typescript": "^5.2.2",
-    "vite": "^4.4.5",
+    "vite": "^4.4.10",
     "vite-plugin-dts": "^3.6.0"
   }
 }
