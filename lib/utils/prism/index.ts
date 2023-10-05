@@ -50,7 +50,7 @@ const search = (text: string) => {
     keys: ["name", "title", "alias"],
   });
 
-  return fuse.search(text).map((i) => i.item);
+  return fuse.search(text).map((i) => i.item).slice(0, 5);
 };
 
 // pre load latex and yaml and html for `math block` \ `front matter` and `html block`

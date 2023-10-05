@@ -1,13 +1,13 @@
-import BaseScrollFloat from "../baseScrollFloat";
-import { patch, h } from "@muya/utils/snabbdom";
-import { search } from "@muya/utils/prism";
 import ScrollPage from "@muya/block/scrollPage";
+import { search } from "@muya/utils/prism";
+import { h, patch } from "@muya/utils/snabbdom";
+import BaseScrollFloat from "../baseScrollFloat";
 import fileIcons from "../utils/fileIcons";
 
-import type { VNode } from "snabbdom";
-import type Muya from "@muya/index";
-import type ParagraphContent from "@muya/block/content/paragraphContent";
 import type CodeBlock from "@muya/block/commonMark/codeBlock";
+import type ParagraphContent from "@muya/block/content/paragraphContent";
+import type Muya from "@muya/index";
+import type { VNode } from "snabbdom";
 
 import "./index.css";
 
@@ -65,21 +65,23 @@ class CodePicker extends BaseScrollFloat {
 
       // Because `markdown mode in Codemirror` don't have extensions.
       // if still can not get the className, add a common className 'atom-icon light-cyan'
-      if (!iconClassNames) {
-        iconClassNames =
-          item.name === "markdown"
-            ? fileIcons.getClassByName("fakeName.md")
-            : "atom-icon light-cyan";
+      if (!iconClassNames && item.name === "markdown") {
+        iconClassNames = fileIcons.getClassByName("fakeName.md");
       }
-      const iconSelector =
+      const text = h("div.language", item.name);
+      const selector = activeItem === item ? "li.item.active" : "li.item";
+      const itemContent = [text];
+
+      if (iconClassNames) {
+        const iconSelector =
         "span" +
         iconClassNames
           .split(/\s/)
           .map((s: string) => `.${s}`)
           .join("");
-      const icon = h("div.icon-wrapper", h(iconSelector));
-      const text = h("div.language", item.name);
-      const selector = activeItem === item ? "li.item.active" : "li.item";
+        const icon = h("div.icon-wrapper", h(iconSelector));
+        itemContent.push(icon);
+      }
 
       return h(
         selector,
@@ -93,7 +95,7 @@ class CodePicker extends BaseScrollFloat {
             },
           },
         },
-        [icon, text]
+        itemContent
       );
     });
 

@@ -17,6 +17,10 @@
 .mu-list-picker .item {
   display: flex;
   height: 28px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   list-style: none;
 }
@@ -33,31 +37,17 @@
 .mu-list-picker .item .icon-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   width: 28px;
   height: 28px;
-  padding-top: 2px;
 }
 
 .mu-list-picker .item .icon-wrapper span::before {
   font-size: 14px;
 }
 
-.mu-list-picker .icon-wrapper > svg {
-  width: 14px;
-  height: 14px;
-
-  fill: var(--icon-color);
-}
-
-.mu-list-picker .item .icon-wrapper img {
-  width: 14px;
-  height: 14px;
-}
-
 .mu-list-picker .item .language {
-  margin-left: 5px;
-
+  flex: 1;
   color: var(--editor-color);
   font-size: 14px;
   line-height: 28px;

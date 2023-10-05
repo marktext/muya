@@ -43,7 +43,7 @@
     "intl-segmenter-polyfill": "^0.4.4",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.16.9",
-    "marked": "^9.0.3",
+    "marked": "^9.1.0",
     "marked-highlight": "^2.0.6",
     "mermaid": "10.5.0",
     "ot-json1": "^1.0.2",
@@ -80,7 +80,7 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-order": "^6.0.3",
     "typescript": "^5.2.2",
-    "vite": "^4.4.10",
+    "vite": "^4.4.11",
     "vite-plugin-dts": "^3.6.0"
   }
 }
