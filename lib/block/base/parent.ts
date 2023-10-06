@@ -125,7 +125,7 @@ abstract class Parent extends TreeNode {
     this.attachments.append(...nodes);
   }
 
-  forEachAt(index: number, length: number, callback) {
+  forEachAt(index: number, length: number = this.length(), callback) {
     return this.children.forEachAt(index, length, callback);
   }
 

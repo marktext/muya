@@ -1,6 +1,8 @@
-import ParagraphContent from "./index";
-
+import Content from "@muya/block/base/content";
+import type Parent from "@muya/block/base/parent";
+import Paragraph from "@muya/block/commonMark/paragraph";
 import logger from "@muya/utils/logger";
+import ParagraphContent from "./index";
 
 const debug = logger("paragraph:content");
 
@@ -12,7 +14,7 @@ export default {
       return;
     }
 
-    let { parent } = this;
+    let parent: Parent | null = this.parent;
     let type = "paragraph";
 
     while (parent && !parent.isScrollPage) {
@@ -45,9 +47,9 @@ export default {
   },
 
   handleBackspaceInBlockQuote(this: ParagraphContent) {
-    const { parent } = this;
-    const blockQuote = parent!.parent;
-    let cursorBlock;
+    const parent = this.parent!;
+    const blockQuote = parent!.parent!;
+    let cursorBlock: Content | null;
 
     if (!parent!.isOnlyChild() && !parent!.isFirstChild()) {
       return this.handleBackspaceInParagraph();
@@ -55,20 +57,20 @@ export default {
 
     if (parent.isOnlyChild()) {
       blockQuote.replaceWith(parent);
-      cursorBlock = parent.children.head;
+      cursorBlock = parent.firstContentInDescendant();
     } else if (parent.isFirstChild()) {
-      const cloneParagraph = parent.clone();
-      blockQuote.parent.insertBefore(cloneParagraph, blockQuote);
+      const cloneParagraph = parent.clone() as Paragraph;
+      blockQuote.parent!.insertBefore(cloneParagraph, blockQuote);
       parent.remove();
-      cursorBlock = cloneParagraph.children.head;
+      cursorBlock = cloneParagraph.firstContentInDescendant();
     }
 
-    cursorBlock.setCursor(0, 0, true);
+    cursorBlock!.setCursor(0, 0, true);
   },
 
   handleBackspaceInList(this: ParagraphContent) {
     const parent = this.parent!;
-    const listItem = parent!.parent!;
+    const listItem = parent.parent!;
     const list = listItem.parent!;
 
     if (!parent.isFirstChild()) {
@@ -76,8 +78,8 @@ export default {
     }
 
     if (listItem.isOnlyChild()) {
-      listItem.forEach((node, i: number) => {
-        const paragraph = node.clone();
+      listItem.forEach((node: Parent, i: number) => {
+        const paragraph = node.clone() as Parent;
         list.parent!.insertBefore(paragraph, list);
         if (i === 0) {
           paragraph.firstContentInDescendant().setCursor(0, 0, true);
@@ -86,9 +88,9 @@ export default {
 
       list.remove();
     } else if (listItem.isFirstChild()) {
-      listItem.forEach((node, i) => {
-        const paragraph = node.clone();
-        list.parent.insertBefore(paragraph, list);
+      listItem.forEach((node: Parent, i: number) => {
+        const paragraph = node.clone() as Parent;
+        list.parent!.insertBefore(paragraph, list);
         if (i === 0) {
           paragraph.firstContentInDescendant().setCursor(0, 0, true);
         }
@@ -97,9 +99,9 @@ export default {
       listItem.remove();
     } else {
       const previousListItem = listItem.prev;
-      listItem.forEach((node, i) => {
-        const paragraph = node.clone();
-        previousListItem.append(paragraph, "user");
+      listItem.forEach((node: Parent, i: number) => {
+        const paragraph = node.clone() as Parent;
+        previousListItem!.append(paragraph, "user");
         if (i === 0) {
           paragraph.firstContentInDescendant().setCursor(0, 0, true);
         }

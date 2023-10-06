@@ -31,10 +31,12 @@ class LangInputContent extends Content {
     this.domNode!.innerHTML = getHighlightHtml(this.text, highlights);
   }
 
-  inputHandler() {
+  /**
+   * Update this block lang and parent's lang, and show/hide language selector.
+   * @param lang 
+   */
+  updateLanguage(lang: string) {
     const { start, end } = this.getCursor()!;
-    const textContent = this.domNode!.textContent ?? "";
-    const lang = textContent.split(/\s+/)[0];
     this.text = lang;
     this.parent!.lang = lang;
     const startOffset = Math.min(lang.length, start.offset);
@@ -53,6 +55,12 @@ class LangInputContent extends Content {
     }
   }
 
+  inputHandler() {
+    const textContent = this.domNode!.textContent ?? "";
+    const lang = textContent.split(/\s+/)[0];
+    this.updateLanguage(lang);
+  }
+
   enterHandler(event: Event) {
     event.preventDefault();
     event.stopPropagation();
@@ -67,8 +75,8 @@ class LangInputContent extends Content {
     // The next if statement is used to fix Firefox compatibility issues
     if (start.offset === 1 && end.offset === 1 && text.length === 1) {
       event.preventDefault();
-      this.text = "";
-      this.setCursor(0, 0, true);
+      const lang = "";
+      this.updateLanguage(lang);
     }
     if (start.offset === 0 && end.offset === 0) {
       event.preventDefault();

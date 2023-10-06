@@ -8,19 +8,22 @@ import TaskList from "@muya/block/gfm/taskList";
 import TaskListItem from "@muya/block/gfm/taskListItem";
 import ScrollPage from "@muya/block/scrollPage";
 import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
-import Muya from "@muya/index";
+import type Muya from "@muya/index";
 import { Cursor } from "@muya/selection/types";
 import { isKeyboardEvent, isLengthEven, methodMixins } from "@muya/utils";
 import logger from "@muya/utils/logger";
-import { IBlockQuoteState, ITaskListItemState } from "../../../state/types";
+import type {
+  IBlockQuoteState,
+  ITaskListItemState,
+} from "../../../state/types";
 import backspaceHandler from "./backspace";
 import tabHandler from "./tab";
+
+const debug = logger("paragraph:content");
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
 const checkQuickInsert = (text: string) => /^[/、]\S*$/.test(text);
 const checkShowPlaceholder = (text: string) => /^[/、]$/.test(text);
-
-const debug = logger("paragraphContent");
 
 const parseTableHeader = (text: string) => {
   const rowHeader = [];
@@ -46,8 +49,9 @@ const parseTableHeader = (text: string) => {
 };
 
 type BackspaceHandler = typeof backspaceHandler;
+type TabHandler = typeof tabHandler;
 
-interface ParagraphContent extends BackspaceHandler {}
+interface ParagraphContent extends BackspaceHandler, TabHandler {}
 
 @methodMixins(backspaceHandler, tabHandler)
 class ParagraphContent extends Format {
@@ -80,8 +84,8 @@ class ParagraphContent extends Format {
     }
   }
 
-  inputHandler(event: Event) {
-    super.inputHandler(event);
+  // Dependence reverse?
+  emitUIEvent() {
     const { text, domNode } = this;
     const { eventCenter, i18n } = this.muya;
     // Check weather need to show code picker
@@ -109,6 +113,42 @@ class ParagraphContent extends Format {
       block: this,
       status: !!needToShowQuickInsert,
     });
+  }
+
+  backspaceHandler(event: Event) {
+    const { start, end } = this.getCursor()!;
+
+    if (start.offset !== 0 || end.offset !== 0) {
+      super.backspaceHandler(event);
+      this.emitUIEvent();
+      return;
+    }
+
+    event.preventDefault();
+    const type = this.paragraphParentType();
+
+    switch (type) {
+      case "paragraph":
+        return this.handleBackspaceInParagraph();
+
+      case "block-quote":
+        return this.handleBackspaceInBlockQuote();
+
+      case "list-item":
+      // fall through
+      case "task-list-item":
+        return this.handleBackspaceInList();
+
+      default:
+        debug.error("Unknown backspace type");
+        break;
+    }
+  }
+
+  inputHandler(event: Event) {
+    super.inputHandler(event);
+
+    this.emitUIEvent();
   }
 
   enterConvert(event: Event) {
@@ -175,7 +215,7 @@ class ParagraphContent extends Format {
         .find(1)
         .firstContentInDescendant()
         .setCursor(0, 0, true);
-    } else if (tagName && VOID_HTML_TAGS.every(tag => tag !== tagName)) {
+    } else if (tagName && VOID_HTML_TAGS.every((tag) => tag !== tagName)) {
       const state = {
         name: "html-block",
         text: `<${tagName}>\n\n</${tagName}>`,
@@ -288,10 +328,14 @@ class ParagraphContent extends Format {
               children: [] as any,
             };
             const offset = list.offset(listItem);
-            list.forEachAt(offset + 1, undefined, (node: TaskListItem | ListItem) => {
-              newListState.children.push(node.getState());
-              node.remove();
-            });
+            list.forEachAt(
+              offset + 1,
+              undefined,
+              (node: TaskListItem | ListItem) => {
+                newListState.children.push(node.getState());
+                node.remove();
+              }
+            );
             const newList = ScrollPage.loadBlock(newListState.name).create(
               this.muya,
               newListState
@@ -311,14 +355,20 @@ class ParagraphContent extends Format {
         };
 
         if (listItem.blockName === "task-list-item") {
-          (newListItemState as unknown as ITaskListItemState).meta = { checked: false };
+          (newListItemState as unknown as ITaskListItemState).meta = {
+            checked: false,
+          };
         }
 
         const offset = listItem.offset(parent);
-        listItem.forEachAt(offset, undefined, (node: TaskListItem | ListItem) => {
-          newListItemState.children.push(node.getState());
-          node.remove();
-        });
+        listItem.forEachAt(
+          offset,
+          undefined,
+          (node: TaskListItem | ListItem) => {
+            newListItemState.children.push(node.getState());
+            node.remove();
+          }
+        );
 
         const newListItem = ScrollPage.loadBlock(newListItemState.name).create(
           this.muya,
@@ -378,34 +428,6 @@ class ParagraphContent extends Format {
       this.enterInListItem(event);
     } else {
       this.enterConvert(event);
-    }
-  }
-
-  backspaceHandler(event: Event) {
-    const { start, end } = this.getCursor()!;
-
-    if (start.offset === 0 && end.offset === 0) {
-      event.preventDefault();
-      const type = this.paragraphParentType();
-
-      switch (type) {
-        case "paragraph":
-          return this.handleBackspaceInParagraph();
-
-        case "block-quote":
-          return this.handleBackspaceInBlockQuote();
-
-        case "list-item":
-        // fall through
-        case "task-list-item":
-          return this.handleBackspaceInList();
-
-        default:
-          debug.error("Unknown backspace type");
-          break;
-      }
-    } else {
-      super.backspaceHandler(event);
     }
   }
 }

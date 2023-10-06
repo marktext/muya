@@ -95,7 +95,7 @@ class LinkedList<T extends LinkedNode<T>> {
     return [...this.iterator()].forEach(callback);
   }
 
-  forEachAt(index: number, length: number, callback: (cur: T, i: number) => void) {
+  forEachAt(index: number, length: number = this.length, callback: (cur: T, i: number) => void) {
     const curNode = this.find(index);
 
     return [...this.iterator(curNode, length)].forEach((node, i) => {

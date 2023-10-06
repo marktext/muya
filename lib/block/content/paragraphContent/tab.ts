@@ -1,5 +1,8 @@
 import ScrollPage from "@muya/block";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
+import { Token } from "@muya/inlineRenderer/types";
+import { isKeyboardEvent } from "@muya/utils";
+import ParagraphContent from "./index";
 
 const BOTH_SIDES_FORMATS = [
   "strong",
@@ -16,9 +19,9 @@ const BOTH_SIDES_FORMATS = [
 ];
 
 export default {
-  isUnindentableListItem() {
+  isUnindentableListItem(this: ParagraphContent) {
     const { parent } = this;
-    const listItem = parent.parent;
+    const listItem = parent!.parent;
     const list = listItem?.parent;
     const listParent = list?.parent;
 
@@ -37,9 +40,9 @@ export default {
     return false;
   },
 
-  isIndentableListItem() {
+  isIndentableListItem(this: ParagraphContent) {
     const { parent } = this;
-    if (parent.blockName !== "paragraph" || !parent.parent) {
+    if (parent!.blockName !== "paragraph" || !parent!.parent) {
       return false;
     }
 
@@ -58,7 +61,7 @@ export default {
     return list && /ol|ul/.test(list.tagName) && listItem.prev;
   },
 
-  unindentListItem(type) {
+  unindentListItem(this: ParagraphContent, type) {
     const { parent } = this;
     const listItem = parent?.parent;
     const list = listItem?.parent;
@@ -124,7 +127,7 @@ export default {
     }
   },
 
-  indentListItem() {
+  indentListItem(this: ParagraphContent) {
     const { parent, muya } = this;
     const listItem = parent?.parent;
     const list = listItem?.parent;
@@ -156,7 +159,7 @@ export default {
     cursorBlock.setCursor(start.offset, end.offset, true);
   },
 
-  insertTab() {
+  insertTab(this: ParagraphContent) {
     const { muya, text } = this;
     const { tabSize } = muya.options;
     const tabCharacter = String.fromCharCode(160).repeat(tabSize);
@@ -173,8 +176,8 @@ export default {
     }
   },
 
-  checkCursorAtEndFormat() {
-    const { offset } = this.getCursor().start;
+  checkCursorAtEndFormat(this: ParagraphContent) {
+    const { offset } = this.getCursor()!.start;
     // TODO: add labels in tokenizer...
     const { muya, text } = this;
     const tokens = tokenizer(text, {
@@ -182,8 +185,8 @@ export default {
       options: muya.options,
     });
     let result = null;
-    const walkTokens = (tkns) => {
-      for (const token of tkns) {
+    const walkTokens = (ts: Token[]) => {
+      for (const token of ts) {
         const {
           marker,
           type,
@@ -204,15 +207,15 @@ export default {
           offset < end
         ) {
           switch (type) {
-            case "strong":
+            case "strong": // fall through
 
-            case "em":
+            case "em": // fall through
 
-            case "inline_code":
+            case "inline_code": // fall through
 
-            case "emoji":
+            case "emoji": // fall through
 
-            case "del":
+            case "del": // fall through
 
             case "inline_math": {
               if (marker && offset === end - marker.length) {
@@ -225,7 +228,7 @@ export default {
               break;
             }
 
-            case "image":
+            case "image": // fall through
 
             case "link": {
               const linkTitleLen = (srcAndTitle || hrefAndTitle).length;
@@ -247,7 +250,7 @@ export default {
               break;
             }
 
-            case "reference_image":
+            case "reference_image": // fall through
 
             case "reference_link": {
               const labelLen = label ? label.length : 0;
@@ -302,11 +305,15 @@ export default {
     return result;
   },
 
-  tabHandler(event) {
+  tabHandler(this: ParagraphContent, event: Event) {
     // disable tab focus
     event.preventDefault();
 
-    const { start, end } = this.getCursor();
+    if (!isKeyboardEvent(event)) {
+      return;
+    }
+
+    const { start, end } = this.getCursor()!;
     if (!start || !end) {
       return;
     }
@@ -328,14 +335,16 @@ export default {
       if (atEnd) {
         const offset = start.offset + atEnd.offset;
 
-        return this.setCursor(offset, offset, true);
+        this.setCursor(offset, offset, true);
+        return;
       }
     }
 
     if (this.isIndentableListItem()) {
-      return this.indentListItem();
+      this.indentListItem();
+      return;
     }
 
-    return this.insertTab();
+    this.insertTab();
   },
 };
