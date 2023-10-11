@@ -27,7 +27,7 @@ class LangInputContent extends Content {
     return this.parent;
   }
 
-  update(_cursor: Cursor, highlights = []) {
+  update(_cursor?: Cursor, highlights = []) {
     this.domNode!.innerHTML = getHighlightHtml(this.text, highlights);
   }
 
@@ -42,17 +42,7 @@ class LangInputContent extends Content {
     const startOffset = Math.min(lang.length, start.offset);
     const endOffset = Math.min(lang.length, end.offset);
     this.setCursor(startOffset, endOffset, true);
-    // Show code picker
-    if (lang) {
-      const reference = this.domNode;
-      this.muya.eventCenter.emit("muya-code-picker", {
-        reference,
-        block: this.parent,
-        lang,
-      });
-    } else {
-      this.muya.eventCenter.emit("muya-code-picker", { reference: null });
-    }
+    this.muya.eventCenter.emit("content-change", { block: this });
   }
 
   inputHandler() {

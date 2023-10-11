@@ -22,8 +22,6 @@ import tabHandler from "./tab";
 const debug = logger("paragraph:content");
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
-const checkQuickInsert = (text: string) => /^[/、]\S*$/.test(text);
-const checkShowPlaceholder = (text: string) => /^[/、]$/.test(text);
 
 const parseTableHeader = (text: string) => {
   const rowHeader = [];
@@ -84,43 +82,13 @@ class ParagraphContent extends Format {
     }
   }
 
-  // Dependence reverse?
-  emitUIEvent() {
-    const { text, domNode } = this;
-    const { eventCenter, i18n } = this.muya;
-    // Check weather need to show code picker
-    const token = text.match(/(^ {0,3}`{3,})([^` ]+)/);
-    if (token && token[2]) {
-      eventCenter.emit("muya-code-picker", {
-        reference: domNode,
-        block: this,
-        lang: token[2],
-      });
-    } else {
-      eventCenter.emit("muya-code-picker", { reference: null });
-    }
-    // Check weather need to show quick insert panel
-    const needToShowQuickInsert = checkQuickInsert(text);
-    const needToShowPlaceholder = checkShowPlaceholder(text);
-    if (needToShowPlaceholder) {
-      domNode!.setAttribute("placeholder", i18n.t("Search keyword..."));
-    } else {
-      domNode!.removeAttribute("placeholder");
-    }
-
-    eventCenter.emit("muya-quick-insert", {
-      reference: domNode,
-      block: this,
-      status: !!needToShowQuickInsert,
-    });
-  }
-
   backspaceHandler(event: Event) {
     const { start, end } = this.getCursor()!;
+    const { eventCenter } = this.muya;
 
     if (start.offset !== 0 || end.offset !== 0) {
       super.backspaceHandler(event);
-      this.emitUIEvent();
+      eventCenter.emit("content-change", { block: this });
       return;
     }
 
@@ -147,8 +115,9 @@ class ParagraphContent extends Format {
 
   inputHandler(event: Event) {
     super.inputHandler(event);
+    const { eventCenter } = this.muya;
 
-    this.emitUIEvent();
+    eventCenter.emit("content-change", { block: this });
   }
 
   enterConvert(event: Event) {

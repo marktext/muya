@@ -4,7 +4,7 @@ import { h, patch } from "@muya/utils/snabbdom";
 import BaseScrollFloat from "../baseScrollFloat";
 import fileIcons from "../utils/fileIcons";
 
-import type CodeBlock from "@muya/block/commonMark/codeBlock";
+import type LangInputContent from "@muya/block/content/langInputContent";
 import type ParagraphContent from "@muya/block/content/paragraphContent";
 import type Muya from "@muya/index";
 import type { VNode } from "snabbdom";
@@ -24,7 +24,7 @@ const defaultOptions = {
 class CodePicker extends BaseScrollFloat {
   static pluginName = "codePicker";
   private oldVNode: VNode | null = null;
-  private block: ParagraphContent | CodeBlock | null = null;
+  private block: ParagraphContent | LangInputContent | null = null;
 
   constructor(muya: Muya, options = {}) {
     const name = "mu-list-picker";
@@ -36,11 +36,27 @@ class CodePicker extends BaseScrollFloat {
   listen() {
     super.listen();
     const { eventCenter } = this.muya;
-    eventCenter.on("muya-code-picker", ({ reference, lang, block }) => {
-      const modes = search(lang ?? "");
-      if (modes.length && reference) {
+
+    eventCenter.on("content-change", ({ block }) => {
+      if (block.blockName !== "paragraph.content" && block.blockName !== "language-input") {
+        return;
+      }
+
+      const { text, domNode } = block;
+      let lang = "";
+      if (block.blockName === "paragraph.content") {
+        const token = text.match(/(^ {0,3}`{3,})([^` ]+)/);
+        if (token && token[2]) {
+          lang = token[2];
+        }
+      } else if (block.blockName === "language-input") {
+        lang = text;
+      }
+
+      const modes = search(lang);
+      if (modes.length) {
         this.block = block;
-        this.show(reference);
+        this.show(domNode);
         this.renderArray = modes;
         this.activeItem = modes[0];
         this.render();
@@ -128,7 +144,7 @@ class CodePicker extends BaseScrollFloat {
     }
 
     function isParagraphContent(
-      b: ParagraphContent | CodeBlock
+      b: ParagraphContent | LangInputContent
     ): b is ParagraphContent {
       return b.blockName === "paragraph.content";
     }
@@ -160,11 +176,10 @@ class CodePicker extends BaseScrollFloat {
       const codeContent = newBlock.lastContentInDescendant();
       codeContent.setCursor(0, 0);
     } else {
-      const languageInput = block.firstContentInDescendant();
-      languageInput.text = name;
-      languageInput.update();
-      block.lang = name;
-      block.lastContentInDescendant().setCursor(0, 0);
+      block.text = name;
+      block.update();
+      block.parent!.lang = name;
+      block.parent?.lastContentInDescendant().setCursor(0, 0);
     }
 
     super.selectItem(item);

@@ -12,15 +12,18 @@ import {
 
 import Muya from "@muya/index";
 import { VNode } from "snabbdom";
+
 import "./index.css";
 
+const checkQuickInsert = (text: string) => /^[/、]\S*$/.test(text);
+const checkShowPlaceholder = (text: string) => /^[/、]$/.test(text);
 const checkCanInsertFrontMatter = (muya: Muya, block: ParagraphContent) => {
   const { frontMatter } = muya.options;
 
   return (
     frontMatter &&
-    !block.parent.prev &&
-    block?.parent?.parent?.blockName === "scrollpage"
+    !block.parent?.prev &&
+    block.parent?.parent?.blockName === "scrollpage"
   );
 };
 
@@ -60,19 +63,31 @@ class QuickInsert extends BaseScrollFloat {
 
   listen() {
     super.listen();
-    const { eventCenter, editor, domNode } = this.muya;
-    eventCenter.subscribe(
-      "muya-quick-insert",
-      ({ reference, block, status }) => {
-        if (status) {
-          this.block = block;
-          this.show(reference);
-          this.search(block.text.substring(1)); // remove `/` char
-        } else {
-          this.hide();
-        }
+    const { eventCenter, editor, domNode, i18n } = this.muya;
+
+    eventCenter.subscribe("content-change", ({ block }) => {
+      // Check weather need to show quick insert panel
+      if (block.blockName !== "paragraph.content") {
+        return;
       }
-    );
+
+      const { text, domNode } = block;
+      const needToShowQuickInsert = checkQuickInsert(text);
+      const needToShowPlaceholder = checkShowPlaceholder(text);
+      if (needToShowPlaceholder) {
+        domNode!.setAttribute("placeholder", i18n.t("Search keyword..."));
+      } else {
+        domNode!.removeAttribute("placeholder");
+      }
+
+      if (needToShowQuickInsert) {
+        this.block = block;
+        this.show(domNode);
+        this.search(text.substring(1)); // remove `/` char
+      } else {
+        this.hide();
+      }
+    });
 
     const handleKeydown = (event: Event) => {
       const { anchorBlock, isSelectionInSameBlock } =
