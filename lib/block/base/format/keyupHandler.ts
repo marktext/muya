@@ -40,6 +40,7 @@ export default {
       anchor.offset,
       "emoji"
     );
+
     if (!editEmoji) {
       this.muya.eventCenter.emit("muya-emoji-picker", {
         emojiText: "",

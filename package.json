@@ -43,7 +43,7 @@
     "intl-segmenter-polyfill": "^0.4.4",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.16.9",
-    "marked": "^9.1.0",
+    "marked": "^9.1.1",
     "marked-highlight": "^2.0.6",
     "mermaid": "10.5.0",
     "ot-json1": "^1.0.2",
@@ -56,7 +56,7 @@
     "turndown": "^7.1.2",
     "vega": "^5.25.0",
     "vega-embed": "^6.23.0",
-    "vega-lite": "^5.16.0"
+    "vega-lite": "^5.16.1"
   },
   "devDependencies": {
     "@laynezh/vite-plugin-lib-assets": "0.5.2",
