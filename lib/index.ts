@@ -120,7 +120,7 @@ class Muya {
 /**
  * [ensureContainerDiv ensure container element is div]
  */
-function getContainer(originContainer, options) {
+function getContainer(originContainer: HTMLElement, options: MuyaOptions) {
   const { spellcheckEnabled, hideQuickInsertHint } = options;
   const newContainer = document.createElement("div");
   const attrs = originContainer.attributes;

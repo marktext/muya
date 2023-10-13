@@ -12,7 +12,7 @@ const debug = logger("parent:");
 abstract class Parent extends TreeNode {
   // Used to store icon, checkbox(span) etc. these blocks are not in children properties in json state.
   public attachments: LinkedList<Parent> = new LinkedList();
-  public children: LinkedList<Parent | Content> = new LinkedList();
+  public children: LinkedList<TreeNode> = new LinkedList();
   public prev: Parent | null = null;
   public next: Parent | null = null;
 
@@ -74,10 +74,10 @@ abstract class Parent extends TreeNode {
    * Return the length of children.
    */
   length() {
-    return this.reduce((acc, _) => acc + 1, 0);
+    return this.reduce((acc: number) => acc + 1, 0);
   }
 
-  offset(node) {
+  offset(node: TreeNode) {
     return this.children.offset(node);
   }
 
@@ -96,7 +96,7 @@ abstract class Parent extends TreeNode {
     args.forEach((node) => {
       node.parent = this;
       const { domNode } = node;
-      this.domNode!.appendChild(domNode);
+      this.domNode!.appendChild(domNode!);
     });
 
     this.children.append(...args);
@@ -115,30 +115,37 @@ abstract class Parent extends TreeNode {
    * This method will only be used when initialization.
    * @param  {...any} nodes attachment blocks
    */
-  appendAttachment(...nodes) {
+  appendAttachment(...nodes: Parent[]) {
     nodes.forEach((node) => {
       node.parent = this;
       const { domNode } = node;
-      this.domNode!.appendChild(domNode);
+      this.domNode!.appendChild(domNode!);
     });
 
     this.attachments.append(...nodes);
   }
 
-  forEachAt(index: number, length: number = this.length(), callback) {
+  forEachAt(
+    index: number,
+    length: number = this.length(),
+    callback: (cur: TreeNode, i: number) => void
+  ) {
     return this.children.forEachAt(index, length, callback);
   }
 
-  forEach(callback) {
+  forEach(callback: (cur: TreeNode, i: number) => void) {
     return this.children.forEach(callback);
   }
 
-  map(callback) {
+  map<M>(callback: (cur: TreeNode, i: number) => M): M[] {
     return this.children.map(callback);
   }
 
-  reduce(callback, initialValue) {
-    return this.children.reduce<number>(callback, initialValue);
+  reduce<M>(
+    callback: (memo: M, cur: TreeNode, i: number) => M,
+    initialValue: M
+  ): M {
+    return this.children.reduce<M>(callback, initialValue);
   }
 
   /**
@@ -159,11 +166,11 @@ abstract class Parent extends TreeNode {
     return block;
   }
 
-  insertBefore(newNode, refNode?, source = "user") {
+  insertBefore(newNode: Parent, refNode: Parent | null = null, source = "user") {
     newNode.parent = this;
     this.children.insertBefore(newNode, refNode);
-    this.domNode.insertBefore(
-      newNode.domNode,
+    this.domNode!.insertBefore(
+      newNode.domNode!,
       refNode ? refNode.domNode : null
     );
 
@@ -177,8 +184,8 @@ abstract class Parent extends TreeNode {
     return newNode;
   }
 
-  insertAfter(newNode, refNode, source = "user") {
-    this.insertBefore(newNode, refNode.next, source);
+  insertAfter(newNode: Parent, refNode: Parent | null = null, source = "user") {
+    this.insertBefore(newNode, refNode ? refNode.next : null, source);
 
     return newNode;
   }
