@@ -89,21 +89,23 @@ abstract class Parent extends TreeNode {
    * Append node in linkedList, mounted it into the DOM tree, dispatch operation if necessary.
    * @param  {...any} args
    */
-  append(...args) {
+  append(...childrenAndSource: [...Parent[], string]): void;
+  append(...children: Parent[]): void;
+  append(...args: unknown[]) {
     const source =
       typeof args[args.length - 1] === "string" ? args.pop() : "api";
 
-    args.forEach((node) => {
+    (args as Parent[]).forEach((node) => {
       node.parent = this;
       const { domNode } = node;
       this.domNode!.appendChild(domNode!);
     });
 
-    this.children.append(...args);
+    this.children.append(...(args as Parent[]));
 
     // push operations
     if (source === "user") {
-      args.forEach((node) => {
+      (args as Parent[]).forEach((node) => {
         const path = node.getJsonPath();
         const state = node.getState();
         this.jsonState.pushOperation("insertOp", path, state);
@@ -197,6 +199,7 @@ abstract class Parent extends TreeNode {
       const state = this.getState();
       this.jsonState.pushOperation("removeOp", path, state);
     }
+
     super.remove();
 
     return this;
@@ -208,7 +211,7 @@ abstract class Parent extends TreeNode {
     });
   }
 
-  removeChild(node, source = "user") {
+  removeChild(node: Parent | Content, source = "user") {
     if (!this.children.contains(node)) {
       debug.warn(
         "Can not removeChild(node), because node is not child of this block"

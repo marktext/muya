@@ -128,7 +128,7 @@ abstract class Content extends TreeNode {
   }
 
   arrowHandler(event: Event) {
-    if(!isKeyboardEvent(event)) {
+    if (!isKeyboardEvent(event)) {
       return;
     }
     const previousContentBlock = this.previousContentInContext();
@@ -265,7 +265,7 @@ abstract class Content extends TreeNode {
     this.domNode!.innerHTML = `<span class="mu-syntax-text">${text}</span>`;
   }
 
-  composeHandler (event: Event) {
+  composeHandler(event: Event) {
     if (event.type === "compositionstart") {
       this.isComposed = true;
     } else if (event.type === "compositionend") {
@@ -359,11 +359,12 @@ abstract class Content extends TreeNode {
                 /[*$`~_]{1}/.test(inputChar)))
           ) {
             needRender = true;
-            text = typeof event.data === "string" && BRACKET_HASH[event.data]
-              ? text.substring(0, offset) +
-                BRACKET_HASH[inputChar] +
-                text.substring(offset)
-              : text;
+            text =
+              typeof event.data === "string" && BRACKET_HASH[event.data]
+                ? text.substring(0, offset) +
+                  BRACKET_HASH[inputChar] +
+                  text.substring(offset)
+                : text;
           }
 
           // Delete the last `*` of `**` when you insert one space between `**` to create a bullet list.
@@ -536,10 +537,6 @@ abstract class Content extends TreeNode {
 
   remove() {
     super.remove();
-    if (this.domNode) {
-      this.domNode.remove();
-    }
-    this.domNode = null;
 
     return this;
   }

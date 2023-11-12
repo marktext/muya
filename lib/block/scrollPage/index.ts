@@ -68,7 +68,7 @@ class ScrollPage extends Parent {
   listenDomEvent() {
     const { eventCenter } = this.muya;
     const { domNode } = this;
-    eventCenter.attachDOMEvent(domNode, "click", this.clickHandler.bind(this));
+    eventCenter.attachDOMEvent(domNode!, "click", this.clickHandler.bind(this));
   }
 
   updateState(state) {
