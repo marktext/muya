@@ -241,7 +241,6 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
     this.parent.children.remove(this);
     this.parent = null;
     this.domNode?.remove();
-    this.domNode = null;
 
     return this;
   }
