@@ -37,7 +37,7 @@ CI and CD
 - [ ] Add and publish Github Action, modify the version number of the package.json, automatically tag and publish the new version to npm after merging or push to master
 
 Test
-- [ ] Unit test(Optional)
+- [ ] Unit test(P1)
 - [ ] e2e test(Optional)
 
 **June 2020**

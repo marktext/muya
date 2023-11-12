@@ -2,6 +2,7 @@ import LinkedNode from "@muya/block/base/linkedList/linkedNode";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
 import Muya from "@muya/index";
 import type { TState } from "@muya/state/types";
+import { Nullable } from "@muya/types";
 import { createDomNode } from "@muya/utils/dom";
 import type { Attributes, Datasets } from "@muya/utils/types";
 import type { Path } from "../types";
@@ -74,8 +75,9 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
    * @returns boolean
    */
   isContent(this: unknown): this is Content {
-    return typeof this.text === "string";
+    return typeof (this as Content).text === "string";
   }
+
 
   /**
    * check this is a Parent block?
@@ -216,7 +218,7 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
     return popItem ? popItem : null;
   }
 
-  insertInto(parent: Parent, refBlock: Parent | null = null) {
+  insertInto(parent: Parent, refBlock: Nullable<Parent> = null) {
     if (this.parent === parent && this.next === refBlock) {
       return;
     }
@@ -225,7 +227,7 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
       this.parent.removeChild(this);
     }
 
-    parent.insertBefore(this, refBlock);
+    parent.insertBefore(this as unknown as Parent, refBlock);
   }
 
   /**
@@ -235,9 +237,13 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
     if (!this.parent) {
       return;
     }
+
     this.parent.children.remove(this);
     this.parent = null;
     this.domNode?.remove();
+    this.domNode = null;
+
+    return this;
   }
 }
 

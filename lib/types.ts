@@ -34,3 +34,6 @@ export interface MuyaOptions {
     }
   },
 }
+
+export type Nullable<T> = T | null;
+
