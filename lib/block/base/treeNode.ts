@@ -16,8 +16,8 @@ interface IConstructor<T> {
 }
 
 abstract class TreeNode extends LinkedNode<TreeNode> {
-  public parent: Parent | null = null;
-  public domNode: HTMLElement | null = null;
+  public parent: Nullable<Parent> = null;
+  public domNode: Nullable<HTMLElement> = null;
   public tagName: string = "";
   public classList: string[] = [];
   public attributes: Attributes = {};
@@ -241,7 +241,6 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
     this.parent.children.remove(this);
     this.parent = null;
     this.domNode?.remove();
-    this.domNode = null;
 
     return this;
   }
