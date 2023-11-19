@@ -1,27 +1,36 @@
 import Parent from "@muya/block/base/parent";
 import { BLOCK_DOM_PROPERTY } from "@muya/config";
+import Muya from "@muya/index";
+import { Nullable } from "@muya/types";
+import { isMouseEvent } from "@muya/utils";
 import logger from "@muya/utils/logger";
 import { TState } from "../../state/types";
+import Content from "../base/content";
+import TreeNode from "../base/treeNode";
+import { Path } from "../types";
 
 const debug = logger("scrollpage:");
 
+interface IBlurFocus {
+  blur: Nullable<Content>;
+  focus: Nullable<Content>;
+}
+
 class ScrollPage extends Parent {
-  public blurFocus: {
-    blur: any;
-    focus: any;
-  };
+  private blurFocus: IBlurFocus = { blur: null, focus: null };
 
   static blockName = "scrollpage";
 
-  static blocks = new Map();
+  static registeredBlocks = new Map();
 
-  static register(Block) {
+  static register(Block: Parent | Content) {
     const { blockName } = Block;
-    this.blocks.set(blockName, Block);
+    this.registeredBlocks.set(blockName, Block);
   }
 
-  static loadBlock(blockName) {
-    const block = this.blocks.get(blockName);
+  static loadBlock(blockName: string) {
+    const block = this.registeredBlocks.get(blockName);
+
     if (!block) {
       debug.warn(`block:${blockName} is not existed.`);
     }
@@ -29,7 +38,7 @@ class ScrollPage extends Parent {
     return block;
   }
 
-  static create(muya, state) {
+  static create(muya: Muya, state: TState[]) {
     const scrollPage = new ScrollPage(muya);
 
     scrollPage.append(
@@ -38,7 +47,7 @@ class ScrollPage extends Parent {
       })
     );
 
-    scrollPage.parent.domNode.appendChild(scrollPage.domNode);
+    scrollPage.parent!.domNode!.appendChild(scrollPage.domNode!);
 
     return scrollPage;
   }
@@ -47,31 +56,31 @@ class ScrollPage extends Parent {
     return [];
   }
 
-  constructor(muya) {
+  constructor(muya: Muya) {
     super(muya);
-    this.parent = muya;
+    // muya is not extends Parent, but it is the parent of scrollPage.
+    this.parent = muya as unknown as Parent;
     this.tagName = "div";
     this.classList = ["mu-container"];
-    this.blurFocus = {
-      blur: null,
-      focus: null,
-    };
+
     this.createDomNode();
     this.listenDomEvent();
   }
 
-  getState(): TState {
+  getState() {
     debug.warn("You can never call `getState` in scrollPage");
-    return;
+
+    return {} as TState;
   }
 
-  listenDomEvent() {
+  private listenDomEvent() {
     const { eventCenter } = this.muya;
     const { domNode } = this;
+
     eventCenter.attachDOMEvent(domNode!, "click", this.clickHandler.bind(this));
   }
 
-  updateState(state) {
+  updateState(state: TState[]) {
     const { muya } = this;
     // Empty scrollPage dom
     this.empty();
@@ -86,46 +95,46 @@ class ScrollPage extends Parent {
    * Find the content block by the path
    * @param {array} path
    */
-  queryBlock(path) {
+  queryBlock(path: Path) {
     if (path.length === 0) {
       return this;
     }
 
-    const p = path.shift();
-    const block = this.find(p);
+    const p = path.shift() as number;
+    const block = this.find(p) as Parent;
 
-    return block && path.length ? (block as any).queryBlock(path) : block;
+    return block && path.length ? block.queryBlock(path) : block;
   }
 
-  updateRefLinkAndImage(label) {
+  updateRefLinkAndImage(label: string) {
     const REG = new RegExp(`\\[${label}\\](?!:)`);
 
-    this.breadthFirstTraverse((node) => {
+    this.breadthFirstTraverse((node: TreeNode) => {
       if (node.isContent() && REG.test(node.text)) {
         node.update();
       }
     });
   }
 
-  handleBlurFromContent(block) {
+  handleBlurFromContent(block: Content) {
     this.blurFocus.blur = block;
     requestAnimationFrame(this.updateActiveStatus);
   }
 
-  handleFocusFromContent(block) {
+  handleFocusFromContent(block: Content) {
     this.blurFocus.focus = block;
     requestAnimationFrame(this.updateActiveStatus);
   }
 
-  updateActiveStatus = () => {
+  private updateActiveStatus = () => {
     const { blur, focus } = this.blurFocus;
 
-    if (!blur && !focus) {
+    if (blur == null && focus == null) {
       return;
     }
 
-    let needBlurBlocks = [];
-    let needFocusBlocks = [];
+    let needBlurBlocks: Parent[] = [];
+    let needFocusBlocks: Parent[] = [];
     let block;
 
     if (blur && focus) {
@@ -159,15 +168,20 @@ class ScrollPage extends Parent {
     };
   };
 
-  // Create a new paragraph if the blank area in editor
-  clickHandler(event) {
-    const { target } = event;
+  // Create a new paragraph if click the blank area in editor.
+  private clickHandler(event: Event) {
+    if (!isMouseEvent(event)) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+
     if (target && target[BLOCK_DOM_PROPERTY] === this) {
-      const lastChild = this.lastChild;
-      const lastContentBlock = (lastChild as any).lastContentInDescendant();
+      const lastChild = this.lastChild as Parent;
+      const lastContentBlock = lastChild.lastContentInDescendant();
       const { clientY } = event;
       const lastChildDom = lastChild.domNode;
-      const { bottom } = lastChildDom.getBoundingClientRect();
+      const { bottom } = lastChildDom!.getBoundingClientRect();
       if (clientY > bottom) {
         if (
           lastChild.blockName === "paragraph" &&

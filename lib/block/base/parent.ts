@@ -4,12 +4,11 @@ import { CLASS_NAMES } from "@muya/config";
 import Muya from "@muya/index";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
-import { TState } from "../../state/types";
 import Content from "./content/index";
 
 const debug = logger("parent:");
 
-abstract class Parent extends TreeNode {
+class Parent extends TreeNode {
   // Used to store icon, checkbox(span) etc. these blocks are not in children properties in json state.
   public attachments: LinkedList<Parent> = new LinkedList();
   public children: LinkedList<TreeNode> = new LinkedList();
@@ -49,7 +48,23 @@ abstract class Parent extends TreeNode {
     super(muya);
   }
 
-  abstract getState(): TState;
+  /**
+   * check this is a Content block?
+   * @param this
+   * @returns boolean
+   */
+  isContent() {
+    return false;
+  }
+
+  /**
+   * check this is a Parent block?
+   * @param this
+   * @returns boolean
+   */
+  isParent() {
+    return true;
+  }
 
   getJsonPath() {
     const { path } = this;
@@ -168,7 +183,11 @@ abstract class Parent extends TreeNode {
     return block;
   }
 
-  insertBefore(newNode: Parent, refNode: Parent | null = null, source = "user") {
+  insertBefore(
+    newNode: Parent,
+    refNode: Parent | null = null,
+    source = "user"
+  ) {
     newNode.parent = this;
     this.children.insertBefore(newNode, refNode);
     this.domNode!.insertBefore(

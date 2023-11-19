@@ -43,7 +43,7 @@ interface Format
   deleteHandler,
   converter
 )
-abstract class Format extends Content {
+class Format extends Content {
   static blockName = "format";
 
   checkCursorInTokenType(text: string, offset: number, type: Token["type"]): Token | null {
