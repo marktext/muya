@@ -5,7 +5,6 @@ import type { TState } from "@muya/state/types";
 import { Nullable } from "@muya/types";
 import { createDomNode } from "@muya/utils/dom";
 import type { Attributes, Datasets } from "@muya/utils/types";
-import type { Path } from "../types";
 import Content from "./content";
 import Parent from "./parent";
 
@@ -15,16 +14,13 @@ interface IConstructor<T> {
   new (muya: Muya): T;
 }
 
-abstract class TreeNode extends LinkedNode<TreeNode> {
+class TreeNode extends LinkedNode<TreeNode> {
   public parent: Nullable<Parent> = null;
   public domNode: Nullable<HTMLElement> = null;
   public tagName: string = "";
   public classList: string[] = [];
   public attributes: Attributes = {};
   public datasets: Datasets = {};
-
-  abstract get path(): Path;
-  abstract get isContainerBlock(): boolean;
 
   static blockName = "tree.node";
 
@@ -67,25 +63,6 @@ abstract class TreeNode extends LinkedNode<TreeNode> {
 
   constructor(public muya: Muya) {
     super();
-  }
-
-  /**
-   * check this is a Content block?
-   * @param this
-   * @returns boolean
-   */
-  isContent(this: unknown): this is Content {
-    return typeof (this as Content).text === "string";
-  }
-
-
-  /**
-   * check this is a Parent block?
-   * @param this
-   * @returns boolean
-   */
-  isParent(this: unknown): this is Parent {
-    return this instanceof Parent;
   }
 
   /**

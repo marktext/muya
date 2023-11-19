@@ -3,6 +3,7 @@ import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
 import I18n from "@muya/i18n";
 import Muya from "@muya/index";
+import { Nullable } from "@muya/types";
 import logger from "@muya/utils/logger";
 import { h, toHTML } from "@muya/utils/snabbdom";
 import { ICodeBlockState, TState } from "../../../state/types";
@@ -39,7 +40,7 @@ const renderCopyButton = (i18n: I18n) => {
 };
 
 class Code extends Parent {
-  public parent: CodeBlock | null = null;
+  public parent: Nullable<CodeBlock> = null;
 
   static blockName = "code";
 

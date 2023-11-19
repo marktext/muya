@@ -17,7 +17,7 @@ import diff from "fast-diff";
 
 // const debug = logger('block.content:')
 
-abstract class Content extends TreeNode {
+class Content extends TreeNode {
   public _text: string;
   public isComposed: boolean;
 
@@ -115,6 +115,24 @@ abstract class Content extends TreeNode {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   enterHandler(_event: Event): void {
     // Do nothing.
+  }
+
+  /**
+   * check this is a Content block?
+   * @param this
+   * @returns boolean
+   */
+  isContent() {
+    return true;
+  }
+
+  /**
+   * check this is a Parent block?
+   * @param this
+   * @returns boolean
+   */
+  isParent() {
+    return false;
   }
 
   deleteHandler(event: Event): void {
