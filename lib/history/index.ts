@@ -1,4 +1,5 @@
 import Muya from "@muya/index";
+import { Nullable } from "@muya/types";
 import type { Doc, JSONOpList } from "ot-json1";
 import * as json1 from "ot-json1";
 import { TSelection } from "../selection/types";
@@ -31,7 +32,7 @@ const DEFAULT_OPTIONS = {
 class History {
   private lastRecorded: number = 0;
   private ignoreChange: boolean = false;
-  private selectionStack: (TSelection | null)[] = [];
+  private selectionStack: (Nullable<TSelection>)[] = [];
   private stack: Stack = {
     undo: [],
     redo: [],

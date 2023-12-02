@@ -8,6 +8,8 @@ import InlineRenderer from "@muya/inlineRenderer";
 import Search from "@muya/search";
 import Selection from "@muya/selection";
 import JSONState from "@muya/state";
+import { TState } from "@muya/state/types";
+import { Nullable } from "@muya/types";
 import { hasPick } from "@muya/utils";
 import logger from "@muya/utils/logger";
 import * as otText from "ot-text-unicode";
@@ -22,8 +24,19 @@ class Editor {
   public searchModule: Search;
   public clipboard: Clipboard;
   public history: History;
-  public scrollPage: ScrollPage;
-  private _activeContentBlock: Content | null = null;
+  public scrollPage: Nullable<ScrollPage> = null;
+  private _activeContentBlock: Nullable<Content> = null;
+
+  constructor(public muya: Muya) {
+    const state = muya.options.json || muya.options.markdown || "";
+
+    this.jsonState = new JSONState(muya, state);
+    this.inlineRenderer = new InlineRenderer(muya);
+    this.selection = new Selection(muya);
+    this.searchModule = new Search(muya);
+    this.clipboard = Clipboard.create(muya);
+    this.history = new History(muya);
+  }
 
   get activeContentBlock() {
     return this._activeContentBlock;
@@ -42,26 +55,18 @@ class Editor {
     }
   }
 
-  constructor(public muya: Muya) {
-    const state = muya.options.json || muya.options.markdown || "";
-    this.jsonState = new JSONState(muya, state);
-    this.inlineRenderer = new InlineRenderer(muya);
-    this.selection = new Selection(muya);
-    this.searchModule = new Search(muya);
-    this.clipboard = Clipboard.create(muya);
-    this.history = new History(muya);
-  }
-
   init() {
     const { muya } = this;
     const state = this.jsonState.getState();
+
     this.scrollPage = ScrollPage.create(muya, state);
-    this.dispatchEvents();
-    this.focus();
+
+    this._dispatchEvents();
+    this._focus();
     this.exportAPI();
   }
 
-  dispatchEvents() {
+  private _dispatchEvents() {
     const { eventCenter } = this.muya;
     const { domNode } = this.muya;
 
@@ -123,9 +128,9 @@ class Editor {
     eventCenter.attachDOMEvent(domNode, "compositionstart", eventHandler);
   }
 
-  focus() {
+  private _focus() {
     // TODO: the cursor maybe passed by muya options.cursor, and no need to find the first leaf block.
-    const firstLeafBlock = this.scrollPage.firstContentInDescendant();
+    const firstLeafBlock = this.scrollPage!.firstContentInDescendant();
 
     const cursor = {
       path: firstLeafBlock.path,
@@ -302,14 +307,15 @@ class Editor {
     }
   }
 
-  setContent(content, autoFocus = false) {
+  setContent(content: TState[] | string, autoFocus = false) {
     this.jsonState.setContent(content);
     const state = this.jsonState.getState();
 
-    this.scrollPage.updateState(state);
+    this.scrollPage!.updateState(state);
     this.history.clear();
+
     if (autoFocus) {
-      this.focus();
+      this._focus();
     }
   }
 

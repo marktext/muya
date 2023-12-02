@@ -9,7 +9,7 @@ import I18n from "@muya/i18n/index";
 import Ui from "@muya/ui/ui";
 
 import Search from "@muya/search";
-import { MuyaOptions } from "./types";
+import { IMuyaOptions } from "./types";
 
 import { ISearchOption } from "./search/types";
 import { TState } from "./state/types";
@@ -32,7 +32,7 @@ class Muya {
   public readonly version: string =
     typeof window.MUYA_VERSION === "undefined" ? "dev" : window.MUYA_VERSION;
 
-  public options: MuyaOptions;
+  public options: IMuyaOptions;
   public eventCenter: EventCenter;
   public domNode: HTMLElement;
   public editor: Editor;
@@ -120,7 +120,7 @@ class Muya {
 /**
  * [ensureContainerDiv ensure container element is div]
  */
-function getContainer(originContainer: HTMLElement, options: MuyaOptions) {
+function getContainer(originContainer: HTMLElement, options: IMuyaOptions) {
   const { spellcheckEnabled, hideQuickInsertHint } = options;
   const newContainer = document.createElement("div");
   const attrs = originContainer.attributes;

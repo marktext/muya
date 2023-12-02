@@ -1,8 +1,9 @@
-export interface MuyaOptions {
+import { TState } from "./state/types";
+
+export interface IMuyaOptions {
   fontSize: number;
   lineHeight: number;
   focusMode: boolean;
-  markdown: string;
   trimUnnecessaryCodeBlockEmptyLines: boolean;
   preferLooseListItem: boolean;
   autoPairBracket: boolean;
@@ -33,6 +34,8 @@ export interface MuyaOptions {
       [key: string]: string;
     }
   },
+  json?: TState[];
+  markdown?: string;
 }
 
 export type Nullable<T> = T | null;
