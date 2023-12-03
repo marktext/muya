@@ -9,7 +9,12 @@ import ScrollPage from "@muya/block/scrollPage";
 import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
 import type Muya from "@muya/index";
 import { tokenizer } from "@muya/inlineRenderer/lexer";
-import { ImageToken, LinkToken, StrongEmToken, Token } from "@muya/inlineRenderer/types";
+import {
+  ImageToken,
+  LinkToken,
+  StrongEmToken,
+  Token,
+} from "@muya/inlineRenderer/types";
 import { Cursor } from "@muya/selection/types";
 import { Nullable } from "@muya/types";
 import { isKeyboardEvent, isLengthEven } from "@muya/utils";
@@ -306,15 +311,11 @@ class ParagraphContent extends Format {
               children: [] as any,
             };
             const offset = list.offset(listItem);
-            list.forEachAt(
-              offset + 1,
-              undefined,
-              (node) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                newListState.children.push((node as any).getState());
-                node.remove();
-              }
-            );
+            list.forEachAt(offset + 1, undefined, (node) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              newListState.children.push((node as any).getState());
+              node.remove();
+            });
             const newList = ScrollPage.loadBlock(newListState.name).create(
               this.muya,
               newListState
@@ -340,15 +341,11 @@ class ParagraphContent extends Format {
         }
 
         const offset = listItem.offset(parent!);
-        listItem.forEachAt(
-          offset,
-          undefined,
-          (node) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            newListItemState.children.push((node as any).getState());
-            node.remove();
-          }
-        );
+        listItem.forEachAt(offset, undefined, (node) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          newListItemState.children.push((node as any).getState());
+          node.remove();
+        });
 
         const newListItem = ScrollPage.loadBlock(newListItemState.name).create(
           this.muya,
@@ -546,6 +543,10 @@ class ParagraphContent extends Format {
     // Now we know it's a list item. Check whether we can indent the list item.
     const list = listItem?.parent;
 
+    if (listItem == null || list == null) {
+      return false;
+    }
+
     if (
       (listItem.blockName !== "list-item" &&
         listItem.blockName !== "task-list-item") ||
@@ -557,17 +558,27 @@ class ParagraphContent extends Format {
     return list && /ol|ul/.test(list.tagName) && listItem.prev;
   }
 
-  unindentListItem(type: string) {
+  private _unindentListItem(type: string) {
     const { parent } = this;
     const listItem = parent?.parent;
     const list = listItem?.parent;
     const listParent = list?.parent;
     const { start, end } = this.getCursor()!;
+
+    if (
+      parent == null ||
+      listItem == null ||
+      list == null ||
+      listParent == null
+    ) {
+      return;
+    }
+
     const cursorParagraphOffset = listItem.offset(parent);
 
     if (type === "REPLACEMENT") {
-      const paragraph = parent.clone();
-      list.parent.insertBefore(paragraph, list);
+      const paragraph = parent.clone() as Paragraph;
+      listParent.insertBefore(paragraph, list);
 
       if (listItem.isOnlyChild()) {
         list.remove();
@@ -575,16 +586,17 @@ class ParagraphContent extends Format {
         listItem.remove();
       }
     } else if (type === "INDENT") {
-      const newListItem = listItem.clone();
-      listParent.parent.insertAfter(newListItem, listParent);
+      const newListItem = listItem.clone() as Parent;
+      listParent.parent!.insertAfter(newListItem, listParent);
 
       if (
         (listItem.next || list.next) &&
-        newListItem.lastChild.blockName !== list.blockName
+        newListItem.lastChild!.blockName !== list.blockName
       ) {
         const state = {
           name: list.blockName,
-          meta: { ...list.meta },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          meta: { ...(list as any).meta },
           children: [],
         };
         const childList = ScrollPage.loadBlock(state.name).create(
@@ -597,7 +609,7 @@ class ParagraphContent extends Format {
       if (listItem.next) {
         const offset = list.offset(listItem);
         list.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild.append(node.clone(), "user");
+          newListItem.lastChild.append((node as Parent).clone(), "user");
           node.remove();
         });
       }
@@ -605,7 +617,7 @@ class ParagraphContent extends Format {
       if (list.next) {
         const offset = listParent.offset(list);
         listParent.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild.append(node.clone(), "user");
+          newListItem.lastChild!.append((node as Parent).clone(), "user");
           node.remove();
         });
       }
@@ -616,9 +628,7 @@ class ParagraphContent extends Format {
         listItem.remove();
       }
 
-      const cursorBlock = newListItem
-        .find(cursorParagraphOffset)
-        .firstContentInDescendant();
+      const cursorBlock = newListItem.find(cursorParagraphOffset).firstContentInDescendant();
       cursorBlock.setCursor(start.offset, end.offset, true);
     }
   }
@@ -628,7 +638,12 @@ class ParagraphContent extends Format {
     const listItem = parent?.parent;
     const list = listItem?.parent;
     const prevListItem = listItem?.prev;
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
+
+    if (parent == null || listItem == null || list == null) {
+      return;
+    }
+
     // Remember the offset of cursor paragraph in listItem
     const offset = listItem.offset(parent);
 
@@ -642,14 +657,14 @@ class ParagraphContent extends Format {
         children: [listItem.getState()],
       };
       newList = ScrollPage.loadBlock(state.name).create(muya, state);
-      prevListItem.append(newList, "user");
+      prevListItem!.append(newList, "user");
     } else {
       newList.append(listItem.clone(), "user");
     }
 
     listItem.remove();
 
-    const cursorBlock = newList.lastChild
+    const cursorBlock = newList!.lastChild
       .find(offset)
       .firstContentInDescendant();
     cursorBlock.setCursor(start.offset, end.offset, true);
@@ -659,7 +674,7 @@ class ParagraphContent extends Format {
     const { muya, text } = this;
     const { tabSize } = muya.options;
     const tabCharacter = String.fromCharCode(160).repeat(tabSize);
-    const { start, end } = this.getCursor();
+    const { start, end } = this.getCursor()!;
 
     if (this.isCollapsed) {
       this.text =
@@ -672,7 +687,7 @@ class ParagraphContent extends Format {
     }
   }
 
-  private _checkCursorAtEndFormat() {
+  private _checkCursorAtEndFormat(): Nullable<{ offset: number }> {
     const { offset } = this.getCursor()!.start;
     // TODO: add labels in tokenizer...
     const { muya, text } = this;
@@ -684,10 +699,7 @@ class ParagraphContent extends Format {
 
     const walkTokens = (ts: Token[]) => {
       for (const token of ts) {
-        const {
-          type,
-          range,
-        } = token;
+        const { type, range } = token;
         const { start, end } = range;
 
         if (
@@ -791,7 +803,10 @@ class ParagraphContent extends Format {
           }
         }
         // As StrongEmToken only used to pass TS check.
-        if ((token as StrongEmToken).children && (token as StrongEmToken).children.length) {
+        if (
+          (token as StrongEmToken).children &&
+          (token as StrongEmToken).children.length
+        ) {
           walkTokens((token as StrongEmToken).children);
         }
       }
@@ -819,7 +834,7 @@ class ParagraphContent extends Format {
       const unindentType = this.isUnindentableListItem();
 
       if (unindentType) {
-        this.unindentListItem(unindentType);
+        this._unindentListItem(unindentType);
       }
 
       return;
