@@ -1,9 +1,9 @@
-import { CLASS_NAMES, BLOCK_TYPE6 } from "@muya/config";
+import { BLOCK_TYPE6, CLASS_NAMES } from "@muya/config";
 import { snakeToCamel } from "@muya/utils";
 import sanitize, { isValidAttribute } from "@muya/utils/dompurify";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, HTMLTagToken, ImageToken, Token } from "../types";
 import { VNode } from "snabbdom";
+import type { HTMLTagToken, ImageToken, SyntaxRenderOptions, Token } from "../types";
+import type Renderer from "./index";
 
 export default function htmlTag(
   this: Renderer,
@@ -16,7 +16,8 @@ export default function htmlTag(
   }: SyntaxRenderOptions & { token: HTMLTagToken }
 ) {
   const { tag, openTag, closeTag, children, attrs } = token;
-  const className = children
+
+  const className = children?.length
     ? this.getClassName(outerClass, block, token, cursor)
     : CLASS_NAMES.MU_GRAY;
   const tagClassName =
@@ -34,7 +35,7 @@ export default function htmlTag(
     : "";
 
   const anchor =
-    Array.isArray(children) && tag !== "ruby" // important
+    Array.isArray(children) && children.length && tag !== "ruby" // important
       ? children.reduce((acc: VNode[], to: Token) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const chunk = (this as any)[snakeToCamel(to.type)]({

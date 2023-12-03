@@ -544,7 +544,7 @@ const tokenizerFac = (
               labels,
               options
             )
-          : "",
+          : [],
         range: {
           start: pos,
           end: pos + len,

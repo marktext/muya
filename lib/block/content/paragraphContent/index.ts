@@ -1,27 +1,41 @@
+import Content from "@muya/block/base/content";
 import Format from "@muya/block/base/format";
 import Parent from "@muya/block/base/parent";
 import BulletList from "@muya/block/commonMark/bulletList";
-import ListItem from "@muya/block/commonMark/listItem";
 import OrderList from "@muya/block/commonMark/orderList";
 import Paragraph from "@muya/block/commonMark/paragraph";
 import TaskList from "@muya/block/gfm/taskList";
-import TaskListItem from "@muya/block/gfm/taskListItem";
 import ScrollPage from "@muya/block/scrollPage";
 import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
 import type Muya from "@muya/index";
+import { tokenizer } from "@muya/inlineRenderer/lexer";
+import { ImageToken, LinkToken, StrongEmToken, Token } from "@muya/inlineRenderer/types";
 import { Cursor } from "@muya/selection/types";
-import { isKeyboardEvent, isLengthEven, methodMixins } from "@muya/utils";
+import { Nullable } from "@muya/types";
+import { isKeyboardEvent, isLengthEven } from "@muya/utils";
 import logger from "@muya/utils/logger";
 import type {
   IBlockQuoteState,
   ITaskListItemState,
 } from "../../../state/types";
-import backspaceHandler from "./backspace";
-import tabHandler from "./tab";
 
 const debug = logger("paragraph:content");
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
+
+const BOTH_SIDES_FORMATS = [
+  "strong",
+  "em",
+  "inline_code",
+  "image",
+  "link",
+  "reference_image",
+  "reference_link",
+  "emoji",
+  "del",
+  "html_tag",
+  "inline_math",
+];
 
 const parseTableHeader = (text: string) => {
   const rowHeader = [];
@@ -45,13 +59,6 @@ const parseTableHeader = (text: string) => {
 
   return rowHeader;
 };
-
-type BackspaceHandler = typeof backspaceHandler;
-type TabHandler = typeof tabHandler;
-
-interface ParagraphContent extends BackspaceHandler, TabHandler {}
-
-@methodMixins(backspaceHandler, tabHandler)
 class ParagraphContent extends Format {
   public parent: Paragraph | null = null;
 
@@ -77,6 +84,7 @@ class ParagraphContent extends Format {
   update(cursor?: Cursor, highlights = []) {
     this.inlineRenderer.patch(this, cursor, highlights);
     const { label } = this.inlineRenderer.getLabelInfo(this);
+
     if (this.scrollPage && label) {
       this.scrollPage.updateRefLinkAndImage(label);
     }
@@ -93,7 +101,7 @@ class ParagraphContent extends Format {
     }
 
     event.preventDefault();
-    const type = this.paragraphParentType();
+    const type = this._paragraphParentType();
 
     switch (type) {
       case "paragraph":
@@ -197,14 +205,14 @@ class ParagraphContent extends Format {
       const offset = tagName.length + 3;
       htmlBlock.firstContentInDescendant().setCursor(offset, offset);
     } else {
-      return super.enterHandler(event);
+      return super.enterHandler(event as KeyboardEvent);
     }
   }
 
   enterInBlockQuote(event: Event) {
     const { text, parent } = this;
     if (text.length !== 0) {
-      return super.enterHandler(event);
+      return super.enterHandler(event as KeyboardEvent);
     }
 
     event.preventDefault();
@@ -234,9 +242,10 @@ class ParagraphContent extends Format {
           name: "block-quote",
           children: [],
         };
-        const offset = blockQuote!.offset(parent);
-        blockQuote!.forEachAt(offset + 1, undefined, (node: Parent) => {
-          newBlockState.children.push(node.getState());
+        const offset = blockQuote!.offset(parent!);
+        blockQuote!.forEachAt(offset + 1, undefined, (node) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          newBlockState.children.push((node as any).getState());
           node.remove();
         });
         const newBlockQuote = ScrollPage.loadBlock(newBlockState.name).create(
@@ -300,8 +309,9 @@ class ParagraphContent extends Format {
             list.forEachAt(
               offset + 1,
               undefined,
-              (node: TaskListItem | ListItem) => {
-                newListState.children.push(node.getState());
+              (node) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                newListState.children.push((node as any).getState());
                 node.remove();
               }
             );
@@ -329,12 +339,13 @@ class ParagraphContent extends Format {
           };
         }
 
-        const offset = listItem.offset(parent);
+        const offset = listItem.offset(parent!);
         listItem.forEachAt(
           offset,
           undefined,
-          (node: TaskListItem | ListItem) => {
-            newListItemState.children.push(node.getState());
+          (node) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            newListItemState.children.push((node as any).getState());
             node.remove();
           }
         );
@@ -376,7 +387,7 @@ class ParagraphContent extends Format {
         this.update();
         newListItem.firstContentInDescendant().setCursor(0, 0, true);
       } else {
-        super.enterHandler(event);
+        super.enterHandler(event as KeyboardEvent);
       }
     }
   }
@@ -389,7 +400,7 @@ class ParagraphContent extends Format {
       return this.shiftEnterHandler(event);
     }
 
-    const type = this.paragraphParentType();
+    const type = this._paragraphParentType();
 
     if (type === "block-quote") {
       this.enterInBlockQuote(event);
@@ -398,6 +409,440 @@ class ParagraphContent extends Format {
     } else {
       this.enterConvert(event);
     }
+  }
+
+  private _paragraphParentType() {
+    if (this.blockName !== "paragraph.content") {
+      debug.warn("Only paragraph content can call _paragraphParentType");
+
+      return;
+    }
+
+    let parent: Nullable<Parent> = this.parent;
+    let type = "paragraph";
+
+    while (parent && !parent.isScrollPage) {
+      if (
+        parent.blockName === "block-quote" ||
+        parent.blockName === "list-item" ||
+        parent.blockName === "task-list-item"
+      ) {
+        type = parent.blockName;
+        break;
+      }
+
+      parent = parent.parent;
+    }
+
+    return type;
+  }
+
+  handleBackspaceInParagraph(this: ParagraphContent) {
+    const previousContentBlock = this.previousContentInContext();
+    // Handle no previous content block, the first paragraph in document.
+    if (!previousContentBlock) {
+      return;
+    }
+    const { text: oldText } = previousContentBlock;
+    const offset = oldText.length;
+    previousContentBlock.text += this.text;
+    this.parent!.remove();
+    previousContentBlock.setCursor(offset, offset, true);
+  }
+
+  handleBackspaceInBlockQuote() {
+    const parent = this.parent!;
+    const blockQuote = parent!.parent!;
+    let cursorBlock: Content | null;
+
+    if (!parent!.isOnlyChild() && !parent!.isFirstChild()) {
+      return this.handleBackspaceInParagraph();
+    }
+
+    if (parent.isOnlyChild()) {
+      blockQuote.replaceWith(parent);
+      cursorBlock = parent.firstContentInDescendant();
+    } else if (parent.isFirstChild()) {
+      const cloneParagraph = parent.clone() as Paragraph;
+      blockQuote.parent!.insertBefore(cloneParagraph, blockQuote);
+      parent.remove();
+      cursorBlock = cloneParagraph.firstContentInDescendant();
+    }
+
+    cursorBlock!.setCursor(0, 0, true);
+  }
+
+  handleBackspaceInList() {
+    const parent = this.parent!;
+    const listItem = parent.parent!;
+    const list = listItem.parent!;
+
+    if (!parent.isFirstChild()) {
+      return this.handleBackspaceInParagraph();
+    }
+
+    if (listItem.isOnlyChild()) {
+      listItem.forEach((node, i: number) => {
+        const paragraph = (node as Parent).clone() as Parent;
+        list.parent!.insertBefore(paragraph, list);
+        if (i === 0) {
+          paragraph.firstContentInDescendant().setCursor(0, 0, true);
+        }
+      });
+
+      list.remove();
+    } else if (listItem.isFirstChild()) {
+      listItem.forEach((node, i: number) => {
+        const paragraph = (node as Parent).clone() as Parent;
+        list.parent!.insertBefore(paragraph, list);
+        if (i === 0) {
+          paragraph.firstContentInDescendant().setCursor(0, 0, true);
+        }
+      });
+
+      listItem.remove();
+    } else {
+      const previousListItem = listItem.prev;
+      listItem.forEach((node, i: number) => {
+        const paragraph = (node as Parent).clone() as Parent;
+        previousListItem!.append(paragraph, "user");
+        if (i === 0) {
+          paragraph.firstContentInDescendant().setCursor(0, 0, true);
+        }
+      });
+
+      listItem.remove();
+    }
+  }
+
+  isUnindentableListItem() {
+    const { parent } = this;
+    const listItem = parent!.parent;
+    const list = listItem?.parent;
+    const listParent = list?.parent;
+
+    if (!this.isCollapsed) {
+      return false;
+    }
+
+    if (
+      listParent &&
+      (listParent.blockName === "list-item" ||
+        listParent.blockName === "task-list-item")
+    ) {
+      return list.prev ? "INDENT" : "REPLACEMENT";
+    }
+
+    return false;
+  }
+
+  private _canIndentListItem() {
+    const { parent } = this;
+    if (parent!.blockName !== "paragraph" || !parent!.parent) {
+      return false;
+    }
+
+    const listItem = parent?.parent;
+    // Now we know it's a list item. Check whether we can indent the list item.
+    const list = listItem?.parent;
+
+    if (
+      (listItem.blockName !== "list-item" &&
+        listItem.blockName !== "task-list-item") ||
+      !this.isCollapsed
+    ) {
+      return false;
+    }
+
+    return list && /ol|ul/.test(list.tagName) && listItem.prev;
+  }
+
+  unindentListItem(type: string) {
+    const { parent } = this;
+    const listItem = parent?.parent;
+    const list = listItem?.parent;
+    const listParent = list?.parent;
+    const { start, end } = this.getCursor()!;
+    const cursorParagraphOffset = listItem.offset(parent);
+
+    if (type === "REPLACEMENT") {
+      const paragraph = parent.clone();
+      list.parent.insertBefore(paragraph, list);
+
+      if (listItem.isOnlyChild()) {
+        list.remove();
+      } else {
+        listItem.remove();
+      }
+    } else if (type === "INDENT") {
+      const newListItem = listItem.clone();
+      listParent.parent.insertAfter(newListItem, listParent);
+
+      if (
+        (listItem.next || list.next) &&
+        newListItem.lastChild.blockName !== list.blockName
+      ) {
+        const state = {
+          name: list.blockName,
+          meta: { ...list.meta },
+          children: [],
+        };
+        const childList = ScrollPage.loadBlock(state.name).create(
+          this.muya,
+          state
+        );
+        newListItem.append(childList, "user");
+      }
+
+      if (listItem.next) {
+        const offset = list.offset(listItem);
+        list.forEachAt(offset + 1, undefined, (node) => {
+          newListItem.lastChild.append(node.clone(), "user");
+          node.remove();
+        });
+      }
+
+      if (list.next) {
+        const offset = listParent.offset(list);
+        listParent.forEachAt(offset + 1, undefined, (node) => {
+          newListItem.lastChild.append(node.clone(), "user");
+          node.remove();
+        });
+      }
+
+      if (listItem.isOnlyChild()) {
+        list.remove();
+      } else {
+        listItem.remove();
+      }
+
+      const cursorBlock = newListItem
+        .find(cursorParagraphOffset)
+        .firstContentInDescendant();
+      cursorBlock.setCursor(start.offset, end.offset, true);
+    }
+  }
+
+  indentListItem() {
+    const { parent, muya } = this;
+    const listItem = parent?.parent;
+    const list = listItem?.parent;
+    const prevListItem = listItem?.prev;
+    const { start, end } = this.getCursor();
+    // Remember the offset of cursor paragraph in listItem
+    const offset = listItem.offset(parent);
+
+    // Search for a list in previous block
+    let newList = prevListItem?.lastChild;
+
+    if (!newList || !/ol|ul/.test(newList.tagName)) {
+      const state = {
+        name: list.blockName,
+        meta: { ...list.meta },
+        children: [listItem.getState()],
+      };
+      newList = ScrollPage.loadBlock(state.name).create(muya, state);
+      prevListItem.append(newList, "user");
+    } else {
+      newList.append(listItem.clone(), "user");
+    }
+
+    listItem.remove();
+
+    const cursorBlock = newList.lastChild
+      .find(offset)
+      .firstContentInDescendant();
+    cursorBlock.setCursor(start.offset, end.offset, true);
+  }
+
+  insertTab() {
+    const { muya, text } = this;
+    const { tabSize } = muya.options;
+    const tabCharacter = String.fromCharCode(160).repeat(tabSize);
+    const { start, end } = this.getCursor();
+
+    if (this.isCollapsed) {
+      this.text =
+        text.substring(0, start.offset) +
+        tabCharacter +
+        text.substring(end.offset);
+      const offset = start.offset + tabCharacter.length;
+
+      this.setCursor(offset, offset, true);
+    }
+  }
+
+  private _checkCursorAtEndFormat() {
+    const { offset } = this.getCursor()!.start;
+    // TODO: add labels in tokenizer...
+    const { muya, text } = this;
+    const tokens = tokenizer(text, {
+      hasBeginRules: false,
+      options: muya.options,
+    });
+    let result = null;
+
+    const walkTokens = (ts: Token[]) => {
+      for (const token of ts) {
+        const {
+          type,
+          range,
+        } = token;
+        const { start, end } = range;
+
+        if (
+          BOTH_SIDES_FORMATS.includes(type) &&
+          offset > start &&
+          offset < end
+        ) {
+          switch (type) {
+            case "strong": // fall through
+
+            case "em": // fall through
+
+            case "inline_code": // fall through
+
+            case "emoji": // fall through
+
+            case "del": // fall through
+
+            case "inline_math": {
+              const { marker } = token;
+              if (marker && offset === end - marker.length) {
+                result = {
+                  offset: marker.length,
+                };
+
+                return;
+              }
+
+              break;
+            }
+
+            case "image": // fall through
+
+            case "link": {
+              const { backlash } = token;
+              const srcAndTitle = (token as ImageToken).srcAndTitle;
+              const hrefAndTitle = (token as LinkToken).hrefAndTitle;
+              const linkTitleLen = (srcAndTitle || hrefAndTitle).length;
+              const secondLashLen =
+                backlash && backlash.second ? backlash.second.length : 0;
+              if (offset === end - 3 - (linkTitleLen + secondLashLen)) {
+                result = {
+                  offset: 2,
+                };
+
+                return;
+              } else if (offset === end - 1) {
+                result = {
+                  offset: 1,
+                };
+
+                return;
+              }
+              break;
+            }
+
+            case "reference_image": // fall through
+
+            case "reference_link": {
+              const { backlash, isFullLink, label } = token;
+              const labelLen = label ? label.length : 0;
+              const secondLashLen =
+                backlash && backlash.second ? backlash.second.length : 0;
+              if (isFullLink) {
+                if (offset === end - 3 - labelLen - secondLashLen) {
+                  result = {
+                    offset: 2,
+                  };
+
+                  return;
+                } else if (offset === end - 1) {
+                  result = {
+                    offset: 1,
+                  };
+
+                  return;
+                }
+              } else if (offset === end - 1) {
+                result = {
+                  offset: 1,
+                };
+
+                return;
+              }
+              break;
+            }
+
+            case "html_tag": {
+              const { closeTag } = token;
+              if (closeTag && offset === end - closeTag.length) {
+                result = {
+                  offset: closeTag.length,
+                };
+
+                return;
+              }
+              break;
+            }
+            default:
+              break;
+          }
+        }
+        // As StrongEmToken only used to pass TS check.
+        if ((token as StrongEmToken).children && (token as StrongEmToken).children.length) {
+          walkTokens((token as StrongEmToken).children);
+        }
+      }
+    };
+
+    walkTokens(tokens);
+
+    return result;
+  }
+
+  tabHandler(event: Event) {
+    // disable tab focus
+    event.preventDefault();
+
+    if (!isKeyboardEvent(event)) {
+      return;
+    }
+
+    const { start, end } = this.getCursor()!;
+    if (!start || !end) {
+      return;
+    }
+
+    if (event.shiftKey) {
+      const unindentType = this.isUnindentableListItem();
+
+      if (unindentType) {
+        this.unindentListItem(unindentType);
+      }
+
+      return;
+    }
+
+    // Handle `tab` to jump to the end of format when the cursor is at the end of format content.
+    if (this.isCollapsed) {
+      const atEnd = this._checkCursorAtEndFormat();
+
+      if (atEnd) {
+        const offset = start.offset + atEnd.offset;
+
+        this.setCursor(offset, offset, true);
+        return;
+      }
+    }
+
+    if (this._canIndentListItem()) {
+      this.indentListItem();
+      return;
+    }
+
+    this.insertTab();
   }
 }
 

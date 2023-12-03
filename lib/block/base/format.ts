@@ -12,10 +12,9 @@ import {
 import { generator, tokenizer } from "@muya/inlineRenderer/lexer";
 import type {
   CodeEmojiMathToken,
-  HTMLTagToken,
   StrongEmToken,
   TextToken,
-  Token,
+  Token
 } from "@muya/inlineRenderer/types";
 import Selection from '@muya/selection';
 import { getTextContent } from "@muya/selection/dom";
@@ -205,10 +204,9 @@ const checkTokenIsInlineFormat = (token: Token) => {
   }
 
   if (
-    type === "html_tag" &&
-    /^(?:u|sub|sup|mark)$/i.test((token as HTMLTagToken).tag)
+    type === "html_tag"
   ) {
-    return true;
+    return /^(?:u|sub|sup|mark)$/i.test(token.tag)
   }
 
   return false;

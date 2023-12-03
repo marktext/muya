@@ -1,7 +1,7 @@
 import { CLASS_NAMES } from "@muya/config";
 import { htmlToVNode } from "@muya/utils/snabbdom";
+import type { HTMLTagToken, SyntaxRenderOptions } from "../types";
 import type Renderer from "./index";
-import type { SyntaxRenderOptions, HTMLTagToken } from "../types";
 
 export default function htmlRuby(
   this: Renderer,
@@ -20,7 +20,7 @@ export default function htmlRuby(
   const vNode = htmlToVNode(token.raw);
   const previewSelector = `span.${CLASS_NAMES.MU_RUBY_RENDER}`;
 
-  return children
+  return children?.length
     ? [
         h(`span.${className}.${CLASS_NAMES.MU_RUBY}`, [
           h(

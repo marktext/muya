@@ -224,7 +224,7 @@ export type HTMLTagToken = BaseToken & {
   attrs: Record<string, string | null>;
   closeTag?: string;
   content?: string;
-  children?: Token[] | "";
+  children?: Token[];
 };
 
 export type SoftLineBreakToken = BaseToken & {
