@@ -1,9 +1,9 @@
-import type Muya from "@muya/index";
 import type Format from "@muya/block/base/format";
+import type Muya from "@muya/index";
 import type { ImageToken } from "@muya/inlineRenderer/types";
 
-import "./index.css";
 import { isMouseEvent } from "@muya/utils";
+import "./index.css";
 
 const VERTICAL_BAR = ["left", "right"];
 

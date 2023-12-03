@@ -4,7 +4,7 @@ import { CLASS_NAMES } from "@muya/config";
 import Muya from "@muya/index";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
-import Content from "./content/index";
+import Content from "./content";
 
 const debug = logger("parent:");
 

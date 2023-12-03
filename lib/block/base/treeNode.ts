@@ -210,7 +210,7 @@ class TreeNode extends LinkedNode<TreeNode> {
   /**
    * Remove the current block in the block tree.
    */
-  remove(this: Parent | Content) {
+  remove() {
     if (!this.parent) {
       return;
     }

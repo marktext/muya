@@ -7,12 +7,20 @@ export const VOID_HTML_TAGS = voidHtmlTags;
 export const HTML_TAGS = htmlTags;
 export const BLOCK_DOM_PROPERTY = "__MUYA_BLOCK__";
 
-export const FORMAT_MARKER_MAP = {
+interface ITag {
+  open: string;
+  close: string;
+}
+
+export const FORMAT_MARKER_MAP: Record<string, string> = {
   em: "*",
   inline_code: "`",
   strong: "**",
   del: "~~",
   inline_math: "$",
+};
+
+export const FORMAT_TAG_MAP: Record<string, ITag> = {
   u: {
     open: "<u>",
     close: "</u>",
@@ -29,7 +37,7 @@ export const FORMAT_MARKER_MAP = {
     open: "<mark>",
     close: "</mark>",
   },
-};
+}
 
 export const FORMAT_TYPES = [
   "strong",

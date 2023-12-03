@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
 import type { Path } from "ot-json1";
-import Parent from "../base/parent";
 import Content from "../base/content";
+import Parent from "../base/parent";
 
 interface ContainerQueryBlock {
   find(p: number): Parent | Content;

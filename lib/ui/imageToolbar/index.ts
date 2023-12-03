@@ -1,13 +1,13 @@
-import { patch, h } from "@muya/utils/snabbdom";
+import { h, patch } from "@muya/utils/snabbdom";
 import BaseFloat from "../baseFloat";
 import icons, { Icon } from "./config";
 
-import "./index.css";
-import { VNode } from "snabbdom";
-import { ImageToken } from "@muya/inlineRenderer/types";
-import type { ReferenceObject } from "popper.js";
 import Format from "@muya/block/base/format";
 import Muya from "@muya/index";
+import { ImageToken } from "@muya/inlineRenderer/types";
+import type { ReferenceObject } from "popper.js";
+import { VNode } from "snabbdom";
+import "./index.css";
 
 const defaultOptions = {
   placement: "top",

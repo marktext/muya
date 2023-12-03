@@ -62,7 +62,7 @@ class Editor {
     this.scrollPage = ScrollPage.create(muya, state);
 
     this._dispatchEvents();
-    this._focus();
+    this.focus();
     this.exportAPI();
   }
 
@@ -128,7 +128,7 @@ class Editor {
     eventCenter.attachDOMEvent(domNode, "compositionstart", eventHandler);
   }
 
-  private _focus() {
+  focus() {
     // TODO: the cursor maybe passed by muya options.cursor, and no need to find the first leaf block.
     const firstLeafBlock = this.scrollPage!.firstContentInDescendant();
 
@@ -315,7 +315,7 @@ class Editor {
     this.history.clear();
 
     if (autoFocus) {
-      this._focus();
+      this.focus();
     }
   }
 

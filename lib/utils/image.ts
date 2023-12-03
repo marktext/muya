@@ -3,7 +3,12 @@ import { tokenizer } from "@muya/inlineRenderer/lexer";
 import type { ImageToken } from "@muya/inlineRenderer/types";
 import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
 
-export const getImageInfo = (image: HTMLElement) => {
+export interface IImageInfo {
+  token: ImageToken;
+  imageId: string;
+}
+
+export function getImageInfo(image: HTMLElement): IImageInfo {
   const paragraph = findContentDOM(image)!;
   const raw = image.getAttribute("data-raw")!;
   const offset = getOffsetOfParagraph(image, paragraph);
@@ -18,7 +23,7 @@ export const getImageInfo = (image: HTMLElement) => {
     token,
     imageId: image.id,
   };
-};
+}
 
 export const getImageSrc = (src: string) => {
   const EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;

@@ -161,6 +161,166 @@ class Selection {
     this.listenSelectActions();
   }
 
+  selectAll() {
+    const {
+      anchor,
+      focus,
+      isSelectionInSameBlock,
+      anchorBlock,
+      anchorPath,
+      scrollPage,
+    } = this;
+    // Select all in one content block.
+    // Can use getSelection here?
+    if (
+      isSelectionInSameBlock &&
+      anchor &&
+      focus &&
+      anchorBlock &&
+      Math.abs(focus.offset - anchor.offset) < anchorBlock.text.length
+    ) {
+      const cursor: Cursor = {
+        anchor: { offset: 0 },
+        focus: { offset: anchorBlock.text.length },
+        block: anchorBlock,
+        path: anchorPath,
+      };
+
+      this.setSelection(cursor);
+      return;
+    }
+    // Select all content in all blocks.
+    const aBlock: Content = scrollPage.firstContentInDescendant();
+    const fBlock: Content = scrollPage.lastContentInDescendant();
+
+    const cursor: Cursor = {
+      anchor: { offset: 0 },
+      focus: { offset: fBlock.text.length },
+      anchorBlock: aBlock,
+      anchorPath: aBlock.path,
+      focusBlock: fBlock,
+      focusPath: fBlock.path,
+    };
+
+    this.setSelection(cursor);
+    const activeEle = this.doc.activeElement;
+    if (activeEle && activeEle.classList.contains("mu-content")) {
+      (activeEle as HTMLElement).blur();
+    }
+  }
+
+  /**
+   * Return the current selection of doc or null if has no selection.
+   * @returns
+   */
+  getSelection(): TSelection | null {
+    const selection = document.getSelection();
+
+    if (!selection) {
+      return null;
+    }
+
+    const { anchorNode, anchorOffset, focusNode, focusOffset } = selection;
+
+    if (!anchorNode || !focusNode) {
+      return null;
+    }
+
+    const anchorDomNode = findContentDOM(anchorNode);
+    const focusDomNode = findContentDOM(focusNode);
+
+    if (!anchorDomNode || !focusDomNode) {
+      return null;
+    }
+
+    const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
+    const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
+    const anchorPath = anchorBlock.path;
+    const focusPath = focusBlock.path;
+
+    const aOffset =
+      getOffsetOfParagraph(anchorNode, anchorDomNode) + anchorOffset;
+    const fOffset = getOffsetOfParagraph(focusNode, focusDomNode) + focusOffset;
+    const anchor = { offset: aOffset };
+    const focus = { offset: fOffset };
+
+    const isCollapsed =
+      anchorBlock === focusBlock && anchor.offset === focus.offset;
+
+    const isSelectionInSameBlock = anchorBlock === focusBlock;
+    let direction = "none";
+    let type = "None";
+
+    if (isCollapsed) {
+      direction = "none";
+    }
+    if (isSelectionInSameBlock) {
+      direction = anchor.offset < focus.offset ? "forward" : "backward";
+    } else {
+      const aDom = anchorBlock.domNode!;
+      const fDom = focusBlock.domNode!;
+      const order = compareParagraphsOrder(aDom, fDom);
+      direction = order ? "forward" : "backward";
+    }
+
+    type = isCollapsed ? "Caret" : "Range";
+
+    return {
+      anchor,
+      focus,
+      anchorBlock,
+      anchorPath,
+      focusBlock,
+      focusPath,
+      isCollapsed,
+      isSelectionInSameBlock,
+      direction,
+      type,
+    };
+  }
+
+  setSelection({
+    anchor,
+    focus,
+    block,
+    path,
+    anchorBlock,
+    anchorPath,
+    focusBlock,
+    focusPath,
+  }: Cursor) {
+    this.anchor = anchor ?? null;
+    this.focus = focus ?? null;
+    this.anchorBlock = anchorBlock ?? block ?? null;
+    this.anchorPath = anchorPath ?? path ?? [];
+    this.focusBlock = focusBlock ?? block ?? null;
+    this.focusPath = focusPath ?? path ?? [];
+    // Update cursor.
+    this.setCursor();
+
+    const {
+      isCollapsed,
+      isSelectionInSameBlock,
+      direction,
+      type,
+      selectedImage,
+    } = this;
+
+    this.muya.eventCenter.emit("selection-change", {
+      anchor,
+      focus,
+      anchorBlock,
+      anchorPath,
+      focusBlock,
+      focusPath,
+      isCollapsed,
+      isSelectionInSameBlock,
+      direction,
+      type,
+      selectedImage,
+    });
+  }
+
   private listenSelectActions() {
     const { eventCenter, domNode } = this.muya;
 
@@ -436,166 +596,6 @@ class Selection {
         imageInfo,
       });
     }
-  }
-
-  selectAll() {
-    const {
-      anchor,
-      focus,
-      isSelectionInSameBlock,
-      anchorBlock,
-      anchorPath,
-      scrollPage,
-    } = this;
-    // Select all in one content block.
-    // Can use getSelection here?
-    if (
-      isSelectionInSameBlock &&
-      anchor &&
-      focus &&
-      anchorBlock &&
-      Math.abs(focus.offset - anchor.offset) < anchorBlock.text.length
-    ) {
-      const cursor: Cursor = {
-        anchor: { offset: 0 },
-        focus: { offset: anchorBlock.text.length },
-        block: anchorBlock,
-        path: anchorPath,
-      };
-
-      this.setSelection(cursor);
-      return;
-    }
-    // Select all content in all blocks.
-    const aBlock: Content = scrollPage.firstContentInDescendant();
-    const fBlock: Content = scrollPage.lastContentInDescendant();
-
-    const cursor: Cursor = {
-      anchor: { offset: 0 },
-      focus: { offset: fBlock.text.length },
-      anchorBlock: aBlock,
-      anchorPath: aBlock.path,
-      focusBlock: fBlock,
-      focusPath: fBlock.path,
-    };
-
-    this.setSelection(cursor);
-    const activeEle = this.doc.activeElement;
-    if (activeEle && activeEle.classList.contains("mu-content")) {
-      (activeEle as HTMLElement).blur();
-    }
-  }
-
-  /**
-   * Return the current selection of doc or null if has no selection.
-   * @returns
-   */
-  getSelection(): TSelection | null {
-    const selection = document.getSelection();
-
-    if (!selection) {
-      return null;
-    }
-
-    const { anchorNode, anchorOffset, focusNode, focusOffset } = selection;
-
-    if (!anchorNode || !focusNode) {
-      return null;
-    }
-
-    const anchorDomNode = findContentDOM(anchorNode);
-    const focusDomNode = findContentDOM(focusNode);
-
-    if (!anchorDomNode || !focusDomNode) {
-      return null;
-    }
-
-    const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
-    const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
-    const anchorPath = anchorBlock.path;
-    const focusPath = focusBlock.path;
-
-    const aOffset =
-      getOffsetOfParagraph(anchorNode, anchorDomNode) + anchorOffset;
-    const fOffset = getOffsetOfParagraph(focusNode, focusDomNode) + focusOffset;
-    const anchor = { offset: aOffset };
-    const focus = { offset: fOffset };
-
-    const isCollapsed =
-      anchorBlock === focusBlock && anchor.offset === focus.offset;
-
-    const isSelectionInSameBlock = anchorBlock === focusBlock;
-    let direction = "none";
-    let type = "None";
-
-    if (isCollapsed) {
-      direction = "none";
-    }
-    if (isSelectionInSameBlock) {
-      direction = anchor.offset < focus.offset ? "forward" : "backward";
-    } else {
-      const aDom = anchorBlock.domNode!;
-      const fDom = focusBlock.domNode!;
-      const order = compareParagraphsOrder(aDom, fDom);
-      direction = order ? "forward" : "backward";
-    }
-
-    type = isCollapsed ? "Caret" : "Range";
-
-    return {
-      anchor,
-      focus,
-      anchorBlock,
-      anchorPath,
-      focusBlock,
-      focusPath,
-      isCollapsed,
-      isSelectionInSameBlock,
-      direction,
-      type,
-    };
-  }
-
-  setSelection({
-    anchor,
-    focus,
-    block,
-    path,
-    anchorBlock,
-    anchorPath,
-    focusBlock,
-    focusPath,
-  }: Cursor) {
-    this.anchor = anchor ?? null;
-    this.focus = focus ?? null;
-    this.anchorBlock = anchorBlock ?? block ?? null;
-    this.anchorPath = anchorPath ?? path ?? [];
-    this.focusBlock = focusBlock ?? block ?? null;
-    this.focusPath = focusPath ?? path ?? [];
-    // Update cursor.
-    this.setCursor();
-
-    const {
-      isCollapsed,
-      isSelectionInSameBlock,
-      direction,
-      type,
-      selectedImage,
-    } = this;
-
-    this.muya.eventCenter.emit("selection-change", {
-      anchor,
-      focus,
-      anchorBlock,
-      anchorPath,
-      focusBlock,
-      focusPath,
-      isCollapsed,
-      isSelectionInSameBlock,
-      direction,
-      type,
-      selectedImage,
-    });
   }
 
   private selectRange(range: Range) {

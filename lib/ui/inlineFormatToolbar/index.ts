@@ -168,6 +168,8 @@ class FormatPicker extends BaseFloat {
     // TODO: @JOCS, remove use this.selection directly.
     const { anchor, focus, anchorBlock, anchorPath, focusBlock, focusPath } =
       selection;
+    const { block } = this;
+
     selection.setSelection({
       anchor,
       focus,
@@ -176,8 +178,8 @@ class FormatPicker extends BaseFloat {
       focusBlock: focusBlock!,
       focusPath,
     });
-    const { block } = this;
     block!.format(item.type);
+
     if (/link|image/.test(item.type)) {
       this.hide();
     } else {

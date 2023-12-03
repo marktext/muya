@@ -15,7 +15,7 @@ export interface ISetextHeadingState {
   name: "setext-heading";
   meta: {
     level: number;
-    underline: "===" | "---";
+    underline: string; // "===" | "---";
   };
   text: string;
 }
@@ -28,7 +28,7 @@ export interface IThematicBreakState {
 export interface ICodeBlockState {
   name: "code-block";
   meta: {
-    type: "indented" | "fenced";
+    type: string; // "indented" | "fenced";
     lang: string;
   };
   text: string;
@@ -59,7 +59,7 @@ export interface IOrderListState {
   meta: {
     start: number;
     loose: boolean;
-    delimiter: "." | ")";
+    delimiter: string; // "." | ")";
   };
   children: IListItemState[];
 }
@@ -67,7 +67,7 @@ export interface IOrderListState {
 export interface IBulletListState {
   name: "bullet-list";
   meta: {
-    marker: "-" | "+" | "*";
+    marker: string; // "-" | "+" | "*";
     loose: boolean;
   };
   children: IListItemState[];
@@ -104,7 +104,7 @@ export interface ITaskListItemState {
 }
 
 export interface ITaskListMeta {
-  marker: "-" | "+" | "*";
+  marker: string; // "-" | "+" | "*";
   loose: boolean;
 }
 
@@ -115,7 +115,7 @@ export interface ITaskListState {
 }
 
 export interface IMathMeta {
-  mathStyle: "" | "gitlab";
+  mathStyle: string; // "" | "gitlab";
 }
 
 export interface IMathBlockState {
@@ -125,8 +125,8 @@ export interface IMathBlockState {
 }
 
 export interface IFrontmatterMeta {
-  lang: "yaml" | "toml" | "json";
-  style: "-" | "+" | ";" | "{";
+  lang: string; // "yaml" | "toml" | "json";
+  style: string; //  "-" | "+" | ";" | "{";
 }
 
 export interface IFrontmatterState {

@@ -201,7 +201,7 @@ class Content extends TreeNode {
           muya,
           newNodeState
         );
-        this.scrollPage.append(newNode, "user");
+        this.scrollPage?.append(newNode, "user");
         cursorBlock = newNode.children.head;
       }
       offset = adjustOffset(0, cursorBlock, event);
@@ -223,7 +223,7 @@ class Content extends TreeNode {
    */
   getCursor() {
     const selection = this.selection.getSelection();
-    if (!selection) {
+    if (selection == null) {
       return null;
     }
 
@@ -519,11 +519,11 @@ class Content extends TreeNode {
   };
 
   blurHandler() {
-    this.scrollPage.handleBlurFromContent(this);
+    this.scrollPage?.handleBlurFromContent(this);
   }
 
   focusHandler() {
-    this.scrollPage.handleFocusFromContent(this);
+    this.scrollPage?.handleFocusFromContent(this);
   }
 
   getAncestors() {
