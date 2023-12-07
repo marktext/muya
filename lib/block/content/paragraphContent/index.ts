@@ -12,8 +12,7 @@ import { tokenizer } from "@muya/inlineRenderer/lexer";
 import {
   ImageToken,
   LinkToken,
-  StrongEmToken,
-  Token,
+  Token
 } from "@muya/inlineRenderer/types";
 import { Cursor } from "@muya/selection/types";
 import { Nullable } from "@muya/types";
@@ -802,12 +801,12 @@ class ParagraphContent extends Format {
               break;
           }
         }
-        // As StrongEmToken only used to pass TS check.
+
         if (
-          (token as StrongEmToken).children &&
-          (token as StrongEmToken).children.length
+          'children' in token &&
+          Array.isArray(token.children)
         ) {
-          walkTokens((token as StrongEmToken).children);
+          walkTokens(token.children);
         }
       }
     };

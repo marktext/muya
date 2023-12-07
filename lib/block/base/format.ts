@@ -12,11 +12,10 @@ import {
 import { generator, tokenizer } from "@muya/inlineRenderer/lexer";
 import type {
   CodeEmojiMathToken,
-  StrongEmToken,
   TextToken,
-  Token
+  Token,
 } from "@muya/inlineRenderer/types";
-import Selection from '@muya/selection';
+import Selection from "@muya/selection";
 import { getTextContent } from "@muya/selection/dom";
 import { Cursor } from "@muya/selection/types";
 import { IBulletListState, IOrderListState } from "@muya/state/types";
@@ -156,7 +155,7 @@ function clearFormat(token: Token, cursor: Cursor) {
         content: token.alt, // maybe src is better?
         parent,
         range, // the range is wrong, but it will not be used.
-      }
+      };
 
       parent.splice(index, 1, newToken);
 
@@ -174,7 +173,7 @@ function clearFormat(token: Token, cursor: Cursor) {
         content: token.content,
         parent,
         range, // the range is wrong, but it will not be used.
-      }
+      };
 
       parent.splice(index, 1, newToken);
 
@@ -203,10 +202,8 @@ const checkTokenIsInlineFormat = (token: Token) => {
     return true;
   }
 
-  if (
-    type === "html_tag"
-  ) {
-    return /^(?:u|sub|sup|mark)$/i.test(token.tag)
+  if (type === "html_tag") {
+    return /^(?:u|sub|sup|mark)$/i.test(token.tag);
   }
 
   return false;
@@ -240,9 +237,8 @@ class Format extends Content {
         ) {
           result = token;
           break;
-        } else if ((token as StrongEmToken).children) {
-          // As StrongEmToken only used to pass the TS check.
-          travel((token as StrongEmToken).children);
+        } else if ("children" in token && Array.isArray(token.children)) {
+          travel(token.children);
         }
       }
     };
@@ -1420,12 +1416,8 @@ class Format extends Content {
           neighbors.push(token);
         }
 
-        // As StrongEmToken only used to pass TS check.
-        if (
-          (token as StrongEmToken).children &&
-          (token as StrongEmToken).children.length
-        ) {
-          iterator((token as StrongEmToken).children);
+        if ("children" in token && Array.isArray(token.children)) {
+          iterator(token.children);
         }
       }
     })(tokens);
@@ -1529,7 +1521,10 @@ class Format extends Content {
     this.setCursor(start.offset, end.offset, true);
   }
 
-  private _addFormat(type: string, { start, end }: { start: IOffset; end: IOffset }) {
+  private _addFormat(
+    type: string,
+    { start, end }: { start: IOffset; end: IOffset }
+  ) {
     switch (type) {
       case "em":
 
