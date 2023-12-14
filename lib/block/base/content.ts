@@ -57,12 +57,8 @@ class Content extends TreeNode {
     // dispatch change to modify json state
     if (oldText !== text) {
       const diffs = diff(oldText, text);
-      this.jsonState.pushOperation(
-        "editOp",
-        path,
-        "text-unicode",
-        diffToTextOp(diffs)
-      );
+
+      this.jsonState.editOperation(path, diffToTextOp(diffs));
     }
   }
 
@@ -115,24 +111,6 @@ class Content extends TreeNode {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   enterHandler(_event: Event): void {
     // Do nothing.
-  }
-
-  /**
-   * check this is a Content block?
-   * @param this
-   * @returns boolean
-   */
-  isContent() {
-    return true;
-  }
-
-  /**
-   * check this is a Parent block?
-   * @param this
-   * @returns boolean
-   */
-  isParent() {
-    return false;
   }
 
   deleteHandler(event: Event): void {
@@ -554,7 +532,7 @@ class Content extends TreeNode {
   }
 
   remove() {
-    super.remove();
+    this.removeFromParent();
 
     return this;
   }

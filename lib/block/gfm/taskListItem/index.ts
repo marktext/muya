@@ -1,6 +1,7 @@
 import Parent from "@muya/block/base/parent";
 import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
 import ScrollPage from "@muya/block/scrollPage";
+import { TPathList } from "@muya/block/types";
 import Muya from "@muya/index";
 import { mixins } from "@muya/utils";
 import { ITaskListItemMeta, ITaskListItemState } from "../../../state/types";
@@ -26,11 +27,11 @@ class TaskListItem extends Parent {
     return listItem;
   }
 
-  get path() {
+  get path(): TPathList[] {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
-    return [...pPath, offset, "children"];
+    return [...pPath, offset, "children"] as TPathList[];
   }
 
   get checked() {
@@ -45,7 +46,7 @@ class TaskListItem extends Parent {
       path.pop();
       path.push("meta", "checked");
 
-      this.jsonState.pushOperation("replaceOp", path, oldCheckStatus, checked);
+      this.jsonState.replaceOperation(path, oldCheckStatus, checked);
     }
   }
 

@@ -7,7 +7,7 @@ import logger from "@muya/utils/logger";
 import { TState } from "../../state/types";
 import Content from "../base/content";
 import TreeNode from "../base/treeNode";
-import { Path } from "../types";
+import { TPathList } from "../types";
 
 const debug = logger("scrollpage:");
 
@@ -95,7 +95,7 @@ class ScrollPage extends Parent {
    * Find the content block by the path
    * @param {array} path
    */
-  queryBlock(path: Path) {
+  queryBlock(path: TPathList) {
     if (path.length === 0) {
       return this;
     }

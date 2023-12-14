@@ -2,8 +2,10 @@ import LinkedList from "@muya/block/base/linkedList/linkedList";
 import TreeNode from "@muya/block/base/treeNode";
 import { CLASS_NAMES } from "@muya/config";
 import Muya from "@muya/index";
+import { TState } from "@muya/state/types";
 import { operateClassName } from "@muya/utils/dom";
 import logger from "@muya/utils/logger";
+import { TPathList } from "../types";
 import Content from "./content";
 
 const debug = logger("parent:");
@@ -44,26 +46,13 @@ class Parent extends TreeNode {
     );
   }
 
+  get path(): TPathList[] {
+    // You should never call get path on Parent.
+    return [];
+  }
+
   constructor(muya: Muya) {
     super(muya);
-  }
-
-  /**
-   * check this is a Content block?
-   * @param this
-   * @returns boolean
-   */
-  isContent() {
-    return false;
-  }
-
-  /**
-   * check this is a Parent block?
-   * @param this
-   * @returns boolean
-   */
-  isParent() {
-    return true;
   }
 
   getJsonPath() {
@@ -73,6 +62,11 @@ class Parent extends TreeNode {
     }
 
     return path;
+  }
+
+  getState(): TState {
+    // You should never call get path on Parent.
+    return {} as TState;
   }
 
   /**
@@ -123,7 +117,7 @@ class Parent extends TreeNode {
       (args as Parent[]).forEach((node) => {
         const path = node.getJsonPath();
         const state = node.getState();
-        this.jsonState.pushOperation("insertOp", path, state);
+        this.jsonState.insertOperation(path, state);
       });
     }
   }
@@ -199,7 +193,7 @@ class Parent extends TreeNode {
       // dispatch json1 operation
       const path = newNode.getJsonPath();
       const state = newNode.getState();
-      this.jsonState.pushOperation("insertOp", path, state);
+      this.jsonState.insertOperation(path, state);
     }
 
     return newNode;
@@ -215,11 +209,10 @@ class Parent extends TreeNode {
     if (source === "user") {
       // dispatch json1 operation
       const path = this.getJsonPath();
-      const state = this.getState();
-      this.jsonState.pushOperation("removeOp", path, state);
+      this.jsonState.removeOperation(path);
     }
 
-    super.remove();
+    this.removeFromParent();
 
     return this;
   }
@@ -230,14 +223,18 @@ class Parent extends TreeNode {
     });
   }
 
-  removeChild(node: Parent | Content, source = "user") {
+  removeChild(node: TreeNode, source = "user") {
     if (!this.children.contains(node)) {
       debug.warn(
         "Can not removeChild(node), because node is not child of this block"
       );
     }
 
-    node.remove(source);
+    if (node.isParent()) {
+      node.remove(source);
+    } else if (node.isContent()) {
+      node.remove();
+    }
 
     return node;
   }

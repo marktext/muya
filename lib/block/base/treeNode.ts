@@ -65,6 +65,24 @@ class TreeNode extends LinkedNode<TreeNode> {
     super();
   }
 
+    /**
+   * check this is a Content block?
+   * @param this
+   * @returns boolean
+   */
+    isContent(this: TreeNode): this is Content {
+      return 'text' in this;
+    }
+  
+    /**
+     * check this is a Parent block?
+     * @param this
+     * @returns boolean
+     */
+    isParent(this: unknown): this is Parent {
+      return this instanceof Parent;
+    }
+
   /**
    * create domNode
    */
@@ -83,7 +101,7 @@ class TreeNode extends LinkedNode<TreeNode> {
   }
 
   // Get previous content block in block tree.
-  previousContentInContext(): Content | null {
+  previousContentInContext(): Nullable<Content> {
     if (this.isScrollPage || !this.parent) {
       return null;
     }
@@ -99,7 +117,7 @@ class TreeNode extends LinkedNode<TreeNode> {
   }
 
   // Get next content block in block tree.
-  nextContentInContext(): Content | null {
+  nextContentInContext(): Nullable<Content> {
     if (this.isScrollPage || !this.parent) {
       return null;
     }
@@ -210,7 +228,7 @@ class TreeNode extends LinkedNode<TreeNode> {
   /**
    * Remove the current block in the block tree.
    */
-  remove() {
+  removeFromParent() {
     if (!this.parent) {
       return;
     }

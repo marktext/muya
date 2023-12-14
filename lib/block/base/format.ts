@@ -26,6 +26,7 @@ import logger from "@muya/utils/logger";
 import AtxHeading from "../commonMark/atxHeading";
 import BulletList from "../commonMark/bulletList";
 import SetextHeading from "../commonMark/setextHeading";
+import Parent from "./parent";
 
 interface IOffset {
   offset: number;
@@ -916,7 +917,7 @@ class Format extends Content {
         list.forEachAt(offset + 1, undefined, (node) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           bulletListState.children.push((node as any).getState());
-          node.remove();
+          (node as Parent).remove();
         });
 
         const bulletList = ScrollPage.loadBlock(bulletListState.name).create(

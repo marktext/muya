@@ -1,6 +1,6 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { Path } from "@muya/block/types";
+import { TPathList } from "@muya/block/types";
 import Muya from "@muya/index";
 import logger from "@muya/utils/logger";
 import { loadLanguage } from "@muya/utils/prism";
@@ -63,7 +63,7 @@ class DiagramBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path: Path) {
+  queryBlock(path: TPathList) {
     return path.length && path[0] === "text"
       ? this.firstContentInDescendant()
       : this;

@@ -7,7 +7,7 @@ import logger from "@muya/utils/logger";
 import { loadLanguage } from "@muya/utils/prism";
 import diff from "fast-diff";
 import { ICodeBlockState } from "../../../state/types";
-import { Path } from "../../types";
+import { TPathList } from "../../types";
 
 const debug = logger("codeblock:");
 
@@ -55,12 +55,9 @@ class CodeBlock extends Parent {
       const diffs = diff("indented", "fenced");
       const { path } = this;
       path.push("meta", "type");
-      this.jsonState.pushOperation(
-        "editOp",
-        path,
-        "text-unicode",
-        diffToTextOp(diffs)
-      );
+
+      this.jsonState.editOperation(path, diffToTextOp(diffs));
+
       operateClassName(this.domNode!, "remove", "mu-indented-code");
       operateClassName(this.domNode!, "add", "mu-fenced-code");
     }
@@ -84,7 +81,7 @@ class CodeBlock extends Parent {
         });
   }
 
-  get path(): Path {
+  get path(): TPathList {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -99,7 +96,7 @@ class CodeBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path: Path) {
+  queryBlock(path: TPathList) {
     if (path.length === 0) {
       return this;
     } else {

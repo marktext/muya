@@ -2,7 +2,7 @@
 import Content from "@muya/block/base/content";
 import { EVENT_KEYS } from "@muya/config";
 import Selection from "@muya/selection";
-import type { Diff } from "fast-diff";
+import { type Diff } from "fast-diff";
 import runSanitize, { Config } from "./dompurify";
 
 type Union = {
@@ -236,12 +236,14 @@ function visibleLength(str: string) {
   return [...new (Intl as any).Segmenter().segment(str)].length;
 }
 
+export type TDiff = (string | number | { d: string });
+
 /**
  * transform diff to text-unicode op
  * @param {array} diffs
  */
-export const diffToTextOp = (diffs: Diff[]) => {
-  const op = [];
+export function diffToTextOp(diffs: Diff[]) {
+  const op: TDiff[] = [];
 
   for (const diff of diffs) {
     switch (diff[0]) {
@@ -269,7 +271,7 @@ export const diffToTextOp = (diffs: Diff[]) => {
   }
 
   return op;
-};
+}
 
 export const getCursorReference = () => {
   const rect = Selection.getCursorCoords();

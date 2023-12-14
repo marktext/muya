@@ -4,7 +4,7 @@ import ScrollPage from "@muya/block/scrollPage";
 // import { diffToTextOp } from '@muya/utils'
 import { loadLanguage } from "@muya/utils/prism";
 // import { operateClassName } from '@muya/utils/dom'
-import { Path } from "@muya/block/types";
+import { TPathList } from "@muya/block/types";
 import Muya from "@muya/index";
 import logger from "@muya/utils/logger";
 import { IFrontmatterMeta, IFrontmatterState } from "../../../state/types";
@@ -36,18 +36,6 @@ class Frontmatter extends Parent {
 
   set lang(value) {
     this.meta.lang = value;
-
-    // TODO update json state
-    // if (this.meta.type !== 'fenced') {
-    //   this.meta.type = 'fenced'
-    //   // dispatch change to modify json state
-    //   const diffs = diff('indented', 'fenced')
-    //   const { path } = this
-    //   path.push('meta', 'type')
-    //   this.jsonState.pushOperation('editOp', path, 'text-unicode', diffToTextOp(diffs))
-    //   operateClassName(this.domNode, 'remove', 'mu-indented-code')
-    //   operateClassName(this.domNode, 'add', 'mu-fenced-code')
-    // }
 
     !!value &&
       loadLanguage(value)
@@ -83,7 +71,7 @@ class Frontmatter extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path: Path) {
+  queryBlock(path: TPathList) {
     if (path.length === 0) {
       return this;
     } else {

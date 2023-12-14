@@ -1,1 +1,1 @@
-export type Path = (string | number)[];
+export type TPathList = (string | number)[];

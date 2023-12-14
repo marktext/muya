@@ -1,5 +1,5 @@
 import Muya from "@muya/index";
-import { deepClone } from "@muya/utils";
+import { TDiff, deepClone } from "@muya/utils";
 import logger from "@muya/utils/logger";
 import * as json1 from "ot-json1";
 import MarkdownToState from "./markdownToState";
@@ -72,20 +72,40 @@ class JSONState {
     }).generate(markdown);
   }
 
-  /**
-   * This method only used by user source.
-   * @param method json1 operation method insertOp, removeOp, replaceOp, editOp
-   * @param path
-   * @param args
-   */
-  pushOperation(
-    method: "insertOp" | "removeOp" | "replaceOp" | "editOp",
-    path: Path,
-    ...args: [unknown, ...unknown[]]
-  ) {
-    const operation: JSONOpList = json1[method](path, ...args);
+  insertOperation(path: Path, state: TState) {
+    const operation = json1.insertOp(path, state as unknown as Doc)!;
+
     this.operationCache.push(operation);
 
+    this._emitStateChange();
+  }
+
+  removeOperation(path: Path) {
+    const operation = json1.removeOp(path)!;
+
+    this.operationCache.push(operation);
+
+    this._emitStateChange();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  editOperation(path: Path, diff: TDiff[]) {
+    const operation = json1.editOp(path, "text-unicode", diff)!;
+
+    this.operationCache.push(operation);
+
+    this._emitStateChange();
+  }
+
+  replaceOperation(path: Path, oldValue: TState, newValue: TState) {
+    const operation = json1.replaceOp(path, oldValue as unknown as Doc, newValue as unknown as Doc)!;
+
+    this.operationCache.push(operation);
+
+    this._emitStateChange();
+  }
+
+  private _emitStateChange() {
     if (!this.isGoing) {
       this.isGoing = true;
       requestAnimationFrame(() => {

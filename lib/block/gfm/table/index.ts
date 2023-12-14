@@ -1,6 +1,6 @@
 import Parent from "@muya/block/base/parent";
 import ScrollPage from "@muya/block/scrollPage";
-import { Path } from "@muya/block/types";
+import { TPathList } from "@muya/block/types";
 import Muya from "@muya/index";
 import { diffToTextOp } from "@muya/utils";
 import logger from "@muya/utils/logger";
@@ -100,7 +100,7 @@ class Table extends Parent {
     eventCenter.attachDOMEvent(domNode!, "mousedown", clickHandler);
   }
 
-  queryBlock(path: Path) {
+  queryBlock(path: TPathList) {
     return (this.firstChild as TableInner).queryBlock(path);
   }
 
@@ -208,12 +208,8 @@ class Table extends Parent {
         const diffs = diff(oldValue, cell.align);
         const { path } = cell;
         path.push("meta", "align");
-        this.jsonState.pushOperation(
-          "editOp",
-          path,
-          "text-unicode",
-          diffToTextOp(diffs)
-        );
+
+        this.jsonState.editOperation(path, diffToTextOp(diffs));
       }
     });
   }
