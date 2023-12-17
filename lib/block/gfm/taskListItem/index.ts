@@ -1,7 +1,7 @@
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
-import { TPathList } from '@muya/block/types';
+import { TBlockPath } from '@muya/block/types';
 import Muya from '@muya/index';
 import { mixins } from '@muya/utils';
 import { ITaskListItemMeta, ITaskListItemState } from '../../../state/types';
@@ -27,7 +27,7 @@ class TaskListItem extends Parent {
     return listItem;
   }
 
-  get path(): TPathList {
+  get path(): TBlockPath {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 

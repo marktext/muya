@@ -1,12 +1,11 @@
 import LinkedList from '@muya/block/base/linkedList/linkedList';
 import TreeNode from '@muya/block/base/treeNode';
 import { CLASS_NAMES } from '@muya/config';
-import Muya from '@muya/index';
 import { TState } from '@muya/state/types';
+import { Nullable } from '@muya/types';
 import { operateClassName } from '@muya/utils/dom';
 import logger from '@muya/utils/logger';
-import { TPathList } from '../types';
-import Content from './content';
+import { TBlockPath } from '../types';
 
 const debug = logger('parent:');
 
@@ -14,8 +13,8 @@ class Parent extends TreeNode {
   // Used to store icon, checkbox(span) etc. these blocks are not in children properties in json state.
   public attachments: LinkedList<Parent> = new LinkedList();
   public children: LinkedList<TreeNode> = new LinkedList();
-  public prev: Parent | null = null;
-  public next: Parent | null = null;
+  public prev: Nullable<Parent> = null;
+  public next: Nullable<Parent> = null;
 
   private _active: boolean = false;
 
@@ -25,10 +24,17 @@ class Parent extends TreeNode {
 
   set active(value) {
     this._active = value;
+
+    if (this.domNode == null) {
+      debug.error('domNode is null.');
+
+      return;
+    }
+
     if (value) {
-      operateClassName(this.domNode!, 'add', CLASS_NAMES.MU_ACTIVE);
+      operateClassName(this.domNode, 'add', CLASS_NAMES.MU_ACTIVE);
     } else {
-      operateClassName(this.domNode!, 'remove', CLASS_NAMES.MU_ACTIVE);
+      operateClassName(this.domNode, 'remove', CLASS_NAMES.MU_ACTIVE);
     }
   }
 
@@ -46,13 +52,10 @@ class Parent extends TreeNode {
     );
   }
 
-  get path(): TPathList {
+  get path(): TBlockPath {
     // You should never call get path on Parent.
+    debug.error('You should never call get path on Parent.');
     return [];
-  }
-
-  constructor(muya: Muya) {
-    super(muya);
   }
 
   getJsonPath() {
@@ -65,7 +68,8 @@ class Parent extends TreeNode {
   }
 
   getState(): TState {
-    // You should never call get path on Parent.
+    // You should never call get state on Parent.
+    debug.error('You should never call get state on Parent.')
     return {} as TState;
   }
 
@@ -242,51 +246,52 @@ class Parent extends TreeNode {
   /**
    * find the first content block, paragraph.content etc.
    */
-  firstContentInDescendant(): Content {
-    let firstContentBlock: Content | any = this;
-    do {
-      firstContentBlock = firstContentBlock.children.head;
-    } while (firstContentBlock.children);
+  firstContentInDescendant() {
+    let likeContentBlock: Nullable<TreeNode> = this.children.head;
 
-    return firstContentBlock;
+    while (likeContentBlock && likeContentBlock.isParent()) {
+      likeContentBlock = likeContentBlock.children.head;
+    }
+
+    return likeContentBlock?.isContent() ? likeContentBlock : null;
   }
 
   /**
    * find the last content block in container block.
    */
-  lastContentInDescendant(): Content {
-    let lastContentBlock: Content | any = this;
+  lastContentInDescendant() {
+    let likeContentBlock: Nullable<TreeNode> = this.children.tail;
 
-    do {
-      lastContentBlock = lastContentBlock.children.tail;
-    } while (lastContentBlock.children);
+    while(likeContentBlock && likeContentBlock.isParent()) {
+      likeContentBlock = likeContentBlock.children.tail;
+    }
 
-    return lastContentBlock;
+    return likeContentBlock?.isContent() ? likeContentBlock : null;
   }
 
-  breadthFirstTraverse(callback) {
-    const queue = [this];
+  breadthFirstTraverse(this: Parent, callback: (node: TreeNode) => void) {
+    const queue: TreeNode[] = [this];
 
     while (queue.length) {
-      const node = queue.shift();
+      const node = queue.shift()!;
 
       callback(node);
 
-      if (node.children) {
+      if (node.isParent()) {
         node.children.forEach((child) => queue.push(child));
       }
     }
   }
 
-  depthFirstTraverse(callback: (node: Parent | Content) => void) {
-    const stack: Parent | Content = [this];
+  depthFirstTraverse(this: Parent, callback: (node: TreeNode) => void) {
+    const stack: TreeNode[] = [this];
 
     while (stack.length) {
-      const node = stack.shift();
+      const node = stack.shift()!;
 
       callback(node);
 
-      if (node.children) {
+      if (node.isParent()) {
         // Use splice ot make sure the first block in document is process first.
         node.children.forEach((child, i) => stack.splice(i, 0, child));
       }

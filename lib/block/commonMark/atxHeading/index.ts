@@ -2,7 +2,7 @@ import Content from '@muya/block/base/content';
 import Parent from '@muya/block/base/parent';
 import LeafQueryBlock from '@muya/block/mixins/leafQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
-import { TPathList } from '@muya/block/types';
+import { TBlockPath } from '@muya/block/types';
 import Muya from '@muya/index';
 import { mixins } from '@muya/utils';
 import { IAtxHeadingState } from '../../../state/types';
@@ -27,7 +27,7 @@ class AtxHeading extends Parent {
     return heading;
   }
 
-  get path(): TPathList {
+  get path(): TBlockPath {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 

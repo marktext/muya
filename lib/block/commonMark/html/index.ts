@@ -1,6 +1,6 @@
 import Parent from '@muya/block/base/parent';
 import ScrollPage from '@muya/block/scrollPage';
-import { TPathList } from '@muya/block/types';
+import { TBlockPath } from '@muya/block/types';
 import { CLASS_NAMES } from '@muya/config';
 import Muya from '@muya/index';
 import { IHtmlBlockState } from '../../../state/types';
@@ -44,7 +44,7 @@ class HTMLBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path: TPathList) {
+  queryBlock(path: TBlockPath) {
     return path.length && path[0] === 'text'
       ? this.firstContentInDescendant()
       : this;

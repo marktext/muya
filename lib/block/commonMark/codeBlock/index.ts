@@ -7,7 +7,7 @@ import logger from '@muya/utils/logger';
 import { loadLanguage } from '@muya/utils/prism';
 import diff from 'fast-diff';
 import { ICodeBlockState } from '../../../state/types';
-import { TPathList } from '../../types';
+import { TBlockPath } from '../../types';
 
 const debug = logger('codeblock:');
 
@@ -81,7 +81,7 @@ class CodeBlock extends Parent {
         });
   }
 
-  get path(): TPathList {
+  get path(): TBlockPath {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -96,7 +96,7 @@ class CodeBlock extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path: TPathList) {
+  queryBlock(path: TBlockPath) {
     if (path.length === 0) {
       return this;
     } else {

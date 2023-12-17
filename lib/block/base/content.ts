@@ -12,7 +12,7 @@ import {
   isKeyboardEvent,
 } from '@muya/utils';
 import diff from 'fast-diff';
-import { TPathList } from '../types';
+import { TBlockPath } from '../types';
 
 // import logger from '@muya/utils/logger'
 
@@ -36,7 +36,7 @@ class Content extends TreeNode {
     return this.muya.editor.inlineRenderer;
   }
 
-  get path(): TPathList {
+  get path(): TBlockPath {
     if (this.parent == null) {
       return ['text'];
     }

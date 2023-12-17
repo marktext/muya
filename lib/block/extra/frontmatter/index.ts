@@ -4,7 +4,7 @@ import ScrollPage from '@muya/block/scrollPage';
 // import { diffToTextOp } from '@muya/utils'
 import { loadLanguage } from '@muya/utils/prism';
 // import { operateClassName } from '@muya/utils/dom'
-import { TPathList } from '@muya/block/types';
+import { TBlockPath } from '@muya/block/types';
 import Muya from '@muya/index';
 import logger from '@muya/utils/logger';
 import { IFrontmatterMeta, IFrontmatterState } from '../../../state/types';
@@ -71,7 +71,7 @@ class Frontmatter extends Parent {
     this.createDomNode();
   }
 
-  queryBlock(path: TPathList) {
+  queryBlock(path: TBlockPath) {
     if (path.length === 0) {
       return this;
     } else {

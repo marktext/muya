@@ -1,1 +1,1 @@
-export type TPathList = (string | number)[];
+export type TBlockPath = (string | number)[];

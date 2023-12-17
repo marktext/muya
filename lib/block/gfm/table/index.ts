@@ -1,6 +1,6 @@
 import Parent from '@muya/block/base/parent';
 import ScrollPage from '@muya/block/scrollPage';
-import { TPathList } from '@muya/block/types';
+import { TBlockPath } from '@muya/block/types';
 import Muya from '@muya/index';
 import { diffToTextOp } from '@muya/utils';
 import logger from '@muya/utils/logger';
@@ -100,7 +100,7 @@ class Table extends Parent {
     eventCenter.attachDOMEvent(domNode!, 'mousedown', clickHandler);
   }
 
-  queryBlock(path: TPathList) {
+  queryBlock(path: TBlockPath) {
     return (this.firstChild as TableInner).queryBlock(path);
   }
 

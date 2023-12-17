@@ -6,8 +6,7 @@ import { isMouseEvent } from '@muya/utils';
 import logger from '@muya/utils/logger';
 import { TState } from '../../state/types';
 import Content from '../base/content';
-import TreeNode from '../base/treeNode';
-import { TPathList } from '../types';
+import { TBlockPath } from '../types';
 
 const debug = logger('scrollpage:');
 
@@ -95,7 +94,7 @@ class ScrollPage extends Parent {
    * Find the content block by the path
    * @param {array} path
    */
-  queryBlock(path: TPathList) {
+  queryBlock(path: TBlockPath) {
     if (path.length === 0) {
       return this;
     }
@@ -109,7 +108,7 @@ class ScrollPage extends Parent {
   updateRefLinkAndImage(label: string) {
     const REG = new RegExp(`\\[${label}\\](?!:)`);
 
-    this.breadthFirstTraverse((node: TreeNode) => {
+    this.breadthFirstTraverse((node) => {
       if (node.isContent() && REG.test(node.text)) {
         node.update();
       }
