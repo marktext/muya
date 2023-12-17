@@ -1,3 +1,4 @@
+import LinkedList from '@muya/block/base/linkedList/linkedList';
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
@@ -14,6 +15,7 @@ interface IOrderListMeta {
 
 @mixins(ContainerQueryBlock)
 class OrderList extends Parent {
+  public children: LinkedList<Parent> = new LinkedList();
   public meta: IOrderListMeta;
 
   static blockName = 'order-list';

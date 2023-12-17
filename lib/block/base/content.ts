@@ -79,6 +79,7 @@ class Content extends TreeNode {
 
   constructor(muya: Muya, text: string) {
     super(muya);
+
     this.tagName = 'span';
     this.classList = ['mu-content'];
     this.attributes = {
@@ -536,8 +537,8 @@ class Content extends TreeNode {
     return commonAncestors;
   }
 
-  remove() {
-    this.removeFromParent();
+  remove(source = 'user') {
+    super.remove(source);
 
     return this;
   }

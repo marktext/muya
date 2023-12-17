@@ -1,3 +1,4 @@
+import LinkedList from '@muya/block/base/linkedList/linkedList';
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
@@ -8,6 +9,8 @@ import { ITaskListItemMeta, ITaskListItemState } from '../../../state/types';
 
 @mixins(ContainerQueryBlock)
 class TaskListItem extends Parent {
+  public children: LinkedList<Parent> = new LinkedList();
+
   public meta: ITaskListItemMeta;
 
   static blockName = 'task-list-item';
@@ -72,7 +75,7 @@ class TaskListItem extends Parent {
     const state: ITaskListItemState = {
       name: 'task-list-item',
       meta: { ...this.meta },
-      children: this.children.map((child) => (child as Parent).getState()),
+      children: this.children.map((child) => child.getState()),
     };
 
     return state;

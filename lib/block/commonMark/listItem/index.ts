@@ -1,3 +1,4 @@
+import LinkedList from '@muya/block/base/linkedList/linkedList';
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
@@ -7,6 +8,8 @@ import { IListItemState } from '../../../state/types';
 
 @mixins(ContainerQueryBlock)
 class ListItem extends Parent {
+  public children: LinkedList<Parent> = new LinkedList();
+
   static blockName = 'list-item';
 
   static create(muya: Muya, state: IListItemState) {
@@ -38,7 +41,7 @@ class ListItem extends Parent {
   getState(): IListItemState {
     const state: IListItemState = {
       name: 'list-item',
-      children: this.children.map((child) => (child as Parent).getState()),
+      children: this.children.map((child) => child.getState()),
     };
 
     return state;

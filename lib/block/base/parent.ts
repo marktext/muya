@@ -216,7 +216,7 @@ class Parent extends TreeNode {
       this.jsonState.removeOperation(path);
     }
 
-    this.removeFromParent();
+    super.remove(source);
 
     return this;
   }

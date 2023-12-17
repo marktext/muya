@@ -228,7 +228,8 @@ class TreeNode extends LinkedNode<TreeNode> {
   /**
    * Remove the current block in the block tree.
    */
-  removeFromParent() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  remove(_source = 'user') {
     if (!this.parent) {
       return;
     }

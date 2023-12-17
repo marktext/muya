@@ -9,11 +9,7 @@ import ScrollPage from '@muya/block/scrollPage';
 import { HTML_TAGS, VOID_HTML_TAGS } from '@muya/config';
 import type Muya from '@muya/index';
 import { tokenizer } from '@muya/inlineRenderer/lexer';
-import {
-  ImageToken,
-  LinkToken,
-  Token
-} from '@muya/inlineRenderer/types';
+import { ImageToken, LinkToken, Token } from '@muya/inlineRenderer/types';
 import { Cursor } from '@muya/selection/types';
 import { Nullable } from '@muya/types';
 import { isKeyboardEvent, isLengthEven } from '@muya/utils';
@@ -63,8 +59,11 @@ const parseTableHeader = (text: string) => {
 
   return rowHeader;
 };
+/**
+ * ParagraphContent
+ */
 class ParagraphContent extends Format {
-  public parent: Paragraph | null = null;
+  public parent: Nullable<Paragraph> = null;
 
   static blockName = 'paragraph.content';
 
@@ -76,6 +75,7 @@ class ParagraphContent extends Format {
 
   constructor(muya: Muya, text: string) {
     super(muya, text);
+
     this.classList = [...this.classList, 'mu-paragraph-content'];
     this.attributes['empty-hint'] = muya.i18n.t('Type / to insert...');
     this.createDomNode();
@@ -281,7 +281,7 @@ class ParagraphContent extends Format {
           case listItem.isOnlyChild(): {
             const newParagraph = parent!.clone() as Paragraph;
             list.replaceWith(newParagraph);
-            newParagraph.firstContentInDescendant().setCursor(0, 0);
+            newParagraph?.firstContentInDescendant()?.setCursor(0, 0);
             break;
           }
 
@@ -289,7 +289,7 @@ class ParagraphContent extends Format {
             const newParagraph = parent!.clone() as Paragraph;
             listItem.remove();
             list.parent!.insertBefore(newParagraph, list);
-            newParagraph.firstContentInDescendant().setCursor(0, 0);
+            newParagraph?.firstContentInDescendant()?.setCursor(0, 0);
             break;
           }
 
@@ -297,7 +297,7 @@ class ParagraphContent extends Format {
             const newParagraph = parent!.clone() as Paragraph;
             listItem.remove();
             list.parent!.insertAfter(newParagraph, list);
-            newParagraph.firstContentInDescendant().setCursor(0, 0);
+            newParagraph?.firstContentInDescendant()?.setCursor(0, 0);
             break;
           }
 
@@ -322,7 +322,7 @@ class ParagraphContent extends Format {
             list.parent!.insertAfter(newParagraph, list);
             list.parent!.insertAfter(newList, newParagraph);
             listItem.remove();
-            newParagraph.firstContentInDescendant().setCursor(0, 0);
+            newParagraph?.firstContentInDescendant()?.setCursor(0, 0);
             break;
           }
         }
@@ -482,7 +482,7 @@ class ParagraphContent extends Format {
         const paragraph = (node as Parent).clone() as Parent;
         list.parent!.insertBefore(paragraph, list);
         if (i === 0) {
-          paragraph.firstContentInDescendant().setCursor(0, 0, true);
+          paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
         }
       });
 
@@ -492,7 +492,7 @@ class ParagraphContent extends Format {
         const paragraph = (node as Parent).clone() as Parent;
         list.parent!.insertBefore(paragraph, list);
         if (i === 0) {
-          paragraph.firstContentInDescendant().setCursor(0, 0, true);
+          paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
         }
       });
 
@@ -503,7 +503,7 @@ class ParagraphContent extends Format {
         const paragraph = (node as Parent).clone() as Parent;
         previousListItem!.append(paragraph, 'user');
         if (i === 0) {
-          paragraph.firstContentInDescendant().setCursor(0, 0, true);
+          paragraph?.firstContentInDescendant()?.setCursor(0, 0, true);
         }
       });
 
@@ -562,16 +562,19 @@ class ParagraphContent extends Format {
     const listItem = parent?.parent;
     const list = listItem?.parent;
     const listParent = list?.parent;
-    const { start, end } = this.getCursor()!;
+    const cursor = this.getCursor();
 
     if (
       parent == null ||
       listItem == null ||
       list == null ||
-      listParent == null
+      listParent == null ||
+      cursor == null
     ) {
       return;
     }
+
+    const { start, end } = cursor;
 
     const cursorParagraphOffset = listItem.offset(parent);
 
@@ -607,8 +610,9 @@ class ParagraphContent extends Format {
 
       if (listItem.next) {
         const offset = list.offset(listItem);
+
         list.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild.append((node as Parent).clone(), 'user');
+          newListItem.lastChild?.append((node as Parent).clone(), 'user');
           node.remove();
         });
       }
@@ -616,7 +620,7 @@ class ParagraphContent extends Format {
       if (list.next) {
         const offset = listParent.offset(list);
         listParent.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild!.append((node as Parent).clone(), 'user');
+          newListItem.lastChild?.append((node as Parent).clone(), 'user');
           node.remove();
         });
       }
@@ -627,8 +631,14 @@ class ParagraphContent extends Format {
         listItem.remove();
       }
 
-      const cursorBlock = newListItem.find(cursorParagraphOffset).firstContentInDescendant();
-      cursorBlock.setCursor(start.offset, end.offset, true);
+      if (newListItem == null) {
+        debug.error('newListItem is null');
+        return;
+      }
+
+      const cursorBlock = (newListItem.find(cursorParagraphOffset) as Parent).firstContentInDescendant();
+
+      cursorBlock?.setCursor(start.offset, end.offset, true);
     }
   }
 
@@ -802,10 +812,7 @@ class ParagraphContent extends Format {
           }
         }
 
-        if (
-          'children' in token &&
-          Array.isArray(token.children)
-        ) {
+        if ('children' in token && Array.isArray(token.children)) {
           walkTokens(token.children);
         }
       }

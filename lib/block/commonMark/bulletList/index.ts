@@ -1,3 +1,4 @@
+import LinkedList from '@muya/block/base/linkedList/linkedList';
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
@@ -5,13 +6,10 @@ import Muya from '@muya/index';
 import { IBulletListState, IListItemState } from '@muya/state/types';
 import { mixins } from '@muya/utils';
 
-interface IBulletListMeta {
-  marker: '-' | '+' | '*';
-  loose: boolean;
-}
-
 @mixins(ContainerQueryBlock)
 class BulletList extends Parent {
+  public children: LinkedList<Parent> = new LinkedList();
+
   static blockName = 'bullet-list';
 
   static create(muya: Muya, state: IBulletListState) {
@@ -33,7 +31,7 @@ class BulletList extends Parent {
     return [...pPath, offset, 'children'];
   }
 
-  public meta: IBulletListMeta;
+  public meta: IBulletListState['meta'];
 
   constructor(muya: Muya, { meta }: IBulletListState) {
     super(muya);
