@@ -1,8 +1,8 @@
-import { getUniqueId } from "@muya/utils";
-import { loadImage } from "@muya/utils/image";
-import { insertAfter, operateClassName } from "@muya/utils/dom";
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
+import { getUniqueId } from '@muya/utils';
+import { loadImage } from '@muya/utils/image';
+import { insertAfter, operateClassName } from '@muya/utils/dom';
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
 
 export default function loadImageAsync(
   this: Renderer,
@@ -25,17 +25,17 @@ export default function loadImageAsync(
     loadImage(src, isUnknownType)
       .then(({ url, width, height }) => {
         const imageText: HTMLElement | null = document.querySelector(`#${id}`);
-        const img = document.createElement("img");
+        const img = document.createElement('img');
         img.src = url;
         if (attrs.alt)
-          img.alt = attrs.alt.replace(/[`*{}[\]()#+\-.!_>~:|<>$]/g, "");
-        if (attrs.title) img.setAttribute("title", attrs.title);
-        if (attrs.width && typeof attrs.width === "number") {
-          img.setAttribute("width", attrs.width);
+          img.alt = attrs.alt.replace(/[`*{}[\]()#+\-.!_>~:|<>$]/g, '');
+        if (attrs.title) img.setAttribute('title', attrs.title);
+        if (attrs.width && typeof attrs.width === 'number') {
+          img.setAttribute('width', attrs.width);
         }
 
-        if (attrs.height && typeof attrs.height === "number") {
-          img.setAttribute("height", attrs.height);
+        if (attrs.height && typeof attrs.height === 'number') {
+          img.setAttribute('height', attrs.height);
         }
 
         if (imageClass) {
@@ -47,17 +47,17 @@ export default function loadImageAsync(
             const imageContainer = imageText.querySelector(
               `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`
             );
-            const oldImage = imageContainer!.querySelector("img");
+            const oldImage = imageContainer!.querySelector('img');
             if (oldImage) {
               oldImage.remove();
             }
             imageContainer!.appendChild(img);
-            imageText.classList.remove("mu-image-loading");
-            imageText.classList.add("mu-image-success");
+            imageText.classList.remove('mu-image-loading');
+            imageText.classList.add('mu-image-success');
           } else {
             insertAfter(img, imageText);
             if (className) {
-              operateClassName(imageText, "add", className);
+              operateClassName(imageText, 'add', className);
             }
           }
         }
@@ -75,9 +75,9 @@ export default function loadImageAsync(
       .catch(() => {
         const imageText: HTMLElement | null = document.querySelector(`#${id}`);
         if (imageText) {
-          operateClassName(imageText, "remove", CLASS_NAMES.MU_IMAGE_LOADING);
-          operateClassName(imageText, "add", CLASS_NAMES.MU_IMAGE_FAIL);
-          const image = imageText.querySelector("img");
+          operateClassName(imageText, 'remove', CLASS_NAMES.MU_IMAGE_LOADING);
+          operateClassName(imageText, 'add', CLASS_NAMES.MU_IMAGE_FAIL);
+          const image = imageText.querySelector('img');
           if (image) {
             image.remove();
           }

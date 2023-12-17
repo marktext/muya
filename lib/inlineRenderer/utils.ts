@@ -1,5 +1,5 @@
-import { findClosingBracket } from "@muya/utils/marked/utils";
-import type { Rules } from "./types";
+import { findClosingBracket } from '@muya/utils/marked/utils';
+import type { Rules } from './types';
 
 // ASCII PUNCTUATION character
 // export const punctuation = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
@@ -9,33 +9,33 @@ export const PUNCTUATION_REG =
 /* eslint-enable no-useless-escape */
 // selected from https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
 export const WHITELIST_ATTRIBUTES = [
-  "align",
-  "alt",
-  "checked",
-  "class",
-  "color",
-  "dir",
-  "disabled",
-  "for",
-  "height",
-  "hidden",
-  "href",
-  "id",
-  "lang",
-  "lazyload",
-  "rel",
-  "spellcheck",
-  "src",
-  "srcset",
-  "start",
-  "style",
-  "target",
-  "title",
-  "type",
-  "value",
-  "width",
+  'align',
+  'alt',
+  'checked',
+  'class',
+  'color',
+  'dir',
+  'disabled',
+  'for',
+  'height',
+  'hidden',
+  'href',
+  'id',
+  'lang',
+  'lazyload',
+  'rel',
+  'spellcheck',
+  'src',
+  'srcset',
+  'start',
+  'style',
+  'target',
+  'title',
+  'type',
+  'value',
+  'width',
   // Used in img
-  "data-align",
+  'data-align',
 ];
 
 // export const unicodeZsCategory = [
@@ -66,10 +66,10 @@ export const WHITELIST_ATTRIBUTES = [
 const UNICODE_WHITESPACE_REG = /^\s/;
 
 const validWidthAndHeight = (value: string) => {
-  if (!/^\d{1,}$/.test(value)) return "";
+  if (!/^\d{1,}$/.test(value)) return '';
   const num = parseInt(value);
 
-  return num >= 0 ? num.toString() : "";
+  return num >= 0 ? num.toString() : '';
 };
 
 export const lowerPriority = (src: string, offset: number, rules: Rules) => {
@@ -99,15 +99,15 @@ export const lowerPriority = (src: string, offset: number, rules: Rules) => {
 
 export const getAttributes = (html: string) => {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const target = doc.querySelector("body")?.firstElementChild;
+  const doc = parser.parseFromString(html, 'text/html');
+  const target = doc.querySelector('body')?.firstElementChild;
   if (!target) return null;
   const attrs: Record<string, string | null> = {};
-  if (target.tagName === "IMG") {
+  if (target.tagName === 'IMG') {
     Object.assign(attrs, {
-      title: "",
-      src: "",
-      alt: "",
+      title: '',
+      src: '',
+      alt: '',
     });
   }
 
@@ -124,20 +124,20 @@ export const getAttributes = (html: string) => {
   return attrs;
 };
 
-export const parseSrcAndTitle = (text = "") => {
+export const parseSrcAndTitle = (text = '') => {
   const parts = text.split(/\s+/);
   if (parts.length === 1) {
     return {
       src: text.trim(),
-      title: "",
+      title: '',
     };
   }
-  const rawTitle = text.replace(/^[^ ]+ +/, "");
-  let src = "";
+  const rawTitle = text.replace(/^[^ ]+ +/, '');
+  let src = '';
   const TITLE_REG = /^('|")(.*?)\1$/; // we only support use `'` and `"` to indicate a title now.
-  let title = "";
+  let title = '';
   if (rawTitle && TITLE_REG.test(rawTitle)) {
-    title = rawTitle.replace(TITLE_REG, "$2");
+    title = rawTitle.replace(TITLE_REG, '$2');
   }
 
   if (title) {
@@ -150,7 +150,7 @@ export const parseSrcAndTitle = (text = "") => {
 };
 
 const canOpenEmphasis = (src: string, marker: string, pending: string) => {
-  const precededChar = pending.charAt(pending.length - 1) || "\n";
+  const precededChar = pending.charAt(pending.length - 1) || '\n';
   const followedChar = src[marker.length];
   // not followed by Unicode whitespace,
   if (UNICODE_WHITESPACE_REG.test(followedChar)) {
@@ -185,7 +185,7 @@ const canOpenEmphasis = (src: string, marker: string, pending: string) => {
 
 const canCloseEmphasis = (src: string, offset: number, marker: string) => {
   const precededChar = src[offset - marker.length - 1];
-  const followedChar = src[offset] || "\n";
+  const followedChar = src[offset] || '\n';
   // not preceded by Unicode whitespace,
   if (UNICODE_WHITESPACE_REG.test(precededChar)) {
     return false;
@@ -238,10 +238,10 @@ export const validateEmphasize = (
   const mLen = marker.length;
   const emphasizeText = src.substring(mLen, offset - mLen);
   const SHORTER_REG = new RegExp(
-    ` \\${marker.split("").join("\\")}[^\\${marker.charAt(0)}]`
+    ` \\${marker.split('').join('\\')}[^\\${marker.charAt(0)}]`
   );
   const CLOSE_REG = new RegExp(
-    `[^\\${marker.charAt(0)}]\\${marker.split("").join("\\")}`
+    `[^\\${marker.charAt(0)}]\\${marker.split('').join('\\')}`
   );
   if (emphasizeText.match(SHORTER_REG) && !emphasizeText.match(CLOSE_REG)) {
     return false;
@@ -257,8 +257,8 @@ export const validateEmphasize = (
 };
 
 export const correctUrl = (token: string[] | null) => {
-  if (token && typeof token[4] === "string") {
-    const lastParenIndex = findClosingBracket(token[4], "()");
+  if (token && typeof token[4] === 'string') {
+    const lastParenIndex = findClosingBracket(token[4], '()');
 
     if (lastParenIndex > -1) {
       const len = token[0].length - (token[4].length - lastParenIndex);
@@ -270,7 +270,7 @@ export const correctUrl = (token: string[] | null) => {
         token[5] = match[1];
       } else {
         token[4] = originSrc;
-        token[5] = "";
+        token[5] = '';
       }
     }
   }

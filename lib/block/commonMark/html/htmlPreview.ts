@@ -1,17 +1,17 @@
-import Parent from "@muya/block/base/parent";
-import { PREVIEW_DOMPURIFY_CONFIG } from "@muya/config";
-import Muya from "@muya/index";
-import { sanitize } from "@muya/utils";
-import { getImageSrc } from "@muya/utils/image";
-import logger from "@muya/utils/logger";
-import { IHtmlBlockState, TState } from "../../../state/types";
+import Parent from '@muya/block/base/parent';
+import { PREVIEW_DOMPURIFY_CONFIG } from '@muya/config';
+import Muya from '@muya/index';
+import { sanitize } from '@muya/utils';
+import { getImageSrc } from '@muya/utils/image';
+import logger from '@muya/utils/logger';
+import { IHtmlBlockState, TState } from '../../../state/types';
 
-const debug = logger("htmlPreview:");
+const debug = logger('htmlPreview:');
 
 class HTMLPreview extends Parent {
   public html: string;
 
-  static blockName = "html-preview";
+  static blockName = 'html-preview';
 
   static create(muya: Muya, state: IHtmlBlockState) {
     const htmlBlock = new HTMLPreview(muya, state);
@@ -20,18 +20,18 @@ class HTMLPreview extends Parent {
   }
 
   get path() {
-    debug.warn("You can never call `get path` in htmlPreview");
+    debug.warn('You can never call `get path` in htmlPreview');
     return [];
   }
 
   constructor(muya: Muya, { text }: IHtmlBlockState) {
     super(muya);
-    this.tagName = "div";
+    this.tagName = 'div';
     this.html = text;
-    this.classList = ["mu-html-preview"];
+    this.classList = ['mu-html-preview'];
     this.attributes = {
-      spellcheck: "false",
-      contenteditable: "false",
+      spellcheck: 'false',
+      contenteditable: 'false',
     };
     this.createDomNode();
     this.update();
@@ -51,22 +51,22 @@ class HTMLPreview extends Parent {
         '<div class="mu-empty">&lt;Empty HTML Block&gt;</div>';
     } else {
       const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlContent, "text/html");
-      const imgs = doc.documentElement.querySelectorAll("img");
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      const imgs = doc.documentElement.querySelectorAll('img');
 
       for (const img of imgs) {
-        const src = img.getAttribute("src")!;
+        const src = img.getAttribute('src')!;
         const imageSrc = getImageSrc(src);
-        img.setAttribute("src", imageSrc.src);
+        img.setAttribute('src', imageSrc.src);
       }
 
       this.domNode!.innerHTML =
-        doc.documentElement!.querySelector("body")!.innerHTML;
+        doc.documentElement!.querySelector('body')!.innerHTML;
     }
   }
 
   getState(): TState {
-    debug.warn("You can never call `getState` in htmlPreview");
+    debug.warn('You can never call `getState` in htmlPreview');
     return {} as TState;
   }
 }

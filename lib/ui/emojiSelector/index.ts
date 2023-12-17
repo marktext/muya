@@ -1,24 +1,24 @@
-import BaseScrollFloat from "@muya/ui/baseScrollFloat";
-import { h, patch } from "@muya/utils/snabbdom";
-import Emoji from "./emoji";
+import BaseScrollFloat from '@muya/ui/baseScrollFloat';
+import { h, patch } from '@muya/utils/snabbdom';
+import Emoji from './emoji';
 
-import type { Emoji as EmojiType } from "@muya/config/emojis";
-import type Muya from "@muya/index";
-import type { VNode } from "snabbdom";
-import "./index.css";
+import type { Emoji as EmojiType } from '@muya/config/emojis';
+import type Muya from '@muya/index';
+import type { VNode } from 'snabbdom';
+import './index.css';
 
 const defaultOptions = {
-  placement: "bottom" as const,
+  placement: 'bottom' as const,
   modifiers: {
     offset: {
-      offset: "0, 12",
+      offset: '0, 12',
     },
   },
   showArrow: false,
 };
 
 class EmojiSelector extends BaseScrollFloat {
-  static pluginName = "emojiPicker";
+  static pluginName = 'emojiPicker';
   private _renderObj: Record<string, EmojiType[]> | null = null;
   private oldVNode: VNode | null = null;
   private emoji: Emoji = new Emoji();
@@ -26,7 +26,7 @@ class EmojiSelector extends BaseScrollFloat {
   public activeItem: EmojiType | null = null;
 
   constructor(muya: Muya) {
-    const name = "mu-emoji-picker";
+    const name = 'mu-emoji-picker';
     super(muya, name, defaultOptions);
 
     this.listen();
@@ -53,7 +53,7 @@ class EmojiSelector extends BaseScrollFloat {
   listen() {
     super.listen();
     const { eventCenter } = this.muya;
-    eventCenter.on("muya-emoji-picker", ({ reference, emojiText, block }) => {
+    eventCenter.on('muya-emoji-picker', ({ reference, emojiText, block }) => {
       if (!emojiText) return this.hide();
       const text = emojiText.trim();
       if (text) {
@@ -80,9 +80,9 @@ class EmojiSelector extends BaseScrollFloat {
     const { i18n } = this.muya;
 
     const children = Object.keys(renderObj).map((category) => {
-      const title = h("div.title", i18n.t(category) || category);
+      const title = h('div.title', i18n.t(category) || category);
       const emojis = renderObj[category].map((e: EmojiType) => {
-        const selector = activeItem === e ? "div.item.active" : "div.item";
+        const selector = activeItem === e ? 'div.item.active' : 'div.item';
 
         return h(
           selector,
@@ -95,14 +95,14 @@ class EmojiSelector extends BaseScrollFloat {
               },
             },
           },
-          h("span", e.emoji)
+          h('span', e.emoji)
         );
       });
 
-      return h("section", [title, h("div.emoji-wrapper", emojis)]);
+      return h('section', [title, h('div.emoji-wrapper', emojis)]);
     });
 
-    const vnode = h("div", children);
+    const vnode = h('div', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);

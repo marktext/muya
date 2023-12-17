@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, CodeEmojiMathToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, CodeEmojiMathToken } from '../types';
 
 export default function inlineCode(
   this: Renderer,
@@ -38,7 +38,7 @@ export default function inlineCode(
       `code.${CLASS_NAMES.MU_INLINE_RULE}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
       },
       content

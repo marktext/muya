@@ -1,14 +1,14 @@
-import LinkedList from "@muya/block/base/linkedList/linkedList";
-import TreeNode from "@muya/block/base/treeNode";
-import { CLASS_NAMES } from "@muya/config";
-import Muya from "@muya/index";
-import { TState } from "@muya/state/types";
-import { operateClassName } from "@muya/utils/dom";
-import logger from "@muya/utils/logger";
-import { TPathList } from "../types";
-import Content from "./content";
+import LinkedList from '@muya/block/base/linkedList/linkedList';
+import TreeNode from '@muya/block/base/treeNode';
+import { CLASS_NAMES } from '@muya/config';
+import Muya from '@muya/index';
+import { TState } from '@muya/state/types';
+import { operateClassName } from '@muya/utils/dom';
+import logger from '@muya/utils/logger';
+import { TPathList } from '../types';
+import Content from './content';
 
-const debug = logger("parent:");
+const debug = logger('parent:');
 
 class Parent extends TreeNode {
   // Used to store icon, checkbox(span) etc. these blocks are not in children properties in json state.
@@ -26,9 +26,9 @@ class Parent extends TreeNode {
   set active(value) {
     this._active = value;
     if (value) {
-      operateClassName(this.domNode!, "add", CLASS_NAMES.MU_ACTIVE);
+      operateClassName(this.domNode!, 'add', CLASS_NAMES.MU_ACTIVE);
     } else {
-      operateClassName(this.domNode!, "remove", CLASS_NAMES.MU_ACTIVE);
+      operateClassName(this.domNode!, 'remove', CLASS_NAMES.MU_ACTIVE);
     }
   }
 
@@ -46,7 +46,7 @@ class Parent extends TreeNode {
     );
   }
 
-  get path(): TPathList[] {
+  get path(): TPathList {
     // You should never call get path on Parent.
     return [];
   }
@@ -102,7 +102,7 @@ class Parent extends TreeNode {
   append(...children: Parent[]): void;
   append(...args: unknown[]) {
     const source =
-      typeof args[args.length - 1] === "string" ? args.pop() : "api";
+      typeof args[args.length - 1] === 'string' ? args.pop() : 'api';
 
     (args as Parent[]).forEach((node) => {
       node.parent = this;
@@ -113,7 +113,7 @@ class Parent extends TreeNode {
     this.children.append(...(args as Parent[]));
 
     // push operations
-    if (source === "user") {
+    if (source === 'user') {
       (args as Parent[]).forEach((node) => {
         const path = node.getJsonPath();
         const state = node.getState();
@@ -163,9 +163,9 @@ class Parent extends TreeNode {
    * Use the `block` to replace the current block(this)
    * @param {TreeNode} block
    */
-  replaceWith(block: Parent, source = "user") {
+  replaceWith(block: Parent, source = 'user') {
     if (!this.parent) {
-      debug.warn("Call replaceWith need has a parent block");
+      debug.warn('Call replaceWith need has a parent block');
 
       return;
     }
@@ -180,7 +180,7 @@ class Parent extends TreeNode {
   insertBefore(
     newNode: Parent,
     refNode: Parent | null = null,
-    source = "user"
+    source = 'user'
   ) {
     newNode.parent = this;
     this.children.insertBefore(newNode, refNode);
@@ -189,7 +189,7 @@ class Parent extends TreeNode {
       refNode ? refNode.domNode : null
     );
 
-    if (source === "user") {
+    if (source === 'user') {
       // dispatch json1 operation
       const path = newNode.getJsonPath();
       const state = newNode.getState();
@@ -199,14 +199,14 @@ class Parent extends TreeNode {
     return newNode;
   }
 
-  insertAfter(newNode: Parent, refNode: Parent | null = null, source = "user") {
+  insertAfter(newNode: Parent, refNode: Parent | null = null, source = 'user') {
     this.insertBefore(newNode, refNode ? refNode.next : null, source);
 
     return newNode;
   }
 
-  remove(source = "user") {
-    if (source === "user") {
+  remove(source = 'user') {
+    if (source === 'user') {
       // dispatch json1 operation
       const path = this.getJsonPath();
       this.jsonState.removeOperation(path);
@@ -219,14 +219,14 @@ class Parent extends TreeNode {
 
   empty() {
     this.forEach((child) => {
-      this.removeChild(child, "api");
+      this.removeChild(child, 'api');
     });
   }
 
-  removeChild(node: TreeNode, source = "user") {
+  removeChild(node: TreeNode, source = 'user') {
     if (!this.children.contains(node)) {
       debug.warn(
-        "Can not removeChild(node), because node is not child of this block"
+        'Can not removeChild(node), because node is not child of this block'
       );
     }
 

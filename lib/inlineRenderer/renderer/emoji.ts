@@ -1,8 +1,8 @@
-import { CLASS_NAMES } from "@muya/config";
-import { validEmoji } from "@muya/utils/emoji";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, CodeEmojiMathToken } from "../types";
-import { VNode } from "snabbdom";
+import { CLASS_NAMES } from '@muya/config';
+import { validEmoji } from '@muya/utils/emoji';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, CodeEmojiMathToken } from '../types';
+import { VNode } from 'snabbdom';
 
 // render token of emoji to vnode
 export default function emoji(
@@ -62,7 +62,7 @@ export default function emoji(
         contentSelector,
         {
           attrs: {
-            spellcheck: "false",
+            spellcheck: 'false',
           },
           dataset: {
             emoji: validation.emoji,

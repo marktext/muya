@@ -1,5 +1,5 @@
-import Muya from "../index";
-import type BaseFloat from "./baseFloat";
+import Muya from '../index';
+import type BaseFloat from './baseFloat';
 
 class Ui {
   public shownFloat: Set<BaseFloat> = new Set();
@@ -11,11 +11,11 @@ class Ui {
 
   listen() {
     // cache shown float box
-    this.muya.eventCenter.subscribe("muya-float", (tool, status) => {
+    this.muya.eventCenter.subscribe('muya-float', (tool, status) => {
       status ? this.shownFloat.add(tool) : this.shownFloat.delete(tool);
     });
     // cache shown btn
-    this.muya.eventCenter.subscribe("muya-float-button", (tool, status) => {
+    this.muya.eventCenter.subscribe('muya-float-button', (tool, status) => {
       status ? this.shownButton.add(tool) : this.shownButton.delete(tool);
     });
   }

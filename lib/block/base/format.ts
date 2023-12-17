@@ -1,6 +1,6 @@
 /* eslint-disable no-fallthrough */
-import ScrollPage from "@muya/block";
-import Content from "@muya/block/base/content";
+import ScrollPage from '@muya/block';
+import Content from '@muya/block/base/content';
 import {
   CLASS_NAMES,
   FORMAT_MARKER_MAP,
@@ -8,25 +8,25 @@ import {
   FORMAT_TYPES,
   PARAGRAPH_STATE,
   THEMATIC_BREAK_STATE,
-} from "@muya/config";
-import { generator, tokenizer } from "@muya/inlineRenderer/lexer";
+} from '@muya/config';
+import { generator, tokenizer } from '@muya/inlineRenderer/lexer';
 import type {
   CodeEmojiMathToken,
   TextToken,
   Token,
-} from "@muya/inlineRenderer/types";
-import Selection from "@muya/selection";
-import { getTextContent } from "@muya/selection/dom";
-import { Cursor } from "@muya/selection/types";
-import { IBulletListState, IOrderListState } from "@muya/state/types";
-import { Nullable } from "@muya/types";
-import { conflict, getCursorReference, isMouseEvent } from "@muya/utils";
-import { IImageInfo, correctImageSrc, getImageInfo } from "@muya/utils/image";
-import logger from "@muya/utils/logger";
-import AtxHeading from "../commonMark/atxHeading";
-import BulletList from "../commonMark/bulletList";
-import SetextHeading from "../commonMark/setextHeading";
-import Parent from "./parent";
+} from '@muya/inlineRenderer/types';
+import Selection from '@muya/selection';
+import { getTextContent } from '@muya/selection/dom';
+import { Cursor } from '@muya/selection/types';
+import { IBulletListState, IOrderListState } from '@muya/state/types';
+import { Nullable } from '@muya/types';
+import { conflict, getCursorReference, isMouseEvent } from '@muya/utils';
+import { IImageInfo, correctImageSrc, getImageInfo } from '@muya/utils/image';
+import logger from '@muya/utils/logger';
+import AtxHeading from '../commonMark/atxHeading';
+import BulletList from '../commonMark/bulletList';
+import SetextHeading from '../commonMark/setextHeading';
+import Parent from './parent';
 
 interface IOffset {
   offset: number;
@@ -36,25 +36,25 @@ interface IOffsetWithDelta extends IOffset {
   delta: number;
 }
 
-const debug = logger("block.format:");
+const debug = logger('block.format:');
 
 function isEmojiToken(token: Token): token is CodeEmojiMathToken {
-  return token.type === "emoji";
+  return token.type === 'emoji';
 }
 
 const INLINE_UPDATE_FRAGMENTS = [
-  "(?:^|\n) {0,3}([*+-] {1,4})", // Bullet list
-  "^(\\[[x ]{1}\\] {1,4})", // Task list **match from beginning**
-  "(?:^|\n) {0,3}(\\d{1,9}(?:\\.|\\)) {1,4})", // Order list
-  "(?:^|\n) {0,3}(#{1,6})(?=\\s{1,}|$)", // ATX headings
-  "^(?:[\\s\\S]+?)\\n {0,3}(\\={3,}|\\-{3,})(?= {1,}|$)", // Setext headings **match from beginning**
-  "(?:^|\n) {0,3}(>).+", // Block quote
-  "^( {4,})", // Indent code **match from beginning**
+  '(?:^|\n) {0,3}([*+-] {1,4})', // Bullet list
+  '^(\\[[x ]{1}\\] {1,4})', // Task list **match from beginning**
+  '(?:^|\n) {0,3}(\\d{1,9}(?:\\.|\\)) {1,4})', // Order list
+  '(?:^|\n) {0,3}(#{1,6})(?=\\s{1,}|$)', // ATX headings
+  '^(?:[\\s\\S]+?)\\n {0,3}(\\={3,}|\\-{3,})(?= {1,}|$)', // Setext headings **match from beginning**
+  '(?:^|\n) {0,3}(>).+', // Block quote
+  '^( {4,})', // Indent code **match from beginning**
   // '^(\\[\\^[^\\^\\[\\]\\s]+?(?<!\\\\)\\]: )', // Footnote **match from beginning**
-  "(?:^|\n) {0,3}((?:\\* *\\* *\\*|- *- *-|_ *_ *_)[ \\*\\-\\_]*)(?=\n|$)", // Thematic break
+  '(?:^|\n) {0,3}((?:\\* *\\* *\\*|- *- *-|_ *_ *_)[ \\*\\-\\_]*)(?=\n|$)', // Thematic break
 ];
 
-const INLINE_UPDATE_REG = new RegExp(INLINE_UPDATE_FRAGMENTS.join("|"), "i");
+const INLINE_UPDATE_REG = new RegExp(INLINE_UPDATE_FRAGMENTS.join('|'), 'i');
 
 function getOffset(offset: number, token: Token) {
   const {
@@ -65,16 +65,16 @@ function getOffset(offset: number, token: Token) {
   const len = end - start;
 
   switch (type) {
-    case "strong":
+    case 'strong':
 
-    case "del":
+    case 'del':
 
-    case "em":
+    case 'em':
 
-    case "inline_code":
+    case 'inline_code':
 
-    case "inline_math": {
-      const MARKER_LEN = type === "strong" || type === "del" ? 2 : 1;
+    case 'inline_math': {
+      const MARKER_LEN = type === 'strong' || type === 'del' ? 2 : 1;
       if (dis < 0) return 0;
       if (dis >= 0 && dis < MARKER_LEN) return -dis;
       if (dis >= MARKER_LEN && dis <= len - MARKER_LEN) return -MARKER_LEN;
@@ -85,7 +85,7 @@ function getOffset(offset: number, token: Token) {
       break;
     }
 
-    case "html_tag": {
+    case 'html_tag': {
       const { tag } = token;
       // handle underline, sup, sub
       const OPEN_MARKER_LEN = FORMAT_TAG_MAP[tag].open.length;
@@ -102,7 +102,7 @@ function getOffset(offset: number, token: Token) {
       break;
     }
 
-    case "link": {
+    case 'link': {
       const { anchor } = token;
       const MARKER_LEN = 1;
 
@@ -113,7 +113,7 @@ function getOffset(offset: number, token: Token) {
       break;
     }
 
-    case "image": {
+    case 'image': {
       const { alt } = token;
       const MARKER_LEN = 1;
 
@@ -130,15 +130,15 @@ function getOffset(offset: number, token: Token) {
 
 function clearFormat(token: Token, cursor: Cursor) {
   switch (token.type) {
-    case "strong":
+    case 'strong':
 
-    case "del":
+    case 'del':
 
-    case "em":
+    case 'em':
 
-    case "link":
+    case 'link':
 
-    case "html_tag": {
+    case 'html_tag': {
       // underline, sub, sup
       const { parent, children } = token;
       const index = parent.indexOf(token);
@@ -147,11 +147,11 @@ function clearFormat(token: Token, cursor: Cursor) {
       break;
     }
 
-    case "image": {
+    case 'image': {
       const { parent, range } = token;
       const index = parent.indexOf(token);
       const newToken: TextToken = {
-        type: "text",
+        type: 'text',
         raw: token.alt,
         content: token.alt, // maybe src is better?
         parent,
@@ -163,13 +163,13 @@ function clearFormat(token: Token, cursor: Cursor) {
       break;
     }
 
-    case "inline_math":
+    case 'inline_math':
 
-    case "inline_code": {
+    case 'inline_code': {
       const { parent, range } = token;
       const index = parent.indexOf(token);
       const newToken: TextToken = {
-        type: "text",
+        type: 'text',
         raw: token.content,
         content: token.content,
         parent,
@@ -203,7 +203,7 @@ const checkTokenIsInlineFormat = (token: Token) => {
     return true;
   }
 
-  if (type === "html_tag") {
+  if (type === 'html_tag') {
     return /^(?:u|sub|sup|mark)$/i.test(token.tag);
   }
 
@@ -211,12 +211,12 @@ const checkTokenIsInlineFormat = (token: Token) => {
 };
 
 class Format extends Content {
-  static blockName = "format";
+  static blockName = 'format';
 
   private _checkCursorInTokenType(
     text: string,
     offset: number,
-    type: Token["type"]
+    type: Token['type']
   ): Token | null {
     const tokens = tokenizer(text, {
       hasBeginRules: false,
@@ -238,7 +238,7 @@ class Format extends Content {
         ) {
           result = token;
           break;
-        } else if ("children" in token && Array.isArray(token.children)) {
+        } else if ('children' in token && Array.isArray(token.children)) {
           travel(token.children);
         }
       }
@@ -343,7 +343,7 @@ class Format extends Content {
     const editEmoji = this._checkCursorInTokenType(
       this.text,
       anchor!.offset,
-      "emoji"
+      'emoji'
     );
 
     if (editEmoji) {
@@ -356,41 +356,41 @@ class Format extends Content {
     }
   }
 
-  replaceImage({ token }: IImageInfo, { alt = "", src = "", title = "" }) {
+  replaceImage({ token }: IImageInfo, { alt = '', src = '', title = '' }) {
     const { type } = token;
     const { start, end } = token.range;
     const oldText = this.text;
-    let imageText = "";
-    if (type === "image") {
-      imageText = "![";
+    let imageText = '';
+    if (type === 'image') {
+      imageText = '![';
       if (alt) {
         imageText += alt;
       }
-      imageText += "](";
+      imageText += '](';
       if (src) {
         imageText += src
-          .replace(/ /g, encodeURI(" "))
-          .replace(/#/g, encodeURIComponent("#"));
+          .replace(/ /g, encodeURI(' '))
+          .replace(/#/g, encodeURIComponent('#'));
       }
 
       if (title) {
         imageText += ` "${title}"`;
       }
-      imageText += ")";
-    } else if (type === "html_tag") {
+      imageText += ')';
+    } else if (type === 'html_tag') {
       const { attrs } = token;
       Object.assign(attrs, { alt, src, title });
-      imageText = "<img ";
+      imageText = '<img ';
 
       for (const attr of Object.keys(attrs)) {
         let value = attrs[attr];
-        if (value && attr === "src") {
+        if (value && attr === 'src') {
           value = correctImageSrc(value);
         }
         imageText += `${attr}="${value}" `;
       }
       imageText = imageText.trim();
-      imageText += ">";
+      imageText += '>';
     }
 
     this.text =
@@ -407,28 +407,28 @@ class Format extends Content {
     // inline/left/center/right
     const { start, end } = token.range;
     const oldText = this.text;
-    let imageText = "";
+    let imageText = '';
     const attrs = Object.assign({}, token.attrs);
     attrs[attrName] = attrValue;
 
-    imageText = "<img ";
+    imageText = '<img ';
 
     for (const attr of Object.keys(attrs)) {
       let value = attrs[attr];
-      if (value && attr === "src") {
+      if (value && attr === 'src') {
         value = correctImageSrc(value);
       }
       imageText += `${attr}="${value}" `;
     }
     imageText = imageText.trim();
-    imageText += ">";
+    imageText += '>';
     this.text =
       oldText.substring(0, start) + imageText + oldText.substring(end);
 
     this.update();
 
     const selector = `#${
-      imageId.indexOf("_") > -1 ? imageId : imageId + "_" + token.range.start
+      imageId.indexOf('_') > -1 ? imageId : imageId + '_' + token.range.start
     } img`;
     const image: HTMLImageElement | null = document.querySelector(selector);
 
@@ -446,8 +446,8 @@ class Format extends Content {
     this.setCursor(start, start, true);
 
     // Hide image toolbar and image transformer
-    eventCenter.emit("muya-transformer", { reference: null });
-    eventCenter.emit("muya-image-toolbar", { reference: null });
+    eventCenter.emit('muya-transformer', { reference: null });
+    eventCenter.emit('muya-image-toolbar', { reference: null });
   }
 
   clickHandler(event: Event): void {
@@ -498,7 +498,7 @@ class Format extends Content {
       if (cursor.start.offset !== cursor.end.offset) {
         const reference = getCursorReference();
 
-        this.muya.eventCenter.emit("muya-format-picker", {
+        this.muya.eventCenter.emit('muya-format-picker', {
           reference,
           block: this,
         });
@@ -541,12 +541,12 @@ class Format extends Content {
     const editEmoji = this._checkCursorInTokenType(
       this.text,
       anchor.offset,
-      "emoji"
+      'emoji'
     );
 
     if (!editEmoji) {
-      this.muya.eventCenter.emit("muya-emoji-picker", {
-        emojiText: "",
+      this.muya.eventCenter.emit('muya-emoji-picker', {
+        emojiText: '',
       });
     }
 
@@ -554,7 +554,7 @@ class Format extends Content {
     if (anchor.offset !== focus.offset) {
       const reference = getCursorReference();
 
-      this.muya.eventCenter.emit("muya-format-picker", {
+      this.muya.eventCenter.emit('muya-format-picker', {
         reference,
         block: this,
       });
@@ -578,12 +578,12 @@ class Format extends Content {
     const isInInlineMath = !!this._checkCursorInTokenType(
       textContent,
       start.offset,
-      "inline_math"
+      'inline_math'
     );
     const isInInlineCode = !!this._checkCursorInTokenType(
       textContent,
       start.offset,
-      "inline_code"
+      'inline_code'
     );
 
     // eslint-disable-next-line prefer-const
@@ -594,7 +594,7 @@ class Format extends Content {
       end,
       isInInlineMath,
       isInInlineCode,
-      "format"
+      'format'
     );
 
     if (this._checkNotSameToken(this.text, text)) {
@@ -623,19 +623,19 @@ class Format extends Content {
     this.selection.setSelection(cursor);
     // check edit emoji
     if (
-      (event as InputEvent).inputType !== "insertFromPaste" &&
-      (event as InputEvent).inputType !== "deleteByCut"
+      (event as InputEvent).inputType !== 'insertFromPaste' &&
+      (event as InputEvent).inputType !== 'deleteByCut'
     ) {
       const emojiToken = this._checkCursorInTokenType(
         this.text,
         start.offset,
-        "emoji"
+        'emoji'
       );
       if (emojiToken && isEmojiToken(emojiToken)) {
         const { content: emojiText } = emojiToken;
         const reference = getCursorReference();
 
-        this.muya.eventCenter.emit("muya-emoji-picker", {
+        this.muya.eventCenter.emit('muya-emoji-picker', {
           reference,
           emojiText,
           block: this,
@@ -644,7 +644,7 @@ class Format extends Content {
     }
 
     // Check block convert if needed, and table cell no need to check.
-    if (this.blockName !== "table.cell.content") {
+    if (this.blockName !== 'table.cell.content') {
       this._convertIfNeeded();
     }
   }
@@ -666,7 +666,7 @@ class Format extends Content {
 
     switch (true) {
       case !!thematicBreak &&
-        new Set(thematicBreak.split("").filter((i) => /\S/.test(i))).size === 1:
+        new Set(thematicBreak.split('').filter((i) => /\S/.test(i))).size === 1:
         this._convertToThematicBreak();
         break;
 
@@ -708,15 +708,15 @@ class Format extends Content {
   // Thematic Break
   private _convertToThematicBreak() {
     // If the block is already thematic break, no need to update.
-    if (this.parent?.blockName === "thematic-break") {
+    if (this.parent?.blockName === 'thematic-break') {
       return;
     }
     const { hasSelection } = this;
     const { start, end } = this.getCursor()!;
     const { text, muya } = this;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
     const preParagraphLines = [];
-    let thematicLine = "";
+    let thematicLine = '';
     const postParagraphLines = [];
     let thematicLineHasPushed = false;
 
@@ -740,7 +740,7 @@ class Format extends Content {
 
     if (preParagraphLines.length) {
       const preParagraphState = Object.assign({}, PARAGRAPH_STATE, {
-        text: preParagraphLines.join("\n"),
+        text: preParagraphLines.join('\n'),
       });
       const preParagraphBlock = ScrollPage.loadBlock(
         preParagraphState.name
@@ -750,7 +750,7 @@ class Format extends Content {
 
     if (postParagraphLines.length) {
       const postParagraphState = Object.assign({}, PARAGRAPH_STATE, {
-        text: postParagraphLines.join("\n"),
+        text: postParagraphLines.join('\n'),
       });
       const postParagraphBlock = ScrollPage.loadBlock(
         postParagraphState.name
@@ -784,11 +784,11 @@ class Format extends Content {
     const matches = text.match(
       /^([\s\S]*?) {0,3}([*+-]|\d{1,9}(?:\.|\))) {1,4}([\s\S]*)$/
     );
-    const blockName = /\d/.test(matches![2]) ? "order-list" : "bullet-list";
+    const blockName = /\d/.test(matches![2]) ? 'order-list' : 'bullet-list';
 
     if (matches![1]) {
       const paragraphState = {
-        name: "paragraph",
+        name: 'paragraph',
         text: matches![1].trim(),
       };
       const paragraph = ScrollPage.loadBlock(paragraphState.name).create(
@@ -805,10 +805,10 @@ class Format extends Content {
       },
       children: [
         {
-          name: "list-item",
+          name: 'list-item',
           children: [
             {
-              name: "paragraph",
+              name: 'paragraph',
               text: matches![3],
             },
           ],
@@ -816,7 +816,7 @@ class Format extends Content {
       ],
     };
 
-    if (blockName === "order-list") {
+    if (blockName === 'order-list') {
       (listState as IOrderListState).meta.delimiter = matches![2].slice(-1);
       (listState as IOrderListState).meta.start = Number(
         matches![2].slice(0, -1)
@@ -850,7 +850,7 @@ class Format extends Content {
 
     if (
       !list ||
-      list.blockName !== "bullet-list" ||
+      list.blockName !== 'bullet-list' ||
       !parent!.isFirstChild() ||
       matches == null
     ) {
@@ -858,21 +858,21 @@ class Format extends Content {
     }
 
     const listState = {
-      name: "task-list",
+      name: 'task-list',
       meta: {
         loose: preferLooseListItem,
         marker: list.meta.marker,
       },
       children: [
         {
-          name: "task-list-item",
+          name: 'task-list-item',
           meta: {
-            checked: matches[1] !== " ",
+            checked: matches[1] !== ' ',
           },
           children: listItem.map((node) => {
             if (node === parent) {
               return {
-                name: "paragraph",
+                name: 'paragraph',
                 text: matches[2],
               };
             } else {
@@ -906,7 +906,7 @@ class Format extends Content {
 
       default: {
         const bulletListState: IBulletListState = {
-          name: "bullet-list",
+          name: 'bullet-list',
           meta: {
             loose: preferLooseListItem,
             marker: list.meta.marker,
@@ -940,7 +940,7 @@ class Format extends Content {
   private _convertToAtxHeading(atxHeading: string) {
     const level = atxHeading.length;
     if (
-      this.parent!.blockName === "atx-heading" &&
+      this.parent!.blockName === 'atx-heading' &&
       (this.parent as AtxHeading).meta.level === level
     ) {
       return;
@@ -949,9 +949,9 @@ class Format extends Content {
     const { hasSelection } = this;
     const { start, end } = this.getCursor()!;
     const { text, muya } = this;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
     const preParagraphLines = [];
-    let atxLine = "";
+    let atxLine = '';
     const postParagraphLines = [];
     let atxLineHasPushed = false;
 
@@ -968,8 +968,8 @@ class Format extends Content {
 
     if (preParagraphLines.length) {
       const preParagraphState = {
-        name: "paragraph",
-        text: preParagraphLines.join("\n"),
+        name: 'paragraph',
+        text: preParagraphLines.join('\n'),
       };
       const preParagraphBlock = ScrollPage.loadBlock(
         preParagraphState.name
@@ -979,8 +979,8 @@ class Format extends Content {
 
     if (postParagraphLines.length) {
       const postParagraphState = {
-        name: "paragraph",
-        text: postParagraphLines.join("\n"),
+        name: 'paragraph',
+        text: postParagraphLines.join('\n'),
       };
       const postParagraphBlock = ScrollPage.loadBlock(
         postParagraphState.name
@@ -989,7 +989,7 @@ class Format extends Content {
     }
 
     const newNodeState = {
-      name: "atx-heading",
+      name: 'atx-heading',
       meta: {
         level,
       },
@@ -1019,7 +1019,7 @@ class Format extends Content {
   private _convertToSetextHeading(setextHeading: string) {
     const level = /=/.test(setextHeading) ? 2 : 1;
     if (
-      this.parent?.blockName === "setext-heading" &&
+      this.parent?.blockName === 'setext-heading' &&
       (this.parent as SetextHeading).meta.level === level
     ) {
       return;
@@ -1027,7 +1027,7 @@ class Format extends Content {
 
     const { hasSelection } = this;
     const { text, muya } = this;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
     const setextLines = [];
     const postParagraphLines = [];
     let setextLineHasPushed = false;
@@ -1043,12 +1043,12 @@ class Format extends Content {
     }
 
     const newNodeState = {
-      name: "setext-heading",
+      name: 'setext-heading',
       meta: {
         level,
         underline: setextHeading,
       },
-      text: setextLines.join("\n"),
+      text: setextLines.join('\n'),
     };
 
     const setextHeadingBlock = ScrollPage.loadBlock(newNodeState.name).create(
@@ -1060,8 +1060,8 @@ class Format extends Content {
 
     if (postParagraphLines.length) {
       const postParagraphState = {
-        name: "paragraph",
-        text: postParagraphLines.join("\n"),
+        name: 'paragraph',
+        text: postParagraphLines.join('\n'),
       };
       const postParagraphBlock = ScrollPage.loadBlock(
         postParagraphState.name
@@ -1083,7 +1083,7 @@ class Format extends Content {
   private _convertToBlockQuote() {
     const { text, muya, hasSelection } = this;
     const { start, end } = this.getCursor()!;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
     const preParagraphLines = [];
     const quoteLines = [];
     let quoteLinesHasPushed = false;
@@ -1103,27 +1103,27 @@ class Format extends Content {
     }
 
     let quoteParagraphState;
-    if (this.blockName === "setextheading.content") {
+    if (this.blockName === 'setextheading.content') {
       quoteParagraphState = {
-        name: "setext-heading",
+        name: 'setext-heading',
         meta: (this.parent as SetextHeading).meta,
-        text: quoteLines.join("\n"),
+        text: quoteLines.join('\n'),
       };
-    } else if (this.blockName === "atxheading.content") {
+    } else if (this.blockName === 'atxheading.content') {
       quoteParagraphState = {
-        name: "atx-heading",
+        name: 'atx-heading',
         meta: (this.parent as AtxHeading).meta,
-        text: quoteLines.join(" "),
+        text: quoteLines.join(' '),
       };
     } else {
       quoteParagraphState = {
-        name: "paragraph",
-        text: quoteLines.join("\n"),
+        name: 'paragraph',
+        text: quoteLines.join('\n'),
       };
     }
 
     const newNodeState = {
-      name: "block-quote",
+      name: 'block-quote',
       children: [quoteParagraphState],
     };
 
@@ -1136,8 +1136,8 @@ class Format extends Content {
 
     if (preParagraphLines.length) {
       const preParagraphState = {
-        name: "paragraph",
-        text: preParagraphLines.join("\n"),
+        name: 'paragraph',
+        text: preParagraphLines.join('\n'),
       };
       const preParagraphBlock = ScrollPage.loadBlock(
         preParagraphState.name
@@ -1159,14 +1159,14 @@ class Format extends Content {
   // Indented Code Block
   private _convertToIndentedCodeBlock() {
     const { text, muya, hasSelection } = this;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
     const codeLines = [];
     const paragraphLines = [];
     let canBeCodeLine = true;
 
     for (const l of lines) {
       if (/^ {4,}/.test(l) && canBeCodeLine) {
-        codeLines.push(l.replace(/^ {4}/, ""));
+        codeLines.push(l.replace(/^ {4}/, ''));
       } else {
         canBeCodeLine = false;
         paragraphLines.push(l);
@@ -1174,12 +1174,12 @@ class Format extends Content {
     }
 
     const codeState = {
-      name: "code-block",
+      name: 'code-block',
       meta: {
-        lang: "",
-        type: "indented",
+        lang: '',
+        type: 'indented',
       },
-      text: codeLines.join("\n"),
+      text: codeLines.join('\n'),
     };
 
     const codeBlock = ScrollPage.loadBlock(codeState.name).create(
@@ -1190,8 +1190,8 @@ class Format extends Content {
 
     if (paragraphLines.length > 0) {
       const paragraphState = {
-        name: "paragraph",
-        text: paragraphLines.join("\n"),
+        name: 'paragraph',
+        text: paragraphLines.join('\n'),
       };
       const paragraphBlock = ScrollPage.loadBlock(paragraphState.name).create(
         muya,
@@ -1210,8 +1210,8 @@ class Format extends Content {
   convertToParagraph(force = false) {
     if (
       !force &&
-      (this.parent!.blockName === "setext-heading" ||
-        this.parent!.blockName === "paragraph")
+      (this.parent!.blockName === 'setext-heading' ||
+        this.parent!.blockName === 'paragraph')
     ) {
       return;
     }
@@ -1220,7 +1220,7 @@ class Format extends Content {
     const { start, end } = this.getCursor()!;
 
     const newNodeState = {
-      name: "paragraph",
+      name: 'paragraph',
       text,
     };
 
@@ -1277,7 +1277,7 @@ class Format extends Content {
       if (
         token.range.start + 1 === start.offset &&
         preToken &&
-        preToken.type === "image"
+        preToken.type === 'image'
       ) {
         needSelectImage = true;
         needRender = true;
@@ -1325,7 +1325,7 @@ class Format extends Content {
       return;
     }
     const nextBlock = this.nextContentInContext();
-    if (!nextBlock || nextBlock.blockName !== "paragraph.content") {
+    if (!nextBlock || nextBlock.blockName !== 'paragraph.content') {
       // If the next block is code content or table cell, nothing need to do.
       event.preventDefault();
       return;
@@ -1354,7 +1354,7 @@ class Format extends Content {
     const { text: oldText } = this;
     const { start, end } = this.getCursor()!;
     this.text =
-      oldText.substring(0, start.offset) + "\n" + oldText.substring(end.offset);
+      oldText.substring(0, start.offset) + '\n' + oldText.substring(end.offset);
     this.setCursor(start.offset + 1, end.offset + 1, true);
   }
 
@@ -1365,7 +1365,7 @@ class Format extends Content {
     this.text = oldText.substring(0, start.offset);
     const textOfNewNode = oldText.substring(end.offset);
     const newParagraphState = {
-      name: "paragraph",
+      name: 'paragraph',
       text: textOfNewNode,
     };
 
@@ -1417,7 +1417,7 @@ class Format extends Content {
           neighbors.push(token);
         }
 
-        if ("children" in token && Array.isArray(token.children)) {
+        if ('children' in token && Array.isArray(token.children)) {
           iterator(token.children);
         }
       }
@@ -1436,7 +1436,7 @@ class Format extends Content {
     const end = cursor.end as IOffsetWithDelta;
 
     if (start == null || end == null) {
-      return debug.warn("You need to special the range you want to format.");
+      return debug.warn('You need to special the range you want to format.');
     }
 
     start.delta = end.delta = 0;
@@ -1448,14 +1448,14 @@ class Format extends Content {
           .filter((format) => {
             return (
               format.type === type ||
-              (format.type === "html_tag" && format.tag === type)
+              (format.type === 'html_tag' && format.tag === type)
             );
           })
           .reverse()
     );
 
     // cache delta
-    if (type === "clear") {
+    if (type === 'clear') {
       for (const neighbor of neighbors) {
         clearFormat(neighbor, { start, end });
       }
@@ -1485,7 +1485,7 @@ class Format extends Content {
 
       this._addFormat(type, { start, end });
 
-      if (type === "image") {
+      if (type === 'image') {
         // Show image selector when create a inline image by menu/shortcut/or just input `![]()`
         requestAnimationFrame(() => {
           const startNode = Selection.getSelectionStart();
@@ -1493,11 +1493,11 @@ class Format extends Content {
           if (startNode) {
             const imageWrapper: Nullable<HTMLElement> = (
               startNode as HTMLElement
-            ).closest(".mu-inline-image");
+            ).closest('.mu-inline-image');
 
             if (
               imageWrapper &&
-              imageWrapper.classList.contains("mu-empty-image")
+              imageWrapper.classList.contains('mu-empty-image')
             ) {
               const imageInfo = getImageInfo(imageWrapper);
               const rect = imageWrapper.getBoundingClientRect();
@@ -1508,7 +1508,7 @@ class Format extends Content {
                 height: imageWrapper.offsetHeight,
               };
 
-              this.muya.eventCenter.emit("muya-image-selector", {
+              this.muya.eventCenter.emit('muya-image-selector', {
                 block: this,
                 reference,
                 imageInfo,
@@ -1527,15 +1527,15 @@ class Format extends Content {
     { start, end }: { start: IOffset; end: IOffset }
   ) {
     switch (type) {
-      case "em":
+      case 'em':
 
-      case "del":
+      case 'del':
 
-      case "inline_code":
+      case 'inline_code':
 
-      case "strong":
+      case 'strong':
 
-      case "inline_math": {
+      case 'inline_math': {
         const MARKER = FORMAT_MARKER_MAP[type];
         const oldText = this.text;
         this.text =
@@ -1549,13 +1549,13 @@ class Format extends Content {
         break;
       }
 
-      case "sub":
+      case 'sub':
 
-      case "sup":
+      case 'sup':
 
-      case "mark":
+      case 'mark':
 
-      case "u": {
+      case 'u': {
         const MARKER = FORMAT_TAG_MAP[type];
         const oldText = this.text;
         this.text =
@@ -1569,19 +1569,19 @@ class Format extends Content {
         break;
       }
 
-      case "link":
+      case 'link':
 
-      case "image": {
+      case 'image': {
         const oldText = this.text;
         const anchorTextLen = end.offset - start.offset;
         this.text =
           oldText.substring(0, start.offset) +
-          (type === "link" ? "[" : "![") +
+          (type === 'link' ? '[' : '![') +
           oldText.substring(start.offset, end.offset) +
-          "]()" +
+          ']()' +
           oldText.substring(end.offset);
         // put cursor between `()`
-        start.offset += type === "link" ? 3 + anchorTextLen : 4 + anchorTextLen;
+        start.offset += type === 'link' ? 3 + anchorTextLen : 4 + anchorTextLen;
         end.offset = start.offset;
         break;
       }
@@ -1596,8 +1596,8 @@ class Format extends Content {
     event.preventDefault();
     event.stopPropagation();
 
-    const startOffset = +inlineRuleRenderEle.getAttribute("data-start")!;
-    const endOffset = +inlineRuleRenderEle.getAttribute("data-end")!;
+    const startOffset = +inlineRuleRenderEle.getAttribute('data-start')!;
+    const endOffset = +inlineRuleRenderEle.getAttribute('data-end')!;
 
     return this.setCursor(startOffset, endOffset, true);
   }

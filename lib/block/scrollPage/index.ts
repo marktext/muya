@@ -1,15 +1,15 @@
-import Parent from "@muya/block/base/parent";
-import { BLOCK_DOM_PROPERTY } from "@muya/config";
-import Muya from "@muya/index";
-import { Nullable } from "@muya/types";
-import { isMouseEvent } from "@muya/utils";
-import logger from "@muya/utils/logger";
-import { TState } from "../../state/types";
-import Content from "../base/content";
-import TreeNode from "../base/treeNode";
-import { TPathList } from "../types";
+import Parent from '@muya/block/base/parent';
+import { BLOCK_DOM_PROPERTY } from '@muya/config';
+import Muya from '@muya/index';
+import { Nullable } from '@muya/types';
+import { isMouseEvent } from '@muya/utils';
+import logger from '@muya/utils/logger';
+import { TState } from '../../state/types';
+import Content from '../base/content';
+import TreeNode from '../base/treeNode';
+import { TPathList } from '../types';
 
-const debug = logger("scrollpage:");
+const debug = logger('scrollpage:');
 
 interface IBlurFocus {
   blur: Nullable<Content>;
@@ -19,7 +19,7 @@ interface IBlurFocus {
 class ScrollPage extends Parent {
   private blurFocus: IBlurFocus = { blur: null, focus: null };
 
-  static blockName = "scrollpage";
+  static blockName = 'scrollpage';
 
   static registeredBlocks = new Map();
 
@@ -60,15 +60,15 @@ class ScrollPage extends Parent {
     super(muya);
     // muya is not extends Parent, but it is the parent of scrollPage.
     this.parent = muya as unknown as Parent;
-    this.tagName = "div";
-    this.classList = ["mu-container"];
+    this.tagName = 'div';
+    this.classList = ['mu-container'];
 
     this.createDomNode();
     this.listenDomEvent();
   }
 
   getState() {
-    debug.warn("You can never call `getState` in scrollPage");
+    debug.warn('You can never call `getState` in scrollPage');
 
     return {} as TState;
   }
@@ -77,7 +77,7 @@ class ScrollPage extends Parent {
     const { eventCenter } = this.muya;
     const { domNode } = this;
 
-    eventCenter.attachDOMEvent(domNode!, "click", this.clickHandler.bind(this));
+    eventCenter.attachDOMEvent(domNode!, 'click', this.clickHandler.bind(this));
   }
 
   updateState(state: TState[]) {
@@ -184,20 +184,20 @@ class ScrollPage extends Parent {
       const { bottom } = lastChildDom!.getBoundingClientRect();
       if (clientY > bottom) {
         if (
-          lastChild.blockName === "paragraph" &&
-          lastContentBlock.text === ""
+          lastChild.blockName === 'paragraph' &&
+          lastContentBlock.text === ''
         ) {
           lastContentBlock.setCursor(0, 0);
         } else {
           const state = {
-            name: "paragraph",
-            text: "",
+            name: 'paragraph',
+            text: '',
           };
           const newNode = ScrollPage.loadBlock(state.name).create(
             this.muya,
             state
           );
-          this.append(newNode, "user");
+          this.append(newNode, 'user');
           const cursorBlock = newNode.lastContentInDescendant();
           cursorBlock.setCursor(0, 0, true);
         }

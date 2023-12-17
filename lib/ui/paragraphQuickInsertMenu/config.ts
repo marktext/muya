@@ -1,38 +1,38 @@
-import bulletListIcon from "@muya/assets/icons/bullet_list/2.png";
-import vegaIcon from "@muya/assets/icons/chart/2.png";
-import codeIcon from "@muya/assets/icons/code/2.png";
-import frontMatterIcon from "@muya/assets/icons/front_matter/2.png";
-import header1Icon from "@muya/assets/icons/heading_1/2.png";
-import header2Icon from "@muya/assets/icons/heading_2/2.png";
-import header3Icon from "@muya/assets/icons/heading_3/2.png";
-import header4Icon from "@muya/assets/icons/heading_4/2.png";
-import header5Icon from "@muya/assets/icons/heading_5/2.png";
-import header6Icon from "@muya/assets/icons/heading_6/2.png";
-import hrIcon from "@muya/assets/icons/horizontal_line/2.png";
-import htmlIcon from "@muya/assets/icons/html/2.png";
-import mathBlockIcon from "@muya/assets/icons/math/2.png";
-import mermaidIcon from "@muya/assets/icons/mermaid/2.png";
-import newTableIcon from "@muya/assets/icons/new_table/2.png";
-import orderListIcon from "@muya/assets/icons/order_list/2.png";
-import paragraphIcon from "@muya/assets/icons/paragraph/2.png";
-import plantumlIcon from "@muya/assets/icons/plantuml/2.png";
-import quoteIcon from "@muya/assets/icons/quote_block/2.png";
-import todoListIcon from "@muya/assets/icons/todolist/2.png";
-import { isOsx } from "@muya/config";
+import bulletListIcon from '@muya/assets/icons/bullet_list/2.png';
+import vegaIcon from '@muya/assets/icons/chart/2.png';
+import codeIcon from '@muya/assets/icons/code/2.png';
+import frontMatterIcon from '@muya/assets/icons/front_matter/2.png';
+import header1Icon from '@muya/assets/icons/heading_1/2.png';
+import header2Icon from '@muya/assets/icons/heading_2/2.png';
+import header3Icon from '@muya/assets/icons/heading_3/2.png';
+import header4Icon from '@muya/assets/icons/heading_4/2.png';
+import header5Icon from '@muya/assets/icons/heading_5/2.png';
+import header6Icon from '@muya/assets/icons/heading_6/2.png';
+import hrIcon from '@muya/assets/icons/horizontal_line/2.png';
+import htmlIcon from '@muya/assets/icons/html/2.png';
+import mathBlockIcon from '@muya/assets/icons/math/2.png';
+import mermaidIcon from '@muya/assets/icons/mermaid/2.png';
+import newTableIcon from '@muya/assets/icons/new_table/2.png';
+import orderListIcon from '@muya/assets/icons/order_list/2.png';
+import paragraphIcon from '@muya/assets/icons/paragraph/2.png';
+import plantumlIcon from '@muya/assets/icons/plantuml/2.png';
+import quoteIcon from '@muya/assets/icons/quote_block/2.png';
+import todoListIcon from '@muya/assets/icons/todolist/2.png';
+import { isOsx } from '@muya/config';
 
-import ScrollPage from "@muya/block/scrollPage";
-import emptyStates from "@muya/config/emptyStates";
-import { deepClone } from "@muya/utils";
+import ScrollPage from '@muya/block/scrollPage';
+import emptyStates from '@muya/config/emptyStates';
+import { deepClone } from '@muya/utils';
 
-import Parent from "@muya/block/base/parent";
-import Muya from "@muya/index";
-import { IAtxHeadingState, IBlockQuoteState, IFrontmatterState, IParagraphState } from "@muya/state/types";
-import logger from "@muya/utils/logger";
-const debug = logger("quickInsert:");
+import Parent from '@muya/block/base/parent';
+import Muya from '@muya/index';
+import { IAtxHeadingState, IBlockQuoteState, IFrontmatterState, IParagraphState } from '@muya/state/types';
+import logger from '@muya/utils/logger';
+const debug = logger('quickInsert:');
 
-const COMMAND_KEY = isOsx ? "⌘" : "Ctrl";
-const OPTION_KEY = isOsx ? "⌥" : "Alt";
-const SHIFT_KEY = isOsx ? "⇧" : "Shift";
+const COMMAND_KEY = isOsx ? '⌘' : 'Ctrl';
+const OPTION_KEY = isOsx ? '⌥' : 'Alt';
+const SHIFT_KEY = isOsx ? '⇧' : 'Shift';
 
 // Command (or Cmd) ⌘
 // Shift ⇧
@@ -62,267 +62,267 @@ export type QuickInsertMenuItem = {
 
 export const MENU_CONFIG: QuickInsertMenuItem[] = [
   {
-    name: "basic blocks",
+    name: 'basic blocks',
     children: [
       {
-        title: "Paragraph",
-        subTitle: "Lorem Ipsum text",
-        label: "paragraph",
+        title: 'Paragraph',
+        subTitle: 'Lorem Ipsum text',
+        label: 'paragraph',
         shortCut: `${COMMAND_KEY}+0`,
         shortKeyMap: {
           altKey: false,
           shiftKey: false,
           metaKey: true,
-          code: "Digit0",
+          code: 'Digit0',
         },
         icon: paragraphIcon,
       },
       {
-        title: "Horizontal Line",
-        subTitle: "---",
-        label: "thematic-break",
+        title: 'Horizontal Line',
+        subTitle: '---',
+        label: 'thematic-break',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+-`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "Minus",
+          code: 'Minus',
         },
         icon: hrIcon,
       },
       {
-        title: "Front Matter",
-        subTitle: "--- Lorem Ipsum ---",
-        label: "frontmatter",
+        title: 'Front Matter',
+        subTitle: '--- Lorem Ipsum ---',
+        label: 'frontmatter',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+Y`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyY",
+          code: 'KeyY',
         },
         icon: frontMatterIcon,
       },
     ],
   },
   {
-    name: "headers",
+    name: 'headers',
     children: [
       {
-        title: "Header 1",
-        subTitle: "# Lorem Ipsum...",
-        label: "atx-heading 1",
+        title: 'Header 1',
+        subTitle: '# Lorem Ipsum...',
+        label: 'atx-heading 1',
         shortCut: `${COMMAND_KEY}+1`,
         shortKeyMap: {
           altKey: false,
           shiftKey: false,
           metaKey: true,
-          code: "Digit1",
+          code: 'Digit1',
         },
         icon: header1Icon,
       },
       {
-        title: "Header 2",
-        subTitle: "## Lorem Ipsum...",
-        label: "atx-heading 2",
+        title: 'Header 2',
+        subTitle: '## Lorem Ipsum...',
+        label: 'atx-heading 2',
         shortCut: `${COMMAND_KEY}+2`,
         shortKeyMap: {
           altKey: false,
           shiftKey: false,
           metaKey: true,
-          code: "Digit2",
+          code: 'Digit2',
         },
         icon: header2Icon,
       },
       {
-        title: "Header 3",
-        subTitle: "### Lorem Ipsum...",
-        label: "atx-heading 3",
+        title: 'Header 3',
+        subTitle: '### Lorem Ipsum...',
+        label: 'atx-heading 3',
         shortCut: `${COMMAND_KEY}+3`,
         shortKeyMap: {
           altKey: false,
           shiftKey: false,
           metaKey: true,
-          code: "Digit3",
+          code: 'Digit3',
         },
         icon: header3Icon,
       },
       {
-        title: "Header 4",
-        subTitle: "#### Lorem Ipsum...",
-        label: "atx-heading 4",
+        title: 'Header 4',
+        subTitle: '#### Lorem Ipsum...',
+        label: 'atx-heading 4',
         shortCut: `${COMMAND_KEY}+4`,
         shortKeyMap: {
           altKey: false,
           shiftKey: false,
           metaKey: true,
-          code: "Digit4",
+          code: 'Digit4',
         },
         icon: header4Icon,
       },
       {
-        title: "Header 5",
-        subTitle: "##### Lorem Ipsum...",
-        label: "atx-heading 5",
+        title: 'Header 5',
+        subTitle: '##### Lorem Ipsum...',
+        label: 'atx-heading 5',
         shortCut: `${COMMAND_KEY}+5`,
         shortKeyMap: {
           altKey: false,
           shiftKey: false,
           metaKey: true,
-          code: "Digit5",
+          code: 'Digit5',
         },
         icon: header5Icon,
       },
       {
-        title: "Header 6",
-        subTitle: "###### Lorem Ipsum...",
-        label: "atx-heading 6",
+        title: 'Header 6',
+        subTitle: '###### Lorem Ipsum...',
+        label: 'atx-heading 6',
         shortCut: `${COMMAND_KEY}+6`,
         shortKeyMap: {
           altKey: false,
           shiftKey: false,
           metaKey: true,
-          code: "Digit6",
+          code: 'Digit6',
         },
         icon: header6Icon,
       },
     ],
   },
   {
-    name: "advanced blocks",
+    name: 'advanced blocks',
     children: [
       {
-        title: "Table Block",
-        subTitle: "|Lorem | Ipsum |",
-        label: "table",
+        title: 'Table Block',
+        subTitle: '|Lorem | Ipsum |',
+        label: 'table',
         // no
         shortCut: `${SHIFT_KEY}+${COMMAND_KEY}+T`,
         shortKeyMap: {
           altKey: false,
           shiftKey: true,
           metaKey: true,
-          code: "KeyT",
+          code: 'KeyT',
         },
         icon: newTableIcon,
       },
       {
-        title: "Display Math",
-        subTitle: "$$ Lorem Ipsum $$",
-        label: "math-block",
+        title: 'Display Math',
+        subTitle: '$$ Lorem Ipsum $$',
+        label: 'math-block',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+M`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyM",
+          code: 'KeyM',
         },
         icon: mathBlockIcon,
       },
       {
-        title: "HTML Block",
-        subTitle: "<div> Lorem Ipsum </div>",
-        label: "html-block",
+        title: 'HTML Block',
+        subTitle: '<div> Lorem Ipsum </div>',
+        label: 'html-block',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+J`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyJ",
+          code: 'KeyJ',
         },
         icon: htmlIcon,
       },
       {
-        title: "Code Block",
-        subTitle: "```java Lorem Ipsum ```",
-        label: "code-block",
+        title: 'Code Block',
+        subTitle: '```java Lorem Ipsum ```',
+        label: 'code-block',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+C`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyC",
+          code: 'KeyC',
         },
         icon: codeIcon,
       },
       {
-        title: "Quote Block",
-        subTitle: ">Lorem Ipsum ...",
-        label: "block-quote",
+        title: 'Quote Block',
+        subTitle: '>Lorem Ipsum ...',
+        label: 'block-quote',
         // no
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+Q`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyQ",
+          code: 'KeyQ',
         },
         icon: quoteIcon,
       },
     ],
   },
   {
-    name: "list blocks",
+    name: 'list blocks',
     children: [
       {
-        title: "Order List",
-        subTitle: "1. Lorem Ipsum ...",
-        label: "order-list",
+        title: 'Order List',
+        subTitle: '1. Lorem Ipsum ...',
+        label: 'order-list',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+O`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyO",
+          code: 'KeyO',
         },
         icon: orderListIcon,
       },
       {
-        title: "Bullet List",
-        subTitle: "- Lorem Ipsum ...",
-        label: "bullet-list",
+        title: 'Bullet List',
+        subTitle: '- Lorem Ipsum ...',
+        label: 'bullet-list',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+U`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyU",
+          code: 'KeyU',
         },
         icon: bulletListIcon,
       },
       {
-        title: "To-do List",
-        subTitle: "- [x] Lorem Ipsum ...",
-        label: "task-list",
+        title: 'To-do List',
+        subTitle: '- [x] Lorem Ipsum ...',
+        label: 'task-list',
         shortCut: `${OPTION_KEY}+${COMMAND_KEY}+X`,
         shortKeyMap: {
           altKey: true,
           shiftKey: false,
           metaKey: true,
-          code: "KeyX",
+          code: 'KeyX',
         },
         icon: todoListIcon,
       },
     ],
   },
   {
-    name: "diagrams",
+    name: 'diagrams',
     children: [
       {
-        title: "Vega Chart",
-        subTitle: "By vega-lite.js",
-        label: "diagram vega-lite",
+        title: 'Vega Chart',
+        subTitle: 'By vega-lite.js',
+        label: 'diagram vega-lite',
         icon: vegaIcon,
       },
       {
-        title: "Mermaid",
-        subTitle: "By mermaid",
-        label: "diagram mermaid",
+        title: 'Mermaid',
+        subTitle: 'By mermaid',
+        label: 'diagram mermaid',
         icon: mermaidIcon,
       },
       {
-        title: "Plantuml",
-        subTitle: "By plantuml",
-        label: "diagram plantuml",
+        title: 'Plantuml',
+        subTitle: 'By plantuml',
+        label: 'diagram plantuml',
         icon: plantumlIcon,
       },
     ],
@@ -332,12 +332,12 @@ export const MENU_CONFIG: QuickInsertMenuItem[] = [
 export const getLabelFromEvent = (event: Event) => {
   const ALL_MENU_CONFIG = MENU_CONFIG.reduce(
     (acc, section) => [...acc, ...section.children],
-    [] as QuickInsertMenuItem["children"]
+    [] as QuickInsertMenuItem['children']
   );
 
   const result = ALL_MENU_CONFIG.find((menu) => {
     const { code, metaKey, shiftKey, altKey } = event as KeyboardEvent;
-    const { shortKeyMap = {} as QuickInsertMenuItem["children"][number]["shortKeyMap"] } = menu;
+    const { shortKeyMap = {} as QuickInsertMenuItem['children'][number]['shortKeyMap'] } = menu;
 
     return (
       code === shortKeyMap?.code &&
@@ -352,7 +352,7 @@ export const getLabelFromEvent = (event: Event) => {
   }
 };
 
-export const replaceBlockByLabel = ({ block, muya, label, text = "" }: {
+export const replaceBlockByLabel = ({ block, muya, label, text = '' }: {
   block: Parent;
   muya: Muya;
   label: string;
@@ -369,55 +369,55 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }: {
   let cursorBlock = null;
 
   switch (label) {
-    case "paragraph":
+    case 'paragraph':
     // fall through
-    case "thematic-break":
+    case 'thematic-break':
     // fall through
-    case "table":
+    case 'table':
     // fall through
-    case "math-block":
+    case 'math-block':
     // fall through
-    case "html-block":
+    case 'html-block':
     // fall through
-    case "code-block":
+    case 'code-block':
     // fall through
-    case "block-quote":
+    case 'block-quote':
       state = deepClone(emptyStates[label]);
-      if (label === "paragraph") {
+      if (label === 'paragraph') {
         (state as IParagraphState).text = text;
-      } else if (label === "block-quote") {
+      } else if (label === 'block-quote') {
         ((state as IBlockQuoteState).children[0] as IParagraphState).text = text;
       }
       newBlock = ScrollPage.loadBlock(label).create(muya, state);
       break;
 
-    case "frontmatter":
+    case 'frontmatter':
       state = deepClone(emptyStates.frontmatter) as IFrontmatterState;
       state.meta.style = frontmatterType;
-      state.meta.lang = /\+-/.test(frontmatterType) ? "yaml" : "json";
+      state.meta.lang = /\+-/.test(frontmatterType) ? 'yaml' : 'json';
       newBlock = ScrollPage.loadBlock(label).create(muya, state);
       break;
 
-    case "atx-heading 1":
+    case 'atx-heading 1':
     // fall through
-    case "atx-heading 2":
+    case 'atx-heading 2':
     // fall through
-    case "atx-heading 3":
+    case 'atx-heading 3':
     // fall through
-    case "atx-heading 4":
+    case 'atx-heading 4':
     // fall through
-    case "atx-heading 5":
+    case 'atx-heading 5':
     // fall through
-    case "atx-heading 6":
-      state = deepClone(emptyStates["atx-heading"]) as IAtxHeadingState;
+    case 'atx-heading 6':
+      state = deepClone(emptyStates['atx-heading']) as IAtxHeadingState;
       // eslint-disable-next-line no-case-declarations
-      const [blockName, level] = label.split(" ");
+      const [blockName, level] = label.split(' ');
       state.meta.level = +level;
-      state.text = "#".repeat(+level) + " " + text;
+      state.text = '#'.repeat(+level) + ' ' + text;
       newBlock = ScrollPage.loadBlock(blockName).create(muya, state);
       break;
 
-    case "order-list":
+    case 'order-list':
       state = deepClone(emptyStates[label]);
       state.meta.loose = preferLooseListItem;
       state.meta.delimiter = orderListDelimiter;
@@ -427,9 +427,9 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }: {
       newBlock = ScrollPage.loadBlock(label).create(muya, state);
       break;
 
-    case "bullet-list":
+    case 'bullet-list':
     // fall through
-    case "task-list":
+    case 'task-list':
       state = deepClone(emptyStates[label]);
       state.meta.loose = preferLooseListItem;
       state.meta.marker = bulletListMarker;
@@ -439,27 +439,27 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }: {
       newBlock = ScrollPage.loadBlock(label).create(muya, state);
       break;
 
-    case "diagram vega-lite":
+    case 'diagram vega-lite':
     // fall through
-    case "diagram mermaid":
+    case 'diagram mermaid':
     // fall through
-    case "diagram plantuml":
+    case 'diagram plantuml':
       state = deepClone(emptyStates.diagram);
       // eslint-disable-next-line no-case-declarations
-      const [name, type] = label.split(" ");
+      const [name, type] = label.split(' ');
       state.meta.type = type;
-      state.meta.lang = type === "vega-lite" ? "json" : "ymal";
+      state.meta.lang = type === 'vega-lite' ? 'json' : 'ymal';
       newBlock = ScrollPage.loadBlock(name).create(muya, state);
       break;
 
     default:
-      debug.log("Unknown label in quick insert");
+      debug.log('Unknown label in quick insert');
       break;
   }
 
   block.replaceWith(newBlock);
-  if (label === "thematic-break") {
-    const nextParagraphBlock = ScrollPage.loadBlock("paragraph").create(
+  if (label === 'thematic-break') {
+    const nextParagraphBlock = ScrollPage.loadBlock('paragraph').create(
       muya,
       deepClone(emptyStates.paragraph)
     );
@@ -469,7 +469,7 @@ export const replaceBlockByLabel = ({ block, muya, label, text = "" }: {
   } else {
     cursorBlock = newBlock.firstContentInDescendant();
     // Set the cursor between <div>\n\n</div> when create html-block
-    const offset = label === "html-block" ? 6 : cursorBlock.text.length;
+    const offset = label === 'html-block' ? 6 : cursorBlock.text.length;
     cursorBlock.setCursor(offset, offset, true);
   }
 };

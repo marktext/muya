@@ -1,4 +1,4 @@
-import ContentBlock from "@muya/block/base/content";
+import ContentBlock from '@muya/block/base/content';
 
 export type NodeOffset = {
   offset: number;

@@ -2,22 +2,22 @@ import {
   BLOCK_DOM_PROPERTY,
   CLASS_NAMES,
   MUYA_DEFAULT_OPTIONS,
-} from "@muya/config/index";
-import Editor from "@muya/editor/index";
-import EventCenter from "@muya/event/index";
-import I18n from "@muya/i18n/index";
-import Ui from "@muya/ui/ui";
+} from '@muya/config/index';
+import Editor from '@muya/editor/index';
+import EventCenter from '@muya/event/index';
+import I18n from '@muya/i18n/index';
+import Ui from '@muya/ui/ui';
 
-import Search from "@muya/search";
-import { IMuyaOptions } from "./types";
+import Search from '@muya/search';
+import { IMuyaOptions } from './types';
 
-import { ISearchOption } from "./search/types";
-import { TState } from "./state/types";
+import { ISearchOption } from './search/types';
+import { TState } from './state/types';
 
-import "./assets/styles/blockSyntax.css";
-import "./assets/styles/index.css";
-import "./assets/styles/inlineSyntax.css";
-import "./assets/styles/prismjs/light.theme.css";
+import './assets/styles/blockSyntax.css';
+import './assets/styles/index.css';
+import './assets/styles/inlineSyntax.css';
+import './assets/styles/prismjs/light.theme.css';
 
 class Muya {
   static plugins = [];
@@ -30,7 +30,7 @@ class Muya {
   }
 
   public readonly version: string =
-    typeof window.MUYA_VERSION === "undefined" ? "dev" : window.MUYA_VERSION;
+    typeof window.MUYA_VERSION === 'undefined' ? 'dev' : window.MUYA_VERSION;
 
   public options: IMuyaOptions;
   public eventCenter: EventCenter;
@@ -47,7 +47,7 @@ class Muya {
   public undo: () => void;
   public redo: () => void;
   public search: (value: string, opt: ISearchOption) => Search;
-  public find: (action: "previous" | "next") => Search;
+  public find: (action: 'previous' | 'next') => Search;
   public replace: (
     replaceValue: string,
     opt: { isSingle: boolean; isRegexp: boolean }
@@ -82,18 +82,18 @@ class Muya {
 
   exportAPI() {
     const apis = {
-      eventCenter: ["on", "off", "once"],
+      eventCenter: ['on', 'off', 'once'],
       editor: [
-        "getState",
-        "getMarkdown",
-        "undo",
-        "redo",
-        "search",
-        "find",
-        "replace",
-        "setContent",
-        "focus",
-        "selectAll",
+        'getState',
+        'getMarkdown',
+        'undo',
+        'redo',
+        'search',
+        'find',
+        'replace',
+        'setContent',
+        'focus',
+        'selectAll',
       ],
     };
 
@@ -122,7 +122,7 @@ class Muya {
  */
 function getContainer(originContainer: HTMLElement, options: IMuyaOptions) {
   const { spellcheckEnabled, hideQuickInsertHint } = options;
-  const newContainer = document.createElement("div");
+  const newContainer = document.createElement('div');
   const attrs = originContainer.attributes;
   // Copy attrs from origin container to new container
   Array.from(attrs).forEach((attr: { name: string; value: string }) => {
@@ -135,10 +135,10 @@ function getContainer(originContainer: HTMLElement, options: IMuyaOptions) {
 
   newContainer.classList.add(CLASS_NAMES.MU_EDITOR);
 
-  newContainer.setAttribute("contenteditable", "true");
-  newContainer.setAttribute("autocorrect", "false");
-  newContainer.setAttribute("autocomplete", "off");
-  newContainer.setAttribute("spellcheck", spellcheckEnabled ? "true" : "false");
+  newContainer.setAttribute('contenteditable', 'true');
+  newContainer.setAttribute('autocorrect', 'false');
+  newContainer.setAttribute('autocomplete', 'off');
+  newContainer.setAttribute('spellcheck', spellcheckEnabled ? 'true' : 'false');
   originContainer.replaceWith(newContainer);
 
   return newContainer;

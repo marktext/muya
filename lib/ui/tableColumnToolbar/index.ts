@@ -1,21 +1,21 @@
-import BaseFloat from "../baseFloat";
-import { patch, h } from "@muya/utils/snabbdom";
-import { isMouseEvent, throttle } from "@muya/utils";
-import icons, { TableColumnToolIcon } from "./config";
-import { BLOCK_DOM_PROPERTY } from "@muya/config";
+import BaseFloat from '../baseFloat';
+import { patch, h } from '@muya/utils/snabbdom';
+import { isMouseEvent, throttle } from '@muya/utils';
+import icons, { TableColumnToolIcon } from './config';
+import { BLOCK_DOM_PROPERTY } from '@muya/config';
 
-import "./index.css";
-import { VNode } from "snabbdom";
-import Muya from "@muya/index";
-import CellBlock from "@muya/block/gfm/table/cell";
+import './index.css';
+import { VNode } from 'snabbdom';
+import Muya from '@muya/index';
+import CellBlock from '@muya/block/gfm/table/cell';
 
 const OFFSET = 27;
 
 const defaultOptions = {
-  placement: "top" as const,
+  placement: 'top' as const,
   modifiers: {
     offset: {
-      offset: "0, 0",
+      offset: '0, 0',
     },
   },
   showArrow: false,
@@ -25,17 +25,17 @@ class TableColumnTools extends BaseFloat {
   public oldVNode: VNode | null = null;
   public block: CellBlock | null = null;
   public icons: TableColumnToolIcon[] = icons;
-  public toolsContainer: HTMLDivElement = document.createElement("div");
+  public toolsContainer: HTMLDivElement = document.createElement('div');
 
-  static pluginName = "tableColumnTools";
+  static pluginName = 'tableColumnTools';
 
   constructor(muya: Muya, options = {}) {
-    const name = "mu-table-column-tools";
+    const name = 'mu-table-column-tools';
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
     this.options = opts;
     this.container!.appendChild(this.toolsContainer);
-    this.floatBox!.classList.add("mu-table-column-tools-container");
+    this.floatBox!.classList.add('mu-table-column-tools-container');
     this.listen();
   }
 
@@ -54,7 +54,7 @@ class TableColumnTools extends BaseFloat {
         return eles.some(
           (ele) =>
             ele[BLOCK_DOM_PROPERTY] &&
-            ele[BLOCK_DOM_PROPERTY].blockName === "table.cell"
+            ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell'
         );
       };
 
@@ -62,14 +62,14 @@ class TableColumnTools extends BaseFloat {
         // No need to show table column tools when format tool bar is shown. or the table column tools will show on the top of format toolbar.
         const { ui } = this.muya;
         for (const { name, status } of ui.shownFloat) {
-          if (name === "mu-format-picker" && status) {
+          if (name === 'mu-format-picker' && status) {
             return this.hide();
           }
         }
         const tableCellEle = bellowEles.find(
           (ele) =>
             ele[BLOCK_DOM_PROPERTY] &&
-            ele[BLOCK_DOM_PROPERTY].blockName === "table.cell"
+            ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell'
         );
         const cellBlock = tableCellEle![BLOCK_DOM_PROPERTY];
         this.block = cellBlock as CellBlock;
@@ -80,36 +80,36 @@ class TableColumnTools extends BaseFloat {
       }
     }, 300);
 
-    eventCenter.attachDOMEvent(document.body, "mousemove", handler);
+    eventCenter.attachDOMEvent(document.body, 'mousemove', handler);
   }
 
   render() {
     const { icons, oldVNode, toolsContainer, block } = this;
     const { i18n } = this.muya;
     const children = icons.map((i) => {
-      const iconWrapperSelector = "div.icon-wrapper";
+      const iconWrapperSelector = 'div.icon-wrapper';
       const icon = h(
-        "i.icon",
+        'i.icon',
         h(
-          "i.icon-inner",
+          'i.icon-inner',
           {
             style: {
               background: `url(${i.icon}) no-repeat`,
-              "background-size": "100%",
+              'background-size': '100%',
             },
           },
-          ""
+          ''
         )
       );
       const iconWrapper = h(iconWrapperSelector, icon);
 
       let itemSelector = `li.item.${i.type}`;
       if (block?.align === i.type) {
-        itemSelector += ".active";
+        itemSelector += '.active';
       }
 
-      if (i.type === "remove") {
-        itemSelector += ".delete";
+      if (i.type === 'remove') {
+        itemSelector += '.delete';
       }
 
       return h(
@@ -128,7 +128,7 @@ class TableColumnTools extends BaseFloat {
       );
     });
 
-    const vnode = h("ul", children);
+    const vnode = h('ul', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);
@@ -153,17 +153,17 @@ class TableColumnTools extends BaseFloat {
     const columnCount = row.offset(this.block);
 
     switch (item.type) {
-      case "remove": {
+      case 'remove': {
         block.table.removeColumn(offset);
 
         return this.hide();
       }
 
-      case "insert left":
+      case 'insert left':
       // fall through
-      case "insert right": {
+      case 'insert right': {
         const offset =
-          item.type === "insert left" ? columnCount : columnCount + 1;
+          item.type === 'insert left' ? columnCount : columnCount + 1;
         const cursorBlock = table.insertColumn(offset);
         if (cursorBlock) {
           cursorBlock.setCursor(0, 0);

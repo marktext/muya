@@ -1,23 +1,23 @@
 import {
   default as Content,
   default as ContentBlock,
-} from "@muya/block/base/content";
-import type Format from "@muya/block/base/format";
-import Parent from "@muya/block/base/parent";
-import ListItem from "@muya/block/commonMark/listItem";
-import TaskListItem from "@muya/block/gfm/taskListItem";
-import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from "@muya/config";
-import Muya from "@muya/index";
-import type { ImageToken } from "@muya/inlineRenderer/types";
-import { isElement, isKeyboardEvent, isMouseEvent } from "@muya/utils";
-import { getImageInfo } from "@muya/utils/image";
+} from '@muya/block/base/content';
+import type Format from '@muya/block/base/format';
+import Parent from '@muya/block/base/parent';
+import ListItem from '@muya/block/commonMark/listItem';
+import TaskListItem from '@muya/block/gfm/taskListItem';
+import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from '@muya/config';
+import Muya from '@muya/index';
+import type { ImageToken } from '@muya/inlineRenderer/types';
+import { isElement, isKeyboardEvent, isMouseEvent } from '@muya/utils';
+import { getImageInfo } from '@muya/utils/image';
 import {
   compareParagraphsOrder,
   findContentDOM,
   getNodeAndOffset,
   getOffsetOfParagraph,
-} from "./dom";
-import { Cursor, NodeOffset, TSelection } from "./types";
+} from './dom';
+import { Cursor, NodeOffset, TSelection } from './types';
 
 class Selection {
   /**
@@ -110,31 +110,31 @@ class Selection {
       isCollapsed,
     } = this;
     if (anchor === null || focus === null || !anchorBlock || !focusBlock) {
-      return "none";
+      return 'none';
     }
 
     if (isCollapsed) {
-      return "none";
+      return 'none';
     }
 
     if (isSelectionInSameBlock) {
-      return anchor.offset < focus.offset ? "forward" : "backward";
+      return anchor.offset < focus.offset ? 'forward' : 'backward';
     } else {
       const aDom = anchorBlock.domNode!;
       const fDom = focusBlock.domNode!;
       const order = compareParagraphsOrder(aDom, fDom);
 
-      return order ? "forward" : "backward";
+      return order ? 'forward' : 'backward';
     }
   }
 
   get type() {
     const { anchorBlock, focusBlock, isCollapsed } = this;
     if (!anchorBlock && !focusBlock) {
-      return "None";
+      return 'None';
     }
 
-    return isCollapsed ? "Caret" : "Range";
+    return isCollapsed ? 'Caret' : 'Range';
   }
 
   public doc: Document = document;
@@ -204,7 +204,7 @@ class Selection {
 
     this.setSelection(cursor);
     const activeEle = this.doc.activeElement;
-    if (activeEle && activeEle.classList.contains("mu-content")) {
+    if (activeEle && activeEle.classList.contains('mu-content')) {
       (activeEle as HTMLElement).blur();
     }
   }
@@ -248,22 +248,22 @@ class Selection {
       anchorBlock === focusBlock && anchor.offset === focus.offset;
 
     const isSelectionInSameBlock = anchorBlock === focusBlock;
-    let direction = "none";
-    let type = "None";
+    let direction = 'none';
+    let type = 'None';
 
     if (isCollapsed) {
-      direction = "none";
+      direction = 'none';
     }
     if (isSelectionInSameBlock) {
-      direction = anchor.offset < focus.offset ? "forward" : "backward";
+      direction = anchor.offset < focus.offset ? 'forward' : 'backward';
     } else {
       const aDom = anchorBlock.domNode!;
       const fDom = focusBlock.domNode!;
       const order = compareParagraphsOrder(aDom, fDom);
-      direction = order ? "forward" : "backward";
+      direction = order ? 'forward' : 'backward';
     }
 
-    type = isCollapsed ? "Caret" : "Range";
+    type = isCollapsed ? 'Caret' : 'Range';
 
     return {
       anchor,
@@ -306,7 +306,7 @@ class Selection {
       selectedImage,
     } = this;
 
-    this.muya.eventCenter.emit("selection-change", {
+    this.muya.eventCenter.emit('selection-change', {
       anchor,
       focus,
       anchorBlock,
@@ -346,10 +346,10 @@ class Selection {
         return;
       }
       const { type, shiftKey } = event;
-      if (type === "mousemove" && !this.selectInfo.isSelect) {
+      if (type === 'mousemove' && !this.selectInfo.isSelect) {
         return;
       }
-      if (type === "click" && !shiftKey) {
+      if (type === 'click' && !shiftKey) {
         return;
       }
       const selection = this.getSelection();
@@ -389,7 +389,7 @@ class Selection {
       ) {
         const firstContent = anchorOutMostBlock.firstContentInDescendant();
         const lastContent = anchorOutMostBlock.lastContentInDescendant();
-        if (direction === "forward") {
+        if (direction === 'forward') {
           newSelection.anchorBlock = firstContent;
           newSelection.anchorPath = firstContent.path;
           newSelection.anchor.offset = 0;
@@ -407,7 +407,7 @@ class Selection {
       ) {
         const firstContent = focusOutMostBlock.firstContentInDescendant();
         const lastContent = focusOutMostBlock.lastContentInDescendant();
-        if (direction === "forward") {
+        if (direction === 'forward') {
           newSelection.focusBlock = lastContent;
           newSelection.focusPath = lastContent.path;
           newSelection.focus.offset = lastContent.text.length;
@@ -422,15 +422,15 @@ class Selection {
         /bullet-list|order-list|task-list/.test(anchorOutMostBlock.blockName)
       ) {
         const listItemBlockName =
-          anchorOutMostBlock.blockName === "task-list"
-            ? "task-list-item"
-            : "list-item";
+          anchorOutMostBlock.blockName === 'task-list'
+            ? 'task-list-item'
+            : 'list-item';
         const listItem = anchorBlock.farthestBlock(listItemBlockName) as
           | ListItem
           | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
         const lastContent = listItem.lastContentInDescendant();
-        if (direction === "forward") {
+        if (direction === 'forward') {
           newSelection.anchorBlock = firstContent;
           newSelection.anchorPath = firstContent.path;
           newSelection.anchor.offset = 0;
@@ -445,15 +445,15 @@ class Selection {
         /bullet-list|order-list|task-list/.test(focusOutMostBlock.blockName)
       ) {
         const listItemBlockName =
-          focusOutMostBlock.blockName === "task-list"
-            ? "task-list-item"
-            : "list-item";
+          focusOutMostBlock.blockName === 'task-list'
+            ? 'task-list-item'
+            : 'list-item';
         const listItem = focusBlock.farthestBlock(listItemBlockName) as
           | ListItem
           | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
         const lastContent = listItem.lastContentInDescendant();
-        if (direction === "forward") {
+        if (direction === 'forward') {
           newSelection.focusBlock = lastContent;
           newSelection.focusPath = lastContent.path;
           newSelection.focus.offset = lastContent.text.length;
@@ -464,7 +464,7 @@ class Selection {
         }
       }
 
-      if (type === "mousemove") {
+      if (type === 'mousemove') {
         this.selectInfo.selection = newSelection;
       } else {
         this.setSelection(newSelection);
@@ -500,14 +500,14 @@ class Selection {
       }
     };
 
-    eventCenter.attachDOMEvent(domNode, "mousedown", handleMousedown);
-    eventCenter.attachDOMEvent(domNode, "mousemove", handleMousemoveOrClick);
-    eventCenter.attachDOMEvent(domNode, "mouseup", handleMouseupOrLeave);
-    eventCenter.attachDOMEvent(domNode, "mouseleave", handleMouseupOrLeave);
-    eventCenter.attachDOMEvent(domNode, "click", handleMousemoveOrClick);
-    eventCenter.attachDOMEvent(domNode, "click", handleClick);
-    eventCenter.attachDOMEvent(document, "click", docHandlerClick);
-    eventCenter.attachDOMEvent(document, "keydown", handleKeydown);
+    eventCenter.attachDOMEvent(domNode, 'mousedown', handleMousedown);
+    eventCenter.attachDOMEvent(domNode, 'mousemove', handleMousemoveOrClick);
+    eventCenter.attachDOMEvent(domNode, 'mouseup', handleMouseupOrLeave);
+    eventCenter.attachDOMEvent(domNode, 'mouseleave', handleMouseupOrLeave);
+    eventCenter.attachDOMEvent(domNode, 'click', handleMousemoveOrClick);
+    eventCenter.attachDOMEvent(domNode, 'click', handleClick);
+    eventCenter.attachDOMEvent(document, 'click', docHandlerClick);
+    eventCenter.attachDOMEvent(document, 'keydown', handleKeydown);
   }
 
   // Handle click inline image.
@@ -518,7 +518,7 @@ class Selection {
     const imageInfo = getImageInfo(imageWrapper);
     const { target } = event;
     const deleteContainer = (target as HTMLElement).closest(
-      ".mu-image-icon-close"
+      '.mu-image-icon-close'
     );
     const contentDom = findContentDOM(target as Node);
 
@@ -535,7 +535,7 @@ class Selection {
     }
 
     // Handle image click, to select the current image
-    if ((target as HTMLElement)?.tagName === "IMG") {
+    if ((target as HTMLElement)?.tagName === 'IMG') {
       // Handle show image toolbar
       const rect = imageWrapper
         .querySelector(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)
@@ -547,7 +547,7 @@ class Selection {
       };
 
       // Show image edit tool bar.
-      eventCenter.emit("muya-image-toolbar", {
+      eventCenter.emit('muya-image-toolbar', {
         block: contentBlock,
         reference,
         imageInfo,
@@ -560,7 +560,7 @@ class Selection {
         `${imageSelector} .${CLASS_NAMES.MU_IMAGE_CONTAINER}`
       );
 
-      eventCenter.emit("muya-transformer", {
+      eventCenter.emit('muya-transformer', {
         block: contentBlock,
         reference: imageContainer,
         imageInfo,
@@ -590,7 +590,7 @@ class Selection {
         height: imageWrapper.offsetHeight,
       };
       const imageInfo = getImageInfo(imageWrapper);
-      eventCenter.emit("muya-image-selector", {
+      eventCenter.emit('muya-image-selector', {
         block: contentBlock,
         reference,
         imageInfo,
@@ -615,7 +615,7 @@ class Selection {
   ) {
     const range = this.doc.createRange();
     range.setStart(startNode, startOffset);
-    if (endNode && typeof endOffset === "number") {
+    if (endNode && typeof endOffset === 'number') {
       range.setEnd(endNode, endOffset);
     } else {
       range.collapse(true);

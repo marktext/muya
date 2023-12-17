@@ -1,9 +1,9 @@
-import { BLOCK_TYPE6, CLASS_NAMES } from "@muya/config";
-import { snakeToCamel } from "@muya/utils";
-import sanitize, { isValidAttribute } from "@muya/utils/dompurify";
-import { VNode } from "snabbdom";
-import type { HTMLTagToken, ImageToken, SyntaxRenderOptions, Token } from "../types";
-import type Renderer from "./index";
+import { BLOCK_TYPE6, CLASS_NAMES } from '@muya/config';
+import { snakeToCamel } from '@muya/utils';
+import sanitize, { isValidAttribute } from '@muya/utils/dompurify';
+import { VNode } from 'snabbdom';
+import type { HTMLTagToken, ImageToken, SyntaxRenderOptions, Token } from '../types';
+import type Renderer from './index';
 
 export default function htmlTag(
   this: Renderer,
@@ -32,10 +32,10 @@ export default function htmlTag(
   );
   const closeContent = closeTag
     ? this.highlight(h, block, end - closeTag.length, end, token)
-    : "";
+    : '';
 
   const anchor =
-    Array.isArray(children) && children.length && tag !== "ruby" // important
+    Array.isArray(children) && children.length && tag !== 'ruby' // important
       ? children.reduce((acc: VNode[], to: Token) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const chunk = (this as any)[snakeToCamel(to.type)]({
@@ -48,15 +48,15 @@ export default function htmlTag(
 
           return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
         }, [])
-      : "";
+      : '';
 
   switch (tag) {
     // Handle html img.
-    case "img": {
+    case 'img': {
       return this.image({ h, cursor, block, token: token as unknown as ImageToken, outerClass });
     }
 
-    case "br": {
+    case 'br': {
       return [h(`span.${CLASS_NAMES.MU_HTML_TAG}`, [...openContent, h(tag)])];
     }
 
@@ -64,7 +64,7 @@ export default function htmlTag(
       // handle void html tag
       if (!closeTag) {
         return [h(`span.${CLASS_NAMES.MU_HTML_TAG}`, openContent)];
-      } else if (tag === "ruby") {
+      } else if (tag === 'ruby') {
         return this.htmlRuby({
           h,
           cursor,
@@ -78,7 +78,7 @@ export default function htmlTag(
         // we also recommand user not use block level element in paragraph. use block element in html block.
         // Use code !sanitize(`<${tag}>`) to filter some malicious tags. for example: <embed>.
         let selector =
-          BLOCK_TYPE6.includes(tag) || !sanitize(`<${tag}>`) ? "span" : tag;
+          BLOCK_TYPE6.includes(tag) || !sanitize(`<${tag}>`) ? 'span' : tag;
         selector += `.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_RAW_HTML}`;
         const data = {
           attrs: {} as Record<string, string>,
@@ -90,8 +90,8 @@ export default function htmlTag(
         };
 
         // Disable spell checking for these tags
-        if (tag === "code" || tag === "kbd") {
-          Object.assign(data.attrs, { spellcheck: "false" });
+        if (tag === 'code' || tag === 'kbd') {
+          Object.assign(data.attrs, { spellcheck: 'false' });
         }
 
         if (attrs.id) {
@@ -107,7 +107,7 @@ export default function htmlTag(
         }
 
         for (const attr of Object.keys(attrs)) {
-          if (attr !== "id" && attr !== "class") {
+          if (attr !== 'id' && attr !== 'class') {
             const attrData = attrs[attr];
             if (attrData && isValidAttribute(tag, attr, attrData)) {
               data.attrs[attr] = attrData;
@@ -120,7 +120,7 @@ export default function htmlTag(
             `span.${tagClassName}.${CLASS_NAMES.MU_OUTPUT_REMOVE}`,
             {
               attrs: {
-                spellcheck: "false",
+                spellcheck: 'false',
               },
             },
             openContent
@@ -130,7 +130,7 @@ export default function htmlTag(
             `span.${tagClassName}.${CLASS_NAMES.MU_OUTPUT_REMOVE}`,
             {
               attrs: {
-                spellcheck: "false",
+                spellcheck: 'false',
               },
             },
             closeContent

@@ -1,16 +1,16 @@
-import Parent from "@muya/block/base/parent";
-import Muya from "@muya/index";
-import logger from "@muya/utils/logger";
-import katex from "katex";
-import "katex/dist/contrib/mhchem.min.js";
-import { IMathBlockState, TState } from "../../../state/types";
+import Parent from '@muya/block/base/parent';
+import Muya from '@muya/index';
+import logger from '@muya/utils/logger';
+import katex from 'katex';
+import 'katex/dist/contrib/mhchem.min.js';
+import { IMathBlockState, TState } from '../../../state/types';
 
-const debug = logger("mathPreview:");
+const debug = logger('mathPreview:');
 
 class MathPreview extends Parent {
   public math: string;
 
-  static blockName = "math-preview";
+  static blockName = 'math-preview';
 
   static create(muya: Muya, state: IMathBlockState) {
     const mathBlock = new MathPreview(muya, state);
@@ -19,18 +19,18 @@ class MathPreview extends Parent {
   }
 
   get path() {
-    debug.warn("You can never call `get path` in htmlPreview");
+    debug.warn('You can never call `get path` in htmlPreview');
     return [];
   }
 
   constructor(muya: Muya, { text }: IMathBlockState) {
     super(muya);
-    this.tagName = "div";
+    this.tagName = 'div';
     this.math = text;
-    this.classList = ["mu-math-preview"];
+    this.classList = ['mu-math-preview'];
     this.attributes = {
-      spellcheck: "false",
-      contenteditable: "false",
+      spellcheck: 'false',
+      contenteditable: 'false',
     };
     this.createDomNode();
     this.attachDOMEvents();
@@ -38,7 +38,7 @@ class MathPreview extends Parent {
   }
 
   getState(): TState {
-    debug.warn("You can never call `getState` in mathPreview");
+    debug.warn('You can never call `getState` in mathPreview');
     return {} as TState;
   }
 
@@ -47,7 +47,7 @@ class MathPreview extends Parent {
 
     eventCenter.attachDOMEvent(
       this.domNode!,
-      "click",
+      'click',
       this.clickHandler.bind(this)
     );
   }
@@ -75,12 +75,12 @@ class MathPreview extends Parent {
         this.domNode!.innerHTML = html;
       } catch (err) {
         this.domNode!.innerHTML = `<div class="mu-math-error">&lt; ${i18n.t(
-          "Invalid Mathematical Formula"
+          'Invalid Mathematical Formula'
         )} &gt;</div>`;
       }
     } else {
       this.domNode!.innerHTML = `<div class="mu-empty">&lt; ${i18n.t(
-        "Empty Mathematical Formula"
+        'Empty Mathematical Formula'
       )} &gt;</div>`;
     }
   }

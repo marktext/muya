@@ -1,11 +1,11 @@
-import ScrollPage from "@muya/block";
-import Format from "@muya/block/base/format";
-import Muya from "@muya/index";
-import { Cursor } from "@muya/selection/types";
-import { isKeyboardEvent } from "@muya/utils";
+import ScrollPage from '@muya/block';
+import Format from '@muya/block/base/format';
+import Muya from '@muya/index';
+import { Cursor } from '@muya/selection/types';
+import { isKeyboardEvent } from '@muya/utils';
 
 class SetextHeadingContent extends Format {
-  static blockName = "setextheading.content";
+  static blockName = 'setextheading.content';
 
   static create(muya: Muya, text: string) {
     const content = new SetextHeadingContent(muya, text);
@@ -15,7 +15,7 @@ class SetextHeadingContent extends Format {
 
   constructor(muya: Muya, text: string) {
     super(muya, text);
-    this.classList = [...this.classList, "mu-setextheading-content"];
+    this.classList = [...this.classList, 'mu-setextheading-content'];
     this.createDomNode();
   }
 
@@ -53,8 +53,8 @@ class SetextHeadingContent extends Format {
       event.stopPropagation();
 
       const newNodeState = {
-        name: "paragraph",
-        text: "",
+        name: 'paragraph',
+        text: '',
       };
 
       const newParagraphBlock = ScrollPage.loadBlock(newNodeState.name).create(

@@ -1,24 +1,24 @@
-import BaseFloat from "../baseFloat";
-import { patch, h } from "@muya/utils/snabbdom";
-import icons from "./config";
+import BaseFloat from '../baseFloat';
+import { patch, h } from '@muya/utils/snabbdom';
+import icons from './config';
 
-import "./index.css";
+import './index.css';
 
 const defaultOptions = {
-  placement: "bottom" as const,
+  placement: 'bottom' as const,
   modifiers: {
     offset: {
-      offset: "0, 5",
+      offset: '0, 5',
     },
   },
   showArrow: false,
 };
 
 class LinkTools extends BaseFloat {
-  static pluginName = "linkTools";
+  static pluginName = 'linkTools';
 
   constructor(muya, options = {}) {
-    const name = "mu-link-tools";
+    const name = 'mu-link-tools';
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
     this.oldVNode = null;
@@ -26,7 +26,7 @@ class LinkTools extends BaseFloat {
     this.options = opts;
     this.icons = icons;
     this.hideTimer = null;
-    const linkContainer = (this.linkContainer = document.createElement("div"));
+    const linkContainer = (this.linkContainer = document.createElement('div'));
     this.container.appendChild(linkContainer);
     this.listen();
   }
@@ -34,7 +34,7 @@ class LinkTools extends BaseFloat {
   listen() {
     const { eventCenter } = this.muya;
     super.listen();
-    eventCenter.subscribe("muya-link-tools", ({ reference, linkInfo }) => {
+    eventCenter.subscribe('muya-link-tools', ({ reference, linkInfo }) => {
       if (reference) {
         this.linkInfo = linkInfo;
         setTimeout(() => {
@@ -61,8 +61,8 @@ class LinkTools extends BaseFloat {
       this.hide();
     };
 
-    eventCenter.attachDOMEvent(this.container, "mouseover", mouseOverHandler);
-    eventCenter.attachDOMEvent(this.container, "mouseleave", mouseOutHandler);
+    eventCenter.attachDOMEvent(this.container, 'mouseover', mouseOverHandler);
+    eventCenter.attachDOMEvent(this.container, 'mouseleave', mouseOutHandler);
   }
 
   render() {
@@ -72,18 +72,18 @@ class LinkTools extends BaseFloat {
       let iconWrapperSelector;
       if (i.icon) {
         // SVG icon Asset
-        iconWrapperSelector = "div.icon-wrapper";
+        iconWrapperSelector = 'div.icon-wrapper';
         icon = h(
-          "i.icon",
+          'i.icon',
           h(
-            "i.icon-inner",
+            'i.icon-inner',
             {
               style: {
                 background: `url(${i.icon}) no-repeat`,
-                "background-size": "100%",
+                'background-size': '100%',
               },
             },
-            ""
+            ''
           )
         );
       }
@@ -103,7 +103,7 @@ class LinkTools extends BaseFloat {
       );
     });
 
-    const vnode = h("ul", children);
+    const vnode = h('ul', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);
@@ -118,12 +118,12 @@ class LinkTools extends BaseFloat {
     event.stopPropagation();
     const { contentState } = this.muya;
     switch (item.type) {
-      case "unlink":
+      case 'unlink':
         contentState.unlink(this.linkInfo);
         this.hide();
         break;
 
-      case "jump":
+      case 'jump':
         this.options.jumpClick(this.linkInfo);
         this.hide();
         break;

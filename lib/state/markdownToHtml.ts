@@ -1,10 +1,10 @@
-import { EXPORT_DOMPURIFY_CONFIG } from "@muya/config";
-import Muya from "@muya/index";
-import { sanitize, unescapeHTML } from "@muya/utils";
-import loadRenderer from "@muya/utils/diagram";
-import { getHighlightHtml } from "@muya/utils/marked";
+import { EXPORT_DOMPURIFY_CONFIG } from '@muya/config';
+import Muya from '@muya/index';
+import { sanitize, unescapeHTML } from '@muya/utils';
+import loadRenderer from '@muya/utils/diagram';
+import { getHighlightHtml } from '@muya/utils/marked';
 
-import exportStyle from "@muya/assets/styles/exportStyle.css?inline";
+import exportStyle from '@muya/assets/styles/exportStyle.css?inline';
 
 class MarkdownToHtml {
   private exportContainer: HTMLDivElement | null = null;
@@ -13,32 +13,32 @@ class MarkdownToHtml {
 
   async renderMermaid() {
     const codes = this.exportContainer!.querySelectorAll(
-      "code.language-mermaid"
+      'code.language-mermaid'
     );
     for (const code of codes) {
       const preEle: HTMLElement = code.parentNode as HTMLElement;
-      const mermaidContainer = document.createElement("div");
+      const mermaidContainer = document.createElement('div');
       mermaidContainer.innerHTML = sanitize(
         unescapeHTML(code.innerHTML),
         EXPORT_DOMPURIFY_CONFIG,
         true
       ) as string;
-      mermaidContainer.classList.add("mermaid");
+      mermaidContainer.classList.add('mermaid');
       preEle.replaceWith(mermaidContainer);
     }
-    const mermaid = await loadRenderer("mermaid");
+    const mermaid = await loadRenderer('mermaid');
     // We only export light theme, so set mermaid theme to `default`, in the future, we can choose which theme to export.
     mermaid.initialize({
       startOnLoad: false,
-      securityLevel: "strict",
-      theme: "default",
+      securityLevel: 'strict',
+      theme: 'default',
     });
     await mermaid.run({
-      nodes: [...this.exportContainer!.querySelectorAll("div.mermaid")],
+      nodes: [...this.exportContainer!.querySelectorAll('div.mermaid')],
     });
     if (this.muya) {
       mermaid.initialize({
-        securityLevel: "strict",
+        securityLevel: 'strict',
         theme: this.muya.options.mermaidTheme,
       });
     }
@@ -46,44 +46,44 @@ class MarkdownToHtml {
 
   async renderDiagram() {
     const selector =
-      "code.language-vega-lite, code.language-plantuml";
+      'code.language-vega-lite, code.language-plantuml';
     const codes = this.exportContainer!.querySelectorAll(selector);
 
     for (const code of codes) {
       const rawCode = unescapeHTML(code.innerHTML);
       const functionType = (() => {
         if (/plantuml/.test(code.className)) {
-          return "plantuml";
+          return 'plantuml';
         } else {
-          return "vega-lite";
+          return 'vega-lite';
         }
       })();
       const render = await loadRenderer(functionType);
       const preParent = code.parentNode;
-      const diagramContainer = document.createElement("div");
+      const diagramContainer = document.createElement('div');
       diagramContainer.classList.add(functionType);
       (preParent as HTMLElement).replaceWith(diagramContainer);
       const options = {};
-      if (functionType === "vega-lite") {
+      if (functionType === 'vega-lite') {
         Object.assign(options, {
           actions: false,
           tooltip: false,
-          renderer: "svg",
-          theme: "latimes", // only render light theme
+          renderer: 'svg',
+          theme: 'latimes', // only render light theme
         });
       }
 
       try {
-        if (functionType === "plantuml") {
+        if (functionType === 'plantuml') {
           const diagram = render.parse(rawCode);
-          diagramContainer.innerHTML = "";
+          diagramContainer.innerHTML = '';
           diagram.insertImgElement(diagramContainer);
         }
-        if (functionType === "vega-lite") {
+        if (functionType === 'vega-lite') {
           await render(diagramContainer, JSON.parse(rawCode), options);
         }
       } catch (err) {
-        diagramContainer.innerHTML = "< Invalid Diagram >";
+        diagramContainer.innerHTML = '< Invalid Diagram >';
       }
     }
   }
@@ -101,8 +101,8 @@ class MarkdownToHtml {
     html = sanitize(html, EXPORT_DOMPURIFY_CONFIG, false) as string;
 
     const exportContainer = (this.exportContainer =
-      document.createElement("div"));
-    exportContainer.classList.add("mu-render-container");
+      document.createElement('div'));
+    exportContainer.classList.add('mu-render-container');
     exportContainer.innerHTML = html;
     document.body.appendChild(exportContainer);
 
@@ -114,10 +114,10 @@ class MarkdownToHtml {
 
     // hack to add arrow marker to output html
     // TODO: JOCS, are these codes still needed?
-    const paths = document.querySelectorAll("path[id^=raphael-marker-]");
+    const paths = document.querySelectorAll('path[id^=raphael-marker-]');
     const def = '<defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">';
     result = result.replace(def, () => {
-      let str = "";
+      let str = '';
       for (const path of paths) {
         str += path.outerHTML;
       }
@@ -138,7 +138,7 @@ class MarkdownToHtml {
     const html = await this.renderHtml();
 
     // `extraCss` may changed in the mean time.
-    const { title = "", extraCss = "" } = options;
+    const { title = '', extraCss = '' } = options;
     return `<!DOCTYPE html>
 <html lang="en">
 <head>

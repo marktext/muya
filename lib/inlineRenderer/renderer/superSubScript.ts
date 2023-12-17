@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, SuperSubScriptToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, SuperSubScriptToken } from '../types';
 
 export default function superSubScript(
   this: Renderer,
@@ -31,7 +31,7 @@ export default function superSubScript(
     end - marker.length,
     token
   );
-  const tagName = marker === "^" ? "sup" : "sub";
+  const tagName = marker === '^' ? 'sup' : 'sub';
 
   return [
     h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, startMarker),
@@ -39,7 +39,7 @@ export default function superSubScript(
       `${tagName}.${CLASS_NAMES.MU_INLINE_RULE}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
       },
       content

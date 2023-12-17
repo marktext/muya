@@ -1,5 +1,5 @@
-import type Content from "@muya/block/base/content";
-import type Parent from "@muya/block/base/parent";
+import type Content from '@muya/block/base/content';
+import type Parent from '@muya/block/base/parent';
 
 declare global {
   interface Window {

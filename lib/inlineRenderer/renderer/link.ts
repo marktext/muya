@@ -1,9 +1,9 @@
-import { CLASS_NAMES } from "@muya/config";
-import { isLengthEven, snakeToCamel } from "@muya/utils";
-import { sanitizeHyperlink } from "@muya/utils/url";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, LinkToken, Token } from "../types";
-import { VNode } from "snabbdom";
+import { CLASS_NAMES } from '@muya/config';
+import { isLengthEven, snakeToCamel } from '@muya/utils';
+import { sanitizeHyperlink } from '@muya/utils/url';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, LinkToken, Token } from '../types';
+import { VNode } from 'snabbdom';
 
 // 'link': /^(\[)((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*?)(\\*)\]\((.*?)(\\*)\)/, // can nest
 export default function link(
@@ -81,7 +81,7 @@ export default function link(
               href: sanitizeHyperlink(
                 token.href + encodeURI(token.backlash.second)
               ),
-              target: "_blank",
+              target: '_blank',
               title: token.title,
             },
           },
@@ -144,7 +144,7 @@ export default function link(
         h(
           `span.${linkClassName}.${CLASS_NAMES.MU_REMOVE}`,
           {
-            attrs: { spellcheck: "false" },
+            attrs: { spellcheck: 'false' },
           },
           [
             ...hrefContent,

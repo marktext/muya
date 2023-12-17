@@ -1,5 +1,5 @@
-import "./index.css";
-import Muya from "../../index";
+import './index.css';
+import Muya from '../../index';
 
 const position = (source, ele) => {
   const rect = source.getBoundingClientRect();
@@ -22,27 +22,27 @@ class Tooltip {
 
     eventCenter.attachDOMEvent(
       domNode,
-      "mouseover",
+      'mouseover',
       this.mouseOver.bind(this)
     );
   }
 
   mouseOver(event) {
     const { target } = event;
-    const toolTipTarget = target.closest("[data-tooltip]");
+    const toolTipTarget = target.closest('[data-tooltip]');
     const { eventCenter } = this.muya;
     if (toolTipTarget && !this.cache.has(toolTipTarget)) {
-      const tooltip = toolTipTarget.getAttribute("data-tooltip");
-      const tooltipEle = document.createElement("div");
+      const tooltip = toolTipTarget.getAttribute('data-tooltip');
+      const tooltipEle = document.createElement('div');
       tooltipEle.textContent = tooltip;
-      tooltipEle.classList.add("mu-tooltip");
+      tooltipEle.classList.add('mu-tooltip');
       document.body.appendChild(tooltipEle);
       position(toolTipTarget, tooltipEle);
 
       this.cache.set(toolTipTarget, tooltipEle);
 
       setTimeout(() => {
-        tooltipEle.classList.add("active");
+        tooltipEle.classList.add('active');
       });
 
       const timer = setInterval(() => {
@@ -54,7 +54,7 @@ class Tooltip {
 
       eventCenter.attachDOMEvent(
         toolTipTarget,
-        "mouseleave",
+        'mouseleave',
         this.mouseLeave.bind(this)
       );
     }

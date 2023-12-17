@@ -2,18 +2,18 @@ const FRONT_REG =
   /^(?:(?:---\n([\s\S]+?)---)|(?:\+\+\+\n([\s\S]+?)\+\+\+)|(?:;;;\n([\s\S]+?);;;)|(?:\{\n([\s\S]+?)\}))(?:\n{2,}|\n{1,2}$)/;
 
 const STYLE_LANG = {
-  "-": "yaml",
-  "+": "toml",
-  ";": "json",
-  "{": "json",
+  '-': 'yaml',
+  '+': 'toml',
+  ';': 'json',
+  '{': 'json',
 } as const;
 
 type FrontMatterToken = {
-  type: "frontmatter";
+  type: 'frontmatter';
   raw: string;
   text: string;
   style: keyof typeof STYLE_LANG;
-  lang: "yaml" | "toml" | "json";
+  lang: 'yaml' | 'toml' | 'json';
 };
 
 export default function getFrontMatterInfo(text: string) {
@@ -26,7 +26,7 @@ export default function getFrontMatterInfo(text: string) {
     const lang = STYLE_LANG[style];
 
     token = {
-      type: "frontmatter",
+      type: 'frontmatter',
       raw,
       text: matches[1],
       style,

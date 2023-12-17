@@ -1,19 +1,19 @@
-import Parent from "@muya/block/base/parent";
-import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import ScrollPage from "@muya/block/scrollPage";
-import { mixins } from "@muya/utils";
-import { ITableRowState } from "../../../state/types";
+import Parent from '@muya/block/base/parent';
+import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
+import ScrollPage from '@muya/block/scrollPage';
+import { mixins } from '@muya/utils';
+import { ITableRowState } from '../../../state/types';
 
 @mixins(ContainerQueryBlock)
 class TableRow extends Parent {
-  static blockName = "table.row";
+  static blockName = 'table.row';
 
   static create(muya, state) {
     const row = new TableRow(muya);
 
     row.append(
       ...state.children.map((child) =>
-        ScrollPage.loadBlock("table.cell").create(muya, child)
+        ScrollPage.loadBlock('table.cell').create(muya, child)
       )
     );
 
@@ -29,15 +29,15 @@ class TableRow extends Parent {
 
   constructor(muya) {
     super(muya);
-    this.tagName = "tr";
+    this.tagName = 'tr';
 
-    this.classList = ["mu-table-row"];
+    this.classList = ['mu-table-row'];
     this.createDomNode();
   }
 
   getState(): ITableRowState {
     const state: ITableRowState = {
-      name: "table.row",
+      name: 'table.row',
       children: this.map((node) => node.getState()),
     };
 

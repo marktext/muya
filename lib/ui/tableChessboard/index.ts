@@ -1,14 +1,14 @@
-import BaseFloat from "../baseFloat";
-import { patch, h } from "@muya/utils/snabbdom";
-import { EVENT_KEYS } from "@muya/config";
+import BaseFloat from '../baseFloat';
+import { patch, h } from '@muya/utils/snabbdom';
+import { EVENT_KEYS } from '@muya/config';
 
-import "./index.css";
+import './index.css';
 
 class TablePicker extends BaseFloat {
-  static pluginName = "tablePicker";
+  static pluginName = 'tablePicker';
 
   constructor(muya) {
-    const name = "mu-table-picker";
+    const name = 'mu-table-picker';
     super(muya, name);
     this.checkerCount = {
       row: 6,
@@ -18,7 +18,7 @@ class TablePicker extends BaseFloat {
     this.current = null;
     this.select = null;
     const tableContainer = (this.tableContainer =
-      document.createElement("div"));
+      document.createElement('div'));
     this.container.appendChild(tableContainer);
     this.listen();
   }
@@ -26,7 +26,7 @@ class TablePicker extends BaseFloat {
   listen() {
     const { eventCenter } = this.muya;
     super.listen();
-    eventCenter.subscribe("muya-table-picker", (data, reference, cb) => {
+    eventCenter.subscribe('muya-table-picker', (data, reference, cb) => {
       if (!this.status) {
         this.show(data, reference, cb);
         this.render();
@@ -46,20 +46,20 @@ class TablePicker extends BaseFloat {
     let j;
 
     for (i = 0; i < row; i++) {
-      let rowSelector = "div.mu-table-picker-row";
+      let rowSelector = 'div.mu-table-picker-row';
       if (i === 0) {
-        rowSelector += ".mu-table-picker-header";
+        rowSelector += '.mu-table-picker-header';
       }
       const cells = [];
 
       for (j = 0; j < column; j++) {
-        let cellSelector = "span.mu-table-picker-cell";
+        let cellSelector = 'span.mu-table-picker-cell';
         if (i <= cRow && j <= cColumn) {
-          cellSelector += ".current";
+          cellSelector += '.current';
         }
 
         if (i <= sRow && j <= sColumn) {
-          cellSelector += ".selected";
+          cellSelector += '.selected';
         }
         cells.push(
           h(cellSelector, {
@@ -71,8 +71,8 @@ class TablePicker extends BaseFloat {
             on: {
               mouseenter: (event) => {
                 const { target } = event;
-                const r = target.getAttribute("data-row");
-                const c = target.getAttribute("data-column");
+                const r = target.getAttribute('data-row');
+                const c = target.getAttribute('data-column');
                 this.select = { row: r, column: c };
                 this.render();
               },
@@ -87,32 +87,32 @@ class TablePicker extends BaseFloat {
       tableRows.push(h(rowSelector, cells));
     }
 
-    const tableFooter = h("div.footer", [
-      h("input.row-input", {
+    const tableFooter = h('div.footer', [
+      h('input.row-input', {
         props: {
-          type: "text",
+          type: 'text',
           value: +this.select.row + 1,
         },
         on: {
           keyup: (event) => {
-            this.keyupHandler(event, "row");
+            this.keyupHandler(event, 'row');
           },
         },
       }),
-      "x",
-      h("input.column-input", {
+      'x',
+      h('input.column-input', {
         props: {
-          type: "text",
+          type: 'text',
           value: +this.select.column + 1,
         },
         on: {
           keyup: (event) => {
-            this.keyupHandler(event, "column");
+            this.keyupHandler(event, 'column');
           },
         },
       }),
       h(
-        "button",
+        'button',
         {
           on: {
             click: (_) => {
@@ -120,11 +120,11 @@ class TablePicker extends BaseFloat {
             },
           },
         },
-        "OK"
+        'OK'
       ),
     ]);
 
-    const vnode = h("div", [h("div.checker", tableRows), tableFooter]);
+    const vnode = h('div', [h('div.checker', tableRows), tableFooter]);
 
     if (oldVNode) {
       patch(oldVNode, vnode);
@@ -143,7 +143,7 @@ class TablePicker extends BaseFloat {
       number--;
     } else if (event.key === EVENT_KEYS.Enter) {
       this.selectItem();
-    } else if (typeof value === "number") {
+    } else if (typeof value === 'number') {
       number = value - 1;
     }
 

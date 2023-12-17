@@ -1,25 +1,25 @@
-import { CLASS_NAMES } from "@muya/config";
-import { getImageSrc } from "@muya/utils/image";
-import ImageIcon from "@muya/assets/icons/image/2.png";
-import ImageFailIcon from "@muya/assets/icons/image_fail/2.png";
-import DeleteIcon from "@muya/assets/icons/delete/2.png";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, ImageToken, H } from "../types";
-import { VNode } from "snabbdom";
+import { CLASS_NAMES } from '@muya/config';
+import { getImageSrc } from '@muya/utils/image';
+import ImageIcon from '@muya/assets/icons/image/2.png';
+import ImageFailIcon from '@muya/assets/icons/image_fail/2.png';
+import DeleteIcon from '@muya/assets/icons/delete/2.png';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, ImageToken, H } from '../types';
+import { VNode } from 'snabbdom';
 
 const renderIcon = (h: H, className: string, icon: string) => {
   const selector = `a.${className}`;
   const iconVnode = h(
-    "i.icon",
+    'i.icon',
     h(
-      "i.icon-inner",
+      'i.icon-inner',
       {
         style: {
           background: `url(${icon}) no-repeat`,
-          "background-size": "100%",
+          'background-size': '100%',
         },
       },
-      ""
+      ''
     )
   );
 
@@ -36,15 +36,15 @@ export default function image(
   const { i18n } = this.muya;
   const data = {
     attrs: {
-      contenteditable: "false",
-      "empty-text": i18n.t("Click to add an image"),
-      "fail-text": i18n.t("Load image failed"),
+      contenteditable: 'false',
+      'empty-text': i18n.t('Click to add an image'),
+      'fail-text': i18n.t('Load image failed'),
     },
     dataset: {
       raw: token.raw,
     },
   };
-  let id: string = "";
+  let id: string = '';
   let isSuccess: boolean | undefined;
   let src = imageSrc.src;
   const alt = token.attrs.alt;
@@ -57,15 +57,15 @@ export default function image(
   }
 
   let wrapperSelector = id
-    ? `span#${isSuccess ? id + "_" + token.range.start : id}.${
+    ? `span#${isSuccess ? id + '_' + token.range.start : id}.${
         CLASS_NAMES.MU_INLINE_IMAGE
       }`
     : `span.${CLASS_NAMES.MU_INLINE_IMAGE}`;
 
   const imageIcons = [
-    renderIcon(h, "mu-image-icon-success", ImageIcon),
-    renderIcon(h, "mu-image-icon-fail", ImageFailIcon),
-    renderIcon(h, "mu-image-icon-close", DeleteIcon),
+    renderIcon(h, 'mu-image-icon-success', ImageIcon),
+    renderIcon(h, 'mu-image-icon-fail', ImageFailIcon),
+    renderIcon(h, 'mu-image-icon-close', DeleteIcon),
   ];
 
   /**
@@ -84,8 +84,8 @@ export default function image(
     return h(`span.${CLASS_NAMES.MU_IMAGE_CONTAINER}`, data, args);
   };
 
-  if (typeof token.attrs["data-align"] === "string") {
-    wrapperSelector += `.${token.attrs["data-align"]}`;
+  if (typeof token.attrs['data-align'] === 'string') {
+    wrapperSelector += `.${token.attrs['data-align']}`;
   }
 
   // the src image is still loading, so use the url Map base64.
@@ -102,7 +102,7 @@ export default function image(
     isSuccess = true;
   }
 
-  if (alt.startsWith("loading-")) {
+  if (alt.startsWith('loading-')) {
     wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_UPLOADING}`;
     Object.assign(data.dataset, {
       id: alt,
@@ -115,7 +115,7 @@ export default function image(
 
   if (src) {
     // image is loading...
-    if (typeof isSuccess === "undefined") {
+    if (typeof isSuccess === 'undefined') {
       wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_LOADING}`;
     } else if (isSuccess === true) {
       wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_SUCCESS}`;
@@ -139,21 +139,21 @@ export default function image(
     const renderImage = () => {
       const data = {
         props: {
-          alt: alt.replace(/[`*{}[\]()#+\-.!_>~:|<>$]/g, ""),
+          alt: alt.replace(/[`*{}[\]()#+\-.!_>~:|<>$]/g, ''),
           src,
           title,
         },
       };
 
-      if (typeof width === "string" && width) {
+      if (typeof width === 'string' && width) {
         Object.assign(data.props, { width });
       }
 
-      if (typeof height === "string" && height) {
+      if (typeof height === 'string' && height) {
         Object.assign(data.props, { height });
       }
 
-      return h("img", data);
+      return h('img', data);
     };
 
     return isSuccess

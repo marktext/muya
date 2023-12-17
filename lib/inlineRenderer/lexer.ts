@@ -1,19 +1,19 @@
-import { isLengthEven, union } from "@muya/utils";
-import type { BeginRules, InlineRules } from "./rules";
-import { beginRules, inlineRules, validateRules } from "./rules";
+import { isLengthEven, union } from '@muya/utils';
+import type { BeginRules, InlineRules } from './rules';
+import { beginRules, inlineRules, validateRules } from './rules';
 import type {
   Labels,
   Token,
   TokenizerFacOptions,
   TokenizerOptions,
-} from "./types";
+} from './types';
 import {
   correctUrl,
   getAttributes,
   lowerPriority,
   parseSrcAndTitle,
   validateEmphasize,
-} from "./utils";
+} from './utils';
 
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html
@@ -31,13 +31,13 @@ const tokenizerFac = (
 ) => {
   const originSrc = src;
   const tokens: Token[] = [];
-  let pending = "";
+  let pending = '';
   let pendingStartPos = pos;
   const { superSubScript, footnote } = options;
   const pushPending = () => {
     if (pending) {
       tokens.push({
-        type: "text",
+        type: 'text',
         parent: tokens,
         raw: pending,
         content: pending,
@@ -49,15 +49,15 @@ const tokenizerFac = (
     }
 
     pendingStartPos = pos;
-    pending = "";
+    pending = '';
   };
 
   if (beginRules && pos === 0) {
     const beginRuleKeys = [
-      "header",
-      "hr",
-      "code_fence",
-      "multiple_math",
+      'header',
+      'hr',
+      'code_fence',
+      'multiple_math',
     ] as const;
 
     for (const ruleName of beginRuleKeys) {
@@ -69,8 +69,8 @@ const tokenizerFac = (
           raw: to[0],
           parent: tokens,
           marker: to[1],
-          content: to[2] || "",
-          backlash: to[3] || "",
+          content: to[2] || '',
+          backlash: to[3] || '',
           range: {
             start: pos,
             end: pos + to[0].length,
@@ -85,19 +85,19 @@ const tokenizerFac = (
     const def = beginRules.reference_definition.exec(src);
     if (def && isLengthEven(def[3])) {
       const token = {
-        type: "reference_definition" as const,
+        type: 'reference_definition' as const,
         parent: tokens,
         leftBracket: def[1],
         label: def[2],
-        backlash: def[3] || "",
+        backlash: def[3] || '',
         rightBracket: def[4],
-        leftHrefMarker: def[5] || "",
+        leftHrefMarker: def[5] || '',
         href: def[6],
-        rightHrefMarker: def[7] || "",
+        rightHrefMarker: def[7] || '',
         leftTitleSpace: def[8],
-        titleMarker: def[9] || "",
-        title: def[10] || "",
-        rightTitleSpace: def[11] || "",
+        titleMarker: def[9] || '',
+        title: def[10] || '',
+        rightTitleSpace: def[11] || '',
         raw: def[0],
         range: {
           start: pos,
@@ -116,11 +116,11 @@ const tokenizerFac = (
     if (backTo) {
       pushPending();
       tokens.push({
-        type: "backlash",
+        type: 'backlash',
         raw: backTo[1],
         marker: backTo[1],
         parent: tokens,
-        content: "",
+        content: '',
         range: {
           start: pos,
           end: pos + backTo[1].length,
@@ -133,7 +133,7 @@ const tokenizerFac = (
       continue;
     }
     // strong | em
-    const emRules = ["strong", "em"] as const;
+    const emRules = ['strong', 'em'] as const;
     let inChunk;
 
     for (const rule of emRules) {
@@ -180,13 +180,13 @@ const tokenizerFac = (
     if (inChunk) continue;
 
     // emoji | inline_code | del | inline_math
-    const chunks = ["inline_code", "del", "emoji", "inline_math"] as const;
+    const chunks = ['inline_code', 'del', 'emoji', 'inline_math'] as const;
 
     for (const rule of chunks) {
       const to = inlineRules[rule].exec(src);
       if (to && isLengthEven(to[3])) {
         if (
-          rule === "emoji" &&
+          rule === 'emoji' &&
           !lowerPriority(src, to[0].length, validateRules)
         )
           break;
@@ -198,9 +198,9 @@ const tokenizerFac = (
         };
         const marker = to[1];
         if (
-          rule === "inline_code" ||
-          rule === "emoji" ||
-          rule === "inline_math"
+          rule === 'inline_code' ||
+          rule === 'emoji' ||
+          rule === 'inline_math'
         ) {
           tokens.push({
             type: rule,
@@ -243,7 +243,7 @@ const tokenizerFac = (
       if (superSubTo) {
         pushPending();
         tokens.push({
-          type: "super_sub_script",
+          type: 'super_sub_script',
           raw: superSubTo[0],
           marker: superSubTo[1],
           range: {
@@ -265,7 +265,7 @@ const tokenizerFac = (
       if (footnoteTo) {
         pushPending();
         tokens.push({
-          type: "footnote_identifier",
+          type: 'footnote_identifier',
           raw: footnoteTo[0],
           marker: footnoteTo[1],
           range: {
@@ -287,7 +287,7 @@ const tokenizerFac = (
       const { src: imageSrc, title } = parseSrcAndTitle(imageTo[4]);
       pushPending();
       tokens.push({
-        type: "image",
+        type: 'image',
         raw: imageTo[0],
         marker: imageTo[1],
         srcAndTitle: imageTo[4],
@@ -321,7 +321,7 @@ const tokenizerFac = (
       const { src: href, title } = parseSrcAndTitle(linkTo[4]);
       pushPending();
       tokens.push({
-        type: "link",
+        type: 'link',
         raw: linkTo[0],
         marker: linkTo[1],
         hrefAndTitle: linkTo[4],
@@ -362,14 +362,14 @@ const tokenizerFac = (
     ) {
       pushPending();
       tokens.push({
-        type: "reference_link",
+        type: 'reference_link',
         raw: rLinkTo[0],
         isFullLink: !!rLinkTo[3],
         parent: tokens,
         anchor: rLinkTo[1],
         backlash: {
           first: rLinkTo[2],
-          second: rLinkTo[4] || "",
+          second: rLinkTo[4] || '',
         },
         label: rLinkTo[3] || rLinkTo[1],
         range: {
@@ -402,14 +402,14 @@ const tokenizerFac = (
       pushPending();
 
       tokens.push({
-        type: "reference_image",
+        type: 'reference_image',
         raw: rImageTo[0],
         isFullLink: !!rImageTo[3],
         parent: tokens,
         alt: rImageTo[1],
         backlash: {
           first: rImageTo[2],
-          second: rImageTo[4] || "",
+          second: rImageTo[4] || '',
         },
         label: rImageTo[3] || rImageTo[1],
         range: {
@@ -429,7 +429,7 @@ const tokenizerFac = (
       const len = htmlEscapeTo[0].length;
       pushPending();
       tokens.push({
-        type: "html_escape",
+        type: 'html_escape',
         raw: htmlEscapeTo[0],
         escapeCharacter: htmlEscapeTo[1],
         parent: tokens,
@@ -452,12 +452,12 @@ const tokenizerFac = (
     ) {
       pushPending();
       tokens.push({
-        type: "auto_link_extension",
+        type: 'auto_link_extension',
         raw: autoLinkExtTo[0],
         www: autoLinkExtTo[1],
         url: autoLinkExtTo[2],
         email: autoLinkExtTo[3],
-        linkType: autoLinkExtTo[1] ? "www" : autoLinkExtTo[2] ? "url" : "email",
+        linkType: autoLinkExtTo[1] ? 'www' : autoLinkExtTo[2] ? 'url' : 'email',
         parent: tokens,
         range: {
           start: pos,
@@ -474,12 +474,12 @@ const tokenizerFac = (
     if (autoLTo) {
       pushPending();
       tokens.push({
-        type: "auto_link",
+        type: 'auto_link',
         raw: autoLTo[0],
         href: autoLTo[1],
         email: autoLTo[2],
         isLink: !!autoLTo[1], // It is a link or email.
-        marker: "<",
+        marker: '<',
         parent: tokens,
         range: {
           start: pos,
@@ -499,9 +499,9 @@ const tokenizerFac = (
       const len = htmlTo[0].length;
       pushPending();
       tokens.push({
-        type: "html_tag",
+        type: 'html_tag',
         raw: htmlTo[0],
-        tag: "<!---->",
+        tag: '<!---->',
         openTag: htmlTo[1],
         parent: tokens,
         attrs: {},
@@ -526,7 +526,7 @@ const tokenizerFac = (
 
       pushPending();
       tokens.push({
-        type: "html_tag",
+        type: 'html_tag',
         raw: html,
         tag,
         openTag: htmlTo[2],
@@ -561,7 +561,7 @@ const tokenizerFac = (
       const len = softTo[0].length;
       pushPending();
       tokens.push({
-        type: "soft_line_break",
+        type: 'soft_line_break',
         raw: softTo[0],
         lineBreak: softTo[1],
         isAtEnd: softTo.input.length === softTo[0].length,
@@ -581,7 +581,7 @@ const tokenizerFac = (
       const len = hardTo[0].length;
       pushPending();
       tokens.push({
-        type: "hard_line_break",
+        type: 'hard_line_break',
         raw: hardTo[0],
         spaces: hardTo[1], // The space in hard line break
         lineBreak: hardTo[2], // \n
@@ -602,7 +602,7 @@ const tokenizerFac = (
     if (tailTo && top) {
       pushPending();
       tokens.push({
-        type: "tail_header",
+        type: 'tail_header',
         raw: tailTo[1],
         marker: tailTo[1],
         parent: tokens,
@@ -662,7 +662,7 @@ export const tokenizer = (
         }
       }
 
-      if ("children" in token && token.children && Array.isArray(token.children)) {
+      if ('children' in token && token.children && Array.isArray(token.children)) {
         postTokenizer(token.children);
       }
     }
@@ -678,7 +678,7 @@ export const tokenizer = (
 // transform `tokens` to text ignore the range of token
 // the opposite of tokenizer
 export const generator = (tokens: Token[]) => {
-  let result = "";
+  let result = '';
 
   for (const token of tokens) {
     result += token.raw;

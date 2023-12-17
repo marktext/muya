@@ -1,4 +1,4 @@
-import { escapeCharacters } from "@muya/config/escapeCharacter";
+import { escapeCharacters } from '@muya/config/escapeCharacter';
 
 /* eslint-disable no-useless-escape */
 export const beginRules = {
@@ -28,7 +28,7 @@ export const commonMarkRules = {
   reference_image: /^\!\[([^\]]+?)(\\*)\](?:\[([^\]]*?)(\\*)\])?/,
   html_tag:
     /^(<!--[\s\S]*?-->|(<([a-zA-Z]{1}[a-zA-Z\d-]*) *[^\n<>]* *(?:\/)?>)(?:([\s\S]*?)(<\/\3 *>))?)/, // raw html
-  html_escape: new RegExp(`^(${escapeCharacters.join("|")})`, "i"),
+  html_escape: new RegExp(`^(${escapeCharacters.join('|')})`, 'i'),
   soft_line_break: /^(\n)(?!\n)/,
   hard_line_break: /^( {2,})(\n)(?!\n)/,
 
@@ -71,13 +71,13 @@ export const inlineRules = {
 export type InlineRules = typeof inlineRules;
 
 const EXCLUDE_KEYS = [
-  "em",
-  "strong",
-  "tail_header",
-  "backlash",
-  "superscript",
-  "subscript",
-  "footnote_identifier",
+  'em',
+  'strong',
+  'tail_header',
+  'backlash',
+  'superscript',
+  'subscript',
+  'footnote_identifier',
 ] as const;
 
 type InlineRuleKeys = keyof InlineRules;

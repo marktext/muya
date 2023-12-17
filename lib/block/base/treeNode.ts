@@ -1,12 +1,12 @@
-import LinkedNode from "@muya/block/base/linkedList/linkedNode";
-import { BLOCK_DOM_PROPERTY } from "@muya/config";
-import Muya from "@muya/index";
-import type { TState } from "@muya/state/types";
-import { Nullable } from "@muya/types";
-import { createDomNode } from "@muya/utils/dom";
-import type { Attributes, Datasets } from "@muya/utils/types";
-import Content from "./content";
-import Parent from "./parent";
+import LinkedNode from '@muya/block/base/linkedList/linkedNode';
+import { BLOCK_DOM_PROPERTY } from '@muya/config';
+import Muya from '@muya/index';
+import type { TState } from '@muya/state/types';
+import { Nullable } from '@muya/types';
+import { createDomNode } from '@muya/utils/dom';
+import type { Attributes, Datasets } from '@muya/utils/types';
+import Content from './content';
+import Parent from './parent';
 
 interface IConstructor<T> {
   blockName: string;
@@ -17,12 +17,12 @@ interface IConstructor<T> {
 class TreeNode extends LinkedNode<TreeNode> {
   public parent: Nullable<Parent> = null;
   public domNode: Nullable<HTMLElement> = null;
-  public tagName: string = "";
+  public tagName: string = '';
   public classList: string[] = [];
   public attributes: Attributes = {};
   public datasets: Datasets = {};
 
-  static blockName = "tree.node";
+  static blockName = 'tree.node';
 
   get static(): IConstructor<TreeNode> {
     return this.constructor as unknown as IConstructor<TreeNode>;
@@ -41,7 +41,7 @@ class TreeNode extends LinkedNode<TreeNode> {
   }
 
   get isScrollPage() {
-    return this.blockName === "scrollpage";
+    return this.blockName === 'scrollpage';
   }
 
   get isOutMostBlock(): boolean {
@@ -124,7 +124,7 @@ class TreeNode extends LinkedNode<TreeNode> {
 
     const { parent } = this;
 
-    if (this.blockName === "language-input") {
+    if (this.blockName === 'language-input') {
       return parent.lastContentInDescendant();
     }
 

@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, BeginRuleToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, BeginRuleToken } from '../types';
 
 export default function header(
   this: Renderer,

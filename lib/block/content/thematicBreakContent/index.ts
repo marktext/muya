@@ -1,10 +1,10 @@
-import Format from "@muya/block/base/format";
-import ScrollPage from "@muya/block/scrollPage";
-import Muya from "@muya/index";
-import { Cursor } from "@muya/selection/types";
+import Format from '@muya/block/base/format';
+import ScrollPage from '@muya/block/scrollPage';
+import Muya from '@muya/index';
+import { Cursor } from '@muya/selection/types';
 
 class ThematicBreakContent extends Format {
-  static blockName = "thematicbreak.content";
+  static blockName = 'thematicbreak.content';
 
   static create(muya: Muya, text: string) {
     const content = new ThematicBreakContent(muya, text);
@@ -14,7 +14,7 @@ class ThematicBreakContent extends Format {
 
   constructor(muya: Muya, text: string) {
     super(muya, text);
-    this.classList = [...this.classList, "mu-thematic-break-content"];
+    this.classList = [...this.classList, 'mu-thematic-break-content'];
     this.createDomNode();
   }
 
@@ -35,8 +35,8 @@ class ThematicBreakContent extends Format {
     const { start, end } = this.getCursor()!;
     if (start.offset === end.offset && start.offset === 0) {
       const newState = {
-        name: "paragraph",
-        text: "",
+        name: 'paragraph',
+        text: '',
       };
       const emptyParagraph = ScrollPage.loadBlock(newState.name).create(
         muya,
@@ -55,7 +55,7 @@ class ThematicBreakContent extends Format {
     const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       // Remove the text content and convert it to paragraph
-      this.text = "";
+      this.text = '';
       this.convertToParagraph();
     } else {
       super.backspaceHandler(event);

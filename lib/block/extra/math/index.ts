@@ -1,22 +1,22 @@
-import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { TPathList } from "@muya/block/types";
-import Muya from "@muya/index";
-import { IMathBlockState, IMathMeta } from "../../../state/types";
+import Parent from '@muya/block/base/parent';
+import ScrollPage from '@muya/block/scrollPage';
+import { TPathList } from '@muya/block/types';
+import Muya from '@muya/index';
+import { IMathBlockState, IMathMeta } from '../../../state/types';
 
 class MathBlock extends Parent {
   public meta: IMathMeta;
 
-  static blockName = "math-block";
+  static blockName = 'math-block';
 
   static create(muya: Muya, state: IMathBlockState) {
     const mathBlock = new MathBlock(muya, state);
 
-    const mathPreview = ScrollPage.loadBlock("math-preview").create(
+    const mathPreview = ScrollPage.loadBlock('math-preview').create(
       muya,
       state
     );
-    const mathContainer = ScrollPage.loadBlock("math-container").create(
+    const mathContainer = ScrollPage.loadBlock('math-container').create(
       muya,
       state
     );
@@ -36,14 +36,14 @@ class MathBlock extends Parent {
 
   constructor(muya: Muya, { meta }: IMathBlockState) {
     super(muya);
-    this.tagName = "figure";
+    this.tagName = 'figure';
     this.meta = meta;
-    this.classList = ["mu-math-block"];
+    this.classList = ['mu-math-block'];
     this.createDomNode();
   }
 
   queryBlock(path: TPathList) {
-    return path.length && path[0] === "text"
+    return path.length && path[0] === 'text'
       ? this.firstContentInDescendant()
       : this;
   }
@@ -53,7 +53,7 @@ class MathBlock extends Parent {
     const { text } = this.firstContentInDescendant();
 
     return {
-      name: "math-block",
+      name: 'math-block',
       text,
       meta,
     };

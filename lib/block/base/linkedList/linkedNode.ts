@@ -1,4 +1,4 @@
-import { Nullable } from "@muya/types";
+import { Nullable } from '@muya/types';
 
 class LinkedNode<T> {
   public prev: Nullable<T>;

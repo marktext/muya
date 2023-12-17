@@ -1,7 +1,7 @@
-import { isWin } from "@muya/config/index";
-import { tokenizer } from "@muya/inlineRenderer/lexer";
-import type { ImageToken } from "@muya/inlineRenderer/types";
-import { findContentDOM, getOffsetOfParagraph } from "@muya/selection/dom";
+import { isWin } from '@muya/config/index';
+import { tokenizer } from '@muya/inlineRenderer/lexer';
+import type { ImageToken } from '@muya/inlineRenderer/types';
+import { findContentDOM, getOffsetOfParagraph } from '@muya/selection/dom';
 
 export interface IImageInfo {
   token: ImageToken;
@@ -10,7 +10,7 @@ export interface IImageInfo {
 
 export function getImageInfo(image: HTMLElement): IImageInfo {
   const paragraph = findContentDOM(image)!;
-  const raw = image.getAttribute("data-raw")!;
+  const raw = image.getAttribute('data-raw')!;
   const offset = getOffsetOfParagraph(image, paragraph);
   const tokens = tokenizer(raw);
   const token = tokens[0] as ImageToken;
@@ -43,7 +43,7 @@ export const getImageSrc = (src: string) => {
     } else {
       return {
         isUnknownType: false,
-        src: "file://" + src,
+        src: 'file://' + src,
       };
     }
   } else if (isUrl && !imageExtension) {
@@ -61,7 +61,7 @@ export const getImageSrc = (src: string) => {
     } else {
       return {
         isUnknownType: false,
-        src: "",
+        src: '',
       };
     }
   }
@@ -78,7 +78,7 @@ export const loadImage = async (
   if (detectContentType) {
     const isImage = await checkImageContentType(url);
     if (!isImage) {
-      return Promise.reject("not an image.");
+      return Promise.reject('not an image.');
     }
   }
 
@@ -101,8 +101,8 @@ export const loadImage = async (
 
 export const checkImageContentType = async (url: string) => {
   try {
-    const res = await fetch(url, { method: "HEAD" });
-    const contentType = res.headers.get("content-type");
+    const res = await fetch(url, { method: 'HEAD' });
+    const contentType = res.headers.get('content-type');
 
     if (
       contentType &&
@@ -122,9 +122,9 @@ export const correctImageSrc = (src: string) => {
   if (src) {
     // Fix ASCII and UNC paths on Windows (#1997).
     if (isWin && /^(?:[a-zA-Z]:\\|[a-zA-Z]:\/).+/.test(src)) {
-      src = "file:///" + src.replace(/\\/g, "/");
+      src = 'file:///' + src.replace(/\\/g, '/');
     } else if (isWin && /^\\\\\?\\.+/.test(src)) {
-      src = "file:///" + src.substring(4).replace(/\\/g, "/");
+      src = 'file:///' + src.substring(4).replace(/\\/g, '/');
     } else if (/^\/.+/.test(src)) {
       // Also adding file protocol on UNIX.
       // Do nothing: src = src

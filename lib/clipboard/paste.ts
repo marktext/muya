@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import CodeBlockContent from "@muya/block/content/codeBlockContent";
-import ScrollPage from "@muya/block/scrollPage";
-import { URL_REG } from "@muya/config";
-import HtmlToMarkdown from "@muya/state/htmlToMarkdown";
-import MarkdownToState from "@muya/state/markdownToState";
-import { getCopyTextType, normalizePastedHTML } from "@muya/utils/paste";
-import Base from "./base";
-import Cut from "./cut";
+import CodeBlockContent from '@muya/block/content/codeBlockContent';
+import ScrollPage from '@muya/block/scrollPage';
+import { URL_REG } from '@muya/config';
+import HtmlToMarkdown from '@muya/state/htmlToMarkdown';
+import MarkdownToState from '@muya/state/markdownToState';
+import { getCopyTextType, normalizePastedHTML } from '@muya/utils/paste';
+import Base from './base';
+import Cut from './cut';
 
 interface Paste extends Cut {}
 
 class Paste extends Base {
-  public pasteType: string = "normal"; // `normal` or `pasteAsPlainText`
+  public pasteType: string = 'normal'; // `normal` or `pasteAsPlainText`
 
   async pasteHandler(event: ClipboardEvent): Promise<void> {
     event.preventDefault();
@@ -42,8 +42,8 @@ class Paste extends Base {
       return;
     }
 
-    const text = event.clipboardData.getData("text/plain");
-    let html = event.clipboardData.getData("text/html");
+    const text = event.clipboardData.getData('text/plain');
+    let html = event.clipboardData.getData('text/html');
 
     // Support pasted URLs from Firefox.
     if (URL_REG.test(text) && !/\s/.test(text) && !html) {
@@ -61,13 +61,13 @@ class Paste extends Base {
 
     if (/html|text/.test(copyType)) {
       let markdown =
-        copyType === "html" && anchorBlock.blockName !== "codeblock.content"
+        copyType === 'html' && anchorBlock.blockName !== 'codeblock.content'
           ? new HtmlToMarkdown({ bulletListMarker }).generate(html)
           : text;
 
       if (
         /\n\n/.test(markdown) &&
-        anchorBlock.blockName !== "codeblock.content"
+        anchorBlock.blockName !== 'codeblock.content'
       ) {
         if (start.offset !== end.offset) {
           anchorBlock.text =
@@ -90,7 +90,7 @@ class Paste extends Base {
         }
 
         // Remove empty paragraph when paste.
-        if (originWrapperBlock.blockName === 'paragraph' && originWrapperBlock.getState().text === "") {
+        if (originWrapperBlock.blockName === 'paragraph' && originWrapperBlock.getState().text === '') {
           originWrapperBlock.remove();
         }
 
@@ -98,10 +98,10 @@ class Paste extends Base {
         const offset = cursorBlock.text.length;
         cursorBlock.setCursor(offset, offset, true);
       } else {
-        if (anchorBlock.blockName === "language-input") {
-          markdown = markdown.replace(/\n/g, "");
-        } else if (anchorBlock.blockName === "table.cell.content") {
-          markdown = markdown.replace(/\n/g, "<br/>");
+        if (anchorBlock.blockName === 'language-input') {
+          markdown = markdown.replace(/\n/g, '');
+        } else if (anchorBlock.blockName === 'table.cell.content') {
+          markdown = markdown.replace(/\n/g, '<br/>');
         }
 
         anchorBlock.text =
@@ -123,10 +123,10 @@ class Paste extends Base {
       }
     } else {
       const state = {
-        name: "code-block",
+        name: 'code-block',
         meta: {
-          type: "fenced",
-          lang: "html",
+          type: 'fenced',
+          lang: 'html',
         },
         text,
       };

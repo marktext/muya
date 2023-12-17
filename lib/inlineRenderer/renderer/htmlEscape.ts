@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from "@muya/config";
-import escapeCharactersMap from "@muya/config/escapeCharacter";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, HTMLEscapeToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import escapeCharactersMap from '@muya/config/escapeCharacter';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, HTMLEscapeToken } from '../types';
 
 export default function htmlEscape(
   this: Renderer,

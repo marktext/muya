@@ -1,4 +1,4 @@
-import type { Placement } from "popper.js";
+import type { Placement } from 'popper.js';
 
 export type BaseOptions = {
   placement: Placement;

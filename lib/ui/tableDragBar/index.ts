@@ -1,15 +1,15 @@
-import ScrollPage from "@muya/block/scrollPage";
-import { BLOCK_DOM_PROPERTY } from "@muya/config";
-import { isMouseEvent, throttle } from "@muya/utils";
-import BaseFloat from "../baseFloat";
+import ScrollPage from '@muya/block/scrollPage';
+import { BLOCK_DOM_PROPERTY } from '@muya/config';
+import { isMouseEvent, throttle } from '@muya/utils';
+import BaseFloat from '../baseFloat';
 
-import Table from "@muya/block/gfm/table";
-import TableBodyCell from "@muya/block/gfm/table/cell";
-import TableInner from "@muya/block/gfm/table/table";
-import Muya from "@muya/index";
-import "./index.css";
+import Table from '@muya/block/gfm/table';
+import TableBodyCell from '@muya/block/gfm/table/cell';
+import TableInner from '@muya/block/gfm/table/table';
+import Muya from '@muya/index';
+import './index.css';
 
-type BarType = "bottom" | "right";
+type BarType = 'bottom' | 'right';
 
 type DragInfo = {
   table: Table;
@@ -27,12 +27,12 @@ type DragInfo = {
 const calculateAspects = (tableBlock: Table, barType: BarType) => {
   const table = tableBlock.firstChild!.domNode!;
 
-  if (barType === "bottom") {
-    const firstRow = table.querySelector("tr");
+  if (barType === 'bottom') {
+    const firstRow = table.querySelector('tr');
 
     return Array.from(firstRow!.children).map((cell) => cell.clientWidth);
   } else {
-    return Array.from(table.querySelectorAll("tr")).map(
+    return Array.from(table.querySelectorAll('tr')).map(
       (row) => row.clientHeight
     );
   }
@@ -40,7 +40,7 @@ const calculateAspects = (tableBlock: Table, barType: BarType) => {
 
 export const getAllTableCells = (tableBlock: Table) => {
   const table = tableBlock.firstChild!.domNode!;
-  const rows = table.querySelectorAll("tr");
+  const rows = table.querySelectorAll('tr');
   const cells = [];
 
   for (const row of Array.from(rows)) {
@@ -53,7 +53,7 @@ export const getAllTableCells = (tableBlock: Table) => {
 export const getIndex = (barType: BarType, cellBlock: TableBodyCell) => {
   const { row, table } = cellBlock;
 
-  return barType === "bottom"
+  return barType === 'bottom'
     ? row.offset(cellBlock)
     : (table.firstChild as TableInner).offset(row);
 };
@@ -62,11 +62,11 @@ const getDragCells = (tableBlock: Table, barType: BarType, index: number) => {
   const table = tableBlock.firstChild!.domNode!;
   const dragCells = [];
 
-  if (barType === "right") {
-    const row = [...table.querySelectorAll("tr")][index];
+  if (barType === 'right') {
+    const row = [...table.querySelectorAll('tr')][index];
     dragCells.push(...row.children);
   } else {
-    const rows = [...table.querySelectorAll("tr")];
+    const rows = [...table.querySelectorAll('tr')];
     const len = rows.length;
     let i;
 
@@ -81,40 +81,40 @@ const getDragCells = (tableBlock: Table, barType: BarType, index: number) => {
 const OFFSET = 20;
 
 const rightOptions = {
-  placement: "right" as const,
+  placement: 'right' as const,
   modifiers: {
     offset: {
-      offset: "0, 0",
+      offset: '0, 0',
     },
   },
   showArrow: false,
 };
 
 const bottomOptions = {
-  placement: "bottom" as const,
+  placement: 'bottom' as const,
   modifiers: {
     offset: {
-      offset: "0, 0",
+      offset: '0, 0',
     },
   },
   showArrow: false,
 };
 
 class TableDragBar extends BaseFloat {
-  static pluginName = "tableDragBar";
+  static pluginName = 'tableDragBar';
   private block: TableBodyCell | null = null;
   private mouseTimer: ReturnType<typeof setTimeout> | null = null;
   private dragEventIds: string[] = [];
   private isDragTableBar: boolean = false;
-  private barType: "bottom" | "right" | null = null;
+  private barType: 'bottom' | 'right' | null = null;
   private dragInfo: DragInfo | null = null;
 
   constructor(muya: Muya, options = {}) {
-    const name = "mu-table-drag-bar";
+    const name = 'mu-table-drag-bar';
     const opts = Object.assign({}, bottomOptions, options);
     super(muya, name, opts);
 
-    this.floatBox!.classList.add("mu-table-drag-container");
+    this.floatBox!.classList.add('mu-table-drag-container');
     this.listen();
   }
 
@@ -136,7 +136,7 @@ class TableDragBar extends BaseFloat {
         els.some(
           (ele) =>
             ele[BLOCK_DOM_PROPERTY] &&
-            ele[BLOCK_DOM_PROPERTY].blockName === "table.cell"
+            ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell'
         );
 
       if (
@@ -147,14 +147,14 @@ class TableDragBar extends BaseFloat {
         const tableCellEl = [...aboveEls, ...leftEls].find(
           (ele) =>
             ele[BLOCK_DOM_PROPERTY] &&
-            ele[BLOCK_DOM_PROPERTY].blockName === "table.cell"
+            ele[BLOCK_DOM_PROPERTY].blockName === 'table.cell'
         );
         const cellBlock = tableCellEl![BLOCK_DOM_PROPERTY] as TableBodyCell;
-        const barType = hasTableCell(aboveEls) ? "bottom" : "right";
+        const barType = hasTableCell(aboveEls) ? 'bottom' : 'right';
 
         this.options = Object.assign(
           {},
-          barType === "right" ? rightOptions : bottomOptions
+          barType === 'right' ? rightOptions : bottomOptions
         );
         this.barType = barType;
         this.block = cellBlock;
@@ -165,9 +165,9 @@ class TableDragBar extends BaseFloat {
       }
     });
 
-    eventCenter.attachDOMEvent(document.body, "mousemove", handler);
-    eventCenter.attachDOMEvent(container!, "mousedown", this.mousedown);
-    eventCenter.attachDOMEvent(container!, "mouseup", this.mouseup);
+    eventCenter.attachDOMEvent(document.body, 'mousemove', handler);
+    eventCenter.attachDOMEvent(container!, 'mousedown', this.mousedown);
+    eventCenter.attachDOMEvent(container!, 'mouseup', this.mouseup);
   }
 
   mousedown = (event: Event) => {
@@ -188,8 +188,8 @@ class TableDragBar extends BaseFloat {
     if (this.mouseTimer) {
       clearTimeout(this.mouseTimer);
       this.mouseTimer = null;
-      if (barType === "right") {
-        eventCenter.emit("muya-table-bar", {
+      if (barType === 'right') {
+        eventCenter.emit('muya-table-bar', {
           reference: container,
           tableInfo: {
             barType,
@@ -227,14 +227,14 @@ class TableDragBar extends BaseFloat {
     for (const row of this.dragInfo.cells) {
       for (const cell of row) {
         if (!this.dragInfo.dragCells.includes(cell)) {
-          cell.classList.add("mu-cell-transform");
+          cell.classList.add('mu-cell-transform');
         }
       }
     }
 
     this.dragEventIds.push(
-      eventCenter.attachDOMEvent(document, "mousemove", this.docMousemove),
-      eventCenter.attachDOMEvent(document, "mouseup", this.docMouseup)
+      eventCenter.attachDOMEvent(document, 'mousemove', this.docMousemove),
+      eventCenter.attachDOMEvent(document, 'mouseup', this.docMouseup)
     );
   }
 
@@ -243,7 +243,7 @@ class TableDragBar extends BaseFloat {
       return;
     }
     const { barType } = this.dragInfo;
-    const attrName = barType === "bottom" ? "clientX" : "clientY";
+    const attrName = barType === 'bottom' ? 'clientX' : 'clientY';
     const offset = (this.dragInfo.offset =
       event[attrName] - this.dragInfo[attrName]);
     if (Math.abs(offset) < 5) {
@@ -325,11 +325,11 @@ class TableDragBar extends BaseFloat {
     const { offset, barType, dragCells } = this.dragInfo!;
 
     for (const cell of dragCells) {
-      if (!cell.classList.contains("mu-drag-cell")) {
-        cell.classList.add("mu-drag-cell");
+      if (!cell.classList.contains('mu-drag-cell')) {
+        cell.classList.add('mu-drag-cell');
         cell.classList.add(`mu-drag-${barType}`);
       }
-      const valueName = barType === "bottom" ? "translateX" : "translateY";
+      const valueName = barType === 'bottom' ? 'translateX' : 'translateY';
       cell.style.transform = `${valueName}(${offset}px)`;
     }
   };
@@ -344,14 +344,14 @@ class TableDragBar extends BaseFloat {
 
     let i;
     if (offset > 0) {
-      if (barType === "bottom") {
+      if (barType === 'bottom') {
         for (const row of cells) {
           for (i = 0; i < len; i++) {
             const cell = row[i];
             if (i > index && i <= curIndex) {
               cell.style.transform = `translateX(${-aspect}px)`;
             } else if (i !== index) {
-              cell.style.transform = "translateX(0px)";
+              cell.style.transform = 'translateX(0px)';
             }
           }
         }
@@ -363,20 +363,20 @@ class TableDragBar extends BaseFloat {
             if (i > index && i <= curIndex) {
               cell.style.transform = `translateY(${-aspect}px)`;
             } else if (i !== index) {
-              cell.style.transform = "translateY(0px)";
+              cell.style.transform = 'translateY(0px)';
             }
           }
         }
       }
     } else {
-      if (barType === "bottom") {
+      if (barType === 'bottom') {
         for (const row of cells) {
           for (i = 0; i < len; i++) {
             const cell = row[i];
             if (i >= curIndex && i < index) {
               cell.style.transform = `translateX(${aspect}px)`;
             } else if (i !== index) {
-              cell.style.transform = "translateX(0px)";
+              cell.style.transform = 'translateX(0px)';
             }
           }
         }
@@ -388,7 +388,7 @@ class TableDragBar extends BaseFloat {
             if (i >= curIndex && i < index) {
               cell.style.transform = `translateY(${aspect}px)`;
             } else if (i !== index) {
-              cell.style.transform = "translateY(0px)";
+              cell.style.transform = 'translateY(0px)';
             }
           }
         }
@@ -415,10 +415,10 @@ class TableDragBar extends BaseFloat {
     }
 
     for (const cell of dragCells) {
-      cell.classList.remove("mu-drag-cell");
+      cell.classList.remove('mu-drag-cell');
       cell.classList.remove(`mu-drag-${barType}`);
-      cell.classList.add("mu-cell-transform");
-      const valueName = barType === "bottom" ? "translateX" : "translateY";
+      cell.classList.add('mu-cell-transform');
+      const valueName = barType === 'bottom' ? 'translateX' : 'translateY';
       cell.style.transform = `${valueName}(${move}px)`;
     }
   };
@@ -445,7 +445,7 @@ class TableDragBar extends BaseFloat {
       const { anchorBlock, anchor, focus, isSelectionInSameBlock } =
         this.muya.editor.selection ?? {};
       const { rowOffset, columnOffset } = anchorBlock?.closestBlock(
-        "table.cell"
+        'table.cell'
       ) as TableBodyCell;
 
       startOffset = isSelectionInSameBlock
@@ -454,7 +454,7 @@ class TableDragBar extends BaseFloat {
       endOffset = isSelectionInSameBlock
         ? Math.max(anchor!.offset, focus!.offset)
         : 0;
-      if (barType === "bottom") {
+      if (barType === 'bottom') {
         cursorRowOffset = rowOffset;
         if (columnOffset === index) {
           cursorColumnOffset = curIndex;
@@ -481,7 +481,7 @@ class TableDragBar extends BaseFloat {
       }
     }
 
-    if (barType === "bottom") {
+    if (barType === 'bottom') {
       tableState.children.forEach((row) => {
         const cellState = row.children.splice(index, 1)[0];
         row.children.splice(curIndex, 0, cellState);
@@ -491,7 +491,7 @@ class TableDragBar extends BaseFloat {
       tableState.children.splice(curIndex, 0, rowState);
     }
 
-    const newTable = ScrollPage.loadBlock("table").create(
+    const newTable = ScrollPage.loadBlock('table').create(
       this.muya,
       tableState
     );

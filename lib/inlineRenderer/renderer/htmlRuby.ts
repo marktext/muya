@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from "@muya/config";
-import { htmlToVNode } from "@muya/utils/snabbdom";
-import type { HTMLTagToken, SyntaxRenderOptions } from "../types";
-import type Renderer from "./index";
+import { CLASS_NAMES } from '@muya/config';
+import { htmlToVNode } from '@muya/utils/snabbdom';
+import type { HTMLTagToken, SyntaxRenderOptions } from '../types';
+import type Renderer from './index';
 
 export default function htmlRuby(
   this: Renderer,
@@ -31,8 +31,8 @@ export default function htmlRuby(
             previewSelector,
             {
               attrs: {
-                contenteditable: "false",
-                spellcheck: "false",
+                contenteditable: 'false',
+                spellcheck: 'false',
               },
               dataset: {
                 start: String(start + 6), // '<ruby>'.length

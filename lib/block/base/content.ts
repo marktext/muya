@@ -1,17 +1,18 @@
-import ScrollPage from "@muya/block";
-import TreeNode from "@muya/block/base/treeNode";
-import { BACK_HASH, BRACKET_HASH, EVENT_KEYS, isFirefox } from "@muya/config";
-import Muya from "@muya/index";
-import { Highlight } from "@muya/inlineRenderer/types";
-import Selection from "@muya/selection";
-import { Cursor, NodeOffset } from "@muya/selection/types";
+import ScrollPage from '@muya/block';
+import TreeNode from '@muya/block/base/treeNode';
+import { BACK_HASH, BRACKET_HASH, EVENT_KEYS, isFirefox } from '@muya/config';
+import Muya from '@muya/index';
+import { Highlight } from '@muya/inlineRenderer/types';
+import Selection from '@muya/selection';
+import { Cursor, NodeOffset } from '@muya/selection/types';
 import {
   adjustOffset,
   diffToTextOp,
   isInputEvent,
   isKeyboardEvent,
-} from "@muya/utils";
-import diff from "fast-diff";
+} from '@muya/utils';
+import diff from 'fast-diff';
+import { TPathList } from '../types';
 
 // import logger from '@muya/utils/logger'
 
@@ -21,7 +22,7 @@ class Content extends TreeNode {
   public _text: string;
   public isComposed: boolean;
 
-  static blockName = "content";
+  static blockName = 'content';
 
   get hasSelection() {
     return !!this.getCursor();
@@ -35,10 +36,14 @@ class Content extends TreeNode {
     return this.muya.editor.inlineRenderer;
   }
 
-  get path() {
-    const { path: pPath } = this.parent!;
+  get path(): TPathList {
+    if (this.parent == null) {
+      return ['text'];
+    }
 
-    return [...pPath, "text"];
+    const { path: pPath } = this.parent;
+
+    return [...pPath, 'text'];
   }
 
   get text() {
@@ -49,9 +54,9 @@ class Content extends TreeNode {
     const oldText = this._text;
     this._text = text;
     const { path } = this;
-    if (this.blockName === "language-input") {
+    if (this.blockName === 'language-input') {
       path.pop();
-      path.push("meta", "lang");
+      path.push('meta', 'lang');
     }
 
     // dispatch change to modify json state
@@ -74,8 +79,8 @@ class Content extends TreeNode {
 
   constructor(muya: Muya, text: string) {
     super(muya);
-    this.tagName = "span";
-    this.classList = ["mu-content"];
+    this.tagName = 'span';
+    this.classList = ['mu-content'];
     this.attributes = {
       contenteditable: true,
     };
@@ -172,14 +177,14 @@ class Content extends TreeNode {
         cursorBlock = nextContentBlock;
       } else {
         const newNodeState = {
-          name: "paragraph",
-          text: "",
+          name: 'paragraph',
+          text: '',
         };
         const newNode = ScrollPage.loadBlock(newNodeState.name).create(
           muya,
           newNodeState
         );
-        this.scrollPage?.append(newNode, "user");
+        this.scrollPage?.append(newNode, 'user');
         cursorBlock = newNode.children.head;
       }
       offset = adjustOffset(0, cursorBlock, event);
@@ -262,9 +267,9 @@ class Content extends TreeNode {
   }
 
   composeHandler(event: Event) {
-    if (event.type === "compositionstart") {
+    if (event.type === 'compositionstart') {
       this.isComposed = true;
-    } else if (event.type === "compositionend") {
+    } else if (event.type === 'compositionend') {
       this.isComposed = false;
       // Because the compose event will not cause `input` event, So need call `inputHandler` by ourself
       this.inputHandler(event);
@@ -282,7 +287,7 @@ class Content extends TreeNode {
     end: NodeOffset,
     isInInlineMath = false,
     isInInlineCode = false,
-    type = "format"
+    type = 'format'
   ) {
     // TODO: @JOCS, remove use this selection directly.
     const { anchor, focus } = this.selection;
@@ -295,7 +300,7 @@ class Content extends TreeNode {
     }
 
     if (this.text !== text) {
-      if (start.offset === end.offset && event.type === "input") {
+      if (start.offset === end.offset && event.type === 'input') {
         const { offset } = start;
         const { autoPairBracket, autoPairMarkdownSyntax, autoPairQuote } =
           this.muya.options;
@@ -308,7 +313,7 @@ class Content extends TreeNode {
           // handle `deleteContentBackward` or `deleteContentForward`
           const deletedChar = this.text[offset];
           if (
-            event.inputType === "deleteContentBackward" &&
+            event.inputType === 'deleteContentBackward' &&
             postInputChar === BRACKET_HASH[deletedChar]
           ) {
             needRender = true;
@@ -316,7 +321,7 @@ class Content extends TreeNode {
           }
 
           if (
-            event.inputType === "deleteContentForward" &&
+            event.inputType === 'deleteContentForward' &&
             inputChar === BACK_HASH[deletedChar]
           ) {
             needRender = true;
@@ -325,7 +330,7 @@ class Content extends TreeNode {
             text = text.substring(0, offset - 1) + text.substring(offset);
           }
         } else if (
-          event.inputType.indexOf("delete") === -1 &&
+          event.inputType.indexOf('delete') === -1 &&
           inputChar === postInputChar &&
           ((autoPairQuote && /[']{1}/.test(inputChar)) ||
             (autoPairQuote && /["]{1}/.test(inputChar)) ||
@@ -347,7 +352,7 @@ class Content extends TreeNode {
               !/[a-zA-Z\d]{1}/.test(preInputChar)) ||
               (autoPairQuote && /["]{1}/.test(inputChar)) ||
               (autoPairBracket && /[{[(]{1}/.test(inputChar)) ||
-              (type === "format" &&
+              (type === 'format' &&
                 !isInInlineMath &&
                 !isInInlineCode &&
                 autoPairMarkdownSyntax &&
@@ -356,7 +361,7 @@ class Content extends TreeNode {
           ) {
             needRender = true;
             text =
-              typeof event.data === "string" && BRACKET_HASH[event.data]
+              typeof event.data === 'string' && BRACKET_HASH[event.data]
                 ? text.substring(0, offset) +
                   BRACKET_HASH[inputChar] +
                   text.substring(offset)
@@ -365,12 +370,12 @@ class Content extends TreeNode {
 
           // Delete the last `*` of `**` when you insert one space between `**` to create a bullet list.
           if (
-            type === "format" &&
-            typeof event.data === "string" &&
+            type === 'format' &&
+            typeof event.data === 'string' &&
             /\s/.test(event.data) &&
             /^\* /.test(text) &&
-            preInputChar === "*" &&
-            postInputChar === "*"
+            preInputChar === '*' &&
+            postInputChar === '*'
           ) {
             text = text.substring(0, offset) + text.substring(offset + 1);
             needRender = true;
@@ -380,9 +385,9 @@ class Content extends TreeNode {
 
       // Just work for `Shift + Enter` to create a soft and hard line break.
       if (
-        this.text.endsWith("\n") &&
+        this.text.endsWith('\n') &&
         start.offset === text.length &&
-        (event.inputType === "insertText" || event.type === "compositionend")
+        (event.inputType === 'insertText' || event.type === 'compositionend')
       ) {
         text = this.text + event.data;
         // I don't know why firefox don't need to offset++
@@ -393,8 +398,8 @@ class Content extends TreeNode {
         }
       } else if (
         this.text.length === oldStart.offset &&
-        this.text[oldStart.offset - 2] === "\n" &&
-        event.inputType === "deleteContentBackward"
+        this.text[oldStart.offset - 2] === '\n' &&
+        event.inputType === 'deleteContentBackward'
       ) {
         text = this.text.substring(0, oldStart.offset - 1);
         start.offset = text.length;
@@ -439,15 +444,15 @@ class Content extends TreeNode {
 
       for (const tool of this.muya.ui.shownFloat) {
         if (
-          tool.name === "mu-format-picker" ||
-          tool.name === "mu-table-picker" ||
-          tool.name === "mu-quick-insert" ||
-          tool.name === "mu-emoji-picker" ||
-          tool.name === "mu-front-menu" ||
-          tool.name === "mu-list-picker" ||
-          tool.name === "mu-image-selector" ||
-          tool.name === "mu-table-column-tools" ||
-          tool.name === "mu-table-bar-tools"
+          tool.name === 'mu-format-picker' ||
+          tool.name === 'mu-table-picker' ||
+          tool.name === 'mu-quick-insert' ||
+          tool.name === 'mu-emoji-picker' ||
+          tool.name === 'mu-front-menu' ||
+          tool.name === 'mu-list-picker' ||
+          tool.name === 'mu-image-selector' ||
+          tool.name === 'mu-table-column-tools' ||
+          tool.name === 'mu-table-bar-tools'
         ) {
           needPreventDefault = true;
           break;

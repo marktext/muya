@@ -1,4 +1,4 @@
-import Content from "@muya/block/base/content";
+import Content from '@muya/block/base/content';
 
 export interface ISearchOption {
   isCaseSensitive?: boolean;

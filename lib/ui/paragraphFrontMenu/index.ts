@@ -1,57 +1,57 @@
-import ScrollPage from "@muya/block/scrollPage";
-import emptyStates from "@muya/config/emptyStates";
-import BaseFloat from "@muya/ui/baseFloat";
-import { replaceBlockByLabel } from "@muya/ui/paragraphQuickInsertMenu/config";
-import { deepClone } from "@muya/utils";
-import { h, patch } from "@muya/utils/snabbdom";
-import { FRONT_MENU, canTurnIntoMenu } from "./config";
+import ScrollPage from '@muya/block/scrollPage';
+import emptyStates from '@muya/config/emptyStates';
+import BaseFloat from '@muya/ui/baseFloat';
+import { replaceBlockByLabel } from '@muya/ui/paragraphQuickInsertMenu/config';
+import { deepClone } from '@muya/utils';
+import { h, patch } from '@muya/utils/snabbdom';
+import { FRONT_MENU, canTurnIntoMenu } from './config';
 
-import type Parent from "@muya/block/base/parent";
-import AtxHeading from "@muya/block/commonMark/atxHeading";
-import type Muya from "@muya/index";
-import { IAtxHeadingState, IBulletListState, IOrderListState, ITaskListState } from "@muya/state/types";
-import { QuickInsertMenuItem } from "@muya/ui/paragraphQuickInsertMenu/config";
-import type { VNode } from "snabbdom";
-import "./index.css";
+import type Parent from '@muya/block/base/parent';
+import AtxHeading from '@muya/block/commonMark/atxHeading';
+import type Muya from '@muya/index';
+import { IAtxHeadingState, IBulletListState, IOrderListState, ITaskListState } from '@muya/state/types';
+import { QuickInsertMenuItem } from '@muya/ui/paragraphQuickInsertMenu/config';
+import type { VNode } from 'snabbdom';
+import './index.css';
 
 const renderIcon = ({ label, icon }: { label: string; icon: string }) =>
   h(
-    "i.icon",
+    'i.icon',
     h(
-      `i.icon-${label.replace(/\s/g, "-")}`,
+      `i.icon-${label.replace(/\s/g, '-')}`,
       {
         style: {
           background: `url(${icon}) no-repeat`,
-          "background-size": "100%",
+          'background-size': '100%',
         },
       },
-      ""
+      ''
     )
   );
 
 const defaultOptions = {
-  placement: "bottom",
+  placement: 'bottom',
   modifiers: {
     offset: {
-      offset: "0, 10",
+      offset: '0, 10',
     },
   },
   showArrow: false,
 };
 
 class FrontMenu extends BaseFloat {
-  static pluginName = "frontMenu";
+  static pluginName = 'frontMenu';
   public reference: HTMLDivElement | null = null;
   private oldVNode: VNode | null = null;
   private block: Parent | null = null;
-  private frontMenuContainer: HTMLDivElement = document.createElement("div");
+  private frontMenuContainer: HTMLDivElement = document.createElement('div');
 
   constructor(muya: Muya, options = {}) {
-    const name = "mu-front-menu";
+    const name = 'mu-front-menu';
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
     Object.assign((this.container!.parentNode as HTMLElement).style, {
-      overflow: "visible",
+      overflow: 'visible',
     });
     this.container!.appendChild(this.frontMenuContainer);
     this.listen();
@@ -61,7 +61,7 @@ class FrontMenu extends BaseFloat {
     const { container } = this;
     const { eventCenter } = this.muya;
     super.listen();
-    eventCenter.subscribe("muya-front-menu", ({ reference, block }) => {
+    eventCenter.subscribe('muya-front-menu', ({ reference, block }) => {
       if (reference) {
         this.block = block;
         this.reference = reference;
@@ -78,15 +78,15 @@ class FrontMenu extends BaseFloat {
       this.block = null;
     };
 
-    eventCenter.attachDOMEvent(container!, "mouseleave", enterLeaveHandler);
+    eventCenter.attachDOMEvent(container!, 'mouseleave', enterLeaveHandler);
   }
 
-  renderSubMenu(subMenu: QuickInsertMenuItem["children"]) {
+  renderSubMenu(subMenu: QuickInsertMenuItem['children']) {
     const { block } = this;
     const { i18n } = this.muya;
     const children = subMenu.map((menuItem) => {
       const { title, label, subTitle } = menuItem;
-      const iconWrapperSelector = "div.icon-wrapper";
+      const iconWrapperSelector = 'div.icon-wrapper';
       const iconWrapper = h(
         iconWrapperSelector,
         {
@@ -98,15 +98,15 @@ class FrontMenu extends BaseFloat {
       );
 
       let itemSelector = `div.turn-into-item.${label}`;
-      if (block?.blockName === "atx-heading") {
+      if (block?.blockName === 'atx-heading') {
         if (
           label.startsWith(block.blockName) &&
           label.endsWith(String((block as AtxHeading).meta.level))
         ) {
-          itemSelector += ".active";
+          itemSelector += '.active';
         }
       } else if (label === block?.blockName) {
-        itemSelector += ".active";
+        itemSelector += '.active';
       }
 
       return h(
@@ -121,7 +121,7 @@ class FrontMenu extends BaseFloat {
         [iconWrapper]
       );
     });
-    const subMenuSelector = "li.turn-into-menu";
+    const subMenuSelector = 'li.turn-into-menu';
 
     return h(subMenuSelector, children);
   }
@@ -131,10 +131,10 @@ class FrontMenu extends BaseFloat {
     const { i18n } = this.muya;
     const { blockName } = block!;
     const children = FRONT_MENU.map(({ icon, label, text, shortCut }) => {
-      const iconWrapperSelector = "div.icon-wrapper";
+      const iconWrapperSelector = 'div.icon-wrapper';
       const iconWrapper = h(iconWrapperSelector, renderIcon({ icon, label }));
-      const textWrapper = h("span.text", i18n.t(text));
-      const shortCutWrapper = h("div.short-cut", [h("span", shortCut)]);
+      const textWrapper = h('span.text', i18n.t(text));
+      const shortCutWrapper = h('div.short-cut', [h('span', shortCut)]);
       const itemSelector = `li.item.${label}`;
       const itemChildren = [iconWrapper, textWrapper, shortCutWrapper];
 
@@ -152,18 +152,18 @@ class FrontMenu extends BaseFloat {
     });
 
     // Frontmatter can not be duplicated
-    if (blockName === "frontmatter") {
+    if (blockName === 'frontmatter') {
       children.splice(0, 1);
     }
 
     const subMenu = canTurnIntoMenu(block!);
     if (subMenu.length) {
-      const line = h("li.divider");
+      const line = h('li.divider');
       children.unshift(line);
       children.unshift(this.renderSubMenu(subMenu));
     }
 
-    const vnode = h("ul", children);
+    const vnode = h('ul', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);
@@ -188,7 +188,7 @@ class FrontMenu extends BaseFloat {
 
     if (/duplicate|new|delete/.test(label)) {
       switch (label) {
-        case "duplicate": {
+        case 'duplicate': {
           state = deepClone(oldState);
           const dupBlock = ScrollPage.loadBlock(state.name).create(muya, state);
           block.parent!.insertAfter(dupBlock, block);
@@ -196,9 +196,9 @@ class FrontMenu extends BaseFloat {
           break;
         }
 
-        case "new": {
+        case 'new': {
           state = deepClone(emptyStates.paragraph);
-          const newBlock = ScrollPage.loadBlock("paragraph").create(
+          const newBlock = ScrollPage.loadBlock('paragraph').create(
             muya,
             state
           );
@@ -207,14 +207,14 @@ class FrontMenu extends BaseFloat {
           break;
         }
 
-        case "delete": {
+        case 'delete': {
           if (block.prev) {
             cursorBlock = block.prev.lastContentInDescendant();
           } else if (block.next) {
             cursorBlock = block.next.firstContentInDescendant();
           } else {
             state = deepClone(emptyStates.paragraph);
-            const newBlock = ScrollPage.loadBlock("paragraph").create(
+            const newBlock = ScrollPage.loadBlock('paragraph').create(
               muya,
               state
             );
@@ -226,24 +226,24 @@ class FrontMenu extends BaseFloat {
       }
     } else {
       switch (block.blockName) {
-        case "paragraph":
+        case 'paragraph':
         // fall through
-        case "atx-heading": {
-          if (block.blockName === "paragraph" && block.blockName === label) {
+        case 'atx-heading': {
+          if (block.blockName === 'paragraph' && block.blockName === label) {
             break;
           }
 
           if (
-            block.blockName === "atx-heading" &&
-            label.split(" ")[1] === String((oldState as IAtxHeadingState).meta.level)
+            block.blockName === 'atx-heading' &&
+            label.split(' ')[1] === String((oldState as IAtxHeadingState).meta.level)
           ) {
             break;
           }
           const rawText = (oldState as IAtxHeadingState).text;
           const text =
-            block.blockName === "paragraph"
+            block.blockName === 'paragraph'
               ? rawText
-              : rawText.replace(/^ {0,3}#{1,6}(?:\s{1,}|$)/, "");
+              : rawText.replace(/^ {0,3}#{1,6}(?:\s{1,}|$)/, '');
           replaceBlockByLabel({
             block,
             label,
@@ -253,18 +253,18 @@ class FrontMenu extends BaseFloat {
           break;
         }
 
-        case "order-list":
+        case 'order-list':
         // fall through
-        case "bullet-list":
+        case 'bullet-list':
         // fall through
-        case "task-list": {
+        case 'task-list': {
           if (block.blockName === label) {
             break;
           }
           state = deepClone(oldState) as IOrderListState | ITaskListState | IBulletListState;
-          if (block.blockName === "task-list") {
+          if (block.blockName === 'task-list') {
             state.children.forEach((listItem) => {
-              listItem.name = "list-item";
+              listItem.name = 'list-item';
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               delete (listItem as any).meta;
             });
@@ -275,9 +275,9 @@ class FrontMenu extends BaseFloat {
             marker = bulletListMarker,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } = state.meta as any;
-          if (label === "task-list") {
+          if (label === 'task-list') {
             state.children.forEach((listItem) => {
-              listItem.name = "task-list-item";
+              listItem.name = 'task-list-item';
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (listItem as any).meta = {
                 checked: false,
@@ -287,7 +287,7 @@ class FrontMenu extends BaseFloat {
               marker,
               loose,
             };
-          } else if (label === "order-list") {
+          } else if (label === 'order-list') {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (state as any).meta = {
               delimiter,

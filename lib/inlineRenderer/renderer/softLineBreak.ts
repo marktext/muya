@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, SoftLineBreakToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, SoftLineBreakToken } from '../types';
 
 export default function softLineBreak(
   this: Renderer,

@@ -1,9 +1,9 @@
-import Muya from "@muya/index";
-import { Nullable } from "@muya/types";
-import type { Doc, JSONOpList } from "ot-json1";
-import * as json1 from "ot-json1";
-import { TSelection } from "../selection/types";
-import type { TState } from "../state/types";
+import Muya from '@muya/index';
+import { Nullable } from '@muya/types';
+import type { Doc, JSONOpList } from 'ot-json1';
+import * as json1 from 'ot-json1';
+import { TSelection } from '../selection/types';
+import type { TState } from '../state/types';
 
 interface IOptions {
   delay: number;
@@ -21,7 +21,7 @@ interface Stack {
   redo: IOperation[];
 }
 
-type HistoryAction = "undo" | "redo";
+type HistoryAction = 'undo' | 'redo';
 
 const DEFAULT_OPTIONS = {
   delay: 1000,
@@ -48,7 +48,7 @@ class History {
 
   listen() {
     this.muya.eventCenter.on(
-      "json-change",
+      'json-change',
       ({
         op,
         source,
@@ -62,7 +62,7 @@ class History {
           return;
         }
 
-        if (!this.options.userOnly || source === "user") {
+        if (!this.options.userOnly || source === 'user') {
           this.record(op, doc);
         } else {
           this.transform(op);
@@ -85,7 +85,7 @@ class History {
 
     this.lastRecorded = 0;
     this.ignoreChange = true;
-    this.muya.editor.updateContents(operation, selection, "user");
+    this.muya.editor.updateContents(operation, selection, 'user');
     this.ignoreChange = false;
 
     this.getLastSelection();
@@ -144,7 +144,7 @@ class History {
   }
 
   redo() {
-    this.change("redo", "undo");
+    this.change('redo', 'undo');
   }
 
   transform(op: JSONOpList) {
@@ -153,7 +153,7 @@ class History {
   }
 
   undo() {
-    this.change("undo", "redo");
+    this.change('undo', 'redo');
   }
 }
 
@@ -164,12 +164,12 @@ function transformStack(stack: IOperation[], operation: JSONOpList) {
     const { operation: oldOperation } = stack[i];
     // TODO: need test.
     stack[i] = Object.assign(stack[i], {
-      operation: json1.type.transform(oldOperation, remoteOperation, "left"),
+      operation: json1.type.transform(oldOperation, remoteOperation, 'left'),
     });
     remoteOperation = json1.type.transform(
       remoteOperation,
       oldOperation,
-      "right"
+      'right'
     )!;
     if (stack[i].operation.length === 0) {
       stack.splice(i, 1);

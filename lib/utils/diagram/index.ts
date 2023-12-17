@@ -7,18 +7,18 @@ const loadRenderer = async (name: string) => {
   if (!rendererCache.has(name)) {
     let m;
     switch (name) {
-      case "plantuml":
-        m = await import("./plantuml");
+      case 'plantuml':
+        m = await import('./plantuml');
         rendererCache.set(name, m.default);
         break;
 
-      case "mermaid":
-        m = await import("mermaid");
+      case 'mermaid':
+        m = await import('mermaid');
         rendererCache.set(name, m.default);
         break;
 
-      case "vega-lite":
-        m = await import("vega-embed");
+      case 'vega-lite':
+        m = await import('vega-embed');
         rendererCache.set(name, m.default);
         break;
 

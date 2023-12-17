@@ -1,4 +1,4 @@
-import { Tokens } from "marked";
+import { Tokens } from 'marked';
 
 export type LexOption = {
   footnote?: boolean;
@@ -9,16 +9,16 @@ export type LexOption = {
 };
 
 export type Heading = Tokens.Heading & {
-  headingStyle: "setext" | "atx";
+  headingStyle: 'setext' | 'atx';
   marker: string;
 };
 
 export type ListItemToken = Tokens.ListItem & {
-  listItemType: "order" | "bullet" | "task";
-  bulletMarkerOrDelimiter: "." | ")" | "*" | "+" | "-" | "";
+  listItemType: 'order' | 'bullet' | 'task';
+  bulletMarkerOrDelimiter: '.' | ')' | '*' | '+' | '-' | '';
 };
 
 export type ListToken = Tokens.List & {
-  listType: "order" | "bullet" | "task";
+  listType: 'order' | 'bullet' | 'task';
   items: ListItemToken[];
 };

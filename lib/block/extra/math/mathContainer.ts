@@ -1,18 +1,18 @@
-import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import Muya from "@muya/index";
-import logger from "@muya/utils/logger";
-import { IMathBlockState, TState } from "../../../state/types";
+import Parent from '@muya/block/base/parent';
+import ScrollPage from '@muya/block/scrollPage';
+import Muya from '@muya/index';
+import logger from '@muya/utils/logger';
+import { IMathBlockState, TState } from '../../../state/types';
 
-const debug = logger("mathContainer:");
+const debug = logger('mathContainer:');
 
 class MathContainer extends Parent {
-  static blockName = "math-container";
+  static blockName = 'math-container';
 
   static create(muya: Muya, state: IMathBlockState) {
     const mathContainer = new MathContainer(muya);
 
-    const code = ScrollPage.loadBlock("code").create(muya, state);
+    const code = ScrollPage.loadBlock('code').create(muya, state);
 
     mathContainer.append(code);
 
@@ -20,7 +20,7 @@ class MathContainer extends Parent {
   }
 
   get lang() {
-    return "latex";
+    return 'latex';
   }
 
   get path() {
@@ -31,13 +31,13 @@ class MathContainer extends Parent {
 
   constructor(muya: Muya) {
     super(muya);
-    this.tagName = "pre";
-    this.classList = ["mu-math-container"];
+    this.tagName = 'pre';
+    this.classList = ['mu-math-container'];
     this.createDomNode();
   }
 
   getState(): TState {
-    debug.warn("You can never call `getState` in mathContainer");
+    debug.warn('You can never call `getState` in mathContainer');
     return {} as TState;
   }
 }

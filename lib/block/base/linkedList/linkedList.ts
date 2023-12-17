@@ -1,4 +1,4 @@
-import LinkedNode from "./linkedNode";
+import LinkedNode from './linkedNode';
 
 class LinkedList<T extends LinkedNode<T>> {
   public head: T | null = null;

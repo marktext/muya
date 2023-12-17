@@ -1,9 +1,9 @@
-import { CLASS_NAMES } from "@muya/config";
-import { snakeToCamel } from "@muya/utils";
-import { sanitizeHyperlink } from "@muya/utils/url";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, ReferenceLinkToken, Token } from "../types";
-import { VNode } from "snabbdom";
+import { CLASS_NAMES } from '@muya/config';
+import { snakeToCamel } from '@muya/utils';
+import { sanitizeHyperlink } from '@muya/utils/url';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, ReferenceLinkToken, Token } from '../types';
+import { VNode } from 'snabbdom';
 
 export default function referenceLink(
   this: Renderer,
@@ -23,7 +23,7 @@ export default function referenceLink(
 
   const { start, end } = token.range;
   const { anchor, children, backlash, isFullLink, label } = token;
-  const MARKER = "[";
+  const MARKER = '[';
   const key = (label + backlash.second).toLowerCase();
   const backlashStart = start + MARKER.length + anchor.length;
   const content = [
@@ -62,7 +62,7 @@ export default function referenceLink(
     : `span.${CLASS_NAMES.MU_REFERENCE_LINK}`;
   const data = {
     attrs: {
-      spellcheck: "false",
+      spellcheck: 'false',
     },
     props: {
       title,

@@ -1,37 +1,37 @@
-import { DEFAULT_TURNDOWN_CONFIG } from "@muya/config";
+import { DEFAULT_TURNDOWN_CONFIG } from '@muya/config';
 import TurndownService, {
   usePluginsAddRules,
-} from "@muya/utils/turndownService";
-import { ITurnoverOptions } from "./types";
+} from '@muya/utils/turndownService';
+import { ITurnoverOptions } from './types';
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
 const turnSoftBreakToSpan = (html: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(
     `<x-mt id="turn-root">${html}</x-mt>`,
-    "text/html"
+    'text/html'
   );
-  const root = doc.querySelector("#turn-root");
+  const root = doc.querySelector('#turn-root');
   const travel = (childNodes: NodeListOf<ChildNode>) => {
     for (const node of childNodes) {
-      if (node.nodeType === Node.TEXT_NODE && node.parentElement?.tagName !== "CODE") {
+      if (node.nodeType === Node.TEXT_NODE && node.parentElement?.tagName !== 'CODE') {
         let startLen = 0;
         let endLen = 0;
         const text =
           node.nodeValue ??
-          ""
+          ''
             .replace(/^(\n+)/, (_, p) => {
               startLen = p.length;
 
-              return "";
+              return '';
             })
             .replace(/(\n+)$/, (_, p) => {
               endLen = p.length;
 
-              return "";
+              return '';
             });
         if (/\n/.test(text)) {
-          const tokens = text.split("\n");
+          const tokens = text.split('\n');
           const params = [];
           let i = 0;
           const len = tokens.length;
@@ -39,14 +39,14 @@ const turnSoftBreakToSpan = (html: string) => {
           for (; i < len; i++) {
             let text = tokens[i];
             if (i === 0 && startLen !== 0) {
-              text = "\n".repeat(startLen) + text;
+              text = '\n'.repeat(startLen) + text;
             } else if (i === len - 1 && endLen !== 0) {
-              text = text + "\n".repeat(endLen);
+              text = text + '\n'.repeat(endLen);
             }
             params.push(document.createTextNode(text));
             if (i !== len - 1) {
-              const softBreak = document.createElement("span");
-              softBreak.classList.add("mu-soft-line-break");
+              const softBreak = document.createElement('span');
+              softBreak.classList.add('mu-soft-line-break');
               params.push(softBreak);
             }
           }

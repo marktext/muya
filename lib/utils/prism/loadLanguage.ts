@@ -1,10 +1,10 @@
-import components from "prismjs/components.js";
-import getLoader from "prismjs/dependencies";
-import { getDefer } from "../index";
+import components from 'prismjs/components.js';
+import getLoader from 'prismjs/dependencies';
+import { getDefer } from '../index';
 
 type LangLoadStatus = {
   lang: string;
-  status: "noexist" | "cached" | "loaded";
+  status: 'noexist' | 'cached' | 'loaded';
 };
 /**
  * The set of all languages which have been loaded using the below function.
@@ -12,10 +12,10 @@ type LangLoadStatus = {
  * @type {Set<string>}
  */
 export const loadedLanguages = new Set([
-  "markup",
-  "css",
-  "clike",
-  "javascript",
+  'markup',
+  'css',
+  'clike',
+  'javascript',
 ]);
 
 const { languages } = components;
@@ -57,13 +57,13 @@ function initLoadLanguage(Prism: any) {
   return async function loadLanguages(langs?: string[] | string) {
     // If no argument is passed, load all components
     if (!langs) {
-      langs = Object.keys(languages).filter((lang) => lang !== "meta");
+      langs = Object.keys(languages).filter((lang) => lang !== 'meta');
     }
 
     if (langs && !langs.length) {
       return Promise.reject(
         new Error(
-          "The first parameter should be a list of load languages or single language."
+          'The first parameter should be a list of load languages or single language.'
         )
       );
     }
@@ -82,12 +82,12 @@ function initLoadLanguage(Prism: any) {
       if (!(lang in components.languages)) {
         defer.resolve({
           lang,
-          status: "noexist",
+          status: 'noexist',
         });
       } else if (loadedLanguages.has(lang)) {
         defer.resolve({
           lang,
-          status: "cached",
+          status: 'cached',
         });
       } else {
         delete Prism.languages[lang];
@@ -96,7 +96,7 @@ function initLoadLanguage(Prism: any) {
         );
         defer.resolve({
           lang,
-          status: "loaded",
+          status: 'loaded',
         });
         loadedLanguages.add(lang);
       }

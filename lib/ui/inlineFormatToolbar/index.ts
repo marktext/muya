@@ -1,49 +1,49 @@
-import { isKeyboardEvent } from "@muya/utils";
-import { h, patch } from "@muya/utils/snabbdom";
-import BaseFloat from "../baseFloat";
-import icons, { FormatToolIcon } from "./config";
+import { isKeyboardEvent } from '@muya/utils';
+import { h, patch } from '@muya/utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import icons, { FormatToolIcon } from './config';
 
-import Format from "@muya/block/base/format";
-import Muya from "@muya/index";
-import { Token } from "@muya/inlineRenderer/types";
-import { VNode } from "snabbdom";
-import type { BaseOptions } from "../types";
-import "./index.css";
+import Format from '@muya/block/base/format';
+import Muya from '@muya/index';
+import { Token } from '@muya/inlineRenderer/types';
+import { VNode } from 'snabbdom';
+import type { BaseOptions } from '../types';
+import './index.css';
 
 const defaultOptions = {
-  placement: "top" as const,
+  placement: 'top' as const,
   modifiers: {
     offset: {
-      offset: "0, 5",
+      offset: '0, 5',
     },
   },
   showArrow: false,
 };
 
 class FormatPicker extends BaseFloat {
-  static pluginName = "formatPicker";
+  static pluginName = 'formatPicker';
   private oldVNode: VNode | null = null;
   private block: Format | null = null;
   private formats: Token[] = [];
   public options: BaseOptions;
   private icons: FormatToolIcon[] = icons;
-  private formatContainer: HTMLDivElement = document.createElement("div");
+  private formatContainer: HTMLDivElement = document.createElement('div');
 
   constructor(muya: Muya, options = {}) {
-    const name = "mu-format-picker";
+    const name = 'mu-format-picker';
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
     this.options = opts;
     // BaseFloat Class has `container` and `floatBox` properties.
     this.container!.appendChild(this.formatContainer);
-    this.floatBox!.classList.add("mu-format-picker-container");
+    this.floatBox!.classList.add('mu-format-picker-container');
     this.listen();
   }
 
   listen() {
     const { eventCenter, domNode, editor } = this.muya;
     super.listen();
-    eventCenter.subscribe("muya-format-picker", ({ reference, block }) => {
+    eventCenter.subscribe('muya-format-picker', ({ reference, block }) => {
       if (reference) {
         this.block = block;
         this.formats = block.getFormatsInRange().formats;
@@ -57,19 +57,19 @@ class FormatPicker extends BaseFloat {
     });
 
     const HASH = {
-      b: "strong",
-      i: "em",
-      u: "u",
-      d: "del",
-      e: "inline_code",
-      l: "link",
+      b: 'strong',
+      i: 'em',
+      u: 'u',
+      d: 'del',
+      e: 'inline_code',
+      l: 'link',
     };
 
     const SHIFT_HASH = {
-      h: "mark",
-      e: "inline_math",
-      i: "image",
-      r: "clear",
+      h: 'mark',
+      e: 'inline_math',
+      i: 'image',
+      r: 'clear',
     } as const;
 
     const handleKeydown = (event: Event) => {
@@ -102,25 +102,25 @@ class FormatPicker extends BaseFloat {
       }
     };
 
-    eventCenter.attachDOMEvent(domNode, "keydown", handleKeydown);
+    eventCenter.attachDOMEvent(domNode, 'keydown', handleKeydown);
   }
 
   render() {
     const { icons, oldVNode, formatContainer, formats } = this;
     const { i18n } = this.muya;
     const children = icons.map((i) => {
-      const iconWrapperSelector = "div.icon-wrapper";
+      const iconWrapperSelector = 'div.icon-wrapper';
       const icon = h(
-        "i.icon",
+        'i.icon',
         h(
-          "i.icon-inner",
+          'i.icon-inner',
           {
             style: {
               background: `url(${i.icon}) no-repeat`,
-              "background-size": "100%",
+              'background-size': '100%',
             },
           },
-          ""
+          ''
         )
       );
       const iconWrapper = h(iconWrapperSelector, icon);
@@ -129,10 +129,10 @@ class FormatPicker extends BaseFloat {
       if (
         formats.some(
           (f) =>
-            f.type === i.type || (f.type === "html_tag" && f.tag === i.type)
+            f.type === i.type || (f.type === 'html_tag' && f.tag === i.type)
         )
       ) {
-        itemSelector += ".active";
+        itemSelector += '.active';
       }
 
       return h(
@@ -151,7 +151,7 @@ class FormatPicker extends BaseFloat {
       );
     });
 
-    const vnode = h("ul", children);
+    const vnode = h('ul', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);

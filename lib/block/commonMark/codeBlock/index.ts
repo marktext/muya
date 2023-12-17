@@ -1,34 +1,34 @@
-import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import Muya from "@muya/index";
-import { diffToTextOp } from "@muya/utils";
-import { operateClassName } from "@muya/utils/dom";
-import logger from "@muya/utils/logger";
-import { loadLanguage } from "@muya/utils/prism";
-import diff from "fast-diff";
-import { ICodeBlockState } from "../../../state/types";
-import { TPathList } from "../../types";
+import Parent from '@muya/block/base/parent';
+import ScrollPage from '@muya/block/scrollPage';
+import Muya from '@muya/index';
+import { diffToTextOp } from '@muya/utils';
+import { operateClassName } from '@muya/utils/dom';
+import logger from '@muya/utils/logger';
+import { loadLanguage } from '@muya/utils/prism';
+import diff from 'fast-diff';
+import { ICodeBlockState } from '../../../state/types';
+import { TPathList } from '../../types';
 
-const debug = logger("codeblock:");
+const debug = logger('codeblock:');
 
 interface ICodeBlockMeta {
-  type: "indented" | "fenced";
+  type: 'indented' | 'fenced';
   lang: string;
 }
 
 class CodeBlock extends Parent {
   public meta: ICodeBlockMeta;
-  static blockName = "code-block";
+  static blockName = 'code-block';
 
   static create(muya: Muya, state: ICodeBlockState) {
     const codeBlock = new CodeBlock(muya, state);
     const { lang } = state.meta;
 
-    const langInput = ScrollPage.loadBlock("language-input").create(
+    const langInput = ScrollPage.loadBlock('language-input').create(
       muya,
       state
     );
-    const code = ScrollPage.loadBlock("code").create(muya, state);
+    const code = ScrollPage.loadBlock('code').create(muya, state);
 
     codeBlock.append(langInput);
     codeBlock.append(code);
@@ -49,17 +49,17 @@ class CodeBlock extends Parent {
   set lang(value) {
     this.meta.lang = value;
 
-    if (this.meta.type !== "fenced") {
-      this.meta.type = "fenced";
+    if (this.meta.type !== 'fenced') {
+      this.meta.type = 'fenced';
       // dispatch change to modify json state
-      const diffs = diff("indented", "fenced");
+      const diffs = diff('indented', 'fenced');
       const { path } = this;
-      path.push("meta", "type");
+      path.push('meta', 'type');
 
       this.jsonState.editOperation(path, diffToTextOp(diffs));
 
-      operateClassName(this.domNode!, "remove", "mu-indented-code");
-      operateClassName(this.domNode!, "add", "mu-fenced-code");
+      operateClassName(this.domNode!, 'remove', 'mu-indented-code');
+      operateClassName(this.domNode!, 'add', 'mu-fenced-code');
     }
 
     !!value &&
@@ -69,7 +69,7 @@ class CodeBlock extends Parent {
           // There are three status `loaded`, `noexist` and `cached`.
           // if the status is `loaded`, indicated that it's a new loaded language
           const needRender = infoList.some(
-            ({ status }) => status === "loaded" || status === "cached"
+            ({ status }) => status === 'loaded' || status === 'cached'
           );
           if (needRender) {
             this.lastContentInDescendant().update();
@@ -90,9 +90,9 @@ class CodeBlock extends Parent {
 
   constructor(muya: Muya, { meta }: ICodeBlockState) {
     super(muya);
-    this.tagName = "pre";
+    this.tagName = 'pre';
     this.meta = meta;
-    this.classList = ["mu-code-block", `mu-${meta.type}-code`];
+    this.classList = ['mu-code-block', `mu-${meta.type}-code`];
     this.createDomNode();
   }
 
@@ -100,9 +100,9 @@ class CodeBlock extends Parent {
     if (path.length === 0) {
       return this;
     } else {
-      if (path[0] === "meta" || path[0] === "type") {
+      if (path[0] === 'meta' || path[0] === 'type') {
         return this;
-      } else if (path[0] === "lang") {
+      } else if (path[0] === 'lang') {
         return this.firstContentInDescendant();
       } else {
         return this.lastContentInDescendant();
@@ -112,7 +112,7 @@ class CodeBlock extends Parent {
 
   getState(): ICodeBlockState {
     const state: ICodeBlockState = {
-      name: "code-block",
+      name: 'code-block',
       meta: { ...this.meta },
       text: this.lastContentInDescendant().text,
     };

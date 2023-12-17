@@ -1,18 +1,18 @@
-import ScrollPage from "@muya/block";
-import Format from "@muya/block/base/format";
-import Table from "@muya/block/gfm/table";
-import Cell from "@muya/block/gfm/table/cell";
-import Row from "@muya/block/gfm/table/row";
-import TableInner from "@muya/block/gfm/table/table";
-import { EVENT_KEYS, isOsx } from "@muya/config";
-import Muya from "@muya/index";
-import { Cursor } from "@muya/selection/types";
-import { isKeyboardEvent } from "@muya/utils";
+import ScrollPage from '@muya/block';
+import Format from '@muya/block/base/format';
+import Table from '@muya/block/gfm/table';
+import Cell from '@muya/block/gfm/table/cell';
+import Row from '@muya/block/gfm/table/row';
+import TableInner from '@muya/block/gfm/table/table';
+import { EVENT_KEYS, isOsx } from '@muya/config';
+import Muya from '@muya/index';
+import { Cursor } from '@muya/selection/types';
+import { isKeyboardEvent } from '@muya/utils';
 
 class TableCellContent extends Format {
   public hasZeroWidthSpaceAtBeginning: boolean = false;
 
-  static blockName = "table.cell.content";
+  static blockName = 'table.cell.content';
 
   static create(muya: Muya, text: string) {
     const content = new TableCellContent(muya, text);
@@ -21,24 +21,24 @@ class TableCellContent extends Format {
   }
 
   get table() {
-    return this.closestBlock("table") as Table;
+    return this.closestBlock('table') as Table;
   }
 
   get tableInner() {
-    return this.closestBlock("table.inner") as TableInner;
+    return this.closestBlock('table.inner') as TableInner;
   }
 
   get row() {
-    return this.closestBlock("table.row") as Row;
+    return this.closestBlock('table.row') as Row;
   }
 
   get cell() {
-    return this.closestBlock("table.cell") as Cell;
+    return this.closestBlock('table.cell') as Cell;
   }
 
   constructor(muya: Muya, text: string) {
     super(muya, text);
-    this.classList = [...this.classList, "mu-table-cell-content"];
+    this.classList = [...this.classList, 'mu-table-cell-content'];
     this.createDomNode();
   }
 
@@ -68,7 +68,7 @@ class TableCellContent extends Format {
     const { start, end } = this.getCursor()!;
     const { text } = this;
 
-    const br = "<br/>";
+    const br = '<br/>';
 
     this.text =
       text.substring(0, start.offset) + br + text.substring(end.offset);
@@ -101,15 +101,15 @@ class TableCellContent extends Format {
         cursorBlock = nextContent;
       } else {
         const state = {
-          name: "paragraph",
-          text: "",
+          name: 'paragraph',
+          text: '',
         };
 
-        const newParagraphBlock = ScrollPage.loadBlock("paragraph").create(
+        const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(
           this.muya,
           state
         );
-        this.scrollPage.append(newParagraphBlock, "user");
+        this.scrollPage.append(newParagraphBlock, 'user');
         cursorBlock = newParagraphBlock.firstContentInDescendant();
       }
     }
@@ -171,15 +171,15 @@ class TableCellContent extends Format {
           cursorBlock = tableNextContent;
         } else {
           const state = {
-            name: "paragraph",
-            text: "",
+            name: 'paragraph',
+            text: '',
           };
 
-          const newParagraphBlock = ScrollPage.loadBlock("paragraph").create(
+          const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(
             this.muya,
             state
           );
-          this.scrollPage.append(newParagraphBlock, "user");
+          this.scrollPage.append(newParagraphBlock, 'user');
           cursorBlock = newParagraphBlock.firstContentInDescendant();
         }
 
@@ -203,14 +203,14 @@ class TableCellContent extends Format {
 
     if (
       !previousContentBlock ||
-      (previousContentBlock.blockName !== "table.cell.content" &&
+      (previousContentBlock.blockName !== 'table.cell.content' &&
         this.table.isEmpty)
     ) {
       const state = {
-        name: "paragraph",
-        text: "",
+        name: 'paragraph',
+        text: '',
       };
-      const newParagraphBlock = ScrollPage.loadBlock("paragraph").create(
+      const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(
         this.muya,
         state
       );
@@ -240,10 +240,10 @@ class TableCellContent extends Format {
   // zero-width character after entering the Chinese.
   composeHandler(event: Event) {
     super.composeHandler(event);
-    if (event.type === "compositionstart" && this.text === "") {
+    if (event.type === 'compositionstart' && this.text === '') {
       this.hasZeroWidthSpaceAtBeginning = true;
-      this.domNode!.innerText = "\u200b";
-    } else if (event.type === "compositionend" && this.hasZeroWidthSpaceAtBeginning) {
+      this.domNode!.innerText = '\u200b';
+    } else if (event.type === 'compositionend' && this.hasZeroWidthSpaceAtBeginning) {
       this.hasZeroWidthSpaceAtBeginning = false;
       const { text } = this;
       const offset = text.length - 1;

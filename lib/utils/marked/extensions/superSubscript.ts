@@ -23,14 +23,14 @@ const REG_HASH = {
 
 export default function () {
   return {
-    extensions: [getExtension("superscript"), getExtension("subscript")],
+    extensions: [getExtension('superscript'), getExtension('subscript')],
   };
 }
 
-function getExtension(name: "superscript" | "subscript") {
+function getExtension(name: 'superscript' | 'subscript') {
   return {
     name: name,
-    level: "inline" as const,
+    level: 'inline' as const,
     start(src: string) {
       const match = src.match(START_HASH[name]);
       if (!match) {
@@ -60,7 +60,7 @@ function getExtension(name: "superscript" | "subscript") {
 
     renderer(token: ScriptToken) {
       const { text, marker } = token;
-      const tagName = marker === "^" ? "sup" : "sub";
+      const tagName = marker === '^' ? 'sup' : 'sub';
 
       return `<${tagName}>${text}</${tagName}>`;
     },

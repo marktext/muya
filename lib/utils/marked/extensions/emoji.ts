@@ -1,4 +1,4 @@
-import { validEmoji } from "@muya/utils/emoji";
+import { validEmoji } from '@muya/utils/emoji';
 
 const START_REG = /(\s|^):(?!:)/;
 const EMOJI_REG = /^(:)([a-z_\d+-]+?)\1/;
@@ -29,8 +29,8 @@ export default function (options: Options = {}) {
 
 function getExtension(opts: Options) {
   return {
-    name: "emoji",
-    level: "inline" as const,
+    name: 'emoji',
+    level: 'inline' as const,
     start(src: string) {
       const match = src.match(START_REG);
       if (!match) {
@@ -50,7 +50,7 @@ function getExtension(opts: Options) {
 
       if (match) {
         return {
-          type: "emoji",
+          type: 'emoji',
           raw: match[0],
           text: match[2].trim(),
           marker: match[1],

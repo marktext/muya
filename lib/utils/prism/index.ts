@@ -1,14 +1,14 @@
-import Fuse from "fuse.js";
-import Prism from "prismjs";
-import { languages } from "prismjs/components.js";
+import Fuse from 'fuse.js';
+import Prism from 'prismjs';
+import { languages } from 'prismjs/components.js';
 import initLoadLanguage, {
   loadedLanguages,
   transformAliasToOrigin,
-} from "./loadLanguage";
+} from './loadLanguage';
 
 const prism = Prism;
 window.Prism = Prism;
-import("prismjs/plugins/keep-markup/prism-keep-markup");
+import('prismjs/plugins/keep-markup/prism-keep-markup');
 
 const langs: {
   name: string;
@@ -22,7 +22,7 @@ for (const name of Object.keys(languages)) {
     ...lang,
   });
   if (lang.alias) {
-    if (typeof lang.alias === "string") {
+    if (typeof lang.alias === 'string') {
       langs.push({
         name: lang.alias,
         ...lang,
@@ -41,22 +41,22 @@ for (const name of Object.keys(languages)) {
 const loadLanguage = initLoadLanguage(Prism);
 
 const search = (text: string) => {
-  if (!text || typeof text !== "string") {
+  if (!text || typeof text !== 'string') {
     return [];
   }
 
   const fuse = new Fuse(langs, {
     includeScore: true,
-    keys: ["name", "title", "alias"],
+    keys: ['name', 'title', 'alias'],
   });
 
   return fuse.search(text).map((i) => i.item).slice(0, 5);
 };
 
 // pre load latex and yaml and html for `math block` \ `front matter` and `html block`
-loadLanguage("latex");
-loadLanguage("yaml");
+loadLanguage('latex');
+loadLanguage('yaml');
 
-export { walkTokens } from "./walkToken";
+export { walkTokens } from './walkToken';
 export { loadLanguage, loadedLanguages, search, transformAliasToOrigin };
 export default prism;

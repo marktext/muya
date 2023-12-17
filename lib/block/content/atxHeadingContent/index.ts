@@ -1,13 +1,13 @@
-import ScrollPage from "@muya/block";
-import Format from "@muya/block/base/format";
-import AtxHeading from "@muya/block/commonMark/atxHeading";
-import Muya from "@muya/index";
-import { Cursor } from "@muya/selection/types";
+import ScrollPage from '@muya/block';
+import Format from '@muya/block/base/format';
+import AtxHeading from '@muya/block/commonMark/atxHeading';
+import Muya from '@muya/index';
+import { Cursor } from '@muya/selection/types';
 
 class AtxHeadingContent extends Format {
   public parent: AtxHeading | null = null;
 
-  static blockName = "atxheading.content";
+  static blockName = 'atxheading.content';
 
   static create(muya: Muya, text: string) {
     const content = new AtxHeadingContent(muya, text);
@@ -17,7 +17,7 @@ class AtxHeadingContent extends Format {
 
   constructor(muya: Muya, text: string) {
     super(muya, text);
-    this.classList = [...this.classList, "mu-atxheading-content"];
+    this.classList = [...this.classList, 'mu-atxheading-content'];
     this.createDomNode();
   }
 
@@ -35,8 +35,8 @@ class AtxHeadingContent extends Format {
 
     if (start.offset === end.offset && start.offset <= level + 1) {
       const newNodeState = {
-        name: "paragraph",
-        text: "",
+        name: 'paragraph',
+        text: '',
       };
 
       const newParagraphBlock = ScrollPage.loadBlock(newNodeState.name).create(
@@ -54,11 +54,11 @@ class AtxHeadingContent extends Format {
     const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       event.preventDefault();
-      this.text = this.text.replace(/^ {0,3}#{1,6} */, "");
+      this.text = this.text.replace(/^ {0,3}#{1,6} */, '');
       this.convertToParagraph();
-    } else if (start.offset === 1 && end.offset === 1 && this.text === "#") {
+    } else if (start.offset === 1 && end.offset === 1 && this.text === '#') {
       event.preventDefault();
-      this.text = "";
+      this.text = '';
       this.setCursor(0, 0);
       this.convertToParagraph();
     } else {

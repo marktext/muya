@@ -1,18 +1,18 @@
-import { CLASS_NAMES } from "@muya/config";
-import { snakeToCamel } from "@muya/utils";
-import type Renderer from "./index";
+import { CLASS_NAMES } from '@muya/config';
+import { snakeToCamel } from '@muya/utils';
+import type Renderer from './index';
 import type {
   SyntaxRenderOptions,
   StrongEmToken,
   DelToken,
   Token,
-} from "../types";
-import { VNode } from "snabbdom";
+} from '../types';
+import { VNode } from 'snabbdom';
 
 // render factory of `del`,`em`,`strong`
 export default function delEmStrongFac(
   this: Renderer,
-  type: "del" | "em" | "strong",
+  type: 'del' | 'em' | 'strong',
   {
     h,
     cursor,

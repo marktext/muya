@@ -1,14 +1,14 @@
-import TreeNode from "@muya/block/base/treeNode";
-import { isFirefox } from "@muya/config";
-import Muya from "@muya/index";
-import { ITaskListItemMeta } from "@muya/state/types";
-import { isMouseEvent } from "@muya/utils";
-import { operateClassName } from "@muya/utils/dom";
-import logger from "@muya/utils/logger";
-import TaskList from "../taskList";
-import TaskListItem from "../taskListItem";
+import TreeNode from '@muya/block/base/treeNode';
+import { isFirefox } from '@muya/config';
+import Muya from '@muya/index';
+import { ITaskListItemMeta } from '@muya/state/types';
+import { isMouseEvent } from '@muya/utils';
+import { operateClassName } from '@muya/utils/dom';
+import logger from '@muya/utils/logger';
+import TaskList from '../taskList';
+import TaskListItem from '../taskListItem';
 
-const debug = logger("tasklistCheckbox:");
+const debug = logger('tasklistCheckbox:');
 
 // The Task List Item component is Firefox compatible, because in Firefox,
 // the input element is not clickable in the contenteditable element(li),
@@ -19,7 +19,7 @@ class TaskListCheckbox extends TreeNode {
   private checked: boolean;
   private eventIds: string[] = [];
 
-  static blockName = "task-list-checkbox";
+  static blockName = 'task-list-checkbox';
 
   static create(muya: Muya, meta: ITaskListItemMeta) {
     const checkbox = new TaskListCheckbox(muya, meta);
@@ -31,7 +31,7 @@ class TaskListCheckbox extends TreeNode {
     const { path: pPath } = this.parent!;
     pPath.pop(); // pop `children`
 
-    return [...pPath, "meta", "checked"];
+    return [...pPath, 'meta', 'checked'];
   }
 
   get isContainerBlock() {
@@ -40,18 +40,18 @@ class TaskListCheckbox extends TreeNode {
 
   constructor(muya: Muya, { checked }: ITaskListItemMeta) {
     super(muya);
-    this.tagName = isFirefox ? "span" : "input";
+    this.tagName = isFirefox ? 'span' : 'input';
     this.checked = checked;
     this.attributes = isFirefox
-      ? { contenteditable: "false" }
-      : { type: "checkbox", contenteditable: "false" };
-    this.classList = ["mu-task-list-checkbox"];
+      ? { contenteditable: 'false' }
+      : { type: 'checkbox', contenteditable: 'false' };
+    this.classList = ['mu-task-list-checkbox'];
 
     if (checked) {
       if (!isFirefox) {
         this.attributes.checked = true;
       }
-      this.classList.push("mu-checkbox-checked");
+      this.classList.push('mu-checkbox-checked');
     }
 
     this.createDomNode();
@@ -70,26 +70,26 @@ class TaskListCheckbox extends TreeNode {
       if (isFirefox) {
         this.checked = !this.checked;
 
-        this.update(this.checked, "user");
+        this.update(this.checked, 'user');
       } else {
         const { checked } = event.target as HTMLInputElement;
         this.checked = checked;
-        this.update(checked, "user");
+        this.update(checked, 'user');
       }
     };
 
     const eventIds = [
-      eventCenter.attachDOMEvent(domNode!, "click", clickHandler),
+      eventCenter.attachDOMEvent(domNode!, 'click', clickHandler),
     ];
 
     this.eventIds.push(...eventIds);
   }
 
-  update = (checked: boolean, source = "api") => {
+  update = (checked: boolean, source = 'api') => {
     operateClassName(
       this.domNode!,
-      checked ? "add" : "remove",
-      "mu-checkbox-checked"
+      checked ? 'add' : 'remove',
+      'mu-checkbox-checked'
     );
     const taskListItem = this.parent as TaskListItem;
     const taskList = taskListItem!.parent as TaskList;
@@ -98,7 +98,7 @@ class TaskListCheckbox extends TreeNode {
       (this.domNode as HTMLInputElement).checked = checked;
     }
 
-    if (source === "api") {
+    if (source === 'api') {
       taskListItem.meta.checked = checked;
     } else {
       taskListItem.checked = checked;
@@ -123,7 +123,7 @@ class TaskListCheckbox extends TreeNode {
   }
 
   getState() {
-    debug.warn("You should never call this method.");
+    debug.warn('You should never call this method.');
   }
 }
 

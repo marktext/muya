@@ -1,15 +1,15 @@
-import Format from "@muya/block/base/format";
-import ParagraphContent from "@muya/block/content/paragraphContent";
-import Muya from "@muya/index";
-import { tokenizer } from "@muya/inlineRenderer/lexer";
-import Renderer from "@muya/inlineRenderer/renderer";
-import { beginRules } from "@muya/inlineRenderer/rules";
-import logger from "@muya/utils/logger";
-import type { Cursor } from "../selection/types";
-import { IParagraphState, TContainerState, TState } from "../state/types";
-import type { Highlight, Labels } from "./types";
+import Format from '@muya/block/base/format';
+import ParagraphContent from '@muya/block/content/paragraphContent';
+import Muya from '@muya/index';
+import { tokenizer } from '@muya/inlineRenderer/lexer';
+import Renderer from '@muya/inlineRenderer/renderer';
+import { beginRules } from '@muya/inlineRenderer/rules';
+import logger from '@muya/utils/logger';
+import type { Cursor } from '../selection/types';
+import { IParagraphState, TContainerState, TState } from '../state/types';
+import type { Highlight, Labels } from './types';
 
-const debug = logger("inlineRenderer:");
+const debug = logger('inlineRenderer:');
 
 class InlineRenderer {
   public labels: Labels = new Map();
@@ -39,7 +39,7 @@ class InlineRenderer {
     this.collectReferenceDefinitions();
     const { domNode } = block;
     if (block.isParent()) {
-      debug.error("Patch can only handle content block");
+      debug.error('Patch can only handle content block');
     }
 
     const tokens = this.tokenizer(block, highlights);
@@ -58,7 +58,7 @@ class InlineRenderer {
     const travel = (sts: TState[]) => {
       if (Array.isArray(sts) && sts.length) {
         for (const st of sts) {
-          if (st.name === "paragraph") {
+          if (st.name === 'paragraph') {
             const { label, info } = this.getLabelInfo(st);
             if (label && info) {
               labels.set(label, info);
@@ -84,7 +84,7 @@ class InlineRenderer {
       label = (tokens[2] + tokens[3]).toLowerCase();
       info = {
         href: tokens[6],
-        title: tokens[10] || "",
+        title: tokens[10] || '',
       };
     }
 

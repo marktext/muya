@@ -1,14 +1,14 @@
-import Content from "@muya/block/base/content";
-import CodeBlock from "@muya/block/commonMark/codeBlock";
-import Muya from "@muya/index";
-import { Cursor } from "@muya/selection/types";
-import { ICodeBlockState } from "@muya/state/types";
-import { getHighlightHtml } from "@muya/utils/highlightHTML";
+import Content from '@muya/block/base/content';
+import CodeBlock from '@muya/block/commonMark/codeBlock';
+import Muya from '@muya/index';
+import { Cursor } from '@muya/selection/types';
+import { ICodeBlockState } from '@muya/state/types';
+import { getHighlightHtml } from '@muya/utils/highlightHTML';
 
 class LangInputContent extends Content {
   public parent: CodeBlock | null = null;
 
-  static blockName = "language-input";
+  static blockName = 'language-input';
 
   static create(muya: Muya, state: ICodeBlockState) {
     const content = new LangInputContent(muya, state);
@@ -18,8 +18,8 @@ class LangInputContent extends Content {
 
   constructor(muya: Muya, { meta }: ICodeBlockState) {
     super(muya, meta.lang);
-    this.classList = [...this.classList, "mu-language-input"];
-    this.attributes.hint = muya.i18n.t("Input Language Identifier...");
+    this.classList = [...this.classList, 'mu-language-input'];
+    this.attributes.hint = muya.i18n.t('Input Language Identifier...');
     this.createDomNode();
   }
 
@@ -42,11 +42,11 @@ class LangInputContent extends Content {
     const startOffset = Math.min(lang.length, start.offset);
     const endOffset = Math.min(lang.length, end.offset);
     this.setCursor(startOffset, endOffset, true);
-    this.muya.eventCenter.emit("content-change", { block: this });
+    this.muya.eventCenter.emit('content-change', { block: this });
   }
 
   inputHandler() {
-    const textContent = this.domNode!.textContent ?? "";
+    const textContent = this.domNode!.textContent ?? '';
     const lang = textContent.split(/\s+/)[0];
     this.updateLanguage(lang);
   }
@@ -65,7 +65,7 @@ class LangInputContent extends Content {
     // The next if statement is used to fix Firefox compatibility issues
     if (start.offset === 1 && end.offset === 1 && text.length === 1) {
       event.preventDefault();
-      const lang = "";
+      const lang = '';
       this.updateLanguage(lang);
     }
     if (start.offset === 0 && end.offset === 0) {

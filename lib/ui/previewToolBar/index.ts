@@ -1,39 +1,39 @@
-import BaseFloat from "../baseFloat";
-import { throttle, isMouseEvent } from "@muya/utils";
-import ScrollPage from "@muya/block";
-import { patch, h } from "@muya/utils/snabbdom";
-import ICONS from "./config";
-import { BLOCK_DOM_PROPERTY } from "@muya/config";
+import BaseFloat from '../baseFloat';
+import { throttle, isMouseEvent } from '@muya/utils';
+import ScrollPage from '@muya/block';
+import { patch, h } from '@muya/utils/snabbdom';
+import ICONS from './config';
+import { BLOCK_DOM_PROPERTY } from '@muya/config';
 
-import "./index.css";
-import type { VNode } from "snabbdom";
-import type Muya from "@muya/index";
-import type HTMLBlock from "@muya/block/commonMark/html";
-import type MathBlock from "@muya/block/extra/math";
+import './index.css';
+import type { VNode } from 'snabbdom';
+import type Muya from '@muya/index';
+import type HTMLBlock from '@muya/block/commonMark/html';
+import type MathBlock from '@muya/block/extra/math';
 
 const defaultOptions = {
-  placement: "left-start" as const,
+  placement: 'left-start' as const,
   modifiers: {
     offset: {
-      offset: "5, -95",
+      offset: '5, -95',
     },
   },
   showArrow: false,
 };
 
 class PreviewTools extends BaseFloat {
-  static pluginName = "previewTools";
+  static pluginName = 'previewTools';
   private oldVNode: VNode | null = null;
   private block: HTMLBlock | MathBlock | null = null;
-  private iconContainer: HTMLDivElement = document.createElement("div");
+  private iconContainer: HTMLDivElement = document.createElement('div');
 
   constructor(muya: Muya, options = {}) {
-    const name = "mu-preview-tools";
+    const name = 'mu-preview-tools';
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
     this.options = opts;
     this.container?.appendChild(this.iconContainer);
-    this.floatBox?.classList.add("mu-preview-tools-container");
+    this.floatBox?.classList.add('mu-preview-tools-container');
     this.listen();
   }
 
@@ -54,7 +54,7 @@ class PreviewTools extends BaseFloat {
       );
       if (container && !(container[BLOCK_DOM_PROPERTY] as HTMLBlock).active) {
         const block = container[BLOCK_DOM_PROPERTY] as HTMLBlock;
-        if (block.blockName === "html-block" && this.muya.options.disableHtml) {
+        if (block.blockName === 'html-block' && this.muya.options.disableHtml) {
           return this.hide();
         }
         this.block = block;
@@ -65,24 +65,24 @@ class PreviewTools extends BaseFloat {
       }
     }, 300);
 
-    eventCenter.attachDOMEvent(document.body, "mousemove", handler);
+    eventCenter.attachDOMEvent(document.body, 'mousemove', handler);
   }
 
   render() {
     const { iconContainer, oldVNode } = this;
     const children = ICONS.map((i) => {
-      const iconWrapperSelector = "div.icon-wrapper";
+      const iconWrapperSelector = 'div.icon-wrapper';
       const icon = h(
-        "i.icon",
+        'i.icon',
         h(
-          "i.icon-inner",
+          'i.icon-inner',
           {
             style: {
               background: `url(${i.icon}) no-repeat`,
-              "background-size": "100%",
+              'background-size': '100%',
             },
           },
-          ""
+          ''
         )
       );
       const iconWrapper = h(iconWrapperSelector, icon);
@@ -105,7 +105,7 @@ class PreviewTools extends BaseFloat {
       );
     });
 
-    const vnode = h("ul", children);
+    const vnode = h('ul', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);
@@ -121,18 +121,18 @@ class PreviewTools extends BaseFloat {
     const { block } = this;
     let cursorBlock = null;
     switch (i.type) {
-      case "edit": {
+      case 'edit': {
         cursorBlock = block!.firstContentInDescendant();
         break;
       }
 
-      case "delete": {
+      case 'delete': {
         const state = {
-          name: "paragraph",
-          text: "",
+          name: 'paragraph',
+          text: '',
         };
 
-        const newBlock = ScrollPage.loadBlock("paragraph").create(
+        const newBlock = ScrollPage.loadBlock('paragraph').create(
           this.muya,
           state
         );

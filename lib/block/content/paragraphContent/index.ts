@@ -1,44 +1,44 @@
-import Content from "@muya/block/base/content";
-import Format from "@muya/block/base/format";
-import Parent from "@muya/block/base/parent";
-import BulletList from "@muya/block/commonMark/bulletList";
-import OrderList from "@muya/block/commonMark/orderList";
-import Paragraph from "@muya/block/commonMark/paragraph";
-import TaskList from "@muya/block/gfm/taskList";
-import ScrollPage from "@muya/block/scrollPage";
-import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
-import type Muya from "@muya/index";
-import { tokenizer } from "@muya/inlineRenderer/lexer";
+import Content from '@muya/block/base/content';
+import Format from '@muya/block/base/format';
+import Parent from '@muya/block/base/parent';
+import BulletList from '@muya/block/commonMark/bulletList';
+import OrderList from '@muya/block/commonMark/orderList';
+import Paragraph from '@muya/block/commonMark/paragraph';
+import TaskList from '@muya/block/gfm/taskList';
+import ScrollPage from '@muya/block/scrollPage';
+import { HTML_TAGS, VOID_HTML_TAGS } from '@muya/config';
+import type Muya from '@muya/index';
+import { tokenizer } from '@muya/inlineRenderer/lexer';
 import {
   ImageToken,
   LinkToken,
   Token
-} from "@muya/inlineRenderer/types";
-import { Cursor } from "@muya/selection/types";
-import { Nullable } from "@muya/types";
-import { isKeyboardEvent, isLengthEven } from "@muya/utils";
-import logger from "@muya/utils/logger";
+} from '@muya/inlineRenderer/types';
+import { Cursor } from '@muya/selection/types';
+import { Nullable } from '@muya/types';
+import { isKeyboardEvent, isLengthEven } from '@muya/utils';
+import logger from '@muya/utils/logger';
 import type {
   IBlockQuoteState,
   ITaskListItemState,
-} from "../../../state/types";
+} from '../../../state/types';
 
-const debug = logger("paragraph:content");
+const debug = logger('paragraph:content');
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
 
 const BOTH_SIDES_FORMATS = [
-  "strong",
-  "em",
-  "inline_code",
-  "image",
-  "link",
-  "reference_image",
-  "reference_link",
-  "emoji",
-  "del",
-  "html_tag",
-  "inline_math",
+  'strong',
+  'em',
+  'inline_code',
+  'image',
+  'link',
+  'reference_image',
+  'reference_link',
+  'emoji',
+  'del',
+  'html_tag',
+  'inline_math',
 ];
 
 const parseTableHeader = (text: string) => {
@@ -57,7 +57,7 @@ const parseTableHeader = (text: string) => {
     }
 
     if (/\|/.test(char) && i !== len - 1) {
-      rowHeader.push("");
+      rowHeader.push('');
     }
   }
 
@@ -66,7 +66,7 @@ const parseTableHeader = (text: string) => {
 class ParagraphContent extends Format {
   public parent: Paragraph | null = null;
 
-  static blockName = "paragraph.content";
+  static blockName = 'paragraph.content';
 
   static create(muya: Muya, text: string) {
     const content = new ParagraphContent(muya, text);
@@ -76,8 +76,8 @@ class ParagraphContent extends Format {
 
   constructor(muya: Muya, text: string) {
     super(muya, text);
-    this.classList = [...this.classList, "mu-paragraph-content"];
-    this.attributes["empty-hint"] = muya.i18n.t("Type / to insert...");
+    this.classList = [...this.classList, 'mu-paragraph-content'];
+    this.attributes['empty-hint'] = muya.i18n.t('Type / to insert...');
     this.createDomNode();
   }
 
@@ -100,7 +100,7 @@ class ParagraphContent extends Format {
 
     if (start.offset !== 0 || end.offset !== 0) {
       super.backspaceHandler(event);
-      eventCenter.emit("content-change", { block: this });
+      eventCenter.emit('content-change', { block: this });
       return;
     }
 
@@ -108,19 +108,19 @@ class ParagraphContent extends Format {
     const type = this._paragraphParentType();
 
     switch (type) {
-      case "paragraph":
+      case 'paragraph':
         return this.handleBackspaceInParagraph();
 
-      case "block-quote":
+      case 'block-quote':
         return this.handleBackspaceInBlockQuote();
 
-      case "list-item":
+      case 'list-item':
       // fall through
-      case "task-list-item":
+      case 'task-list-item':
         return this.handleBackspaceInList();
 
       default:
-        debug.error("Unknown backspace type");
+        debug.error('Unknown backspace type');
         break;
     }
   }
@@ -129,7 +129,7 @@ class ParagraphContent extends Format {
     super.inputHandler(event);
     const { eventCenter } = this.muya;
 
-    eventCenter.emit("content-change", { block: this });
+    eventCenter.emit('content-change', { block: this });
   }
 
   enterConvert(event: Event) {
@@ -147,13 +147,13 @@ class ParagraphContent extends Format {
 
     if (mathMath) {
       const state = {
-        name: "math-block",
-        text: "",
+        name: 'math-block',
+        text: '',
         meta: {
-          mathStyle: "",
+          mathStyle: '',
         },
       };
-      const mathBlock = ScrollPage.loadBlock("math-block").create(
+      const mathBlock = ScrollPage.loadBlock('math-block').create(
         this.muya,
         state
       );
@@ -163,12 +163,12 @@ class ParagraphContent extends Format {
       // Convert to code block
       const lang = codeBlockToken[2];
       const state = {
-        name: "code-block",
+        name: 'code-block',
         meta: {
           lang,
-          type: "fenced",
+          type: 'fenced',
         },
-        text: "",
+        text: '',
       };
       const codeBlock = ScrollPage.loadBlock(state.name).create(
         this.muya,
@@ -184,7 +184,7 @@ class ParagraphContent extends Format {
       isLengthEven(tableMatch[2])
     ) {
       const tableHeader = parseTableHeader(this.text);
-      const tableBlock = ScrollPage.loadBlock("table").createWithHeader(
+      const tableBlock = ScrollPage.loadBlock('table').createWithHeader(
         this.muya,
         tableHeader
       );
@@ -198,10 +198,10 @@ class ParagraphContent extends Format {
         .setCursor(0, 0, true);
     } else if (tagName && VOID_HTML_TAGS.every((tag) => tag !== tagName)) {
       const state = {
-        name: "html-block",
+        name: 'html-block',
         text: `<${tagName}>\n\n</${tagName}>`,
       };
-      const htmlBlock = ScrollPage.loadBlock("html-block").create(
+      const htmlBlock = ScrollPage.loadBlock('html-block').create(
         this.muya,
         state
       );
@@ -243,7 +243,7 @@ class ParagraphContent extends Format {
 
       default: {
         const newBlockState: IBlockQuoteState = {
-          name: "block-quote",
+          name: 'block-quote',
           children: [],
         };
         const offset = blockQuote!.offset(parent!);
@@ -333,7 +333,7 @@ class ParagraphContent extends Format {
           children: [] as any,
         };
 
-        if (listItem.blockName === "task-list-item") {
+        if (listItem.blockName === 'task-list-item') {
           (newListItemState as unknown as ITaskListItemState).meta = {
             checked: false,
           };
@@ -361,13 +361,13 @@ class ParagraphContent extends Format {
           name: listItem.blockName,
           children: [
             {
-              name: "paragraph",
+              name: 'paragraph',
               text: text.substring(end.offset),
             },
           ],
         };
 
-        if (listItem.blockName === "task-list-item") {
+        if (listItem.blockName === 'task-list-item') {
           (newNodeState as ITaskListItemState).meta = {
             checked: false,
           };
@@ -398,9 +398,9 @@ class ParagraphContent extends Format {
 
     const type = this._paragraphParentType();
 
-    if (type === "block-quote") {
+    if (type === 'block-quote') {
       this.enterInBlockQuote(event);
-    } else if (type === "list-item" || type === "task-list-item") {
+    } else if (type === 'list-item' || type === 'task-list-item') {
       this.enterInListItem(event);
     } else {
       this.enterConvert(event);
@@ -408,20 +408,20 @@ class ParagraphContent extends Format {
   }
 
   private _paragraphParentType() {
-    if (this.blockName !== "paragraph.content") {
-      debug.warn("Only paragraph content can call _paragraphParentType");
+    if (this.blockName !== 'paragraph.content') {
+      debug.warn('Only paragraph content can call _paragraphParentType');
 
       return;
     }
 
     let parent: Nullable<Parent> = this.parent;
-    let type = "paragraph";
+    let type = 'paragraph';
 
     while (parent && !parent.isScrollPage) {
       if (
-        parent.blockName === "block-quote" ||
-        parent.blockName === "list-item" ||
-        parent.blockName === "task-list-item"
+        parent.blockName === 'block-quote' ||
+        parent.blockName === 'list-item' ||
+        parent.blockName === 'task-list-item'
       ) {
         type = parent.blockName;
         break;
@@ -501,7 +501,7 @@ class ParagraphContent extends Format {
       const previousListItem = listItem.prev;
       listItem.forEach((node, i: number) => {
         const paragraph = (node as Parent).clone() as Parent;
-        previousListItem!.append(paragraph, "user");
+        previousListItem!.append(paragraph, 'user');
         if (i === 0) {
           paragraph.firstContentInDescendant().setCursor(0, 0, true);
         }
@@ -523,10 +523,10 @@ class ParagraphContent extends Format {
 
     if (
       listParent &&
-      (listParent.blockName === "list-item" ||
-        listParent.blockName === "task-list-item")
+      (listParent.blockName === 'list-item' ||
+        listParent.blockName === 'task-list-item')
     ) {
-      return list.prev ? "INDENT" : "REPLACEMENT";
+      return list.prev ? 'INDENT' : 'REPLACEMENT';
     }
 
     return false;
@@ -534,7 +534,7 @@ class ParagraphContent extends Format {
 
   private _canIndentListItem() {
     const { parent } = this;
-    if (parent!.blockName !== "paragraph" || !parent!.parent) {
+    if (parent!.blockName !== 'paragraph' || !parent!.parent) {
       return false;
     }
 
@@ -547,8 +547,8 @@ class ParagraphContent extends Format {
     }
 
     if (
-      (listItem.blockName !== "list-item" &&
-        listItem.blockName !== "task-list-item") ||
+      (listItem.blockName !== 'list-item' &&
+        listItem.blockName !== 'task-list-item') ||
       !this.isCollapsed
     ) {
       return false;
@@ -575,7 +575,7 @@ class ParagraphContent extends Format {
 
     const cursorParagraphOffset = listItem.offset(parent);
 
-    if (type === "REPLACEMENT") {
+    if (type === 'REPLACEMENT') {
       const paragraph = parent.clone() as Paragraph;
       listParent.insertBefore(paragraph, list);
 
@@ -584,7 +584,7 @@ class ParagraphContent extends Format {
       } else {
         listItem.remove();
       }
-    } else if (type === "INDENT") {
+    } else if (type === 'INDENT') {
       const newListItem = listItem.clone() as Parent;
       listParent.parent!.insertAfter(newListItem, listParent);
 
@@ -602,13 +602,13 @@ class ParagraphContent extends Format {
           this.muya,
           state
         );
-        newListItem.append(childList, "user");
+        newListItem.append(childList, 'user');
       }
 
       if (listItem.next) {
         const offset = list.offset(listItem);
         list.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild.append((node as Parent).clone(), "user");
+          newListItem.lastChild.append((node as Parent).clone(), 'user');
           node.remove();
         });
       }
@@ -616,7 +616,7 @@ class ParagraphContent extends Format {
       if (list.next) {
         const offset = listParent.offset(list);
         listParent.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild!.append((node as Parent).clone(), "user");
+          newListItem.lastChild!.append((node as Parent).clone(), 'user');
           node.remove();
         });
       }
@@ -656,9 +656,9 @@ class ParagraphContent extends Format {
         children: [listItem.getState()],
       };
       newList = ScrollPage.loadBlock(state.name).create(muya, state);
-      prevListItem!.append(newList, "user");
+      prevListItem!.append(newList, 'user');
     } else {
-      newList.append(listItem.clone(), "user");
+      newList.append(listItem.clone(), 'user');
     }
 
     listItem.remove();
@@ -707,17 +707,17 @@ class ParagraphContent extends Format {
           offset < end
         ) {
           switch (type) {
-            case "strong": // fall through
+            case 'strong': // fall through
 
-            case "em": // fall through
+            case 'em': // fall through
 
-            case "inline_code": // fall through
+            case 'inline_code': // fall through
 
-            case "emoji": // fall through
+            case 'emoji': // fall through
 
-            case "del": // fall through
+            case 'del': // fall through
 
-            case "inline_math": {
+            case 'inline_math': {
               const { marker } = token;
               if (marker && offset === end - marker.length) {
                 result = {
@@ -730,9 +730,9 @@ class ParagraphContent extends Format {
               break;
             }
 
-            case "image": // fall through
+            case 'image': // fall through
 
-            case "link": {
+            case 'link': {
               const { backlash } = token;
               const srcAndTitle = (token as ImageToken).srcAndTitle;
               const hrefAndTitle = (token as LinkToken).hrefAndTitle;
@@ -755,9 +755,9 @@ class ParagraphContent extends Format {
               break;
             }
 
-            case "reference_image": // fall through
+            case 'reference_image': // fall through
 
-            case "reference_link": {
+            case 'reference_link': {
               const { backlash, isFullLink, label } = token;
               const labelLen = label ? label.length : 0;
               const secondLashLen =
@@ -786,7 +786,7 @@ class ParagraphContent extends Format {
               break;
             }
 
-            case "html_tag": {
+            case 'html_tag': {
               const { closeTag } = token;
               if (closeTag && offset === end - closeTag.length) {
                 result = {

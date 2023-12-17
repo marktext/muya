@@ -1,26 +1,26 @@
-import { h, patch } from "@muya/utils/snabbdom";
-import BaseFloat from "../baseFloat";
-import icons, { Icon } from "./config";
+import { h, patch } from '@muya/utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import icons, { Icon } from './config';
 
-import Format from "@muya/block/base/format";
-import Muya from "@muya/index";
-import { ImageToken } from "@muya/inlineRenderer/types";
-import type { ReferenceObject } from "popper.js";
-import { VNode } from "snabbdom";
-import "./index.css";
+import Format from '@muya/block/base/format';
+import Muya from '@muya/index';
+import { ImageToken } from '@muya/inlineRenderer/types';
+import type { ReferenceObject } from 'popper.js';
+import { VNode } from 'snabbdom';
+import './index.css';
 
 const defaultOptions = {
-  placement: "top",
+  placement: 'top',
   modifiers: {
     offset: {
-      offset: "0, 10",
+      offset: '0, 10',
     },
   },
   showArrow: false,
 };
 
 class ImageToolbar extends BaseFloat {
-  static pluginName = "imageToolbar";
+  static pluginName = 'imageToolbar';
   private oldVNode: VNode | null = null;
   private imageInfo: {
     token: ImageToken;
@@ -29,16 +29,16 @@ class ImageToolbar extends BaseFloat {
   private icons: Icon[] = icons;
   private reference: ReferenceObject | null = null;
   private block: Format | null = null;
-  private toolbarContainer: HTMLDivElement = document.createElement("div");
+  private toolbarContainer: HTMLDivElement = document.createElement('div');
 
   constructor(muya: Muya, options = {}) {
-    const name = "mu-image-toolbar";
+    const name = 'mu-image-toolbar';
     const opts = Object.assign({}, defaultOptions, options);
 
     super(muya, name, opts);
 
     this.container!.appendChild(this.toolbarContainer);
-    this.floatBox!.classList.add("mu-image-toolbar-container");
+    this.floatBox!.classList.add('mu-image-toolbar-container');
 
     this.listen();
   }
@@ -46,7 +46,7 @@ class ImageToolbar extends BaseFloat {
   listen() {
     const { eventCenter } = this.muya;
     super.listen();
-    eventCenter.on("muya-image-toolbar", ({ block, reference, imageInfo }) => {
+    eventCenter.on('muya-image-toolbar', ({ block, reference, imageInfo }) => {
       this.reference = reference;
       if (reference) {
         this.block = block;
@@ -65,27 +65,27 @@ class ImageToolbar extends BaseFloat {
     const { icons, oldVNode, toolbarContainer, imageInfo } = this;
     const { i18n } = this.muya;
     const { attrs } = imageInfo!.token;
-    const dataAlign = attrs["data-align"];
+    const dataAlign = attrs['data-align'];
     const children = icons.map((i) => {
-      const iconWrapperSelector = "div.icon-wrapper";
+      const iconWrapperSelector = 'div.icon-wrapper';
       const icon = h(
-        "i.icon",
+        'i.icon',
         h(
-          "i.icon-inner",
+          'i.icon-inner',
           {
             style: {
               background: `url(${i.icon}) no-repeat`,
-              "background-size": "100%",
+              'background-size': '100%',
             },
           },
-          ""
+          ''
         )
       );
       const iconWrapper = h(iconWrapperSelector, icon);
       let itemSelector = `li.item.${i.type}`;
 
-      if (i.type === dataAlign || (!dataAlign && i.type === "inline")) {
-        itemSelector += ".active";
+      if (i.type === dataAlign || (!dataAlign && i.type === 'inline')) {
+        itemSelector += '.active';
       }
 
       return h(
@@ -107,7 +107,7 @@ class ImageToolbar extends BaseFloat {
       );
     });
 
-    const vnode = h("ul", children);
+    const vnode = h('ul', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);
@@ -125,17 +125,17 @@ class ImageToolbar extends BaseFloat {
 
     switch (item.type) {
       // Delete image.
-      case "delete":
+      case 'delete':
         this.block!.deleteImage(imageInfo!);
         // Hide image transformer
-        this.muya.eventCenter.emit("muya-transformer", {
+        this.muya.eventCenter.emit('muya-transformer', {
           reference: null,
         });
 
         return this.hide();
 
       // Edit image, for example: editor alt and title, replace image.
-      case "edit": {
+      case 'edit': {
         const rect = this.reference!.getBoundingClientRect();
         const reference = {
           getBoundingClientRect() {
@@ -145,11 +145,11 @@ class ImageToolbar extends BaseFloat {
           },
         };
         // Hide image resize bar
-        this.muya.eventCenter.emit("muya-transformer", {
+        this.muya.eventCenter.emit('muya-transformer', {
           reference: null,
         });
 
-        this.muya.eventCenter.emit("muya-image-selector", {
+        this.muya.eventCenter.emit('muya-image-selector', {
           block: this.block,
           reference,
           imageInfo,
@@ -158,14 +158,14 @@ class ImageToolbar extends BaseFloat {
         return this.hide();
       }
 
-      case "inline":
+      case 'inline':
       // fall through
-      case "left":
+      case 'left':
       // fall through
-      case "center":
+      case 'center':
       // fall through
-      case "right": {
-        this.block!.updateImage(this.imageInfo!, "data-align", item.type);
+      case 'right': {
+        this.block!.updateImage(this.imageInfo!, 'data-align', item.type);
 
         return this.hide();
       }

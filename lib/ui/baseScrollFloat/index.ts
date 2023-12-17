@@ -1,8 +1,8 @@
-import BaseFloat from "@muya/ui/baseFloat";
-import { EVENT_KEYS } from "@muya/config";
-import { isKeyboardEvent, noop } from "@muya/utils";
-import type Muya from "@muya/index";
-import type { ReferenceObject } from "popper.js";
+import BaseFloat from '@muya/ui/baseFloat';
+import { EVENT_KEYS } from '@muya/config';
+import { isKeyboardEvent, noop } from '@muya/utils';
+import type Muya from '@muya/index';
+import type { ReferenceObject } from 'popper.js';
 
 abstract class BaseScrollFloat extends BaseFloat {
   public scrollElement: HTMLElement | null = null;
@@ -17,7 +17,7 @@ abstract class BaseScrollFloat extends BaseFloat {
 
   createScrollElement() {
     const { container } = this;
-    const scrollElement = document.createElement("div");
+    const scrollElement = document.createElement('div');
     container!.appendChild(scrollElement);
     this.scrollElement = scrollElement;
   }
@@ -25,9 +25,9 @@ abstract class BaseScrollFloat extends BaseFloat {
   activeEleScrollIntoView(ele: HTMLElement) {
     if (ele) {
       ele.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "start",
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'start',
       });
     }
   }
@@ -39,14 +39,14 @@ abstract class BaseScrollFloat extends BaseFloat {
       if (!this.status || !isKeyboardEvent(event)) return;
       switch (event.key) {
         case EVENT_KEYS.ArrowUp:
-          this.step("previous");
+          this.step('previous');
           break;
 
         case EVENT_KEYS.ArrowDown:
           // // falls through
 
         case EVENT_KEYS.Tab:
-          this.step("next");
+          this.step('next');
           break;
 
         case EVENT_KEYS.Enter:
@@ -58,7 +58,7 @@ abstract class BaseScrollFloat extends BaseFloat {
       }
     };
 
-    eventCenter.attachDOMEvent(domNode, "keydown", handler);
+    eventCenter.attachDOMEvent(domNode, 'keydown', handler);
   }
 
   hide() {
@@ -77,11 +77,11 @@ abstract class BaseScrollFloat extends BaseFloat {
     super.show(reference, cb);
   }
 
-  step(direction: "previous" | "next") {
+  step(direction: 'previous' | 'next') {
     let index = this.renderArray.findIndex((item) => {
       return item === this.activeItem;
     });
-    index = direction === "next" ? index + 1 : index - 1;
+    index = direction === 'next' ? index + 1 : index - 1;
 
     if (index < 0) {
       index = this.renderArray.length - 1;

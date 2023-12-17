@@ -1,16 +1,16 @@
-import Parent from "@muya/block/base/parent";
-import ContainerQueryBlock from "@muya/block/mixins/containerQueryBlock";
-import ScrollPage from "@muya/block/scrollPage";
-import Muya from "@muya/index";
-import { mixins } from "@muya/utils";
-import { ITaskListMeta, ITaskListState } from "../../../state/types";
-import TaskListItem from "../taskListItem";
+import Parent from '@muya/block/base/parent';
+import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
+import ScrollPage from '@muya/block/scrollPage';
+import Muya from '@muya/index';
+import { mixins } from '@muya/utils';
+import { ITaskListMeta, ITaskListState } from '../../../state/types';
+import TaskListItem from '../taskListItem';
 
 @mixins(ContainerQueryBlock)
 class TaskList extends Parent {
   public meta: ITaskListMeta;
 
-  static blockName = "task-list";
+  static blockName = 'task-list';
 
   static create(muya: Muya, state: ITaskListState) {
     const taskList = new TaskList(muya, state);
@@ -28,19 +28,19 @@ class TaskList extends Parent {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
-    return [...pPath, offset, "children"];
+    return [...pPath, offset, 'children'];
   }
 
   constructor(muya: Muya, { meta }: ITaskListState) {
     super(muya);
-    this.tagName = "ul";
+    this.tagName = 'ul';
     this.meta = meta;
     this.datasets = {
       marker: meta.marker,
     };
-    this.classList = ["mu-task-list"];
+    this.classList = ['mu-task-list'];
     if (!meta.loose) {
-      this.classList.push("mu-tight-list");
+      this.classList.push('mu-tight-list');
     }
     this.createDomNode();
   }
@@ -75,7 +75,7 @@ class TaskList extends Parent {
 
   getState(): ITaskListState {
     const state: ITaskListState = {
-      name: "task-list",
+      name: 'task-list',
       meta: { ...this.meta },
       children: this.children.map((child) => (child as TaskListItem).getState()),
     };

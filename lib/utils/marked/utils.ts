@@ -6,7 +6,7 @@ export const findClosingBracket = (str: string, b: string) => {
   let level = 0;
 
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === "\\") {
+    if (str[i] === '\\') {
       i++;
     } else if (str[i] === b[0]) {
       level++;

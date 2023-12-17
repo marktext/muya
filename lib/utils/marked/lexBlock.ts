@@ -1,10 +1,10 @@
-import { Lexer, Token, marked } from "marked";
-import compatibleTaskList from "./compatibleTaskList";
-import mathExtension from "./extensions/math";
-import fm from "./frontMatter";
-import { DEFAULT_OPTIONS } from "./options";
-import type { Heading, LexOption, ListToken } from "./types";
-import walkTokens from "./walkTokens";
+import { Lexer, Token, marked } from 'marked';
+import compatibleTaskList from './compatibleTaskList';
+import mathExtension from './extensions/math';
+import fm from './frontMatter';
+import { DEFAULT_OPTIONS } from './options';
+import type { Heading, LexOption, ListToken } from './types';
+import walkTokens from './walkTokens';
 
 export function lexBlock(
   src: string,

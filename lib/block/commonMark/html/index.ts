@@ -1,21 +1,21 @@
-import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { TPathList } from "@muya/block/types";
-import { CLASS_NAMES } from "@muya/config";
-import Muya from "@muya/index";
-import { IHtmlBlockState } from "../../../state/types";
+import Parent from '@muya/block/base/parent';
+import ScrollPage from '@muya/block/scrollPage';
+import { TPathList } from '@muya/block/types';
+import { CLASS_NAMES } from '@muya/config';
+import Muya from '@muya/index';
+import { IHtmlBlockState } from '../../../state/types';
 
 class HTMLBlock extends Parent {
-  static blockName = "html-block";
+  static blockName = 'html-block';
 
   static create(muya: Muya, state: IHtmlBlockState) {
     const htmlBlock = new HTMLBlock(muya);
 
-    const htmlPreview = ScrollPage.loadBlock("html-preview").create(
+    const htmlPreview = ScrollPage.loadBlock('html-preview').create(
       muya,
       state
     );
-    const htmlContainer = ScrollPage.loadBlock("html-container").create(
+    const htmlContainer = ScrollPage.loadBlock('html-container').create(
       muya,
       state
     );
@@ -35,7 +35,7 @@ class HTMLBlock extends Parent {
 
   constructor(muya: Muya) {
     super(muya);
-    this.tagName = "figure";
+    this.tagName = 'figure';
     this.classList = [CLASS_NAMES.MU_HTML_BLOCK];
     const { disableHtml } = muya.options;
     if (disableHtml) {
@@ -45,14 +45,14 @@ class HTMLBlock extends Parent {
   }
 
   queryBlock(path: TPathList) {
-    return path.length && path[0] === "text"
+    return path.length && path[0] === 'text'
       ? this.firstContentInDescendant()
       : this;
   }
 
   getState(): IHtmlBlockState {
     const state: IHtmlBlockState = {
-      name: "html-block",
+      name: 'html-block',
       text: this.firstContentInDescendant().text,
     };
 

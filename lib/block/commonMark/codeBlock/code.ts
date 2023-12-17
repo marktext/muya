@@ -1,29 +1,29 @@
-import copyIcon from "@muya/assets/icons/copy/2.png";
-import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import I18n from "@muya/i18n";
-import Muya from "@muya/index";
-import { Nullable } from "@muya/types";
-import logger from "@muya/utils/logger";
-import { h, toHTML } from "@muya/utils/snabbdom";
-import { ICodeBlockState, TState } from "../../../state/types";
-import CodeBlock from "./index";
+import copyIcon from '@muya/assets/icons/copy/2.png';
+import Parent from '@muya/block/base/parent';
+import ScrollPage from '@muya/block/scrollPage';
+import I18n from '@muya/i18n';
+import Muya from '@muya/index';
+import { Nullable } from '@muya/types';
+import logger from '@muya/utils/logger';
+import { h, toHTML } from '@muya/utils/snabbdom';
+import { ICodeBlockState, TState } from '../../../state/types';
+import CodeBlock from './index';
 
-const debug = logger("code:");
+const debug = logger('code:');
 
 const renderCopyButton = (i18n: I18n) => {
-  const selector = "a.mu-code-copy";
+  const selector = 'a.mu-code-copy';
   const iconVnode = h(
-    "i.icon",
+    'i.icon',
     h(
-      "i.icon-inner",
+      'i.icon-inner',
       {
         style: {
           background: `url(${copyIcon}) no-repeat`,
-          "background-size": "100%",
+          'background-size': '100%',
         },
       },
-      ""
+      ''
     )
   );
 
@@ -31,8 +31,8 @@ const renderCopyButton = (i18n: I18n) => {
     selector,
     {
       attrs: {
-        title: i18n.t("Copy content"),
-        contenteditable: "false",
+        title: i18n.t('Copy content'),
+        contenteditable: 'false',
       },
     },
     iconVnode
@@ -42,12 +42,12 @@ const renderCopyButton = (i18n: I18n) => {
 class Code extends Parent {
   public parent: Nullable<CodeBlock> = null;
 
-  static blockName = "code";
+  static blockName = 'code';
 
   static create(muya: Muya, state: ICodeBlockState) {
     const code = new Code(muya);
 
-    code.append(ScrollPage.loadBlock("codeblock.content").create(muya, state));
+    code.append(ScrollPage.loadBlock('codeblock.content').create(muya, state));
 
     return code;
   }
@@ -60,15 +60,15 @@ class Code extends Parent {
 
   constructor(muya: Muya) {
     super(muya);
-    this.tagName = "code";
-    this.classList = ["mu-code"];
+    this.tagName = 'code';
+    this.classList = ['mu-code'];
     this.createDomNode();
     this.createCopyNode();
     this.listen();
   }
 
   getState(): TState {
-    debug.warn("You can never call `getState` in code");
+    debug.warn('You can never call `getState` in code');
     return {} as TState;
   }
 
@@ -86,7 +86,7 @@ class Code extends Parent {
       event.stopPropagation();
 
       const codeContent = this.firstContentInDescendant();
-      editor.clipboard.copy("copyCodeContent", codeContent.text);
+      editor.clipboard.copy('copyCodeContent', codeContent.text);
     };
 
     const mousedownHandler = (event: Event) => {
@@ -95,12 +95,12 @@ class Code extends Parent {
 
     eventCenter.attachDOMEvent(
       this.domNode?.firstElementChild as HTMLElement,
-      "click",
+      'click',
       clickHandler
     );
     eventCenter.attachDOMEvent(
       this.domNode?.firstElementChild as HTMLElement,
-      "mousedown",
+      'mousedown',
       mousedownHandler
     );
   }

@@ -1,15 +1,15 @@
-import { EVENT_KEYS, URL_REG, isWin } from "@muya/config";
-import { getUniqueId, isKeyboardEvent } from "@muya/utils";
-import { getImageInfo, getImageSrc } from "@muya/utils/image";
-import { h, patch } from "@muya/utils/snabbdom";
-import BaseFloat from "../baseFloat";
-import type { BaseOptions } from "../types";
+import { EVENT_KEYS, URL_REG, isWin } from '@muya/config';
+import { getUniqueId, isKeyboardEvent } from '@muya/utils';
+import { getImageInfo, getImageSrc } from '@muya/utils/image';
+import { h, patch } from '@muya/utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import type { BaseOptions } from '../types';
 
-import Format from "@muya/block/base/format";
-import Muya from "@muya/index";
-import { ImageToken } from "@muya/inlineRenderer/types";
-import { VNode } from "snabbdom";
-import "./index.css";
+import Format from '@muya/block/base/format';
+import Muya from '@muya/index';
+import { ImageToken } from '@muya/inlineRenderer/types';
+import { VNode } from 'snabbdom';
+import './index.css';
 
 type State = {
   src: string;
@@ -23,10 +23,10 @@ type Options = {
 } & BaseOptions;
 
 const defaultOptions = {
-  placement: "bottom" as const,
+  placement: 'bottom' as const,
   modifiers: {
     offset: {
-      offset: "0, 0",
+      offset: '0, 0',
     },
   },
   showArrow: false,
@@ -34,7 +34,7 @@ const defaultOptions = {
 
 class ImageEditTool extends BaseFloat {
   public options: Options;
-  static pluginName = "imageSelector";
+  static pluginName = 'imageSelector';
   private oldVNode: VNode | null = null;
   private imageInfo: {
     token: ImageToken;
@@ -42,27 +42,27 @@ class ImageEditTool extends BaseFloat {
   } | null = null;
   private block: Format | null = null;
   private state: State = {
-    alt: "",
-    src: "",
-    title: "",
+    alt: '',
+    src: '',
+    title: '',
   };
   private imageSelectorContainer: HTMLDivElement =
-    document.createElement("div");
+    document.createElement('div');
 
   constructor(muya: Muya, options: Options = {...defaultOptions}) {
-    const name = "mu-image-selector";
+    const name = 'mu-image-selector';
     super(muya, name, Object.assign({}, defaultOptions, options));
     // Why aren't options set on baseFloat?
     this.options = Object.assign({}, defaultOptions, options);
     this.container!.appendChild(this.imageSelectorContainer);
-    this.floatBox!.classList.add("mu-image-selector-wrapper");
+    this.floatBox!.classList.add('mu-image-selector-wrapper');
     this.listen();
   }
 
   listen() {
     super.listen();
     const { eventCenter } = this.muya;
-    eventCenter.on("muya-image-selector", ({ block, reference, imageInfo }) => {
+    eventCenter.on('muya-image-selector', ({ block, reference, imageInfo }) => {
       if (reference) {
         this.block = block;
 
@@ -84,7 +84,7 @@ class ImageEditTool extends BaseFloat {
         this.render();
 
         // Auto focus and select all content of the `src.input` element.
-        const input = this.container?.querySelector("input.src");
+        const input = this.container?.querySelector('input.src');
         if (input) {
           (input as HTMLInputElement).focus();
           (input as HTMLInputElement).select();
@@ -175,7 +175,7 @@ class ImageEditTool extends BaseFloat {
 
     const moreButton = this.options.imagePathPicker
       ? h(
-          "span.more",
+          'span.more',
           {
             on: {
               click: () => {
@@ -183,13 +183,13 @@ class ImageEditTool extends BaseFloat {
               },
             },
           },
-          h("span.more-inner")
+          h('span.more-inner')
         )
       : null;
 
-    const srcInput = h("input.src", {
+    const srcInput = h('input.src', {
       props: {
-        placeholder: i18n.t("Image src placeholder"),
+        placeholder: i18n.t('Image src placeholder'),
         value: src,
       },
       on: {
@@ -206,7 +206,7 @@ class ImageEditTool extends BaseFloat {
     });
 
     const confirmButton = h(
-      "span.confirm",
+      'span.confirm',
       {
         on: {
           click: () => {
@@ -214,10 +214,10 @@ class ImageEditTool extends BaseFloat {
           },
         },
       },
-      i18n.t("Confirm Text")
+      i18n.t('Confirm Text')
     );
 
-    const vnode = h("div.image-edit-tool", [
+    const vnode = h('div.image-edit-tool', [
       moreButton,
       srcInput,
       confirmButton,

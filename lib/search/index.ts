@@ -1,12 +1,12 @@
-import Content from "@muya/block/base/content";
-import { DEFAULT_SEARCH_OPTIONS } from "@muya/config";
-import Muya from "@muya/index";
-import { buildRegexValue, matchString } from "@muya/utils/search";
-import { Highlight } from "../inlineRenderer/types";
-import { IMatch } from "./types";
+import Content from '@muya/block/base/content';
+import { DEFAULT_SEARCH_OPTIONS } from '@muya/config';
+import Muya from '@muya/index';
+import { buildRegexValue, matchString } from '@muya/utils/search';
+import { Highlight } from '../inlineRenderer/types';
+import { IMatch } from './types';
 
 class Search {
-  public value: string = "";
+  public value: string = '';
   public matches: IMatch[] = [];
   public index: number = -1;
 
@@ -55,7 +55,7 @@ class Search {
     if (!matches.length) {
       return;
     }
-    let tempText = "";
+    let tempText = '';
     let lastBlock = matches[0].block;
     let lastEnd = 0;
 
@@ -66,7 +66,7 @@ class Search {
           lastBlock.text = tempText + lastBlock.text.substring(lastEnd);
         }
 
-        tempText = "";
+        tempText = '';
         lastEnd = 0;
         lastBlock = block;
       }
@@ -111,7 +111,7 @@ class Search {
    * Find preview or next value, and highlight it.
    * @param {string} action : previous or next.
    */
-  find(action: "previous" | "next"): this {
+  find(action: 'previous' | 'next'): this {
     const { matches } = this;
     let { index } = this;
     const len = matches.length;
@@ -120,7 +120,7 @@ class Search {
       return this;
     }
 
-    index = action === "next" ? index + 1 : index - 1;
+    index = action === 'next' ? index + 1 : index - 1;
 
     if (index < 0) {
       index = len - 1;
@@ -157,7 +157,7 @@ class Search {
       this.scrollPage.depthFirstTraverse((block) => {
         if (block.isContent()) {
           const { text } = block;
-          if (text && typeof text === "string") {
+          if (text && typeof text === 'string') {
             const strMatches = matchString(text, value, options);
             matches.push(
               ...strMatches.map(({ index, match, subMatches }) => {

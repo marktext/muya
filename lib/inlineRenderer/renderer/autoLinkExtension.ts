@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from "@muya/config";
-import { sanitizeHyperlink } from "@muya/utils/url";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, AutoLinkExtensionToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import { sanitizeHyperlink } from '@muya/utils/url';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, AutoLinkExtensionToken } from '../types';
 
 // render auto_link to vnode
 export default function autoLinkExtension(
@@ -13,9 +13,9 @@ export default function autoLinkExtension(
 
   const content = this.highlight(h, block, start, end, token);
   const hyperlink =
-    linkType === "www"
+    linkType === 'www'
       ? encodeURI(`http://${www}`)
-      : linkType === "url"
+      : linkType === 'url'
       ? encodeURI(url)
       : `mailto:${email}`;
 
@@ -24,11 +24,11 @@ export default function autoLinkExtension(
       `a.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_AUTO_LINK_EXTENSION}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
         props: {
           href: sanitizeHyperlink(hyperlink),
-          target: "_blank",
+          target: '_blank',
         },
       },
       content

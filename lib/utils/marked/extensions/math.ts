@@ -1,11 +1,11 @@
-import katex from "katex";
+import katex from 'katex';
 
 export type MathToken = {
-  type: "inlineMath" | "multiplemath";
+  type: 'inlineMath' | 'multiplemath';
   raw: string;
   text: string;
   displayMode: boolean;
-  mathStyle?: "" | "gitlab";
+  mathStyle?: '' | 'gitlab';
 };
 
 type Options = {
@@ -43,10 +43,10 @@ function createRenderer(options: Options, newlineAfter: boolean) {
         katex.renderToString(text, {
           ...otherOpts,
           displayMode,
-        }) + (newlineAfter ? "\n" : "")
+        }) + (newlineAfter ? '\n' : '')
       );
     } else {
-      return type === "inlineMath"
+      return type === 'inlineMath'
         ? `$${text}$`
         : `<pre class="multiple-math" data-math-style="${mathStyle}">${text}</pre>\n`;
     }
@@ -55,8 +55,8 @@ function createRenderer(options: Options, newlineAfter: boolean) {
 
 function inlineKatex(renderer: (token: MathToken) => string) {
   return {
-    name: "inlineMath",
-    level: "inline" as const,
+    name: 'inlineMath',
+    level: 'inline' as const,
     start(src: string) {
       const match = src.match(inlineStartRule);
       if (!match) {
@@ -74,7 +74,7 @@ function inlineKatex(renderer: (token: MathToken) => string) {
       const match = src.match(inlineRule);
       if (match) {
         return {
-          type: "inlineMath",
+          type: 'inlineMath',
           raw: match[0],
           text: match[2].trim(),
           displayMode: match[1].length === 2,
@@ -87,20 +87,20 @@ function inlineKatex(renderer: (token: MathToken) => string) {
 
 function blockKatex(renderer: (token: MathToken) => string) {
   return {
-    name: "multiplemath",
-    level: "block" as const,
+    name: 'multiplemath',
+    level: 'block' as const,
     start(src: string) {
-      return src.indexOf("\n$");
+      return src.indexOf('\n$');
     },
     tokenizer(src: string) {
       const match = src.match(blockRule);
       if (match) {
         return {
-          type: "multiplemath",
+          type: 'multiplemath',
           raw: match[0],
           text: match[2].trim(),
           displayMode: match[1].length === 2,
-          mathStyle: "",
+          mathStyle: '',
         };
       }
     },

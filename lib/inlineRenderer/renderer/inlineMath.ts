@@ -1,11 +1,11 @@
-import katex from "katex";
-import "katex/dist/contrib/mhchem.min.js";
-import { CLASS_NAMES } from "@muya/config";
-import { htmlToVNode } from "@muya/utils/snabbdom";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, CodeEmojiMathToken } from "../types";
+import katex from 'katex';
+import 'katex/dist/contrib/mhchem.min.js';
+import { CLASS_NAMES } from '@muya/config';
+import { htmlToVNode } from '@muya/utils/snabbdom';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, CodeEmojiMathToken } from '../types';
 
-import "katex/dist/katex.min.css";
+import 'katex/dist/katex.min.css';
 
 export default function inlineMath(this: Renderer, {
   h, cursor, block, token, outerClass
@@ -54,7 +54,7 @@ export default function inlineMath(this: Renderer, {
       mathVnode = htmlToVNode(html);
       loadMathMap.set(key, mathVnode);
     } catch (err) {
-      mathVnode = `<${i18n.t("Invalid Mathematical Formula")}>`;
+      mathVnode = `<${i18n.t('Invalid Mathematical Formula')}>`;
       previewSelector += `.${CLASS_NAMES.MU_MATH_ERROR}`;
     }
   }
@@ -65,14 +65,14 @@ export default function inlineMath(this: Renderer, {
       h(
         `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_MATH_TEXT}`,
         {
-          attrs: { spellcheck: "false" },
+          attrs: { spellcheck: 'false' },
         },
         content
       ),
       h(
         previewSelector,
         {
-          attrs: { contenteditable: "false" },
+          attrs: { contenteditable: 'false' },
           dataset: {
             start: String(start + 1), // '$'.length
             end: String(end - 1), // '$'.length

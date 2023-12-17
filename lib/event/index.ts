@@ -1,4 +1,4 @@
-import type { Event, Listener, Listeners } from "./types";
+import type { Event, Listener, Listeners } from './types';
 
 // TODO: @Jocs use the same name function in utils.
 const uniqueIdGenerator = function* () {
@@ -8,7 +8,7 @@ const uniqueIdGenerator = function* () {
     yield id++;
   }
 };
-const PREFIX = "event-";
+const PREFIX = 'event-';
 const idIterator = uniqueIdGenerator();
 
 class EventCenter {
@@ -30,7 +30,7 @@ class EventCenter {
     capture?: boolean | AddEventListenerOptions
   ): string {
     if (this.checkHasBind(target, event, listener, capture)) {
-      return "";
+      return '';
     }
 
     const { eventId } = this;

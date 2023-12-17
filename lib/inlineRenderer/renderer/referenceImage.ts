@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from "@muya/config";
-import { getImageSrc } from "@muya/utils/image";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, ReferenceImageToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import { getImageSrc } from '@muya/utils/image';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, ReferenceImageToken } from '../types';
 
 // reference_image
 export default function referenceImage(
@@ -20,8 +20,8 @@ export default function referenceImage(
   const tag = this.highlight(h, block, start, end, token);
   const { label, backlash, alt } = token;
   const rawSrc = label + backlash.second;
-  let href = "";
-  let title = "";
+  let href = '';
+  let title = '';
   if (this.parent.labels.has(rawSrc.toLowerCase())) {
     ({ href, title } = this.parent.labels.get(rawSrc.toLowerCase())!);
   }

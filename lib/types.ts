@@ -1,4 +1,4 @@
-import { TState } from "./state/types";
+import { TState } from './state/types';
 
 export interface IMuyaOptions {
   fontSize: number;
@@ -15,7 +15,7 @@ export interface IMuyaOptions {
   codeBlockLineNumbers: boolean;
   listIndentation: number;
   frontMatter: boolean;
-  frontmatterType: "-" | "+" | ";" | "{";
+  frontmatterType: '-' | '+' | ';' | '{';
   mermaidTheme: string;
   vegaTheme: string;
   hideQuickInsertHint: boolean;

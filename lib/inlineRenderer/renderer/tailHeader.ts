@@ -1,5 +1,5 @@
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, TailHeaderToken } from "../types";
+import type Renderer from './index';
+import type { SyntaxRenderOptions, TailHeaderToken } from '../types';
 
 export default function tailHeader(
   this: Renderer,
@@ -15,7 +15,7 @@ export default function tailHeader(
   const { start, end } = token.range;
   const content = this.highlight(h, block, start, end, token);
 
-  if (block.blockName === "atxheading.content") {
+  if (block.blockName === 'atxheading.content') {
     return [h(`span.${className}`, content)];
   } else {
     return content;

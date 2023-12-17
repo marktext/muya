@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, BeginRuleToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, BeginRuleToken } from '../types';
 
 // Use to render ```
 export default function codeFence(
@@ -25,7 +25,7 @@ export default function codeFence(
       `span.${CLASS_NAMES.MU_LANGUAGE}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
       },
       content

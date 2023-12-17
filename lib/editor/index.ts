@@ -1,21 +1,21 @@
-import ScrollPage from "@muya/block";
-import Content from "@muya/block/base/content";
-import Format from "@muya/block/base/format";
-import Clipboard from "@muya/clipboard";
-import { BLOCK_DOM_PROPERTY, isFirefox } from "@muya/config";
-import History from "@muya/history";
-import InlineRenderer from "@muya/inlineRenderer";
-import Search from "@muya/search";
-import Selection from "@muya/selection";
-import JSONState from "@muya/state";
-import { TState } from "@muya/state/types";
-import { Nullable } from "@muya/types";
-import { hasPick } from "@muya/utils";
-import logger from "@muya/utils/logger";
-import * as otText from "ot-text-unicode";
-import Muya from "../index";
+import ScrollPage from '@muya/block';
+import Content from '@muya/block/base/content';
+import Format from '@muya/block/base/format';
+import Clipboard from '@muya/clipboard';
+import { BLOCK_DOM_PROPERTY, isFirefox } from '@muya/config';
+import History from '@muya/history';
+import InlineRenderer from '@muya/inlineRenderer';
+import Search from '@muya/search';
+import Selection from '@muya/selection';
+import JSONState from '@muya/state';
+import { TState } from '@muya/state/types';
+import { Nullable } from '@muya/types';
+import { hasPick } from '@muya/utils';
+import logger from '@muya/utils/logger';
+import * as otText from 'ot-text-unicode';
+import Muya from '../index';
 
-const debug = logger("editor:");
+const debug = logger('editor:');
 
 class Editor {
   public jsonState: JSONState;
@@ -28,7 +28,7 @@ class Editor {
   private _activeContentBlock: Nullable<Content> = null;
 
   constructor(public muya: Muya) {
-    const state = muya.options.json || muya.options.markdown || "";
+    const state = muya.options.json || muya.options.markdown || '';
 
     this.jsonState = new JSONState(muya, state);
     this.inlineRenderer = new InlineRenderer(muya);
@@ -75,10 +75,10 @@ class Editor {
         this.selection.getSelection() ?? {};
       // Fix issue that language input can not get focus when it's empty(Firefox only)
       if (
-        event.type === "click" &&
+        event.type === 'click' &&
         isFirefox &&
-        (event.target as HTMLElement).textContent === "" &&
-        (event.target as HTMLElement).classList.contains("mu-language-input")
+        (event.target as HTMLElement).textContent === '' &&
+        (event.target as HTMLElement).classList.contains('mu-language-input')
       ) {
         ((event.target as Element)[BLOCK_DOM_PROPERTY] as Content)?.setCursor(
           0,
@@ -96,36 +96,36 @@ class Editor {
       this.activeContentBlock = anchorBlock;
 
       switch (event.type) {
-        case "click": {
+        case 'click': {
           anchorBlock.clickHandler(event);
           break;
         }
-        case "input": {
+        case 'input': {
           anchorBlock.inputHandler(event);
           break;
         }
-        case "keydown": {
+        case 'keydown': {
           anchorBlock.keydownHandler(event);
           break;
         }
-        case "keyup": {
+        case 'keyup': {
           anchorBlock.keyupHandler(event);
           break;
         }
-        case "compositionend":
-        case "compositionstart": {
+        case 'compositionend':
+        case 'compositionstart': {
           anchorBlock.composeHandler(event);
           break;
         }
       }
     };
 
-    eventCenter.attachDOMEvent(domNode, "click", eventHandler);
-    eventCenter.attachDOMEvent(domNode, "input", eventHandler);
-    eventCenter.attachDOMEvent(domNode, "keydown", eventHandler);
-    eventCenter.attachDOMEvent(domNode, "keyup", eventHandler);
-    eventCenter.attachDOMEvent(domNode, "compositionend", eventHandler);
-    eventCenter.attachDOMEvent(domNode, "compositionstart", eventHandler);
+    eventCenter.attachDOMEvent(domNode, 'click', eventHandler);
+    eventCenter.attachDOMEvent(domNode, 'input', eventHandler);
+    eventCenter.attachDOMEvent(domNode, 'keydown', eventHandler);
+    eventCenter.attachDOMEvent(domNode, 'keyup', eventHandler);
+    eventCenter.attachDOMEvent(domNode, 'compositionend', eventHandler);
+    eventCenter.attachDOMEvent(domNode, 'compositionstart', eventHandler);
   }
 
   focus() {
@@ -144,7 +144,7 @@ class Editor {
     };
 
     const needUpdated =
-      firstLeafBlock.blockName === "paragraph.content" &&
+      firstLeafBlock.blockName === 'paragraph.content' &&
       (firstLeafBlock as Format).checkNeedRender(cursor);
 
     firstLeafBlock.setCursor(0, 0, needUpdated);
@@ -168,7 +168,7 @@ class Editor {
       for (; i < descent.length; i++) {
         const d = descent[i];
         if (Array.isArray(d)) break;
-        if (typeof d === "object") continue;
+        if (typeof d === 'object') continue;
         stack.push(subDoc);
         // Its valid to descend into a null space - just we can't pick there.
         subDoc = subDoc == null ? undefined : subDoc.queryBlock([d]);
@@ -182,7 +182,7 @@ class Editor {
       // Then back again.
       for (--i; i >= 0; i--) {
         const d = descent[i];
-        if (typeof d !== "object") {
+        if (typeof d !== 'object') {
           const container = stack.pop();
           if (
             subDoc ===
@@ -192,11 +192,11 @@ class Editor {
           } else {
             if (subDoc === undefined) {
               // TODO: handler typeof d === 'string'
-              typeof d === "number" && container.find(d).remove("api");
+              typeof d === 'number' && container.find(d).remove('api');
               subDoc = container;
             } else {
-              typeof d === "number" &&
-                container.find(d).replaceWith(subDoc, "api");
+              typeof d === 'number' &&
+                container.find(d).replaceWith(subDoc, 'api');
               subDoc = container;
             }
           }
@@ -216,14 +216,14 @@ class Editor {
       let m = 0;
       const rootContainer = { root }; // This is an avoidable allocation.
       let container: any = rootContainer;
-      let key = "root"; // For writing
+      let key = 'root'; // For writing
 
       function mut() {
         for (; m < i; m++) {
           const d = descent[m];
-          if (typeof d === "object") continue;
+          if (typeof d === 'object') continue;
           container =
-            key === "root" ? container[key] : container.queryBlock([key]);
+            key === 'root' ? container[key] : container.queryBlock([key]);
           key = d;
         }
       }
@@ -238,24 +238,24 @@ class Editor {
             // It maybe never go into this if statement.
             subDoc = container[key] = child;
           }
-        } else if (typeof d === "object") {
+        } else if (typeof d === 'object') {
           if (d.i !== undefined) {
             // Insert
             mut();
             const ref = container.find(key);
-            if (typeof key === "number") {
+            if (typeof key === 'number') {
               const newBlock = ScrollPage.loadBlock(d.i.name).create(muya, d.i);
-              container.insertBefore(newBlock, ref, "api");
+              container.insertBefore(newBlock, ref, 'api');
 
               subDoc = newBlock;
             } else {
               switch (key) {
-                case "checked": {
-                  ref.update(d.i, "api");
+                case 'checked': {
+                  ref.update(d.i, 'api');
                   break;
                 }
 
-                case "meta":
+                case 'meta':
                   // Do nothing.
                   break;
 
@@ -269,13 +269,13 @@ class Editor {
           if (d.es) {
             // Edit. Ok because its illegal to drop inside mixed region
             mut();
-            if (subDoc.blockName === "table.cell") {
+            if (subDoc.blockName === 'table.cell') {
               subDoc.align = otText.type.apply(subDoc.align, d.es);
-            } else if (subDoc.blockName === "language-input") {
+            } else if (subDoc.blockName === 'language-input') {
               subDoc._text = otText.type.apply(subDoc.text, d.es);
               subDoc.parent.meta.lang = subDoc.text;
               subDoc.update();
-            } else if (subDoc.blockName === "code-block") {
+            } else if (subDoc.blockName === 'code-block') {
               // Handle modify code block type.
               subDoc.meta.type = otText.type.apply(subDoc.meta.type, d.es);
             } else {
@@ -322,10 +322,10 @@ class Editor {
 
   exportAPI() {
     const apis = {
-      jsonState: ["getState", "getMarkdown"],
-      history: ["undo", "redo"],
-      searchModule: ["search", "find", "replace"],
-      selection: ["selectAll"],
+      jsonState: ['getState', 'getMarkdown'],
+      history: ['undo', 'redo'],
+      searchModule: ['search', 'find', 'replace'],
+      selection: ['selectAll'],
     };
 
     Object.keys(apis).forEach((key) => {

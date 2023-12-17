@@ -1,23 +1,23 @@
-import Popper from "popper.js";
-import { noop, isKeyboardEvent } from "@muya/utils";
-import { EVENT_KEYS } from "@muya/config";
-import type Muya from "@muya/index";
-import type { ReferenceObject } from "popper.js";
-import type { BaseOptions } from "../types";
+import Popper from 'popper.js';
+import { noop, isKeyboardEvent } from '@muya/utils';
+import { EVENT_KEYS } from '@muya/config';
+import type Muya from '@muya/index';
+import type { ReferenceObject } from 'popper.js';
+import type { BaseOptions } from '../types';
 
-import "./index.css";
+import './index.css';
 
 const defaultOptions = () => ({
-  placement: "bottom-start" as const,
+  placement: 'bottom-start' as const,
   modifiers: {
     offset: {
-      offset: "0, 12",
+      offset: '0, 12',
     },
   },
   showArrow: false,
 });
 
-const BUTTON_GROUP = ["mu-table-drag-bar", "mu-front-button"];
+const BUTTON_GROUP = ['mu-table-drag-bar', 'mu-front-button'];
 
 abstract class BaseFloat {
   public options: BaseOptions;
@@ -35,12 +35,12 @@ abstract class BaseFloat {
   }
 
   init() {
-    const floatBox = document.createElement("div");
-    const container = document.createElement("div");
+    const floatBox = document.createElement('div');
+    const container = document.createElement('div');
     // Use to remember which float container is shown.
     container.classList.add(this.name);
-    container.classList.add("mu-float-container");
-    floatBox.classList.add("mu-float-wrapper");
+    container.classList.add('mu-float-container');
+    floatBox.classList.add('mu-float-wrapper');
 
     floatBox.appendChild(container);
     document.body.appendChild(floatBox);
@@ -82,7 +82,7 @@ abstract class BaseFloat {
     // TODO: @JOCS, But now there is a problem, the container for scroll is indeterminate,
     // and currently the default scroll container is the parent element of the editor(muya.domNode)
     const scrollHandler = (event: Event) => {
-      if (typeof this.lastScrollTop !== "number") {
+      if (typeof this.lastScrollTop !== 'number') {
         this.lastScrollTop = (event.target as Element)?.scrollTop;
 
         return;
@@ -98,13 +98,13 @@ abstract class BaseFloat {
       }
     };
 
-    eventCenter.attachDOMEvent(document, "click", this.hide.bind(this));
-    eventCenter.attachDOMEvent(floatBox!, "click", (event) => {
+    eventCenter.attachDOMEvent(document, 'click', this.hide.bind(this));
+    eventCenter.attachDOMEvent(floatBox!, 'click', (event) => {
       event.stopPropagation();
       event.preventDefault();
     });
-    eventCenter.attachDOMEvent(domNode, "keydown", keydownHandler);
-    eventCenter.attachDOMEvent(domNode.parentElement!, "scroll", scrollHandler);
+    eventCenter.attachDOMEvent(domNode, 'keydown', keydownHandler);
+    eventCenter.attachDOMEvent(domNode.parentElement!, 'scroll', scrollHandler);
   }
 
   hide() {
@@ -118,9 +118,9 @@ abstract class BaseFloat {
     this.cb = noop;
     this.lastScrollTop = null;
     if (BUTTON_GROUP.includes(this.name)) {
-      eventCenter.emit("muya-float-button", this, false);
+      eventCenter.emit('muya-float-button', this, false);
     } else {
-      eventCenter.emit("muya-float", this, false);
+      eventCenter.emit('muya-float', this, false);
     }
   }
 
@@ -129,7 +129,7 @@ abstract class BaseFloat {
     const { eventCenter } = this.muya;
     const { placement, modifiers } = this.options;
     if (!floatBox) {
-      throw new Error("The float box is not existed.");
+      throw new Error('The float box is not existed.');
       return;
     }
     if (this.popper && this.popper.destroy) {
@@ -142,9 +142,9 @@ abstract class BaseFloat {
     });
     this.status = true;
     if (BUTTON_GROUP.includes(this.name)) {
-      eventCenter.emit("muya-float-button", this, true);
+      eventCenter.emit('muya-float-button', this, true);
     } else {
-      eventCenter.emit("muya-float", this, true);
+      eventCenter.emit('muya-float', this, true);
     }
   }
 

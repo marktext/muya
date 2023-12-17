@@ -1,5 +1,5 @@
-import fileIcons from "@marktext/file-icons";
-import "@marktext/file-icons/build/index.css";
+import fileIcons from '@marktext/file-icons';
+import '@marktext/file-icons/build/index.css';
 
 fileIcons.getClassByName = function (name: string) {
   const icon = fileIcons.matchName(name);

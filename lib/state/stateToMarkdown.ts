@@ -9,8 +9,8 @@
  * Pandoc Markdown: https://pandoc.org/MANUAL.html#pandocs-markdown
  * The output markdown needs to obey the standards of these Spec.
  */
-import { deepClone } from "@muya/utils";
-import logger from "@muya/utils/logger";
+import { deepClone } from '@muya/utils';
+import logger from '@muya/utils/logger';
 
 import type {
   IAtxHeadingState,
@@ -30,11 +30,11 @@ import type {
   ITaskListState,
   IThematicBreakState,
   TState,
-} from "./types";
+} from './types';
 
-const debug = logger("export markdown: ");
+const debug = logger('export markdown: ');
 const escapeText = (str: string) => {
-  return str.replace(/([^\\])\|/g, "$1\\|");
+  return str.replace(/([^\\])\|/g, '$1\\|');
 };
 
 export interface IExportMarkdownOptions {
@@ -59,11 +59,11 @@ export default class ExportMarkdown {
     this.isLooseParentList = true;
 
     // set and validate settings
-    this.listIndentation = "number";
-    if (listIndentation === "dfm") {
-      this.listIndentation = "dfm";
+    this.listIndentation = 'number';
+    if (listIndentation === 'dfm') {
+      this.listIndentation = 'dfm';
       this.listIndentationCount = 4;
-    } else if (typeof listIndentation === "number") {
+    } else if (typeof listIndentation === 'number') {
       this.listIndentationCount = Math.min(Math.max(listIndentation, 1), 4);
     } else {
       this.listIndentationCount = 1;
@@ -76,87 +76,87 @@ export default class ExportMarkdown {
 
   convertStatesToMarkdown(
     states: TState[],
-    indent = "",
-    listIndent = ""
+    indent = '',
+    listIndent = ''
   ): string {
     const result = [];
     // helper for CommonMark 264
-    let lastListBullet = "";
+    let lastListBullet = '';
 
     for (const state of states) {
       if (
-        state.name !== "order-list" &&
-        state.name !== "bullet-list" &&
-        state.name !== "task-list"
+        state.name !== 'order-list' &&
+        state.name !== 'bullet-list' &&
+        state.name !== 'task-list'
       ) {
-        lastListBullet = "";
+        lastListBullet = '';
       }
 
       switch (state.name) {
-        case "frontmatter":
+        case 'frontmatter':
           result.push(this.serializeFrontMatter(state));
           break;
 
-        case "paragraph":
+        case 'paragraph':
 
-        case "thematic-break":
+        case 'thematic-break':
           this.insertLineBreak(result, indent);
           result.push(this.serializeTextParagraph(state, indent));
           break;
 
-        case "atx-heading":
+        case 'atx-heading':
           this.insertLineBreak(result, indent);
           result.push(this.serializeAtxHeading(state, indent));
           break;
 
-        case "setext-heading":
+        case 'setext-heading':
           this.insertLineBreak(result, indent);
           result.push(this.serializeSetextHeading(state, indent));
           break;
 
-        case "code-block":
+        case 'code-block':
           this.insertLineBreak(result, indent);
           result.push(this.serializeCodeBlock(state, indent));
           break;
 
-        case "html-block":
+        case 'html-block':
           this.insertLineBreak(result, indent);
           result.push(this.serializeHtmlBlock(state, indent));
           break;
 
-        case "math-block":
+        case 'math-block':
           this.insertLineBreak(result, indent);
           result.push(this.serializeMathBlock(state, indent));
           break;
 
-        case "diagram":
+        case 'diagram':
           this.insertLineBreak(result, indent);
           result.push(this.serializeDiagramBlock(state, indent));
           break;
 
-        case "block-quote":
+        case 'block-quote':
           this.insertLineBreak(result, indent);
           result.push(this.serializeBlockquote(state, indent));
           break;
 
-        case "table":
+        case 'table':
           this.insertLineBreak(result, indent);
           result.push(this.serializeTable(state, indent));
           break;
 
-        case "order-list":
+        case 'order-list':
 
-        case "bullet-list":
+        case 'bullet-list':
 
-        case "task-list": {
+        case 'task-list': {
           let insertNewLine = this.isLooseParentList;
           this.isLooseParentList = true;
           const { meta } = state;
 
           // Start a new list without separation due changing the bullet or ordered list delimiter starts a new list.
           const bulletMarkerOrDelimiter =
-            (meta as IOrderListState["meta"]).delimiter ||
-            (meta as IBulletListState["meta"]).marker;
+            (meta as IOrderListState['meta']).delimiter ||
+            (meta as IBulletListState['meta']).marker;
 
           if (lastListBullet && lastListBullet !== bulletMarkerOrDelimiter) {
             insertNewLine = false;
@@ -173,9 +173,9 @@ export default class ExportMarkdown {
           break;
         }
 
-        case "list-item":
+        case 'list-item':
 
-        case "task-list-item": {
+        case 'task-list-item': {
           const { loose } = this.listType[this.listType.length - 1];
 
           // helper variable to correct the first tight item in a nested list
@@ -190,7 +190,7 @@ export default class ExportMarkdown {
 
         default: {
           debug.warn(
-            "convertStatesToMarkdown: Unknown state type:",
+            'convertStatesToMarkdown: Unknown state type:',
             state.name
           );
           break;
@@ -198,7 +198,7 @@ export default class ExportMarkdown {
       }
     }
 
-    return result.join("");
+    return result.join('');
   }
 
   insertLineBreak(result: unknown[], indent: string) {
@@ -210,23 +210,23 @@ export default class ExportMarkdown {
     let startToken;
     let endToken;
     switch (state.meta.lang) {
-      case "yaml":
-        startToken = "---\n";
-        endToken = "---\n";
+      case 'yaml':
+        startToken = '---\n';
+        endToken = '---\n';
         break;
 
-      case "toml":
-        startToken = "+++\n";
-        endToken = "+++\n";
+      case 'toml':
+        startToken = '+++\n';
+        endToken = '+++\n';
         break;
 
-      case "json":
-        if (state.meta.style === ";") {
-          startToken = ";;;\n";
-          endToken = ";;;\n";
+      case 'json':
+        if (state.meta.style === ';') {
+          startToken = ';;;\n';
+          endToken = ';;;\n';
         } else {
-          startToken = "{\n";
-          endToken = "}\n";
+          startToken = '{\n';
+          endToken = '}\n';
         }
         break;
     }
@@ -234,14 +234,14 @@ export default class ExportMarkdown {
     const result = [];
     result.push(startToken);
     const { text } = state;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
 
     for (const line of lines) {
       result.push(`${line}\n`);
     }
     result.push(endToken);
 
-    return result.join("");
+    return result.join('');
   }
 
   serializeTextParagraph(
@@ -249,9 +249,9 @@ export default class ExportMarkdown {
     indent: string
   ) {
     const { text } = state;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
 
-    return lines.map((line) => `${indent}${line}`).join("\n") + "\n";
+    return lines.map((line) => `${indent}${line}`).join('\n') + '\n';
   }
 
   serializeAtxHeading(state: IAtxHeadingState, indent: string) {
@@ -266,10 +266,10 @@ export default class ExportMarkdown {
   serializeSetextHeading(state: ISetextHeadingState, indent: string) {
     const { text, meta } = state;
     const { underline } = meta;
-    const lines = text.trim().split("\n");
+    const lines = text.trim().split('\n');
 
     return (
-      lines.map((line) => `${indent}${line}`).join("\n") +
+      lines.map((line) => `${indent}${line}`).join('\n') +
       `\n${indent}${underline.trim()}\n`
     );
   }
@@ -277,34 +277,34 @@ export default class ExportMarkdown {
   serializeCodeBlock(state: ICodeBlockState, indent: string) {
     const result = [];
     const { text, meta } = state;
-    const textList = text.split("\n");
+    const textList = text.split('\n');
     const { type, lang } = meta;
 
-    if (type === "fenced") {
-      result.push(`${indent}${lang ? "```" + lang + "\n" : "```\n"}`);
+    if (type === 'fenced') {
+      result.push(`${indent}${lang ? '```' + lang + '\n' : '```\n'}`);
       textList.forEach((text) => {
         result.push(`${indent}${text}\n`);
       });
-      result.push(indent + "```\n");
+      result.push(indent + '```\n');
     } else {
       textList.forEach((text) => {
         result.push(`${indent}    ${text}\n`);
       });
     }
 
-    return result.join("");
+    return result.join('');
   }
 
   serializeHtmlBlock(state: IHtmlBlockState, indent: string) {
     const result = [];
     const { text } = state;
-    const lines = text.split("\n");
+    const lines = text.split('\n');
 
     for (const line of lines) {
       result.push(`${indent}${line}\n`);
     }
 
-    return result.join("");
+    return result.join('');
   }
 
   serializeMathBlock(state: IMathBlockState, indent: string) {
@@ -313,15 +313,15 @@ export default class ExportMarkdown {
       text,
       meta: { mathStyle },
     } = state;
-    const lines = text.split("\n");
-    result.push(indent + (mathStyle === "" ? "$$\n" : "```math\n"));
+    const lines = text.split('\n');
+    result.push(indent + (mathStyle === '' ? '$$\n' : '```math\n'));
 
     for (const line of lines) {
       result.push(`${indent}${line}\n`);
     }
-    result.push(indent + (mathStyle === "" ? "$$\n" : "```\n"));
+    result.push(indent + (mathStyle === '' ? '$$\n' : '```\n'));
 
-    return result.join("");
+    return result.join('');
   }
 
   serializeDiagramBlock(state: IDiagramState, indent: string) {
@@ -330,15 +330,15 @@ export default class ExportMarkdown {
       text,
       meta: { type },
     } = state;
-    const lines = text.split("\n");
-    result.push(indent + "```" + type + "\n");
+    const lines = text.split('\n');
+    result.push(indent + '```' + type + '\n');
 
     for (const line of lines) {
       result.push(`${indent}${line}\n`);
     }
-    result.push(indent + "```\n");
+    result.push(indent + '```\n');
 
-    return result.join("");
+    return result.join('');
   }
 
   serializeBlockquote(state: IBlockQuoteState, indent: string) {
@@ -380,33 +380,33 @@ export default class ExportMarkdown {
     tableData.forEach((r, i) => {
       const rs =
         indent +
-        "|" +
+        '|' +
         r
           .map((cell, j) => {
-            const raw = ` ${cell + " ".repeat(columnWidth[j].width)}`;
+            const raw = ` ${cell + ' '.repeat(columnWidth[j].width)}`;
 
             return raw.substring(0, columnWidth[j].width);
           })
-          .join("|") +
-        "|";
+          .join('|') +
+        '|';
       result.push(rs);
       if (i === 0) {
         const cutOff =
           indent +
-          "|" +
+          '|' +
           columnWidth
             .map(({ width, align }) => {
-              let raw = "-".repeat(width - 2);
+              let raw = '-'.repeat(width - 2);
               switch (align) {
-                case "left":
+                case 'left':
                   raw = `:${raw} `;
                   break;
 
-                case "center":
+                case 'center':
                   raw = `:${raw}:`;
                   break;
 
-                case "right":
+                case 'right':
                   raw = ` ${raw}:`;
                   break;
                 default:
@@ -416,13 +416,13 @@ export default class ExportMarkdown {
 
               return raw;
             })
-            .join("|") +
-          "|";
+            .join('|') +
+          '|';
         result.push(cutOff);
       }
     });
 
-    return result.join("\n") + "\n";
+    return result.join('\n') + '\n';
   }
 
   serializeList(
@@ -447,29 +447,29 @@ export default class ExportMarkdown {
     let itemMarker;
 
     if (isUnorderedList) {
-      itemMarker = marker ? `${marker} ` : "- ";
+      itemMarker = marker ? `${marker} ` : '- ';
     } else {
       // NOTE: GitHub and Bitbucket limit the list count to 99 but this is nowhere defined.
       //  We limit the number to 99 for Daring Fireball Markdown to prevent indentation issues.
       let n = start;
-      if ((this.listIndentation === "dfm" && n > 99) || n > 999999999) {
+      if ((this.listIndentation === 'dfm' && n > 99) || n > 999999999) {
         n = 1;
       }
       listInfo.start++;
 
-      itemMarker = `${n}${delimiter || "."} `;
+      itemMarker = `${n}${delimiter || '.'} `;
     }
 
     // Subsequent paragraph indentation
-    const newIndent = indent + " ".repeat(itemMarker.length);
+    const newIndent = indent + ' '.repeat(itemMarker.length);
 
     // New list indentation. We already added one space to the indentation
-    let listIndent = "";
+    let listIndent = '';
     const { listIndentation } = this;
-    if (listIndentation === "dfm") {
-      listIndent = " ".repeat(4 - itemMarker.length);
-    } else if (listIndentation === "number") {
-      listIndent = " ".repeat(this.listIndentationCount - 1);
+    if (listIndentation === 'dfm') {
+      listIndent = ' '.repeat(4 - itemMarker.length);
+    } else if (listIndentation === 'number') {
+      listIndent = ' '.repeat(this.listIndentationCount - 1);
     }
 
     // TODO: Indent subsequent paragraphs by one tab. - not important
@@ -477,8 +477,8 @@ export default class ExportMarkdown {
     //  we integrate tabs in block quotes and subsequent paragraphs and how to combine with spaces?
     //  I don't know how to combine tabs and spaces and it seems not specified, so work for another day.
 
-    if (name === "task-list-item") {
-      itemMarker += state.meta.checked ? "[x] " : "[ ] ";
+    if (name === 'task-list-item') {
+      itemMarker += state.meta.checked ? '[x] ' : '[ ] ';
     }
 
     result.push(`${indent}${itemMarker}`);
@@ -488,6 +488,6 @@ export default class ExportMarkdown {
       )
     );
 
-    return result.join("");
+    return result.join('');
   }
 }

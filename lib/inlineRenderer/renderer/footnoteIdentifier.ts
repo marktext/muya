@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, FootnoteIdentifierToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, FootnoteIdentifierToken } from '../types';
 
 export default function footnoteIdentifier(
   this: Renderer,
@@ -38,10 +38,10 @@ export default function footnoteIdentifier(
       [
         h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, startMarker),
         h(
-          "a",
+          'a',
           {
             attrs: {
-              spellcheck: "false",
+              spellcheck: 'false',
             },
           },
           content

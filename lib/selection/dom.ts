@@ -1,12 +1,12 @@
 // utils used in selection/index.js
-import { CLASS_NAMES } from "@muya/config";
-import { isElement } from "@muya/utils";
+import { CLASS_NAMES } from '@muya/config';
+import { isElement } from '@muya/utils';
 
 export const isContentDOM = (element: HTMLElement) => {
   return (
     element &&
-    element.tagName === "SPAN" &&
-    element.classList.contains("mu-content")
+    element.tagName === 'SPAN' &&
+    element.classList.contains('mu-content')
   );
 };
 
@@ -40,7 +40,7 @@ export const getTextContent = (node: Node, blackList: string[] = []) => {
     return node.textContent!;
   }
 
-  let text = "";
+  let text = '';
   if (
     isElement(node) &&
     blackList.some(
@@ -57,15 +57,15 @@ export const getTextContent = (node: Node, blackList: string[] = []) => {
     node.classList.contains(`${CLASS_NAMES.MU_INLINE_IMAGE}`)
   ) {
     // handle inline image
-    const raw = node.getAttribute("data-raw");
+    const raw = node.getAttribute('data-raw');
     const imageContainer = node.querySelector(
       `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`
     );
-    const hasImg = imageContainer!.querySelector("img");
+    const hasImg = imageContainer!.querySelector('img');
     const childNodes = imageContainer!.childNodes;
     if (childNodes.length && hasImg) {
       for (const child of childNodes) {
-        if (child.nodeType === Node.ELEMENT_NODE && child.nodeName === "IMG") {
+        if (child.nodeType === Node.ELEMENT_NODE && child.nodeName === 'IMG') {
           text += raw;
         } else if (child.nodeType === Node.TEXT_NODE) {
           text += child.textContent;
@@ -147,7 +147,7 @@ export function getNodeAndOffset(
         const imageContainer = child.querySelector(
           `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`
         )!;
-        const hasImg = imageContainer.querySelector("img");
+        const hasImg = imageContainer.querySelector('img');
 
         if (!hasImg) {
           return {

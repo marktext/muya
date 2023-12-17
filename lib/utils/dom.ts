@@ -1,4 +1,4 @@
-import type { Attributes, Datasets } from "./types";
+import type { Attributes, Datasets } from './types';
 
 type TCreateDomOptions = {
   classList: string[];
@@ -32,12 +32,12 @@ export const createDomNode = (
  */
 export const operateClassName = (
   element: HTMLElement,
-  ctrl: "add" | "remove",
+  ctrl: 'add' | 'remove',
   className: string
 ) => {
   const existed = element.classList.contains(className);
 
-  if ((ctrl === "add" && !existed) || (ctrl === "remove" && existed)) {
+  if ((ctrl === 'add' && !existed) || (ctrl === 'remove' && existed)) {
     element.classList[ctrl](className);
   }
 };

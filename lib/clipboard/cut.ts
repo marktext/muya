@@ -1,8 +1,8 @@
-import ScrollPage from "@muya/block";
-import emptyStates from "@muya/config/emptyStates";
-import { deepClone } from "@muya/utils";
-import { IBlockQuoteState, IParagraphState } from "../state/types";
-import Base from "./base";
+import ScrollPage from '@muya/block';
+import emptyStates from '@muya/config/emptyStates';
+import { deepClone } from '@muya/utils';
+import { IBlockQuoteState, IParagraphState } from '../state/types';
+import Base from './base';
 
 class Cut extends Base {
   cutHandler() {
@@ -24,8 +24,8 @@ class Cut extends Base {
     if (isSelectionInSameBlock) {
       const { text } = anchorBlock;
       const startOffset =
-        direction === "forward" ? anchor.offset : focus.offset;
-      const endOffset = direction === "forward" ? focus.offset : anchor.offset;
+        direction === 'forward' ? anchor.offset : focus.offset;
+      const endOffset = direction === 'forward' ? focus.offset : anchor.offset;
 
       anchorBlock.text =
         text.substring(0, startOffset) + text.substring(endOffset);
@@ -36,27 +36,27 @@ class Cut extends Base {
     const anchorOutMostBlock = anchorBlock.outMostBlock;
     const focusOutMostBlock = focusBlock.outMostBlock;
     const startOutBlock =
-      direction === "forward" ? anchorOutMostBlock : focusOutMostBlock;
+      direction === 'forward' ? anchorOutMostBlock : focusOutMostBlock;
     const endOutBlock =
-      direction === "forward" ? focusOutMostBlock : anchorOutMostBlock;
-    const startBlock = direction === "forward" ? anchorBlock : focusBlock;
-    const endBlock = direction === "forward" ? focusBlock : anchorBlock;
-    const startOffset = direction === "forward" ? anchor.offset : focus.offset;
-    const endOffset = direction === "forward" ? focus.offset : anchor.offset;
+      direction === 'forward' ? focusOutMostBlock : anchorOutMostBlock;
+    const startBlock = direction === 'forward' ? anchorBlock : focusBlock;
+    const endBlock = direction === 'forward' ? focusBlock : anchorBlock;
+    const startOffset = direction === 'forward' ? anchor.offset : focus.offset;
+    const endOffset = direction === 'forward' ? focus.offset : anchor.offset;
     let cursorBlock;
     let cursorOffset;
 
-    const removePartial = (position: "start" | "end") => {
-      const outBlock = position === "start" ? startOutBlock : endOutBlock;
-      const block = position === "start" ? startBlock : endBlock;
+    const removePartial = (position: 'start' | 'end') => {
+      const outBlock = position === 'start' ? startOutBlock : endOutBlock;
+      const block = position === 'start' ? startBlock : endBlock;
       // Handle anchor and focus in different blocks
       if (
         /block-quote|code-block|html-block|table|math-block|frontmatter|diagram/.test(
           outBlock.blockName
         )
       ) {
-        if (position === "start") {
-          const state = outBlock.blockName === "block-quote" ? deepClone(emptyStates["block-quote"]) : deepClone(emptyStates.paragraph);
+        if (position === 'start') {
+          const state = outBlock.blockName === 'block-quote' ? deepClone(emptyStates['block-quote']) : deepClone(emptyStates.paragraph);
           const newBlock = ScrollPage.loadBlock((state as IBlockQuoteState | IParagraphState).name).create(
             this.muya,
             state
@@ -69,17 +69,17 @@ class Cut extends Base {
         }
       } else if (/bullet-list|order-list|task-list/.test(outBlock.blockName)) {
         const listItemBlockName =
-          outBlock.blockName === "task-list" ? "task-list-item" : "list-item";
+          outBlock.blockName === 'task-list' ? 'task-list-item' : 'list-item';
         const listItem = block.farthestBlock(listItemBlockName);
         const offset = outBlock.offset(listItem);
         outBlock.forEach((item, index) => {
-          if (position === "start" && index === offset) {
+          if (position === 'start' && index === offset) {
             const state = {
               name: listItemBlockName,
               children: [
                 {
-                  name: "paragraph",
-                  text: "",
+                  name: 'paragraph',
+                  text: '',
                 },
               ],
             };
@@ -91,8 +91,8 @@ class Cut extends Base {
             cursorBlock = newListItem.firstContentInDescendant();
             cursorOffset = 0;
           } else if (
-            (position === "start" && index > offset) ||
-            (position === "end" && index <= offset)
+            (position === 'start' && index > offset) ||
+            (position === 'end' && index <= offset)
           ) {
             if (item.isOnlyChild()) {
               outBlock.remove();
@@ -102,11 +102,11 @@ class Cut extends Base {
           }
         });
       } else {
-        if (position === "start") {
+        if (position === 'start') {
           startBlock.text = startBlock.text.substring(0, startOffset);
           cursorBlock = startBlock;
           cursorOffset = startOffset;
-        } else if (position === "end") {
+        } else if (position === 'end') {
           if (cursorBlock) {
             cursorBlock.text += endBlock.text.substring(endOffset);
             endOutBlock.remove();
@@ -117,8 +117,8 @@ class Cut extends Base {
 
     if (anchorOutMostBlock === focusOutMostBlock) {
       // Handle anchor and focus in same list\quote block
-      if (anchorOutMostBlock.blockName === "block-quote") {
-        const state = deepClone(emptyStates["block-quote"]);
+      if (anchorOutMostBlock.blockName === 'block-quote') {
+        const state = deepClone(emptyStates['block-quote']);
         const newQuoteBlock = ScrollPage.loadBlock((state as IBlockQuoteState).name).create(
           this.muya,
           state
@@ -126,10 +126,10 @@ class Cut extends Base {
         anchorOutMostBlock.replaceWith(newQuoteBlock);
         cursorBlock = newQuoteBlock.firstContentInDescendant();
         cursorOffset = 0;
-      } else if (anchorOutMostBlock.blockName === "table") {
+      } else if (anchorOutMostBlock.blockName === 'table') {
         const state = {
-          name: "paragraph",
-          text: "",
+          name: 'paragraph',
+          text: '',
         }
         const newBlock = ScrollPage.loadBlock(state.name).create(
           this.muya,
@@ -140,9 +140,9 @@ class Cut extends Base {
         cursorOffset = 0;
       } else {
         const listItemBlockName =
-          anchorOutMostBlock.blockName === "task-list"
-            ? "task-list-item"
-            : "list-item";
+          anchorOutMostBlock.blockName === 'task-list'
+            ? 'task-list-item'
+            : 'list-item';
         const anchorFarthestListItem =
           anchorBlock.farthestBlock(listItemBlockName);
         const focusFarthestListItem =
@@ -157,8 +157,8 @@ class Cut extends Base {
               name: listItemBlockName,
               children: [
                 {
-                  name: "paragraph",
-                  text: "",
+                  name: 'paragraph',
+                  text: '',
                 },
               ],
             };
@@ -175,7 +175,7 @@ class Cut extends Base {
         });
       }
     } else {
-      removePartial("start");
+      removePartial('start');
       // Get State between the start outmost block and the end outmost block.
       let node = startOutBlock.next;
       while (node && node !== endOutBlock) {
@@ -183,7 +183,7 @@ class Cut extends Base {
         node.remove();
         node = temp;
       }
-      removePartial("end");
+      removePartial('end');
     }
 
     if (cursorBlock) {
@@ -192,15 +192,15 @@ class Cut extends Base {
 
     if (this.scrollPage.length() === 0) {
       const state = {
-        name: "paragraph",
-        text: "",
+        name: 'paragraph',
+        text: '',
       };
 
-      const newParagraphBlock = ScrollPage.loadBlock("paragraph").create(
+      const newParagraphBlock = ScrollPage.loadBlock('paragraph').create(
         this.muya,
         state
       );
-      this.scrollPage.append(newParagraphBlock, "user");
+      this.scrollPage.append(newParagraphBlock, 'user');
       cursorBlock = newParagraphBlock.firstContentInDescendant();
       cursorBlock.setCursor(0, 0, true);
     }

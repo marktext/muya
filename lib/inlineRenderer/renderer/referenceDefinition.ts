@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from "@muya/config";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, ReferenceDefinitionToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, ReferenceDefinitionToken } from '../types';
 
 export default function referenceDefinition(
   this: Renderer,
@@ -63,7 +63,7 @@ export default function referenceDefinition(
       `span.${CLASS_NAMES.MU_REFERENCE_LABEL}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
       },
       labelContent
@@ -79,7 +79,7 @@ export default function referenceDefinition(
       `span.${className}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
       },
       middleContent
@@ -89,7 +89,7 @@ export default function referenceDefinition(
       `span.${className}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
       },
       rightContent

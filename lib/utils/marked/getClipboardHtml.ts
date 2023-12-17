@@ -1,16 +1,16 @@
-import { marked } from "marked";
-import mathExtension from "./extensions/math";
-import superSubScriptExtension from "./extensions/superSubscript";
-import fm, { frontMatterRender } from "./frontMatter";
-import { DEFAULT_OPTIONS } from "./options";
-import type { LexOption } from "./types";
-import walkTokens from "./walkTokens";
+import { marked } from 'marked';
+import mathExtension from './extensions/math';
+import superSubScriptExtension from './extensions/superSubscript';
+import fm, { frontMatterRender } from './frontMatter';
+import { DEFAULT_OPTIONS } from './options';
+import type { LexOption } from './types';
+import walkTokens from './walkTokens';
 
 export function getClipBoardHtml(src: string, options: LexOption = {}) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
   const { frontMatter, math, isGitlabCompatibilityEnabled, superSubScript } =
     options;
-  let html = "";
+  let html = '';
 
   marked.use({
     walkTokens: walkTokens({ math, isGitlabCompatibilityEnabled }),

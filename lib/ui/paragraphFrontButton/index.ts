@@ -1,25 +1,25 @@
-import { BLOCK_DOM_PROPERTY } from "@muya/config";
-import { isMouseEvent, throttle, verticalPositionInRect } from "@muya/utils";
-import { h, patch } from "@muya/utils/snabbdom";
-import Popper from "popper.js";
-import { getIcon } from "./config";
+import { BLOCK_DOM_PROPERTY } from '@muya/config';
+import { isMouseEvent, throttle, verticalPositionInRect } from '@muya/utils';
+import { h, patch } from '@muya/utils/snabbdom';
+import Popper from 'popper.js';
+import { getIcon } from './config';
 
-import dragIcon from "@muya/assets/icons/drag/2.png";
-import type Parent from "@muya/block/base/parent";
-import BulletList from "@muya/block/commonMark/bulletList";
-import OrderList from "@muya/block/commonMark/orderList";
-import type Muya from "@muya/index";
-import type { VNode } from "snabbdom";
-import type { BaseOptions } from "../types";
-import "./index.css";
+import dragIcon from '@muya/assets/icons/drag/2.png';
+import type Parent from '@muya/block/base/parent';
+import BulletList from '@muya/block/commonMark/bulletList';
+import OrderList from '@muya/block/commonMark/orderList';
+import type Muya from '@muya/index';
+import type { VNode } from 'snabbdom';
+import type { BaseOptions } from '../types';
+import './index.css';
 
 const LEFT_OFFSET = 100;
 
 const defaultOptions = () => ({
-  placement: "left-start" as const,
+  placement: 'left-start' as const,
   modifiers: {
     offset: {
-      offset: "0, 8",
+      offset: '0, 8',
     },
   },
   showArrow: false,
@@ -27,16 +27,16 @@ const defaultOptions = () => ({
 
 const renderIcon = (i: string, className: string) =>
   h(
-    `i.icon${className ? `.${className}` : ""}`,
+    `i.icon${className ? `.${className}` : ''}`,
     h(
-      "i.icon-inner",
+      'i.icon-inner',
       {
         style: {
           background: `url(${i}) no-repeat`,
-          "background-size": "100%",
+          'background-size': '100%',
         },
       },
-      ""
+      ''
     )
   );
 
@@ -45,21 +45,21 @@ function isOrderOrBulletList(block: Parent): block is OrderList | BulletList {
 }
 
 class FrontButton {
-  public name: string = "mu-front-button";
+  public name: string = 'mu-front-button';
   public resizeObserver: ResizeObserver | null = null;
   private options: BaseOptions;
   private block: Parent | null = null;
   private oldVNode: VNode | null = null;
   private status: boolean = false;
-  private floatBox: HTMLDivElement = document.createElement("div");
-  private container: HTMLDivElement = document.createElement("div");
-  private iconWrapper: HTMLDivElement = document.createElement("div");
+  private floatBox: HTMLDivElement = document.createElement('div');
+  private container: HTMLDivElement = document.createElement('div');
+  private iconWrapper: HTMLDivElement = document.createElement('div');
   private popper: Popper | null = null;
   private dragTimer: ReturnType<typeof setTimeout> | null = null;
   private dragInfo: {
     block: Parent;
     target?: Parent | null;
-    position?: "down" | "up" | null;
+    position?: 'down' | 'up' | null;
   } | null = null;
   private ghost: HTMLDivElement | null = null;
   private shadow: HTMLDivElement | null = null;
@@ -77,7 +77,7 @@ class FrontButton {
     // Use to remember which float container is shown.
     container.classList.add(this.name);
     container.appendChild(iconWrapper);
-    floatBox.classList.add("mu-front-button-wrapper");
+    floatBox.classList.add('mu-front-button-wrapper');
     floatBox.appendChild(container);
     document.body.appendChild(floatBox);
 
@@ -124,16 +124,16 @@ class FrontButton {
     }, 300);
 
     const clickHandler = () => {
-      eventCenter.emit("muya-front-menu", {
+      eventCenter.emit('muya-front-menu', {
         reference: container,
         block: this.block,
       });
     };
 
-    eventCenter.attachDOMEvent(container, "mousedown", this.dragBarMouseDown);
-    eventCenter.attachDOMEvent(container, "mouseup", this.dragBarMouseUp);
-    eventCenter.attachDOMEvent(document, "mousemove", mousemoveHandler);
-    eventCenter.attachDOMEvent(container, "click", clickHandler);
+    eventCenter.attachDOMEvent(container, 'mousedown', this.dragBarMouseDown);
+    eventCenter.attachDOMEvent(container, 'mouseup', this.dragBarMouseUp);
+    eventCenter.attachDOMEvent(document, 'mousemove', mousemoveHandler);
+    eventCenter.attachDOMEvent(container, 'click', clickHandler);
   }
 
   dragBarMouseDown = (event: Event) => {
@@ -174,7 +174,7 @@ class FrontButton {
     if (
       outMostElement &&
       outMostElement[BLOCK_DOM_PROPERTY] !== this.dragInfo.block &&
-      (outMostElement[BLOCK_DOM_PROPERTY] as Parent).blockName !== "frontmatter"
+      (outMostElement[BLOCK_DOM_PROPERTY] as Parent).blockName !== 'frontmatter'
     ) {
       const block = outMostElement[BLOCK_DOM_PROPERTY];
       const rect = outMostElement.getBoundingClientRect();
@@ -206,19 +206,19 @@ class FrontButton {
       this.ghost.remove();
     }
     this.destroyShadow();
-    document.body.style.cursor = "auto";
+    document.body.style.cursor = 'auto';
     this.dragTimer = null;
     const { block, target, position } = this.dragInfo || {};
 
     if (target && position && block) {
       if (
-        (position === "down" && block.prev === target) ||
-        (position === "up" && block.next === target)
+        (position === 'down' && block.prev === target) ||
+        (position === 'up' && block.next === target)
       ) {
         return;
       }
 
-      if (position === "up") {
+      if (position === 'up') {
         block.insertInto(block.parent!, target);
       } else {
         block.insertInto(block.parent!, target.next);
@@ -245,7 +245,7 @@ class FrontButton {
   startDrag = () => {
     const { block } = this;
     // Frontmatter should not be drag.
-    if (!block || (block && block.blockName === "frontmatter")) {
+    if (!block || (block && block.blockName === 'frontmatter')) {
       return;
     }
     this.disableListen = true;
@@ -256,39 +256,39 @@ class FrontButton {
     this.hide();
     const { eventCenter } = this.muya;
 
-    document.body.style.cursor = "grabbing";
+    document.body.style.cursor = 'grabbing';
 
     this.dragEvents = [
       eventCenter.attachDOMEvent(
         document,
-        "mousemove",
+        'mousemove',
         throttle(this.mouseMove, 100)
       ),
-      eventCenter.attachDOMEvent(document, "mouseup", this.mouseUp),
+      eventCenter.attachDOMEvent(document, 'mouseup', this.mouseUp),
     ];
   };
 
-  createStyledGhost(rect: DOMRect, position: "down" | "up") {
+  createStyledGhost(rect: DOMRect, position: 'down' | 'up') {
     let ghost = this.ghost;
     if (!ghost) {
-      ghost = document.createElement("div");
+      ghost = document.createElement('div');
       document.body.appendChild(ghost);
-      ghost.classList.add("mu-line-ghost");
+      ghost.classList.add('mu-line-ghost');
       this.ghost = ghost;
     }
 
     Object.assign(ghost.style, {
       width: `${rect.width}px`,
       left: `${rect.left}px`,
-      top: position === "up" ? `${rect.top}px` : `${rect.top + rect.height}px`,
+      top: position === 'up' ? `${rect.top}px` : `${rect.top + rect.height}px`,
     });
   }
 
   createStyledShadow() {
     const { domNode } = this.block!;
     const { width, top, left } = domNode!.getBoundingClientRect();
-    const shadow = document.createElement("div");
-    shadow.classList.add("mu-shadow");
+    const shadow = document.createElement('div');
+    shadow.classList.add('mu-shadow');
     Object.assign(shadow.style, {
       width: `${width}px`,
       top: `${top}px`,
@@ -322,10 +322,10 @@ class FrontButton {
   render() {
     const { container, iconWrapper, block, oldVNode } = this;
 
-    const iconWrapperSelector = "div.mu-icon-wrapper";
+    const iconWrapperSelector = 'div.mu-icon-wrapper';
     const i = getIcon(block!);
-    const iconParagraph = renderIcon(i, "paragraph");
-    const iconDrag = renderIcon(dragIcon, "drag");
+    const iconParagraph = renderIcon(i, 'paragraph');
+    const iconDrag = renderIcon(dragIcon, 'drag');
 
     const vnode = h(iconWrapperSelector, [iconParagraph, iconDrag]);
 
@@ -351,8 +351,8 @@ class FrontButton {
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
     }
-    this.floatBox.style.opacity = "0";
-    eventCenter.emit("muya-float-button", this, false);
+    this.floatBox.style.opacity = '0';
+    eventCenter.emit('muya-float-button', this, false);
   }
 
   show(block: Parent) {
@@ -364,13 +364,13 @@ class FrontButton {
     const { floatBox } = this;
     const { placement, modifiers } = this.options;
     const { eventCenter } = this.muya;
-    floatBox.style.opacity = "1";
+    floatBox.style.opacity = '1';
     if (this.popper && this.popper.destroy) {
       this.popper.destroy();
     }
 
     const styles = window.getComputedStyle(domNode!);
-    const paddingTop = parseFloat(styles["paddingTop"]);
+    const paddingTop = parseFloat(styles['paddingTop']);
 
     const isLooseList = isOrderOrBulletList(block) && block.meta.loose;
     modifiers.offset.offset = `${isLooseList ? paddingTop * 2 : paddingTop}, 8`;
@@ -380,7 +380,7 @@ class FrontButton {
       modifiers,
     });
     this.status = true;
-    eventCenter.emit("muya-float-button", this, true);
+    eventCenter.emit('muya-float-button', this, true);
   }
 
   destroy() {

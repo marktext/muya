@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from "@muya/config";
-import { sanitizeHyperlink } from "@muya/utils/url";
-import type Renderer from "./index";
-import type { SyntaxRenderOptions, AutoLinkToken } from "../types";
+import { CLASS_NAMES } from '@muya/config';
+import { sanitizeHyperlink } from '@muya/utils/url';
+import type Renderer from './index';
+import type { SyntaxRenderOptions, AutoLinkToken } from '../types';
 
 // render auto_link to VNode
 export default function autoLink(
@@ -36,11 +36,11 @@ export default function autoLink(
       `a.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_AUTO_LINK}`,
       {
         attrs: {
-          spellcheck: "false",
+          spellcheck: 'false',
         },
         props: {
           href: sanitizeHyperlink(hyperlink),
-          target: "_blank",
+          target: '_blank',
         },
       },
       content

@@ -1,20 +1,20 @@
-import Parent from "@muya/block/base/parent";
-import ThematicBreakContent from "@muya/block/content/thematicBreakContent";
-import LeafQueryBlock from "@muya/block/mixins/leafQueryBlock";
-import ScrollPage from "@muya/block/scrollPage";
-import Muya from "@muya/index";
-import { mixins } from "@muya/utils";
-import { IThematicBreakState } from "../../../state/types";
+import Parent from '@muya/block/base/parent';
+import ThematicBreakContent from '@muya/block/content/thematicBreakContent';
+import LeafQueryBlock from '@muya/block/mixins/leafQueryBlock';
+import ScrollPage from '@muya/block/scrollPage';
+import Muya from '@muya/index';
+import { mixins } from '@muya/utils';
+import { IThematicBreakState } from '../../../state/types';
 
 @mixins(LeafQueryBlock)
 class ThematicBreak extends Parent {
-  static blockName = "thematic-break";
+  static blockName = 'thematic-break';
 
   static create(muya: Muya, state: IThematicBreakState) {
     const heading = new ThematicBreak(muya);
 
     heading.append(
-      ScrollPage.loadBlock("thematicbreak.content").create(muya, state.text)
+      ScrollPage.loadBlock('thematicbreak.content').create(muya, state.text)
     );
 
     return heading;
@@ -29,14 +29,14 @@ class ThematicBreak extends Parent {
 
   constructor(muya: Muya) {
     super(muya);
-    this.tagName = "p";
-    this.classList = ["mu-thematic-break"];
+    this.tagName = 'p';
+    this.classList = ['mu-thematic-break'];
     this.createDomNode();
   }
 
   getState(): IThematicBreakState {
     return {
-      name: "thematic-break",
+      name: 'thematic-break',
       text: (this.children.head as ThematicBreakContent).text,
     };
   }

@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import Muya from "@muya/index";
-import { mixins } from "@muya/utils";
-import Base from "./base";
-import Copy from "./copy";
-import Cut from "./cut";
-import Paste from "./paste";
+import Muya from '@muya/index';
+import { mixins } from '@muya/utils';
+import Base from './base';
+import Copy from './copy';
+import Cut from './cut';
+import Paste from './paste';
 
 interface Clipboard extends Copy, Cut, Paste {}
 
 @mixins(Copy, Cut, Paste)
 class Clipboard extends Base {
-  public copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
-  public pasteType: string = "normal"; // `normal` or `pasteAsPlainText`
-  public copyInfo: string = "";
+  public copyType: string = 'normal'; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
+  public pasteType: string = 'normal'; // `normal` or `pasteAsPlainText`
+  public copyInfo: string = '';
 
   static create(muya: Muya) {
     const clipboard = new Clipboard(muya);
@@ -28,7 +28,7 @@ class Clipboard extends Base {
       event.preventDefault();
       event.stopPropagation();
 
-      const isCut = event.type === "cut";
+      const isCut = event.type === 'cut';
 
       this.copyHandler(event);
 
@@ -58,7 +58,7 @@ class Clipboard extends Base {
         return;
       }
 
-      if (key === "Backspace" || key === "Delete") {
+      if (key === 'Backspace' || key === 'Delete') {
         event.preventDefault();
       }
 
@@ -71,41 +71,41 @@ class Clipboard extends Base {
 
     eventCenter.attachDOMEvent(
       domNode,
-      "copy",
+      'copy',
       copyCutHandler as EventListener
     );
-    eventCenter.attachDOMEvent(domNode, "cut", copyCutHandler as EventListener);
-    eventCenter.attachDOMEvent(domNode, "paste", pasteHandler as EventListener);
+    eventCenter.attachDOMEvent(domNode, 'cut', copyCutHandler as EventListener);
+    eventCenter.attachDOMEvent(domNode, 'paste', pasteHandler as EventListener);
     eventCenter.attachDOMEvent(
       domNode,
-      "keydown",
+      'keydown',
       keydownHandler as EventListener
     );
   }
 
   copyAsMarkdown() {
-    this.copyType = "copyAsMarkdown";
-    document.execCommand("copy");
-    this.copyType = "normal";
+    this.copyType = 'copyAsMarkdown';
+    document.execCommand('copy');
+    this.copyType = 'normal';
   }
 
   copyAsHtml() {
-    this.copyType = "copyAsHtml";
-    document.execCommand("copy");
-    this.copyType = "normal";
+    this.copyType = 'copyAsHtml';
+    document.execCommand('copy');
+    this.copyType = 'normal';
   }
 
   pasteAsPlainText() {
-    this.pasteType = "pasteAsPlainText";
-    document.execCommand("paste");
-    this.pasteType = "normal";
+    this.pasteType = 'pasteAsPlainText';
+    document.execCommand('paste');
+    this.pasteType = 'normal';
   }
 
   copy(type: string, info: string) {
     this.copyType = type;
     this.copyInfo = info;
-    document.execCommand("copy");
-    this.copyType = "normal";
+    document.execCommand('copy');
+    this.copyType = 'normal';
   }
 }
 

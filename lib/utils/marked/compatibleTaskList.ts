@@ -1,8 +1,8 @@
-import type { Token } from "marked";
-import { ListItemToken, ListToken } from "./types";
+import type { Token } from 'marked';
+import { ListItemToken, ListToken } from './types';
 
 function isListToken (token: Token | ListToken): token is ListToken {
-  return token.type === "list";
+  return token.type === 'list';
 }
 
 const BULL_REG = /^ {0,3}([*+-]|\d{1,9}(?:\.|\)))/;
@@ -17,39 +17,39 @@ const compatibleTaskList = (tokens: (Token | ListToken | ListItemToken)[] = []) 
   for (const token of tokens) {
     if (isListToken(token)) {
       if (token.ordered === true) {
-        token.listType = "order";
+        token.listType = 'order';
         for (const item of token.items) {
           item.tokens = compatibleTaskList(item.tokens);
-          item.listItemType = "order";
+          item.listItemType = 'order';
           const matches = BULL_REG.exec(item.raw);
-          item.bulletMarkerOrDelimiter = matches ? matches[1].slice(-1) as ListItemToken["bulletMarkerOrDelimiter"] : "";
+          item.bulletMarkerOrDelimiter = matches ? matches[1].slice(-1) as ListItemToken['bulletMarkerOrDelimiter'] : '';
         }
         results.push(token);
       } else {
         const { type, raw, ordered, loose } = token;
         let cache: {
-          type: "list";
-          listType: "bullet" | "task";
+          type: 'list';
+          listType: 'bullet' | 'task';
           raw: string;
           ordered: false;
-          start: "";
+          start: '';
           loose: boolean;
           items: ListItemToken[];
         } | null = null;
 
         for (const item of token.items) {
           item.tokens = compatibleTaskList(item.tokens);
-          const listItemType = item.task ? "task" : "bullet";
+          const listItemType = item.task ? 'task' : 'bullet';
           item.listItemType = listItemType;
           const matches = BULL_REG.exec(item.raw);
-          item.bulletMarkerOrDelimiter = matches ? matches[1] as ListItemToken["bulletMarkerOrDelimiter"] : "";
+          item.bulletMarkerOrDelimiter = matches ? matches[1] as ListItemToken['bulletMarkerOrDelimiter'] : '';
 
           if (!cache) {
             cache = {
               type,
               raw,
               ordered,
-              start: "",
+              start: '',
               loose,
               listType: listItemType,
               items: [item],
@@ -63,7 +63,7 @@ const compatibleTaskList = (tokens: (Token | ListToken | ListItemToken)[] = []) 
                 type,
                 raw,
                 ordered,
-                start: "",
+                start: '',
                 loose,
                 listType: listItemType,
                 items: [item],
@@ -76,7 +76,7 @@ const compatibleTaskList = (tokens: (Token | ListToken | ListItemToken)[] = []) 
           results.push(cache);
         }
       }
-    } else if (token.type === "blockquote") {
+    } else if (token.type === 'blockquote') {
       token.tokens = compatibleTaskList(token.tokens);
       results.push(token);
     } else {

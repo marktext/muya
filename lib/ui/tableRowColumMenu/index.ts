@@ -1,40 +1,40 @@
-import { h, patch } from "@muya/utils/snabbdom";
-import BaseFloat from "../baseFloat";
-import { MenuItem, toolList } from "./config";
+import { h, patch } from '@muya/utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import { MenuItem, toolList } from './config';
 
-import TableBodyCell from "@muya/block/gfm/table/cell";
-import TableInner from "@muya/block/gfm/table/table";
-import Muya from "@muya/index";
-import { VNode } from "snabbdom";
-import "./index.css";
+import TableBodyCell from '@muya/block/gfm/table/cell';
+import TableInner from '@muya/block/gfm/table/table';
+import Muya from '@muya/index';
+import { VNode } from 'snabbdom';
+import './index.css';
 
 const defaultOptions = {
-  placement: "bottom-center",
+  placement: 'bottom-center',
   modifiers: {
     offset: {
-      offset: "0, 5",
+      offset: '0, 5',
     },
   },
   showArrow: false,
 };
 
 type TableInfo = {
-  barType: "bottom" | "right";
+  barType: 'bottom' | 'right';
 };
 
 class TableBarTools extends BaseFloat {
-  static pluginName = "tableBarTools";
+  static pluginName = 'tableBarTools';
   private oldVNode: VNode | null = null;
   private tableInfo: TableInfo | null = null;
   private block: TableBodyCell | null = null;
-  private tableBarContainer: HTMLDivElement = document.createElement("div");
+  private tableBarContainer: HTMLDivElement = document.createElement('div');
 
   constructor(muya: Muya, options = {}) {
-    const name = "mu-table-bar-tools";
+    const name = 'mu-table-bar-tools';
     const opts = Object.assign({}, defaultOptions, options);
     super(muya, name, opts);
 
-    this.floatBox!.classList.add("mu-table-bar-tools");
+    this.floatBox!.classList.add('mu-table-bar-tools');
     this.container!.appendChild(this.tableBarContainer);
     this.listen();
   }
@@ -43,7 +43,7 @@ class TableBarTools extends BaseFloat {
     super.listen();
     const { eventCenter } = this.muya;
     eventCenter.subscribe(
-      "muya-table-bar",
+      'muya-table-bar',
       ({ reference, tableInfo, block }) => {
         if (reference) {
           this.tableInfo = tableInfo;
@@ -64,7 +64,7 @@ class TableBarTools extends BaseFloat {
     const children = renderArray.map((item) => {
       const { label } = item;
 
-      const selector = "li.item";
+      const selector = 'li.item';
 
       return h(
         selector,
@@ -82,7 +82,7 @@ class TableBarTools extends BaseFloat {
       );
     });
 
-    const vnode = h("ul", children);
+    const vnode = h('ul', children);
 
     if (oldVNode) {
       patch(oldVNode, vnode);
@@ -101,14 +101,14 @@ class TableBarTools extends BaseFloat {
     const columnCount = row.offset(this.block);
     const { location, action, target } = item;
 
-    if (action === "insert") {
+    if (action === 'insert') {
       let cursorBlock = null;
 
-      if (target === "row") {
-        const offset = location === "previous" ? rowCount : rowCount + 1;
+      if (target === 'row') {
+        const offset = location === 'previous' ? rowCount : rowCount + 1;
         cursorBlock = table.insertRow(offset);
       } else {
-        const offset = location === "left" ? columnCount : columnCount + 1;
+        const offset = location === 'left' ? columnCount : columnCount + 1;
         cursorBlock = table.insertColumn(offset);
       }
 
@@ -116,7 +116,7 @@ class TableBarTools extends BaseFloat {
         cursorBlock.setCursor(0, 0);
       }
     } else {
-      if (target === "row") {
+      if (target === 'row') {
         table.removeRow(rowCount);
       } else {
         table.removeColumn(columnCount);

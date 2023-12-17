@@ -1,23 +1,23 @@
-import Parent from "@muya/block/base/parent";
-import ScrollPage from "@muya/block/scrollPage";
-import { TPathList } from "@muya/block/types";
-import Muya from "@muya/index";
-import { diffToTextOp } from "@muya/utils";
-import logger from "@muya/utils/logger";
-import diff from "fast-diff";
-import { ITableState } from "../../../state/types";
-import TableRow from "./row";
-import TableInner from "./table";
+import Parent from '@muya/block/base/parent';
+import ScrollPage from '@muya/block/scrollPage';
+import { TPathList } from '@muya/block/types';
+import Muya from '@muya/index';
+import { diffToTextOp } from '@muya/utils';
+import logger from '@muya/utils/logger';
+import diff from 'fast-diff';
+import { ITableState } from '../../../state/types';
+import TableRow from './row';
+import TableInner from './table';
 
-const debug = logger("table:");
+const debug = logger('table:');
 
 class Table extends Parent {
-  static blockName = "table";
+  static blockName = 'table';
 
   static create(muya: Muya, state: ITableState) {
     const table = new Table(muya);
 
-    table.append(ScrollPage.loadBlock("table.inner").create(muya, state));
+    table.append(ScrollPage.loadBlock('table.inner').create(muya, state));
 
     return table;
   }
@@ -28,22 +28,22 @@ class Table extends Parent {
 
   static createWithHeader(muya: Muya, header: string[]) {
     const state: ITableState = {
-      name: "table",
+      name: 'table',
       children: [
         {
-          name: "table.row",
+          name: 'table.row',
           children: header.map((c) => ({
-            name: "table.cell",
-            meta: { align: "none" },
+            name: 'table.cell',
+            meta: { align: 'none' },
             text: c,
           })),
         },
         {
-          name: "table.row",
+          name: 'table.row',
           children: header.map(() => ({
-            name: "table.cell",
-            meta: { align: "none" },
-            text: "",
+            name: 'table.cell',
+            meta: { align: 'none' },
+            text: '',
           })),
         },
       ],
@@ -63,7 +63,7 @@ class Table extends Parent {
     const state = this.getState();
 
     return state.children.every((row) =>
-      row.children.every((cell) => cell.text === "")
+      row.children.every((cell) => cell.text === '')
     );
   }
 
@@ -77,9 +77,9 @@ class Table extends Parent {
 
   constructor(muya: Muya) {
     super(muya);
-    this.tagName = "figure";
+    this.tagName = 'figure';
 
-    this.classList = ["mu-table"];
+    this.classList = ['mu-table'];
     this.createDomNode();
     this.listenDomEvent();
   }
@@ -97,7 +97,7 @@ class Table extends Parent {
         cursorBlock.setCursor(offset, offset, true);
       }
     };
-    eventCenter.attachDOMEvent(domNode!, "mousedown", clickHandler);
+    eventCenter.attachDOMEvent(domNode!, 'mousedown', clickHandler);
   }
 
   queryBlock(path: TPathList) {
@@ -113,7 +113,7 @@ class Table extends Parent {
     const table = this.firstChild as TableInner;
     table.forEach((row) => {
       row.forEach((cell) => {
-        cell.firstChild.text = "";
+        cell.firstChild.text = '';
       });
     });
   }
@@ -126,19 +126,19 @@ class Table extends Parent {
         ? (this.firstChild as any).find(offset - 1)
         : (this.firstChild as any).find(offset);
     const state = {
-      name: "table.row",
+      name: 'table.row',
       children: [...new Array(columnCount)].map((_, i) => {
         return {
-          name: "table.cell",
+          name: 'table.cell',
           meta: {
             align: firstRowState.children[i].meta.align,
           },
-          text: "",
+          text: '',
         };
       }),
     };
 
-    const rowBlock = ScrollPage.loadBlock("table.row").create(this.muya, state);
+    const rowBlock = ScrollPage.loadBlock('table.row').create(this.muya, state);
 
     if (offset > 0) {
       (this.firstChild as any).insertAfter(rowBlock, currentRow);
@@ -149,16 +149,16 @@ class Table extends Parent {
     return rowBlock.firstContentInDescendant();
   }
 
-  insertColumn(offset, align = "none") {
+  insertColumn(offset, align = 'none') {
     const tableInner: any = this.firstChild;
     let firstCellInNewColumn = null;
     tableInner.forEach((row) => {
       const state = {
-        name: "table.cell",
+        name: 'table.cell',
         meta: { align },
-        text: "",
+        text: '',
       };
-      const cell = ScrollPage.loadBlock("table.cell").create(this.muya, state);
+      const cell = ScrollPage.loadBlock('table.cell').create(this.muya, state);
       const ref = row.find(offset);
       row.insertBefore(cell, ref);
       if (!firstCellInNewColumn) {
@@ -203,11 +203,11 @@ class Table extends Parent {
       const cell = row.find(offset);
       if (cell) {
         const { align: oldValue } = cell;
-        cell.align = oldValue === value ? "none" : value;
+        cell.align = oldValue === value ? 'none' : value;
         // dispatch change to modify json state
         const diffs = diff(oldValue, cell.align);
         const { path } = cell;
-        path.push("meta", "align");
+        path.push('meta', 'align');
 
         this.jsonState.editOperation(path, diffToTextOp(diffs));
       }

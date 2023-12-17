@@ -1,7 +1,7 @@
-import type Format from "@muya/block/base/format";
-import { union } from "@muya/utils";
-import type { H, Token } from "../types";
-import type Renderer from "./index";
+import type Format from '@muya/block/base/format';
+import { union } from '@muya/utils';
+import type { H, Token } from '../types';
+import type Renderer from './index';
 
 // change text to highlight vnode
 export default function highlight(

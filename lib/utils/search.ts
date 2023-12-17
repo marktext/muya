@@ -1,5 +1,5 @@
-import execAll from "execall";
-import { IMatch, ISearchOption } from "../search/types";
+import execAll from 'execall';
+import { IMatch, ISearchOption } from '../search/types';
 
 export const matchString = (text: string, value: string, options: ISearchOption) => {
   const { isCaseSensitive, isWholeWord, isRegexp } = options;
@@ -8,15 +8,15 @@ export const matchString = (text: string, value: string, options: ISearchOption)
   /* eslint-enable no-useless-escape */
   let SEARCH_REG = null;
   let regStr = value;
-  let flag = "g";
+  let flag = 'g';
 
   if (!isCaseSensitive) {
-    flag += "i";
+    flag += 'i';
   }
 
   if (!isRegexp) {
     regStr = value.replace(SPECIAL_CHAR_REG, (p) => {
-      return p === "\\" ? "\\\\" : `\\${p}`;
+      return p === '\\' ? '\\\\' : `\\${p}`;
     });
   }
 
@@ -39,7 +39,7 @@ export const buildRegexValue = (match: IMatch, value: string) => {
 
   if (Array.isArray(groups) && groups.length) {
     for (const group of groups) {
-      const index = parseInt(group.replace(/^\$/, ""));
+      const index = parseInt(group.replace(/^\$/, ''));
       if (index === 0) {
         value = value.replace(group, match.match);
       } else if (index > 0 && index <= match.subMatches.length) {

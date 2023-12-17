@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Content from "@muya/block/base/content";
-import { EVENT_KEYS } from "@muya/config";
-import Selection from "@muya/selection";
-import { type Diff } from "fast-diff";
-import runSanitize, { Config } from "./dompurify";
+import Content from '@muya/block/base/content';
+import { EVENT_KEYS } from '@muya/config';
+import Selection from '@muya/selection';
+import { type Diff } from 'fast-diff';
+import runSanitize, { Config } from './dompurify';
 
 type Union = {
   start: number;
@@ -28,7 +28,7 @@ export const uniqueIdGenerator = function* () {
   }
 };
 
-const ID_PREFIX = "mu-";
+const ID_PREFIX = 'mu-';
 const uniqueIdIterator = uniqueIdGenerator();
 
 export const getUniqueId = () => `${ID_PREFIX}${uniqueIdIterator.next().value}`;
@@ -44,7 +44,7 @@ export const isOdd = (n: number) => Math.abs(n) % 2 === 1;
 
 export const isEven = (n: number) => Math.abs(n) % 2 === 0;
 
-export const isLengthEven = (str = "") => str.length % 2 === 0;
+export const isLengthEven = (str = '') => str.length % 2 === 0;
 
 export const snakeToCamel = (name: string) => {
   return name.replace(/_([a-z])/g, (_p0, p1) => p1.toUpperCase());
@@ -130,11 +130,11 @@ export const escapeHTML = (str: string) =>
     /[&<>'"]/g,
     (tag) =>
       ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "'": "&#39;",
-        '"': "&quot;",
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '\'': '&#39;',
+        '"': '&quot;',
       }[tag] || tag)
   );
 
@@ -143,11 +143,11 @@ export const unescapeHTML = (str: string) =>
     /(?:&amp;|&lt;|&gt;|&quot;|&#39;)/g,
     (tag) =>
       ({
-        "&amp;": "&",
-        "&lt;": "<",
-        "&gt;": ">",
-        "&#39;": "'",
-        "&quot;": '"',
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&#39;': '\'',
+        '&quot;': '"',
       }[tag] || tag)
   );
 
@@ -166,7 +166,7 @@ export const wordCount = (markdown: string) => {
   let character = 0;
   let all = 0;
 
-  const removedChinese = markdown.replace(/[\u4e00-\u9fa5]/g, "");
+  const removedChinese = markdown.replace(/[\u4e00-\u9fa5]/g, '');
   const tokens = removedChinese.split(/[\s\n]+/).filter((t) => t);
   const chineseWordLength = markdown.length - removedChinese.length;
   word += chineseWordLength + tokens.length;
@@ -184,7 +184,7 @@ export const genUpper2LowerKeyHash = (
   keys: string[]
 ): Record<string, string> => {
   return keys.reduce((acc, key) => {
-    const value = key.toLowerCase().replace(/_/g, "-");
+    const value = key.toLowerCase().replace(/_/g, '-');
 
     return Object.assign(acc, { [key]: value });
   }, {});
@@ -265,7 +265,7 @@ export function diffToTextOp(diffs: Diff[]) {
   }
 
   let peak = op[op.length - 1];
-  while (typeof peak === "number") {
+  while (typeof peak === 'number') {
     op.pop();
     peak = op[op.length - 1];
   }
@@ -296,7 +296,7 @@ export const adjustOffset = <T extends Content>(
   event: KeyboardEvent
 ) => {
   if (
-    block.parent?.blockName === "atx-heading" &&
+    block.parent?.blockName === 'atx-heading' &&
     event.key === EVENT_KEYS.ArrowDown
   ) {
     const match = /^\s{0,3}(?:#{1,6})(?:\s{1,}|$)/.exec(block.text);
@@ -312,7 +312,7 @@ export const verticalPositionInRect = (event: MouseEvent, rect: DOMRect) => {
   const { clientY } = event;
   const { top, height } = rect;
 
-  return clientY - top > height / 2 ? "down" : "up";
+  return clientY - top > height / 2 ? 'down' : 'up';
 };
 
 export const hasPick = (c: any) => c && (c.p != null || c.r !== undefined);
@@ -348,7 +348,7 @@ export const mixins =
     constructors.forEach((baseCtor) => {
       Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
         // Do not rewrite the constructor of derivedCtor.
-        if (name === "constructor") {
+        if (name === 'constructor') {
           return;
         }
         Object.defineProperty(
@@ -363,16 +363,16 @@ export const mixins =
 
 // narrowing Event type to KeyboardEvent.
 export function isKeyboardEvent(event: Event): event is KeyboardEvent {
-  return "key" in event;
+  return 'key' in event;
 }
 
 // narrowing Event type to MouseEvent.
 export function isMouseEvent(event: Event): event is MouseEvent {
-  return "x" in event;
+  return 'x' in event;
 }
 
 export function isInputEvent(event: Event): event is InputEvent {
-  return "inputType" in event;
+  return 'inputType' in event;
 }
 
 // narrowing Note type to Element.

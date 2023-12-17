@@ -1,10 +1,10 @@
 export interface IParagraphState {
-  name: "paragraph";
+  name: 'paragraph';
   text: string;
 }
 
 export interface IAtxHeadingState {
-  name: "atx-heading";
+  name: 'atx-heading';
   meta: {
     level: number;
   };
@@ -12,7 +12,7 @@ export interface IAtxHeadingState {
 }
 
 export interface ISetextHeadingState {
-  name: "setext-heading";
+  name: 'setext-heading';
   meta: {
     level: number;
     underline: string; // "===" | "---";
@@ -21,12 +21,12 @@ export interface ISetextHeadingState {
 }
 
 export interface IThematicBreakState {
-  name: "thematic-break";
+  name: 'thematic-break';
   text: string;
 }
 
 export interface ICodeBlockState {
-  name: "code-block";
+  name: 'code-block';
   meta: {
     type: string; // "indented" | "fenced";
     lang: string;
@@ -35,27 +35,27 @@ export interface ICodeBlockState {
 }
 
 export interface IHtmlBlockState {
-  name: "html-block";
+  name: 'html-block';
   text: string;
 }
 
 export interface ILinkReferenceDefinitionState {
-  name: "link-reference-definition";
+  name: 'link-reference-definition';
   text: string;
 }
 
 export interface IBlockQuoteState {
-  name: "block-quote";
+  name: 'block-quote';
   children: TState[];
 }
 
 export interface IListItemState {
-  name: "list-item";
+  name: 'list-item';
   children: TState[];
 }
 
 export interface IOrderListState {
-  name: "order-list";
+  name: 'order-list';
   meta: {
     start: number;
     loose: boolean;
@@ -65,7 +65,7 @@ export interface IOrderListState {
 }
 
 export interface IBulletListState {
-  name: "bullet-list";
+  name: 'bullet-list';
   meta: {
     marker: string; // "-" | "+" | "*";
     loose: boolean;
@@ -74,22 +74,22 @@ export interface IBulletListState {
 }
 
 export interface ITableRowState {
-  name: "table.row";
+  name: 'table.row';
   children: ITableCellState[];
 }
 
 export interface ITableCellMeta {
-  align: "none" | "left" | "center" | "right";
+  align: 'none' | 'left' | 'center' | 'right';
 }
 
 export interface ITableCellState {
-  name: "table.cell";
+  name: 'table.cell';
   meta: ITableCellMeta;
   text: string;
 }
 
 export interface ITableState {
-  name: "table";
+  name: 'table';
   children: ITableRowState[];
 }
 
@@ -98,7 +98,7 @@ export interface ITaskListItemMeta {
 }
 
 export interface ITaskListItemState {
-  name: "task-list-item";
+  name: 'task-list-item';
   meta: ITaskListItemMeta;
   children: TState[];
 }
@@ -109,7 +109,7 @@ export interface ITaskListMeta {
 }
 
 export interface ITaskListState {
-  name: "task-list";
+  name: 'task-list';
   meta: ITaskListMeta;
   children: ITaskListItemState[];
 }
@@ -119,7 +119,7 @@ export interface IMathMeta {
 }
 
 export interface IMathBlockState {
-  name: "math-block";
+  name: 'math-block';
   meta: IMathMeta;
   text: string;
 }
@@ -130,18 +130,18 @@ export interface IFrontmatterMeta {
 }
 
 export interface IFrontmatterState {
-  name: "frontmatter";
+  name: 'frontmatter';
   meta: IFrontmatterMeta;
   text: string;
 }
 
 export interface IDiagramMeta {
-  lang: "yaml";
-  type: "mermaid" | "plantuml" | "vega-lite";
+  lang: 'yaml';
+  type: 'mermaid' | 'plantuml' | 'vega-lite';
 }
 
 export interface IDiagramState {
-  name: "diagram";
+  name: 'diagram';
   meta: IDiagramMeta;
   text: string;
 }
@@ -174,14 +174,14 @@ export type TState = TLeafState | TContainerState;
 export type CodeContentState = ICodeBlockState | IHtmlBlockState | IDiagramState | IMathBlockState | IFrontmatterState
 
 export interface ITurnoverOptions {
-  headingStyle: "atx" | "setext"; // setext or atx
-  hr: "---";
-  bulletListMarker: "-" | "+" | "*"; // -, +, or *
-  codeBlockStyle: "fenced" | "indented"; // fenced or indented
-  fence: "```" | "~~~"; // ``` or ~~~
-  emDelimiter: "*" | "_"; // _ or *
-  strongDelimiter: "**" | "__"; // ** or __
-  linkStyle: "inlined";
-  linkReferenceStyle: "full";
+  headingStyle: 'atx' | 'setext'; // setext or atx
+  hr: '---';
+  bulletListMarker: '-' | '+' | '*'; // -, +, or *
+  codeBlockStyle: 'fenced' | 'indented'; // fenced or indented
+  fence: '```' | '~~~'; // ``` or ~~~
+  emDelimiter: '*' | '_'; // _ or *
+  strongDelimiter: '**' | '__'; // ** or __
+  linkStyle: 'inlined';
+  linkReferenceStyle: 'full';
   blankReplacement: (content: unknown, node: unknown, options: unknown) => string;
 }

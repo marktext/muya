@@ -1,23 +1,23 @@
-import Content from "@muya/block/base/content";
-import Code from "@muya/block/commonMark/codeBlock/code";
-import type HTMLPreview from "@muya/block/commonMark/html/htmlPreview";
-import ScrollPage from "@muya/block/scrollPage";
-import { HTML_TAGS, VOID_HTML_TAGS } from "@muya/config";
-import Muya from "@muya/index";
-import type { Cursor } from "@muya/selection/types";
+import Content from '@muya/block/base/content';
+import Code from '@muya/block/commonMark/codeBlock/code';
+import type HTMLPreview from '@muya/block/commonMark/html/htmlPreview';
+import ScrollPage from '@muya/block/scrollPage';
+import { HTML_TAGS, VOID_HTML_TAGS } from '@muya/config';
+import Muya from '@muya/index';
+import type { Cursor } from '@muya/selection/types';
 import {
   CodeContentState,
   ICodeBlockState,
   IDiagramState,
   IFrontmatterState,
-} from "@muya/state/types";
-import { adjustOffset, escapeHTML } from "@muya/utils";
-import { MARKER_HASH, getHighlightHtml } from "@muya/utils/highlightHTML";
+} from '@muya/state/types';
+import { adjustOffset, escapeHTML } from '@muya/utils';
+import { MARKER_HASH, getHighlightHtml } from '@muya/utils/highlightHTML';
 import prism, {
   loadedLanguages,
   transformAliasToOrigin,
   walkTokens
-} from "@muya/utils/prism/";
+} from '@muya/utils/prism/';
 
 const checkAutoIndent = (text: string, offset: number) => {
   const pairStr = text.substring(offset - 1, offset + 1);
@@ -28,7 +28,7 @@ const checkAutoIndent = (text: string, offset: number) => {
 const getIndentSpace = (text: string) => {
   const match = /^(\s*)\S/.exec(text);
 
-  return match ? match[1] : "";
+  return match ? match[1] : '';
 };
 
 /**
@@ -36,11 +36,11 @@ const getIndentSpace = (text: string) => {
  * div#id.className => {tag: 'div', id: 'id', className: 'className', isVoid: false}
  */
 
-const parseSelector = (str = "") => {
+const parseSelector = (str = '') => {
   const REG_EXP = /(#|\.)([^#.]+)/;
-  let tag = "";
-  let id = "";
-  let className = "";
+  let tag = '';
+  let id = '';
+  let className = '';
   let isVoid = false;
   let cap;
 
@@ -57,10 +57,10 @@ const parseSelector = (str = "") => {
     }
   }
 
-  if (tag !== "") {
+  if (tag !== '') {
     cap = REG_EXP.exec(str);
     while (cap && str.length) {
-      if (cap[1] === "#") {
+      if (cap[1] === '#') {
         id = cap[2];
       } else {
         className = cap[2];
@@ -74,8 +74,8 @@ const parseSelector = (str = "") => {
 };
 
 const LANG_HASH = {
-  "html-block": "html",
-  "math-block": "latex",
+  'html-block': 'html',
+  'math-block': 'latex',
 };
 
 function hasStateMeta(
@@ -88,7 +88,7 @@ class CodeBlockContent extends Content {
   public initialLang: string;
   public parent: Code | null = null;
 
-  static blockName = "codeblock.content";
+  static blockName = 'codeblock.content';
 
   static create(muya: Muya, state: CodeContentState) {
     const content = new CodeBlockContent(muya, state);
@@ -125,10 +125,10 @@ class CodeBlockContent extends Content {
       this.initialLang = LANG_HASH[state.name];
     }
 
-    this.classList = [...this.classList, "mu-codeblock-content"];
+    this.classList = [...this.classList, 'mu-codeblock-content'];
     // Used for empty status prompts
-    this.attributes.frontMatter = muya.i18n.t("Input Front Matter...");
-    this.attributes.math = muya.i18n.t("Input Mathematical Formula...");
+    this.attributes.frontMatter = muya.i18n.t('Input Front Matter...');
+    this.attributes.math = muya.i18n.t('Input Mathematical Formula...');
     this.createDomNode();
   }
 
@@ -149,17 +149,17 @@ class CodeBlockContent extends Content {
     const fullLengthLang = transformAliasToOrigin([lang])[0];
     const domNode = this.domNode!;
     const code = escapeHTML(getHighlightHtml(text, highlights, true, true))
-      .replace(new RegExp(MARKER_HASH["<"], "g"), "<")
-      .replace(new RegExp(MARKER_HASH[">"], "g"), ">")
-      .replace(new RegExp(MARKER_HASH['"'], "g"), '"')
-      .replace(new RegExp(MARKER_HASH["'"], "g"), "'");
+      .replace(new RegExp(MARKER_HASH['<'], 'g'), '<')
+      .replace(new RegExp(MARKER_HASH['>'], 'g'), '>')
+      .replace(new RegExp(MARKER_HASH['"'], 'g'), '"')
+      .replace(new RegExp(MARKER_HASH['\''], 'g'), '\'');
 
     if (
       fullLengthLang &&
       /\S/.test(code) &&
       loadedLanguages.has(fullLengthLang)
     ) {
-      const wrapper = document.createElement("div");
+      const wrapper = document.createElement('div');
       wrapper.classList.add(`language-${fullLengthLang}`);
       wrapper.innerHTML = code;
       prism.highlightElement(wrapper, false, function (this: HTMLElement) {
@@ -184,7 +184,7 @@ class CodeBlockContent extends Content {
       end,
       false,
       false,
-      "codeblock.content"
+      'codeblock.content'
     );
     this.text = text;
 
@@ -209,14 +209,14 @@ class CodeBlockContent extends Content {
         cursorBlock = nextContentBlock;
       } else {
         const newNodeState = {
-          name: "paragraph",
-          text: "",
+          name: 'paragraph',
+          text: '',
         };
         const newNode = ScrollPage.loadBlock(newNodeState.name).create(
           this.muya,
           newNodeState
         );
-        this.scrollPage.append(newNode, "user");
+        this.scrollPage.append(newNode, 'user');
         cursorBlock = newNode.firstChild;
       }
       const offset = adjustOffset(0, cursorBlock, event);
@@ -233,8 +233,8 @@ class CodeBlockContent extends Content {
 
     this.text =
       text.substring(0, start.offset) +
-      "\n" +
-      (autoIndent ? indent + " ".repeat(tabSize) + "\n" : "") +
+      '\n' +
+      (autoIndent ? indent + ' '.repeat(tabSize) + '\n' : '') +
       indent +
       text.substring(start.offset);
 
@@ -255,7 +255,7 @@ class CodeBlockContent extends Content {
 
     if (isMarkupCodeContent) {
       const lastWordBeforeCursor =
-        text.substring(0, start.offset).split(/\s+/).pop() ?? "";
+        text.substring(0, start.offset).split(/\s+/).pop() ?? '';
       const { tag, isVoid, id, className } =
         parseSelector(lastWordBeforeCursor);
 
@@ -270,23 +270,23 @@ class CodeBlockContent extends Content {
         let endOffset = 0;
 
         switch (tag) {
-          case "img":
+          case 'img':
             html += ' alt="" src=""';
             startOffset = endOffset = html.length - 1;
             break;
 
-          case "input":
+          case 'input':
             html += ' type="text"';
             startOffset = html.length - 5;
             endOffset = html.length - 1;
             break;
 
-          case "a":
+          case 'a':
             html += ' href=""';
             startOffset = endOffset = html.length - 1;
             break;
 
-          case "link":
+          case 'link':
             html += ' rel="stylesheet" href=""';
             startOffset = endOffset = html.length - 1;
             break;
@@ -300,7 +300,7 @@ class CodeBlockContent extends Content {
           html += ` class="${className}"`;
         }
 
-        html += ">";
+        html += '>';
 
         if (startOffset === 0 && endOffset === 0) {
           startOffset = endOffset = html.length;
@@ -332,7 +332,7 @@ class CodeBlockContent extends Content {
       event.preventDefault();
       const { text, muya } = this;
       const state = {
-        name: "paragraph",
+        name: 'paragraph',
         text,
       };
       const newNode = ScrollPage.loadBlock(state.name).create(muya, state);
@@ -346,7 +346,7 @@ class CodeBlockContent extends Content {
     // pressing the backspace key should work properly.(compatibility with Firefox)
     if (
       start.offset === end.offset &&
-      this.text[start.offset - 1] === "\n"
+      this.text[start.offset - 1] === '\n'
     ) {
       event.preventDefault();
       const { text } = this;
@@ -366,14 +366,14 @@ class CodeBlockContent extends Content {
       if (fullLengthLang && /\S/.test(text) && loadedLanguages.has(fullLengthLang)) {
         const tokens = prism.tokenize(text, prism.languages[lang]);
         let offset = start.offset;
-        let code = "";
+        let code = '';
         let needRender = false;
 
         walkTokens(tokens, token => {
-          if (offset === 1 && token.type === "temp-text" && typeof token.content === "string") {
+          if (offset === 1 && token.type === 'temp-text' && typeof token.content === 'string') {
             token.content = token.content.substring(1);
             needRender = true;
-          } else if (offset === token.length && token.type !== "temp-text" && typeof token.content === "string") {
+          } else if (offset === token.length && token.type !== 'temp-text' && typeof token.content === 'string') {
             token.content = token.content.substring(0, token.length - 1);
             needRender = true;
           }

@@ -1,18 +1,18 @@
-import { Marked } from "marked";
-import { markedHighlight } from "marked-highlight";
-import Prism from "prismjs";
-import emojiExtension from "./extensions/emoji";
-import mathExtension from "./extensions/math";
-import superSubScriptExtension from "./extensions/superSubscript";
-import fm, { frontMatterRender } from "./frontMatter";
-import { DEFAULT_OPTIONS } from "./options";
-import type { LexOption } from "./types";
-import walkTokens from "./walkTokens";
+import { Marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import Prism from 'prismjs';
+import emojiExtension from './extensions/emoji';
+import mathExtension from './extensions/math';
+import superSubScriptExtension from './extensions/superSubscript';
+import fm, { frontMatterRender } from './frontMatter';
+import { DEFAULT_OPTIONS } from './options';
+import type { LexOption } from './types';
+import walkTokens from './walkTokens';
 
 const DIAGRAM_TYPE = [
-  "mermaid",
-  "plantuml",
-  "vega-lite",
+  'mermaid',
+  'plantuml',
+  'vega-lite',
 ];
 
 const marked = new Marked(
@@ -42,7 +42,7 @@ export function getHighlightHtml(src: string, options: LexOption = {}) {
   const { frontMatter, math, isGitlabCompatibilityEnabled, superSubScript } =
     options;
 
-  let html = "";
+  let html = '';
 
   marked.use({
     walkTokens: walkTokens({ math, isGitlabCompatibilityEnabled }),

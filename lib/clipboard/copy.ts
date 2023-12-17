@@ -1,23 +1,23 @@
-import Parent from "@muya/block/base/parent";
-import { getClipBoardHtml } from "@muya/utils/marked";
-import StateToMarkdown from "../state/stateToMarkdown";
-import Base from "./base";
+import Parent from '@muya/block/base/parent';
+import { getClipBoardHtml } from '@muya/utils/marked';
+import StateToMarkdown from '../state/stateToMarkdown';
+import Base from './base';
 
 class Copy extends Base {
-  public copyType: string = "normal"; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
-  public copyInfo: string = "";
+  public copyType: string = 'normal'; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
+  public copyInfo: string = '';
 
   getClipboardData() {
     const { copyType, copyInfo } = this;
-    if (copyType === "copyCodeContent") {
+    if (copyType === 'copyCodeContent') {
       return {
-        html: "",
+        html: '',
         text: copyInfo,
       };
     }
 
-    let text = "";
-    let html = "";
+    let text = '';
+    let html = '';
 
     const selection = this.selection.getSelection();
     if (!selection) {
@@ -78,9 +78,9 @@ class Copy extends Base {
         ? focus.offset
         : anchor.offset;
 
-    const getPartialState = (position: "start" | "end") => {
-      const outBlock = position === "start" ? startOutBlock : endOutBlock;
-      const block = position === "start" ? startBlock : endBlock;
+    const getPartialState = (position: 'start' | 'end') => {
+      const outBlock = position === 'start' ? startOutBlock : endOutBlock;
+      const block = position === 'start' ? startBlock : endBlock;
       // Handle anchor and focus in different blocks
       if (
         /block-quote|code-block|html-block|table|math-block|frontmatter|diagram/.test(
@@ -90,7 +90,7 @@ class Copy extends Base {
         copyState.push((outBlock as Parent).getState());
       } else if (/bullet-list|order-list|task-list/.test(outBlock!.blockName)) {
         const listItemBlockName =
-          outBlock!.blockName === "task-list" ? "task-list-item" : "list-item";
+          outBlock!.blockName === 'task-list' ? 'task-list-item' : 'list-item';
         const listItem = block.farthestBlock(listItemBlockName);
         const offset = (outBlock as Parent).offset(listItem);
         const { name, meta, children } = (outBlock as any).getState();
@@ -98,18 +98,18 @@ class Copy extends Base {
           name,
           meta,
           children: children.filter((_: unknown, index: number) =>
-            position === "start" ? index >= offset : index <= offset
+            position === 'start' ? index >= offset : index <= offset
           ),
         });
       } else {
-        if (position === "start" && startOffset < startBlock.text.length) {
+        if (position === 'start' && startOffset < startBlock.text.length) {
           copyState.push({
-            name: "paragraph",
+            name: 'paragraph',
             text: startBlock.text.substring(startOffset),
           });
-        } else if (position === "end" && endOffset > 0) {
+        } else if (position === 'end' && endOffset > 0) {
           copyState.push({
-            name: "paragraph",
+            name: 'paragraph',
             text: endBlock.text.substring(0, endOffset),
           });
         }
@@ -122,9 +122,9 @@ class Copy extends Base {
         copyState.push((anchorOutMostBlock as Parent).getState());
       } else {
         const listItemBlockName =
-          anchorOutMostBlock!.blockName === "task-list"
-            ? "task-list-item"
-            : "list-item";
+          anchorOutMostBlock!.blockName === 'task-list'
+            ? 'task-list-item'
+            : 'list-item';
         const anchorFarthestListItem =
           anchorBlock.farthestBlock(listItemBlockName);
         const focusFarthestListItem =
@@ -148,14 +148,14 @@ class Copy extends Base {
         });
       }
     } else {
-      getPartialState("start");
+      getPartialState('start');
       // Get State between the start outmost block and the end outmost block.
       let node = startOutBlock?.next;
       while (node && node !== endOutBlock) {
         copyState.push((node as Parent).getState());
         node = node.next;
       }
-      getPartialState("end");
+      getPartialState('end');
     }
 
     const mdGenerator = new StateToMarkdown();
@@ -181,27 +181,27 @@ class Copy extends Base {
     }
 
     switch (copyType) {
-      case "normal": {
-        event.clipboardData.setData("text/html", html);
-        event.clipboardData.setData("text/plain", text);
+      case 'normal': {
+        event.clipboardData.setData('text/html', html);
+        event.clipboardData.setData('text/plain', text);
         break;
       }
 
-      case "copyAsHtml": {
-        event.clipboardData.setData("text/html", "");
-        event.clipboardData.setData("text/plain", html);
+      case 'copyAsHtml': {
+        event.clipboardData.setData('text/html', '');
+        event.clipboardData.setData('text/plain', html);
         break;
       }
 
-      case "copyAsMarkdown": {
-        event.clipboardData.setData("text/html", "");
-        event.clipboardData.setData("text/plain", text);
+      case 'copyAsMarkdown': {
+        event.clipboardData.setData('text/html', '');
+        event.clipboardData.setData('text/plain', text);
         break;
       }
 
-      case "copyCodeContent": {
-        event.clipboardData.setData("text/html", "");
-        event.clipboardData.setData("text/plain", text);
+      case 'copyCodeContent': {
+        event.clipboardData.setData('text/html', '');
+        event.clipboardData.setData('text/plain', text);
         break;
       }
     }

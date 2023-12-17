@@ -1,6 +1,6 @@
-import Fuse from "fuse.js";
-import emojis from "@muya/config/emojis";
-import type { Emoji as EmojiType } from "@muya/config/emojis";
+import Fuse from 'fuse.js';
+import emojis from '@muya/config/emojis';
+import type { Emoji as EmojiType } from '@muya/config/emojis';
 
 const emojisForSearch: Record<string, EmojiType[]> = {};
 
@@ -26,7 +26,7 @@ class Emoji {
     Object.keys(emojisForSearch).forEach((category) => {
       const fuse = new Fuse(emojisForSearch[category], {
         includeScore: true,
-        keys: ["aliases", "tags"],
+        keys: ['aliases', 'tags'],
       });
       const list = fuse.search(text).map((i) => i.item);
       if (list.length) {

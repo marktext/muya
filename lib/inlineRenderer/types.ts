@@ -1,6 +1,6 @@
-import type Format from "@muya/block/base/format";
-import type { Cursor } from "@muya/selection/types";
-import { h } from "snabbdom";
+import type Format from '@muya/block/base/format';
+import type { Cursor } from '@muya/selection/types';
+import { h } from 'snabbdom';
 
 export type H = typeof h;
 
@@ -75,14 +75,14 @@ export type BaseToken = {
 };
 
 export type BeginRuleToken = BaseToken & {
-  type: "header" | "hr" | "code_fence" | "multiple_math";
+  type: 'header' | 'hr' | 'code_fence' | 'multiple_math';
   marker: string;
   content: string;
   backlash: string;
 };
 
 export type ReferenceDefinitionToken = BaseToken & {
-  type: "reference_definition";
+  type: 'reference_definition';
   leftBracket: string;
   label: string;
   backlash: string;
@@ -97,51 +97,51 @@ export type ReferenceDefinitionToken = BaseToken & {
 };
 
 export type TextToken = BaseToken & {
-  type: "text";
+  type: 'text';
   content: string;
 };
 
 export type BacklashToken = BaseToken & {
-  type: "backlash";
+  type: 'backlash';
   marker: string;
   content: string;
 };
 
 export type StrongEmToken = BaseToken & {
-  type: "strong" | "em";
+  type: 'strong' | 'em';
   marker: string;
   children: Token[];
   backlash: string;
 };
 
 export type CodeEmojiMathToken = BaseToken & {
-  type: "inline_code" | "emoji" | "inline_math";
+  type: 'inline_code' | 'emoji' | 'inline_math';
   marker: string;
   content: string;
   backlash: string;
 };
 
 export type DelToken = BaseToken & {
-  type: "del";
+  type: 'del';
   marker: string;
   children: Token[];
   backlash: string;
 };
 
 export type SuperSubScriptToken = BaseToken & {
-  type: "super_sub_script";
+  type: 'super_sub_script';
   marker: string;
   content: string;
 };
 
 export type FootnoteIdentifierToken = BaseToken & {
-  type: "footnote_identifier";
+  type: 'footnote_identifier';
   marker: string;
   content: string;
 };
 
 export type ImageToken = BaseToken & {
-  type: "image";
+  type: 'image';
   marker: string;
   srcAndTitle: string;
   attrs: {
@@ -160,7 +160,7 @@ export type ImageToken = BaseToken & {
 };
 
 export type LinkToken = BaseToken & {
-  type: "link";
+  type: 'link';
   marker: string;
   hrefAndTitle: string;
   href: string;
@@ -174,7 +174,7 @@ export type LinkToken = BaseToken & {
 };
 
 export type ReferenceLinkToken = BaseToken & {
-  type: "reference_link";
+  type: 'reference_link';
   isFullLink: boolean;
   anchor: string;
   backlash: {
@@ -186,7 +186,7 @@ export type ReferenceLinkToken = BaseToken & {
 };
 
 export type ReferenceImageToken = BaseToken & {
-  type: "reference_image";
+  type: 'reference_image';
   isFullLink: boolean;
   alt: string;
   backlash: {
@@ -197,28 +197,28 @@ export type ReferenceImageToken = BaseToken & {
 };
 
 export type HTMLEscapeToken = BaseToken & {
-  type: "html_escape";
+  type: 'html_escape';
   escapeCharacter: string;
 };
 
 export type AutoLinkExtensionToken = BaseToken & {
-  type: "auto_link_extension";
+  type: 'auto_link_extension';
   www: string;
   url: string;
   email: string;
-  linkType: "www" | "url" | "email";
+  linkType: 'www' | 'url' | 'email';
 };
 
 export type AutoLinkToken = BaseToken & {
-  type: "auto_link";
+  type: 'auto_link';
   href: string;
   email: string;
   isLink: boolean; // It is a link or email.
-  marker: "<";
+  marker: '<';
 };
 
 export type HTMLTagToken = BaseToken & {
-  type: "html_tag";
+  type: 'html_tag';
   tag: string;
   openTag: string;
   attrs: Record<string, string | null>;
@@ -228,19 +228,19 @@ export type HTMLTagToken = BaseToken & {
 };
 
 export type SoftLineBreakToken = BaseToken & {
-  type: "soft_line_break";
+  type: 'soft_line_break';
   lineBreak: string;
   isAtEnd: boolean;
 };
 
 export type HardLineBreakToken = BaseToken & {
-  type: "hard_line_break";
+  type: 'hard_line_break';
   spaces: string; // The space in hard line break
   lineBreak: string; // \n
   isAtEnd: boolean;
 };
 
 export type TailHeaderToken = BaseToken & {
-  type: "tail_header";
+  type: 'tail_header';
   marker: string;
 };

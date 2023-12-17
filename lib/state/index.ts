@@ -1,14 +1,14 @@
-import Muya from "@muya/index";
-import { TDiff, deepClone } from "@muya/utils";
-import logger from "@muya/utils/logger";
-import * as json1 from "ot-json1";
-import MarkdownToState from "./markdownToState";
-import StateToMarkdown from "./stateToMarkdown";
+import Muya from '@muya/index';
+import { TDiff, deepClone } from '@muya/utils';
+import logger from '@muya/utils/logger';
+import * as json1 from 'ot-json1';
+import MarkdownToState from './markdownToState';
+import StateToMarkdown from './stateToMarkdown';
 
-import type { Doc, JSONOpList, Path } from "ot-json1";
-import type { TState } from "./types";
+import type { Doc, JSONOpList, Path } from 'ot-json1';
+import type { TState } from './types';
 
-const debug = logger("jsonState:");
+const debug = logger('jsonState:');
 
 class JSONState {
   static invert(op: JSONOpList) {
@@ -22,7 +22,7 @@ class JSONState {
   static transform(
     op: JSONOpList,
     otherOp: JSONOpList,
-    type: "left" | "right"
+    type: 'left' | 'right'
   ) {
     return json1.type.transform(op, otherOp, type);
   }
@@ -43,7 +43,7 @@ class JSONState {
   }
 
   setContent(content: TState[] | string) {
-    if (typeof content === "object") {
+    if (typeof content === 'object') {
       this.setState(content);
     } else {
       this.setMarkdown(content);
@@ -90,7 +90,7 @@ class JSONState {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   editOperation(path: Path, diff: TDiff[]) {
-    const operation = json1.editOp(path, "text-unicode", diff)!;
+    const operation = json1.editOp(path, 'text-unicode', diff)!;
 
     this.operationCache.push(operation);
 
@@ -113,9 +113,9 @@ class JSONState {
         this.apply(op);
         // TODO: remove doc in future
         const doc = this.getState();
-        this.muya.eventCenter.emit("json-change", {
+        this.muya.eventCenter.emit('json-change', {
           op,
-          source: "user",
+          source: 'user',
           doc,
         });
         this.operationCache = [];
@@ -124,12 +124,12 @@ class JSONState {
     }
   }
 
-  dispatch(op: JSONOpList, source = "user" /* user, api */) {
+  dispatch(op: JSONOpList, source = 'user' /* user, api */) {
     this.apply(op);
     // TODO: remove doc in future
     const doc = this.getState();
     debug.log(JSON.stringify(op));
-    this.muya.eventCenter.emit("json-change", {
+    this.muya.eventCenter.emit('json-change', {
       op,
       source,
       doc,

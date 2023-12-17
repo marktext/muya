@@ -1,7 +1,7 @@
-import plantumlEncoder from "plantuml-encoder";
+import plantumlEncoder from 'plantuml-encoder';
 
 export default class Diagram {
-  public encodedInput = "";
+  public encodedInput = '';
 
   /**
    * Builds a Diagram object storing the encoded input value
@@ -26,13 +26,13 @@ export default class Diagram {
   }
 
   insertImgElement(container: string | HTMLElement) {
-    const PLANTUML_URL = "https://www.plantuml.com/plantuml";
+    const PLANTUML_URL = 'https://www.plantuml.com/plantuml';
     const div =
-      typeof container === "string"
+      typeof container === 'string'
         ? document.getElementById(container)
         : container;
     if (div === null || !div.tagName) {
-      throw new Error("Invalid container: " + container);
+      throw new Error('Invalid container: ' + container);
     }
     const src = `${PLANTUML_URL}/svg/${this.encodedInput}`;
 

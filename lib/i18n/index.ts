@@ -1,11 +1,11 @@
-import en from "../locales/en";
-import Muya from "@muya/index";
+import en from '../locales/en';
+import Muya from '@muya/index';
 
-import type { Locale } from "./types";
+import type { Locale } from './types';
 
 class I18n {
   public lang: string;
-  public resources: Record<string, Locale["resource"]>;
+  public resources: Record<string, Locale['resource']>;
 
   constructor(public muya: Muya, object: Locale) {
     const { name, resource } = object || en;

@@ -1,4 +1,4 @@
-import Muya from "@muya/index";
+import Muya from '@muya/index';
 
 abstract class Base {
   get selection() {
