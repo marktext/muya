@@ -388,7 +388,8 @@ class Selection {
         )
       ) {
         const firstContent = anchorOutMostBlock.firstContentInDescendant();
-        const lastContent = anchorOutMostBlock.lastContentInDescendant();
+        const lastContent = anchorOutMostBlock.lastContentInDescendant()!;
+
         if (direction === 'forward') {
           newSelection.anchorBlock = firstContent;
           newSelection.anchorPath = firstContent.path;
@@ -406,7 +407,7 @@ class Selection {
         )
       ) {
         const firstContent = focusOutMostBlock.firstContentInDescendant();
-        const lastContent = focusOutMostBlock.lastContentInDescendant();
+        const lastContent = focusOutMostBlock.lastContentInDescendant()!;
         if (direction === 'forward') {
           newSelection.focusBlock = lastContent;
           newSelection.focusPath = lastContent.path;
@@ -429,7 +430,7 @@ class Selection {
           | ListItem
           | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
-        const lastContent = listItem.lastContentInDescendant();
+        const lastContent = listItem.lastContentInDescendant()!;
         if (direction === 'forward') {
           newSelection.anchorBlock = firstContent;
           newSelection.anchorPath = firstContent.path;
@@ -452,7 +453,7 @@ class Selection {
           | ListItem
           | TaskListItem;
         const firstContent = listItem.firstContentInDescendant();
-        const lastContent = listItem.lastContentInDescendant();
+        const lastContent = listItem.lastContentInDescendant()!;
         if (direction === 'forward') {
           newSelection.focusBlock = lastContent;
           newSelection.focusPath = lastContent.path;

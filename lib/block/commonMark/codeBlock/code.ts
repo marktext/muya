@@ -86,6 +86,12 @@ class Code extends Parent {
       event.stopPropagation();
 
       const codeContent = this.firstContentInDescendant();
+
+      if (codeContent == null) {
+        debug.error('Has no code content');
+        return;
+      }
+
       editor.clipboard.copy('copyCodeContent', codeContent.text);
     };
 

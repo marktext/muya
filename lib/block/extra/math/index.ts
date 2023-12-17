@@ -50,7 +50,11 @@ class MathBlock extends Parent {
 
   getState(): IMathBlockState {
     const { meta } = this;
-    const { text } = this.firstContentInDescendant();
+    const text = this.firstContentInDescendant()?.text;
+
+    if (text == null) {
+      throw new Error('text is null when getState in math block.');
+    }
 
     return {
       name: 'math-block',

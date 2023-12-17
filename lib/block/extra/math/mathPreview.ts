@@ -57,7 +57,7 @@ class MathPreview extends Parent {
     event.stopPropagation();
 
     const cursorBlock = this.parent!.firstContentInDescendant();
-    cursorBlock.setCursor(0, 0);
+    cursorBlock?.setCursor(0, 0);
   }
 
   update(math = this.math) {

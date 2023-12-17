@@ -46,7 +46,7 @@ class AtxHeadingContent extends Format {
       this.parent!.parent!.insertBefore(newParagraphBlock, this.parent);
       this.setCursor(start.offset, end.offset, true);
     } else {
-      super.enterHandler(event);
+      super.enterHandler(event as KeyboardEvent);
     }
   }
 

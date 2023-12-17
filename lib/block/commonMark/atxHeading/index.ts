@@ -7,13 +7,9 @@ import Muya from '@muya/index';
 import { mixins } from '@muya/utils';
 import { IAtxHeadingState } from '../../../state/types';
 
-interface IAtxHeadingMeta {
-  level: number;
-}
-
 @mixins(LeafQueryBlock)
 class AtxHeading extends Parent {
-  public meta: IAtxHeadingMeta;
+  public meta: IAtxHeadingState['meta'];
 
   static blockName = 'atx-heading';
 

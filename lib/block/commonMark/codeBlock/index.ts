@@ -11,13 +11,8 @@ import { TBlockPath } from '../../types';
 
 const debug = logger('codeblock:');
 
-interface ICodeBlockMeta {
-  type: 'indented' | 'fenced';
-  lang: string;
-}
-
 class CodeBlock extends Parent {
-  public meta: ICodeBlockMeta;
+  public meta: ICodeBlockState['meta'];
   static blockName = 'code-block';
 
   static create(muya: Muya, state: ICodeBlockState) {
@@ -72,7 +67,7 @@ class CodeBlock extends Parent {
             ({ status }) => status === 'loaded' || status === 'cached'
           );
           if (needRender) {
-            this.lastContentInDescendant().update();
+            this.lastContentInDescendant()?.update();
           }
         })
         .catch((err) => {
@@ -114,7 +109,7 @@ class CodeBlock extends Parent {
     const state: ICodeBlockState = {
       name: 'code-block',
       meta: { ...this.meta },
-      text: this.lastContentInDescendant().text,
+      text: this.lastContentInDescendant()!.text,
     };
 
     return state;

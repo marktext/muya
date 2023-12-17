@@ -177,10 +177,11 @@ class ScrollPage extends Parent {
 
     if (target && target[BLOCK_DOM_PROPERTY] === this) {
       const lastChild = this.lastChild as Parent;
-      const lastContentBlock = lastChild.lastContentInDescendant();
+      const lastContentBlock = lastChild.lastContentInDescendant()!;
       const { clientY } = event;
       const lastChildDom = lastChild.domNode;
       const { bottom } = lastChildDom!.getBoundingClientRect();
+
       if (clientY > bottom) {
         if (
           lastChild.blockName === 'paragraph' &&

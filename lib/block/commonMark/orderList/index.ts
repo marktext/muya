@@ -7,16 +7,10 @@ import { mixins } from '@muya/utils';
 import { IOrderListState } from '../../../state/types';
 import ListItem from '../listItem';
 
-interface IOrderListMeta {
-  start: number;
-  loose: boolean;
-  delimiter: '.' | ')';
-}
-
 @mixins(ContainerQueryBlock)
 class OrderList extends Parent {
   public children: LinkedList<Parent> = new LinkedList();
-  public meta: IOrderListMeta;
+  public meta: IOrderListState['meta'];
 
   static blockName = 'order-list';
 

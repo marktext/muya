@@ -56,7 +56,7 @@ class LangInputContent extends Content {
     event.stopPropagation();
 
     const { parent } = this;
-    parent!.lastContentInDescendant().setCursor(0, 0);
+    parent!.lastContentInDescendant()?.setCursor(0, 0);
   }
 
   backspaceHandler(event: Event) {

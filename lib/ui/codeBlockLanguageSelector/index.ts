@@ -179,7 +179,7 @@ class CodePicker extends BaseScrollFloat {
       block.text = name;
       block.update();
       block.parent!.lang = name;
-      block.parent?.lastContentInDescendant().setCursor(0, 0);
+      block.parent?.lastContentInDescendant()?.setCursor(0, 0);
     }
 
     super.selectItem(item);

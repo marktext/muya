@@ -6,14 +6,9 @@ import Muya from '@muya/index';
 import { mixins } from '@muya/utils';
 import { ISetextHeadingState } from '../../../state/types';
 
-interface ISetextHeadingMeta {
-  level: number;
-  underline: '===' | '---';
-}
-
 @mixins(LeafQueryBlock)
 class SetextHeading extends Parent {
-  public meta: ISetextHeadingMeta;
+  public meta: ISetextHeadingState['meta'];
 
   static blockName = 'setext-heading';
 

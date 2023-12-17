@@ -305,7 +305,7 @@ class FrontMenu extends BaseFloat {
           const listBlock = ScrollPage.loadBlock(label).create(muya, state);
           block.replaceWith(listBlock);
           const guessCursorBlock =
-            muya.editor.scrollPage.queryBlock(anchorPath);
+            muya.editor.scrollPage?.queryBlock(anchorPath);
           if (guessCursorBlock && isSelectionInSameBlock) {
             const begin = Math.min(anchor!.offset, focus!.offset);
             const end = Math.max(anchor!.offset, focus!.offset);

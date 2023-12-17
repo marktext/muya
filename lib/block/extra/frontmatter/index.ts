@@ -47,7 +47,7 @@ class Frontmatter extends Parent {
             ({ status }) => status === 'loaded' || status === 'cached'
           );
           if (needRender) {
-            this.lastContentInDescendant().update();
+            this.lastContentInDescendant()?.update();
           }
         })
         .catch((err) => {
@@ -90,7 +90,7 @@ class Frontmatter extends Parent {
     const state: IFrontmatterState = {
       name: 'frontmatter',
       meta: { ...this.meta },
-      text: this.lastContentInDescendant().text,
+      text: this.lastContentInDescendant()?.text ?? '',
     };
 
     return state;

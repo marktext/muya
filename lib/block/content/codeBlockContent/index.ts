@@ -216,7 +216,7 @@ class CodeBlockContent extends Content {
           this.muya,
           newNodeState
         );
-        this.scrollPage.append(newNode, 'user');
+        this.scrollPage?.append(newNode, 'user');
         cursorBlock = newNode.firstChild;
       }
       const offset = adjustOffset(0, cursorBlock, event);

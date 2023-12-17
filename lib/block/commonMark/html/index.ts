@@ -53,7 +53,7 @@ class HTMLBlock extends Parent {
   getState(): IHtmlBlockState {
     const state: IHtmlBlockState = {
       name: 'html-block',
-      text: this.firstContentInDescendant().text,
+      text: this.firstContentInDescendant()?.text ?? '',
     };
 
     return state;

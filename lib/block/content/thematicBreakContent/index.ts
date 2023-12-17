@@ -47,7 +47,7 @@ class ThematicBreakContent extends Format {
     } else {
       const offset = text.length;
       this.setCursor(offset, offset);
-      super.enterHandler(event);
+      super.enterHandler(event as KeyboardEvent);
     }
   }
 

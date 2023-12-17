@@ -105,8 +105,12 @@ class DiagramPreview extends Parent {
     event.preventDefault();
     event.stopPropagation();
 
-    const cursorBlock = this.parent!.firstContentInDescendant();
-    cursorBlock.setCursor(0, 0);
+    if (this.parent == null) {
+      return;
+    }
+
+    const cursorBlock = this.parent.firstContentInDescendant();
+    cursorBlock?.setCursor(0, 0);
   }
 
   async update(code = this.code) {

@@ -37,7 +37,7 @@ class DiagramBlock extends Parent {
             ({ status }) => status === 'loaded' || status === 'cached'
           );
           if (needRender) {
-            diagramBlock.lastContentInDescendant().update();
+            diagramBlock.lastContentInDescendant()?.update();
           }
         })
         .catch((err) => {
@@ -71,7 +71,11 @@ class DiagramBlock extends Parent {
 
   getState(): IDiagramState {
     const { meta } = this;
-    const { text } = this.firstContentInDescendant();
+    const text = this.firstContentInDescendant()?.text;
+
+    if (text == null) {
+      throw new Error('text is null when getState in diagram block.');
+    }
 
     return {
       name: 'diagram',

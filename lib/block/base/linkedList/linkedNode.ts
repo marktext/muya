@@ -1,12 +1,8 @@
 import { Nullable } from '@muya/types';
 
 class LinkedNode<T> {
-  public prev: Nullable<T>;
-  public next: Nullable<T>;
-
-  constructor() {
-    this.prev = this.next = null;
-  }
+  public prev: Nullable<T> = null;
+  public next: Nullable<T> = null;
 }
 
 export default LinkedNode;

@@ -92,7 +92,7 @@ class Table extends Parent {
     const clickHandler = (event: Event) => {
       if (event.target === domNode) {
         event.preventDefault();
-        const cursorBlock = this.lastContentInDescendant();
+        const cursorBlock = this.lastContentInDescendant()!;
         const offset = cursorBlock.text.length;
         cursorBlock.setCursor(offset, offset, true);
       }

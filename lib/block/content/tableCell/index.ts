@@ -96,7 +96,8 @@ class TableCellContent extends Format {
       cursorBlock = nextRow.firstContentInDescendant();
     } else {
       const lastCellContent = row.lastContentInDescendant();
-      const nextContent = lastCellContent.nextContentInContext();
+      const nextContent = lastCellContent?.nextContentInContext();
+
       if (nextContent) {
         cursorBlock = nextContent;
       } else {
@@ -109,7 +110,7 @@ class TableCellContent extends Format {
           this.muya,
           state
         );
-        this.scrollPage.append(newParagraphBlock, 'user');
+        this.scrollPage?.append(newParagraphBlock, 'user');
         cursorBlock = newParagraphBlock.firstContentInDescendant();
       }
     }
@@ -151,8 +152,11 @@ class TableCellContent extends Format {
         const cursorBlock = (
           previousRow.find(offset) as Cell
         ).firstContentInDescendant();
-        const cursorOffset = cursorBlock.text.length;
-        cursorBlock.setCursor(cursorOffset, cursorOffset, true);
+
+        if (cursorBlock) {
+          const cursorOffset = cursorBlock.text.length;
+          cursorBlock.setCursor(cursorOffset, cursorOffset, true);
+        }
       } else if (tablePrevContent) {
         const cursorOffset = tablePrevContent.text.length;
         tablePrevContent.setCursor(cursorOffset, cursorOffset, true);
@@ -164,7 +168,8 @@ class TableCellContent extends Format {
         const cursorBlock = (
           nextRow.find(offset) as Cell
         ).firstContentInDescendant();
-        cursorBlock.setCursor(0, 0, true);
+
+        cursorBlock?.setCursor(0, 0, true);
       } else {
         let cursorBlock = null;
         if (tableNextContent) {
@@ -179,7 +184,7 @@ class TableCellContent extends Format {
             this.muya,
             state
           );
-          this.scrollPage.append(newParagraphBlock, 'user');
+          this.scrollPage?.append(newParagraphBlock, 'user');
           cursorBlock = newParagraphBlock.firstContentInDescendant();
         }
 
