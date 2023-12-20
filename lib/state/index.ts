@@ -97,8 +97,8 @@ class JSONState {
     this._emitStateChange();
   }
 
-  replaceOperation(path: Path, oldValue: TState, newValue: TState) {
-    const operation = json1.replaceOp(path, oldValue as unknown as Doc, newValue as unknown as Doc)!;
+  replaceOperation(path: Path, oldValue: Doc, newValue: Doc) {
+    const operation = json1.replaceOp(path, oldValue, newValue)!;
 
     this.operationCache.push(operation);
 

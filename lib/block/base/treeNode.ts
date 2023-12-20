@@ -16,10 +16,15 @@ interface IConstructor<T> {
 
 class TreeNode extends LinkedNode<TreeNode> {
   public parent: Nullable<Parent> = null;
+
   public domNode: Nullable<HTMLElement> = null;
+
   public tagName: string = '';
+
   public classList: string[] = [];
+
   public attributes: Attributes = {};
+
   public datasets: Datasets = {};
 
   static blockName = 'tree.node';

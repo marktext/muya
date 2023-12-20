@@ -21,6 +21,7 @@ class TaskListItem extends Parent {
     listItem.appendAttachment(
       ScrollPage.loadBlock('task-list-checkbox').create(muya, state.meta)
     );
+
     listItem.append(
       ...state.children.map((child) =>
         ScrollPage.loadBlock(child.name).create(muya, child)
@@ -43,8 +44,9 @@ class TaskListItem extends Parent {
 
   set checked(checked) {
     const oldCheckStatus = this.meta.checked;
-    this.meta.checked = checked;
+
     if (checked !== oldCheckStatus) {
+      this.meta.checked = checked;
       const { path } = this;
       path.pop();
       path.push('meta', 'checked');
@@ -59,16 +61,6 @@ class TaskListItem extends Parent {
     this.meta = meta;
     this.classList = ['mu-task-list-item'];
     this.createDomNode();
-  }
-
-  find(key: number | string) {
-    if (typeof key === 'number') {
-      return super.find(key);
-    } else if (typeof key === 'string') {
-      // If key is checked.
-      // Return taskListCheckbox.
-      return this.attachments.head;
-    }
   }
 
   getState(): ITaskListItemState {

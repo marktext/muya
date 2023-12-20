@@ -17,6 +17,7 @@ const debug = logger('tasklistCheckbox:');
 // span has a cursor staggered problem.
 class TaskListCheckbox extends TreeNode {
   private checked: boolean;
+
   private eventIds: string[] = [];
 
   static blockName = 'task-list-checkbox';
@@ -98,6 +99,7 @@ class TaskListCheckbox extends TreeNode {
       (this.domNode as HTMLInputElement).checked = checked;
     }
 
+    // No need to trigger the OT operation If the source is `api`.
     if (source === 'api') {
       taskListItem.meta.checked = checked;
     } else {
@@ -113,13 +115,12 @@ class TaskListCheckbox extends TreeNode {
     }
   }
 
-  remove() {
-    this.detachDOMEvents();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  remove(_source: string) {
     super.remove();
-    if (this.domNode) {
-      this.domNode.remove();
-    }
-    this.domNode = null;
+    this.detachDOMEvents();
+
+    return this;
   }
 
   getState() {
