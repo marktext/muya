@@ -1,14 +1,16 @@
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
+import Muya from '@muya/index';
 import { mixins } from '@muya/utils';
 import { ITableRowState } from '../../../state/types';
+import TableBodyCell from './cell';
 
 @mixins(ContainerQueryBlock)
 class TableRow extends Parent {
   static blockName = 'table.row';
 
-  static create(muya, state) {
+  static create(muya: Muya, state: ITableRowState) {
     const row = new TableRow(muya);
 
     row.append(
@@ -27,7 +29,7 @@ class TableRow extends Parent {
     return [...pPath, offset];
   }
 
-  constructor(muya) {
+  constructor(muya: Muya) {
     super(muya);
     this.tagName = 'tr';
 
@@ -38,7 +40,7 @@ class TableRow extends Parent {
   getState(): ITableRowState {
     const state: ITableRowState = {
       name: 'table.row',
-      children: this.map((node) => node.getState()),
+      children: this.map((node) => (node as TableBodyCell).getState()),
     };
 
     return state;

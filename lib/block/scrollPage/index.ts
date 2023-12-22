@@ -16,7 +16,7 @@ interface IBlurFocus {
 }
 
 class ScrollPage extends Parent {
-  private blurFocus: IBlurFocus = { blur: null, focus: null };
+  private _blurFocus: IBlurFocus = { blur: null, focus: null };
 
   static blockName = 'scrollpage';
 
@@ -116,17 +116,17 @@ class ScrollPage extends Parent {
   }
 
   handleBlurFromContent(block: Content) {
-    this.blurFocus.blur = block;
+    this._blurFocus.blur = block;
     requestAnimationFrame(this.updateActiveStatus);
   }
 
   handleFocusFromContent(block: Content) {
-    this.blurFocus.focus = block;
+    this._blurFocus.focus = block;
     requestAnimationFrame(this.updateActiveStatus);
   }
 
   private updateActiveStatus = () => {
-    const { blur, focus } = this.blurFocus;
+    const { blur, focus } = this._blurFocus;
 
     if (blur == null && focus == null) {
       return;
@@ -161,7 +161,7 @@ class ScrollPage extends Parent {
       });
     }
 
-    this.blurFocus = {
+    this._blurFocus = {
       blur: null,
       focus: null,
     };

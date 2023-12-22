@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import type { Path } from 'ot-json1';
 import Content from '../base/content';
 import Parent from '../base/parent';
+import { TBlockPath } from '../types';
 
 interface ContainerQueryBlock {
   find(p: number): Parent | Content;
 }
 class ContainerQueryBlock {
-  queryBlock(path: [string, ...Path]) {
-    if (/children|meta|align|type|lang/.test(path[0])) {
+  queryBlock(path: TBlockPath) {
+    if (typeof path[0] === 'string' && /children|meta|align|type|lang/.test(path[0])) {
       path.shift();
     }
 

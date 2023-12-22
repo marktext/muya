@@ -1,9 +1,9 @@
-import type { Path } from 'ot-json1';
+import { TBlockPath } from '../types';
 
 class LeafQueryBlock {
   public firstChild: unknown;
 
-  queryBlock(path: Path) {
+  queryBlock(path: TBlockPath) {
     return path.length && path[0] === 'text' ? this.firstChild : this;
   }
 }
