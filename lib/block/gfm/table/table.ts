@@ -1,16 +1,16 @@
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
+import Muya from '@muya/index';
 import { mixins } from '@muya/utils';
 import { ITableState } from '../../../state/types';
-
-interface TableInner extends ContainerQueryBlock {}
+import TableRow from './row';
 
 @mixins(ContainerQueryBlock)
 class TableInner extends Parent {
   static blockName = 'table.inner';
 
-  static create(muya, state) {
+  static create(muya: Muya, state: ITableState) {
     const table = new TableInner(muya, state);
 
     table.append(
@@ -23,10 +23,11 @@ class TableInner extends Parent {
   }
 
   get path() {
-    return [...this.parent.path, 'children'];
+    return [...this.parent!.path, 'children'];
   }
 
-  constructor(muya, state?) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(muya: Muya, _state: ITableState) {
     super(muya);
     this.tagName = 'table';
 
@@ -37,7 +38,7 @@ class TableInner extends Parent {
   getState(): ITableState {
     const state: ITableState = {
       name: 'table',
-      children: this.map((node) => node.getState()),
+      children: this.map((node) => (node as TableRow).getState()),
     };
 
     return state;
