@@ -11,7 +11,7 @@ import { IAtxHeadingState } from '../../../state/types';
 class AtxHeading extends Parent {
   public meta: IAtxHeadingState['meta'];
 
-  static blockName = 'atx-heading';
+  static override blockName = 'atx-heading';
 
   static create(muya: Muya, state: IAtxHeadingState) {
     const heading = new AtxHeading(muya, state);
@@ -23,7 +23,7 @@ class AtxHeading extends Parent {
     return heading;
   }
 
-  get path(): TBlockPath {
+  override get path(): TBlockPath {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -38,7 +38,7 @@ class AtxHeading extends Parent {
     this.createDomNode();
   }
 
-  getState(): IAtxHeadingState {
+  override getState(): IAtxHeadingState {
     return {
       name: 'atx-heading',
       meta: this.meta,

@@ -10,7 +10,7 @@ const debug = logger('diagram:');
 
 class DiagramBlock extends Parent {
   public meta: IDiagramMeta;
-  static blockName = 'diagram';
+  static override blockName = 'diagram';
 
   static create(muya: Muya, state: IDiagramState) {
     const diagramBlock = new DiagramBlock(muya, state);
@@ -48,7 +48,7 @@ class DiagramBlock extends Parent {
     return diagramBlock;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -69,7 +69,7 @@ class DiagramBlock extends Parent {
       : this;
   }
 
-  getState(): IDiagramState {
+  override getState(): IDiagramState {
     const { meta } = this;
     const text = this.firstContentInDescendant()?.text;
 

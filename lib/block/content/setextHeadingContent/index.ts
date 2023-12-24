@@ -5,7 +5,7 @@ import { Cursor } from '@muya/selection/types';
 import { isKeyboardEvent } from '@muya/utils';
 
 class SetextHeadingContent extends Format {
-  static blockName = 'setextheading.content';
+  static override blockName = 'setextheading.content';
 
   static create(muya: Muya, text: string) {
     const content = new SetextHeadingContent(muya, text);
@@ -19,15 +19,15 @@ class SetextHeadingContent extends Format {
     this.createDomNode();
   }
 
-  getAnchor() {
+  override getAnchor() {
     return this.parent;
   }
 
-  update(cursor: Cursor, highlights = []) {
+  override update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
-  enterHandler(event: Event) {
+  override enterHandler(event: Event) {
     if(!isKeyboardEvent(event)) {
       return;
     }
@@ -68,7 +68,7 @@ class SetextHeadingContent extends Format {
     }
   }
 
-  backspaceHandler(event: Event) {
+  override backspaceHandler(event: Event) {
     const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       this.convertToParagraph(true);

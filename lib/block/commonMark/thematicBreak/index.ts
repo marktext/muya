@@ -8,7 +8,7 @@ import { IThematicBreakState } from '../../../state/types';
 
 @mixins(LeafQueryBlock)
 class ThematicBreak extends Parent {
-  static blockName = 'thematic-break';
+  static override blockName = 'thematic-break';
 
   static create(muya: Muya, state: IThematicBreakState) {
     const heading = new ThematicBreak(muya);
@@ -20,7 +20,7 @@ class ThematicBreak extends Parent {
     return heading;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -34,7 +34,7 @@ class ThematicBreak extends Parent {
     this.createDomNode();
   }
 
-  getState(): IThematicBreakState {
+  override getState(): IThematicBreakState {
     return {
       name: 'thematic-break',
       text: (this.children.head as ThematicBreakContent).text,

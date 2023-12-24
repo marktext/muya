@@ -7,7 +7,7 @@ import { IMathBlockState, IMathMeta } from '../../../state/types';
 class MathBlock extends Parent {
   public meta: IMathMeta;
 
-  static blockName = 'math-block';
+  static override blockName = 'math-block';
 
   static create(muya: Muya, state: IMathBlockState) {
     const mathBlock = new MathBlock(muya, state);
@@ -27,7 +27,7 @@ class MathBlock extends Parent {
     return mathBlock;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -48,7 +48,7 @@ class MathBlock extends Parent {
       : this;
   }
 
-  getState(): IMathBlockState {
+  override getState(): IMathBlockState {
     const { meta } = this;
     const text = this.firstContentInDescendant()?.text;
 

@@ -63,9 +63,9 @@ const parseTableHeader = (text: string) => {
  * ParagraphContent
  */
 class ParagraphContent extends Format {
-  public parent: Nullable<Paragraph> = null;
+  public override parent: Nullable<Paragraph> = null;
 
-  static blockName = 'paragraph.content';
+  static override blockName = 'paragraph.content';
 
   static create(muya: Muya, text: string) {
     const content = new ParagraphContent(muya, text);
@@ -81,11 +81,11 @@ class ParagraphContent extends Format {
     this.createDomNode();
   }
 
-  getAnchor() {
+  override getAnchor() {
     return this.parent;
   }
 
-  update(cursor?: Cursor, highlights = []) {
+  override update(cursor?: Cursor, highlights = []) {
     this.inlineRenderer.patch(this, cursor, highlights);
     const { label } = this.inlineRenderer.getLabelInfo(this);
 
@@ -94,7 +94,7 @@ class ParagraphContent extends Format {
     }
   }
 
-  backspaceHandler(event: Event) {
+  override backspaceHandler(event: Event) {
     const { start, end } = this.getCursor()!;
     const { eventCenter } = this.muya;
 
@@ -125,7 +125,7 @@ class ParagraphContent extends Format {
     }
   }
 
-  inputHandler(event: Event) {
+  override inputHandler(event: Event) {
     super.inputHandler(event);
     const { eventCenter } = this.muya;
 
@@ -388,7 +388,7 @@ class ParagraphContent extends Format {
     }
   }
 
-  enterHandler(event: Event) {
+  override enterHandler(event: Event) {
     if (!isKeyboardEvent(event)) {
       return;
     }
@@ -679,7 +679,7 @@ class ParagraphContent extends Format {
     cursorBlock.setCursor(start.offset, end.offset, true);
   }
 
-  insertTab() {
+  override insertTab() {
     const { muya, text } = this;
     const { tabSize } = muya.options;
     const tabCharacter = String.fromCharCode(160).repeat(tabSize);
@@ -823,7 +823,7 @@ class ParagraphContent extends Format {
     return result;
   }
 
-  tabHandler(event: Event) {
+  override tabHandler(event: Event) {
     // disable tab focus
     event.preventDefault();
 

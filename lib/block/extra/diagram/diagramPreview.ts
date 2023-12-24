@@ -58,7 +58,7 @@ const renderDiagram = async ({
 class DiagramPreview extends Parent {
   public code: string;
   public type: string;
-  static blockName = 'diagram-preview';
+  static override blockName = 'diagram-preview';
 
   static create(muya: Muya, state: IDiagramState) {
     const diagramPreview = new DiagramPreview(muya, state);
@@ -66,7 +66,7 @@ class DiagramPreview extends Parent {
     return diagramPreview;
   }
 
-  get path() {
+  override get path() {
     debug.warn('You can never call `get path` in diagramPreview');
     return [];
   }
@@ -86,7 +86,7 @@ class DiagramPreview extends Parent {
     this.update();
   }
 
-  getState(): TState {
+  override getState(): TState {
     debug.warn('You can never call `getState` in diagramPreview');
     return {} as TState;
   }

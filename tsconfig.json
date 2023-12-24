@@ -14,13 +14,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-
+  
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noErrorTruncation": true,
+    "noImplicitOverride": true,
     "paths": {
       "@muya/*": ["./lib/*"],
     }

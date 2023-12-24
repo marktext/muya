@@ -7,7 +7,7 @@ import { IBlockQuoteState } from '../../../state/types';
 
 @mixins(ContainerQueryBlock)
 class BlockQuote extends Parent {
-  static blockName = 'block-quote';
+  static override blockName = 'block-quote';
 
   static create(muya: Muya, state: IBlockQuoteState) {
     const blockQuote = new BlockQuote(muya);
@@ -19,7 +19,7 @@ class BlockQuote extends Parent {
     return blockQuote;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -33,7 +33,7 @@ class BlockQuote extends Parent {
     this.createDomNode();
   }
 
-  getState(): IBlockQuoteState {
+  override getState(): IBlockQuoteState {
     const state: IBlockQuoteState = {
       name: 'block-quote',
       children: this.children.map((child) => (child as Parent).getState()),

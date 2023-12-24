@@ -11,10 +11,13 @@ const debug = logger('parent:');
 
 class Parent extends TreeNode {
   // Used to store icon, checkbox(span) etc. these blocks are not in children properties in json state.
-  public attachments: LinkedList<Parent> = new LinkedList();
-  public children: LinkedList<TreeNode> = new LinkedList();
-  public prev: Nullable<Parent> = null;
-  public next: Nullable<Parent> = null;
+  attachments: LinkedList<Parent> = new LinkedList();
+
+  children: LinkedList<TreeNode> = new LinkedList();
+
+  override prev: Nullable<Parent> = null;
+
+  override next: Nullable<Parent> = null;
 
   private _active: boolean = false;
 
@@ -209,7 +212,7 @@ class Parent extends TreeNode {
     return newNode;
   }
 
-  remove(source = 'user') {
+  override remove(source = 'user') {
     if (source === 'user') {
       // dispatch json1 operation
       const path = this.getJsonPath();

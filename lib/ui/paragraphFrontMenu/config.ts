@@ -43,8 +43,8 @@ export const canTurnIntoMenu = (block: Parent) => {
 
   switch (blockName) {
     case 'paragraph': {
-      const isEmpty = /^\s*$/.test(block.firstContentInDescendant().text);
-      if (isEmpty) {
+      const paragraphIsEmpty = /^\s*$/.test(block.firstContentInDescendant()!.text);
+      if (paragraphIsEmpty) {
         return ALL_MENU_CONFIG.filter((item) => item.label !== 'frontmatter');
       }
 

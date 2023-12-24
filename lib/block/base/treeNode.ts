@@ -1,4 +1,3 @@
-import LinkedNode from '@muya/block/base/linkedList/linkedNode';
 import { BLOCK_DOM_PROPERTY } from '@muya/config';
 import Muya from '@muya/index';
 import type { TState } from '@muya/state/types';
@@ -6,6 +5,7 @@ import { Nullable } from '@muya/types';
 import { createDomNode } from '@muya/utils/dom';
 import type { Attributes, Datasets } from '@muya/utils/types';
 import Content from './content';
+import type { LinkedNode } from './linkedList/linkedNode';
 import Parent from './parent';
 
 interface IConstructor<T> {
@@ -14,18 +14,22 @@ interface IConstructor<T> {
   new (muya: Muya): T;
 }
 
-class TreeNode extends LinkedNode<TreeNode> {
-  public parent: Nullable<Parent> = null;
+class TreeNode implements LinkedNode {
+  prev: Nullable<TreeNode> = null;
 
-  public domNode: Nullable<HTMLElement> = null;
+  next: Nullable<TreeNode> = null;
 
-  public tagName: string = '';
+  parent: Nullable<Parent> = null;
 
-  public classList: string[] = [];
+  domNode: Nullable<HTMLElement> = null;
 
-  public attributes: Attributes = {};
+  tagName: string = '';
 
-  public datasets: Datasets = {};
+  classList: string[] = [];
+
+  attributes: Attributes = {};
+
+  datasets: Datasets = {};
 
   static blockName = 'tree.node';
 
@@ -53,8 +57,8 @@ class TreeNode extends LinkedNode<TreeNode> {
     return this.parent ? this.parent.isScrollPage : false;
   }
 
-  get outMostBlock(): this | Parent | null {
-    let node = this.isContent() ? this.parent : this;
+  get outMostBlock(): Nullable<Parent> {
+    let node = this.isContent() ? this.parent : this as unknown as Parent;
 
     while (node) {
       if (node.isOutMostBlock) {
@@ -66,27 +70,25 @@ class TreeNode extends LinkedNode<TreeNode> {
     return null;
   }
 
-  constructor(public muya: Muya) {
-    super();
-  }
+  constructor(public muya: Muya) {}
 
-    /**
+  /**
    * check this is a Content block?
    * @param this
    * @returns boolean
    */
-    isContent(this: TreeNode): this is Content {
-      return 'text' in this;
-    }
-  
-    /**
-     * check this is a Parent block?
-     * @param this
-     * @returns boolean
-     */
-    isParent(this: unknown): this is Parent {
-      return this instanceof Parent;
-    }
+  isContent(this: TreeNode): this is Content {
+    return 'text' in this;
+  }
+
+  /**
+   * check this is a Parent block?
+   * @param this
+   * @returns boolean
+   */
+  isParent(this: unknown): this is Parent {
+    return this instanceof Parent;
+  }
 
   /**
    * create domNode

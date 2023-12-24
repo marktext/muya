@@ -7,7 +7,7 @@ import { IHtmlBlockState, TState } from '../../../state/types';
 const debug = logger('htmlContainer:');
 
 class HTMLContainer extends Parent {
-  static blockName = 'html-container';
+  static override blockName = 'html-container';
 
   static create(muya: Muya, state: IHtmlBlockState) {
     const htmlContainer = new HTMLContainer(muya);
@@ -23,7 +23,7 @@ class HTMLContainer extends Parent {
     return 'markup';
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
 
     return [...pPath];
@@ -36,7 +36,7 @@ class HTMLContainer extends Parent {
     this.createDomNode();
   }
 
-  getState(): TState {
+  override getState(): TState {
     debug.warn('You can never call `getState` in htmlContainer');
     return {} as TState;
   }

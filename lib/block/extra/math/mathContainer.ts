@@ -7,7 +7,7 @@ import { IMathBlockState, TState } from '../../../state/types';
 const debug = logger('mathContainer:');
 
 class MathContainer extends Parent {
-  static blockName = 'math-container';
+  static override blockName = 'math-container';
 
   static create(muya: Muya, state: IMathBlockState) {
     const mathContainer = new MathContainer(muya);
@@ -23,7 +23,7 @@ class MathContainer extends Parent {
     return 'latex';
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
 
     return [...pPath];
@@ -36,7 +36,7 @@ class MathContainer extends Parent {
     this.createDomNode();
   }
 
-  getState(): TState {
+  override getState(): TState {
     debug.warn('You can never call `getState` in mathContainer');
     return {} as TState;
   }

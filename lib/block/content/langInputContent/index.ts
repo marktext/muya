@@ -6,9 +6,9 @@ import { ICodeBlockState } from '@muya/state/types';
 import { getHighlightHtml } from '@muya/utils/highlightHTML';
 
 class LangInputContent extends Content {
-  public parent: CodeBlock | null = null;
+  public override parent: CodeBlock | null = null;
 
-  static blockName = 'language-input';
+  static override blockName = 'language-input';
 
   static create(muya: Muya, state: ICodeBlockState) {
     const content = new LangInputContent(muya, state);
@@ -23,11 +23,11 @@ class LangInputContent extends Content {
     this.createDomNode();
   }
 
-  getAnchor() {
+  override getAnchor() {
     return this.parent;
   }
 
-  update(_cursor?: Cursor, highlights = []) {
+  override update(_cursor?: Cursor, highlights = []) {
     this.domNode!.innerHTML = getHighlightHtml(this.text, highlights);
   }
 
@@ -45,13 +45,13 @@ class LangInputContent extends Content {
     this.muya.eventCenter.emit('content-change', { block: this });
   }
 
-  inputHandler() {
+  override inputHandler() {
     const textContent = this.domNode!.textContent ?? '';
     const lang = textContent.split(/\s+/)[0];
     this.updateLanguage(lang);
   }
 
-  enterHandler(event: Event) {
+  override enterHandler(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -59,7 +59,7 @@ class LangInputContent extends Content {
     parent!.lastContentInDescendant()?.setCursor(0, 0);
   }
 
-  backspaceHandler(event: Event) {
+  override backspaceHandler(event: Event) {
     const { start, end } = this.getCursor()!;
     const { text } = this;
     // The next if statement is used to fix Firefox compatibility issues

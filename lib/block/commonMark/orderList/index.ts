@@ -9,10 +9,10 @@ import ListItem from '../listItem';
 
 @mixins(ContainerQueryBlock)
 class OrderList extends Parent {
-  public children: LinkedList<Parent> = new LinkedList();
+  public override children: LinkedList<Parent> = new LinkedList();
   public meta: IOrderListState['meta'];
 
-  static blockName = 'order-list';
+  static override blockName = 'order-list';
 
   static create(muya: Muya, state: IOrderListState) {
     const orderList = new OrderList(muya, state);
@@ -26,7 +26,7 @@ class OrderList extends Parent {
     return orderList;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -46,7 +46,7 @@ class OrderList extends Parent {
     this.createDomNode();
   }
 
-  getState(): IOrderListState {
+  override getState(): IOrderListState {
     const state: IOrderListState = {
       name: 'order-list',
       meta: { ...this.meta },

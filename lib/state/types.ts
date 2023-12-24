@@ -79,7 +79,7 @@ export interface ITableRowState {
 }
 
 export interface ITableCellMeta {
-  align: 'none' | 'left' | 'center' | 'right';
+  align: string; // 'none' | 'left' | 'center' | 'right';
 }
 
 export interface ITableCellState {

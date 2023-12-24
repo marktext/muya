@@ -19,6 +19,7 @@ class ContainerQueryBlock {
     const p = path.shift() as number;
     const block = this.find(p);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return block && path.length ? (block as any).queryBlock(path) : block;
   }
 }

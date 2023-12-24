@@ -211,7 +211,7 @@ const checkTokenIsInlineFormat = (token: Token) => {
 };
 
 class Format extends Content {
-  static blockName = 'format';
+  static override blockName = 'format';
 
   private _checkCursorInTokenType(
     text: string,
@@ -325,7 +325,7 @@ class Format extends Content {
     return false;
   }
 
-  blurHandler() {
+  override blurHandler() {
     super.blurHandler();
     const needRender = this.checkNeedRender();
     if (needRender) {
@@ -450,7 +450,7 @@ class Format extends Content {
     eventCenter.emit('muya-image-toolbar', { reference: null });
   }
 
-  clickHandler(event: Event): void {
+  override clickHandler(event: Event): void {
     if (!isMouseEvent(event)) {
       return;
     }
@@ -506,7 +506,7 @@ class Format extends Content {
     });
   }
 
-  keyupHandler(): void {
+  override keyupHandler(): void {
     if (this.isComposed) {
       return;
     }
@@ -561,7 +561,7 @@ class Format extends Content {
     }
   }
 
-  inputHandler(event: Event): void {
+  override inputHandler(event: Event): void {
     // Do not use `isInputEvent` util, because compositionEnd event also invoke this method.
     if (
       this.isComposed ||
@@ -1237,7 +1237,7 @@ class Format extends Content {
     }
   }
 
-  backspaceHandler(event: Event): void {
+  override backspaceHandler(event: Event): void {
     const { start, end } = this.getCursor() ?? {};
     // Let input handler to handle this case.
     if (!start || !end || start?.offset !== end?.offset) {
@@ -1317,7 +1317,7 @@ class Format extends Content {
     }
   }
 
-  deleteHandler(event: KeyboardEvent): void {
+  override deleteHandler(event: KeyboardEvent): void {
     const { start, end } = this.getCursor()!;
     const { text } = this;
     // Let input handler to handle this case.
@@ -1358,7 +1358,7 @@ class Format extends Content {
     this.setCursor(start.offset + 1, end.offset + 1, true);
   }
 
-  enterHandler(event: KeyboardEvent): void {
+  override enterHandler(event: KeyboardEvent): void {
     event.preventDefault();
     const { text: oldText, muya, parent } = this;
     const { start, end } = this.getCursor()!;

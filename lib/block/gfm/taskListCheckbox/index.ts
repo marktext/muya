@@ -20,7 +20,7 @@ class TaskListCheckbox extends TreeNode {
 
   private eventIds: string[] = [];
 
-  static blockName = 'task-list-checkbox';
+  static override blockName = 'task-list-checkbox';
 
   static create(muya: Muya, meta: ITaskListItemMeta) {
     const checkbox = new TaskListCheckbox(muya, meta);
@@ -116,7 +116,7 @@ class TaskListCheckbox extends TreeNode {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  remove(_source: string) {
+  override remove(_source: string) {
     super.remove();
     this.detachDOMEvents();
 

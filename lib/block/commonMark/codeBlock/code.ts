@@ -40,9 +40,9 @@ const renderCopyButton = (i18n: I18n) => {
 };
 
 class Code extends Parent {
-  public parent: Nullable<CodeBlock> = null;
+  public override parent: Nullable<CodeBlock> = null;
 
-  static blockName = 'code';
+  static override blockName = 'code';
 
   static create(muya: Muya, state: ICodeBlockState) {
     const code = new Code(muya);
@@ -52,7 +52,7 @@ class Code extends Parent {
     return code;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
 
     return [...pPath];
@@ -67,7 +67,7 @@ class Code extends Parent {
     this.listen();
   }
 
-  getState(): TState {
+  override getState(): TState {
     debug.warn('You can never call `getState` in code');
     return {} as TState;
   }

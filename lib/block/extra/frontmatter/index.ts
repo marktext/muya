@@ -14,7 +14,7 @@ const debug = logger('frontmatter:');
 class Frontmatter extends Parent {
   public meta: IFrontmatterMeta;
 
-  static blockName = 'frontmatter';
+  static override blockName = 'frontmatter';
 
   static create(muya: Muya, state: IFrontmatterState) {
     const frontmatter = new Frontmatter(muya, state);
@@ -56,7 +56,7 @@ class Frontmatter extends Parent {
         });
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -86,7 +86,7 @@ class Frontmatter extends Parent {
     }
   }
 
-  getState(): IFrontmatterState {
+  override getState(): IFrontmatterState {
     const state: IFrontmatterState = {
       name: 'frontmatter',
       meta: { ...this.meta },

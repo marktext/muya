@@ -8,7 +8,7 @@ const debug = logger('diagramContainer:');
 
 class DiagramContainer extends Parent {
   public meta: IDiagramMeta;
-  static blockName = 'diagram-container';
+  static override blockName = 'diagram-container';
 
   static create(muya: Muya, state: IDiagramState) {
     const diagramContainer = new DiagramContainer(muya, state);
@@ -24,7 +24,7 @@ class DiagramContainer extends Parent {
     return this.meta.lang;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
 
     return [...pPath];
@@ -38,7 +38,7 @@ class DiagramContainer extends Parent {
     this.createDomNode();
   }
 
-  getState(): TState {
+  override getState(): TState {
     debug.warn('You can never call `getState` in diagramContainer');
     return {} as TState;
   }

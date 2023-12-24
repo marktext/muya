@@ -12,7 +12,7 @@ import { isKeyboardEvent } from '@muya/utils';
 class TableCellContent extends Format {
   public hasZeroWidthSpaceAtBeginning: boolean = false;
 
-  static blockName = 'table.cell.content';
+  static override blockName = 'table.cell.content';
 
   static create(muya: Muya, text: string) {
     const content = new TableCellContent(muya, text);
@@ -42,11 +42,11 @@ class TableCellContent extends Format {
     this.createDomNode();
   }
 
-  getAnchor() {
+  override getAnchor() {
     return this.table;
   }
 
-  update(cursor: Cursor, highlights = []) {
+  override update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
@@ -118,7 +118,7 @@ class TableCellContent extends Format {
     cursorBlock.setCursor(0, 0, true);
   }
 
-  enterHandler(event: Event) {
+  override enterHandler(event: Event) {
     if (!isKeyboardEvent(event)) {
       return;
     }
@@ -131,7 +131,7 @@ class TableCellContent extends Format {
     }
   }
 
-  arrowHandler(event: Event) {
+  override arrowHandler(event: Event) {
     if (!isKeyboardEvent(event)) {
       return;
     }
@@ -195,7 +195,7 @@ class TableCellContent extends Format {
     }
   }
 
-  backspaceHandler(event: Event) {
+  override backspaceHandler(event: Event) {
     const { start, end } = this.getCursor()!;
     const previousContentBlock = this.previousContentInContext();
 
@@ -209,7 +209,7 @@ class TableCellContent extends Format {
     if (
       !previousContentBlock ||
       (previousContentBlock.blockName !== 'table.cell.content' &&
-        this.table.isEmpty)
+        this.table.isEmpty())
     ) {
       const state = {
         name: 'paragraph',
@@ -227,7 +227,7 @@ class TableCellContent extends Format {
     }
   }
 
-  tabHandler(event: Event) {
+  override tabHandler(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -243,7 +243,7 @@ class TableCellContent extends Format {
   // the table to be messed up, so we insert a zero-width
   // character before entering the Chinese, and remove the 
   // zero-width character after entering the Chinese.
-  composeHandler(event: Event) {
+  override composeHandler(event: Event) {
     super.composeHandler(event);
     if (event.type === 'compositionstart' && this.text === '') {
       this.hasZeroWidthSpaceAtBeginning = true;

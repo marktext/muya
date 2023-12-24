@@ -1,3 +1,4 @@
+import LinkedList from '@muya/block/base/linkedList/linkedList';
 import Parent from '@muya/block/base/parent';
 import TableCellContent from '@muya/block/content/tableCell';
 import LeafQueryBlock from '@muya/block/mixins/leafQueryBlock';
@@ -11,9 +12,11 @@ import TableInner from './table';
 
 @mixins(LeafQueryBlock)
 class TableBodyCell extends Parent {
+  override children: LinkedList<TableCellContent> = new LinkedList();
+
   public meta: ITableCellMeta;
 
-  static blockName = 'table.cell';
+  static override blockName = 'table.cell';
 
   static create(muya: Muya, state: ITableCellState) {
     const cell = new TableBodyCell(muya, state);
@@ -25,7 +28,7 @@ class TableBodyCell extends Parent {
     return cell;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -68,7 +71,7 @@ class TableBodyCell extends Parent {
     this.createDomNode();
   }
 
-  getState(): ITableCellState {
+  override getState(): ITableCellState {
     const state: ITableCellState = {
       name: 'table.cell',
       meta: { ...this.meta },

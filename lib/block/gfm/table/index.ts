@@ -1,18 +1,24 @@
+import LinkedList from '@muya/block/base/linkedList/linkedList';
 import Parent from '@muya/block/base/parent';
+import TableCellContent from '@muya/block/content/tableCell';
 import ScrollPage from '@muya/block/scrollPage';
 import { TBlockPath } from '@muya/block/types';
 import Muya from '@muya/index';
+import { Nullable } from '@muya/types';
 import { diffToTextOp } from '@muya/utils';
 import logger from '@muya/utils/logger';
 import diff from 'fast-diff';
 import { ITableState } from '../../../state/types';
+import TableBodyCell from './cell';
 import TableRow from './row';
 import TableInner from './table';
 
 const debug = logger('table:');
 
 class Table extends Parent {
-  static blockName = 'table';
+  override children: LinkedList<TableInner> = new LinkedList();
+
+  static override blockName = 'table';
 
   static create(muya: Muya, state: ITableState) {
     const table = new Table(muya);
@@ -52,19 +58,11 @@ class Table extends Parent {
     return this.create(muya, state);
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
     return [...pPath, offset];
-  }
-
-  get isEmpty() {
-    const state = this.getState();
-
-    return state.children.every((row) =>
-      row.children.every((cell) => cell.text === '')
-    );
   }
 
   get rowCount() {
@@ -84,6 +82,14 @@ class Table extends Parent {
     this.listenDomEvent();
   }
 
+  isEmpty() {
+    const state = this.getState();
+
+    return state.children.every((row) =>
+      row.children.every((cell) => cell.text === '')
+    );
+  }
+
   listenDomEvent() {
     const { eventCenter } = this.muya;
     const { domNode } = this;
@@ -101,30 +107,35 @@ class Table extends Parent {
   }
 
   queryBlock(path: TBlockPath) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return (this.firstChild as TableInner).queryBlock(path);
   }
 
-  empty() {
-    const { isEmpty } = this;
-    if (isEmpty) {
+  override empty() {
+    if (this.isEmpty()) {
       return;
     }
 
-    const table = this.firstChild as TableInner;
+    const table = this.children.head;
+    if (table == null) {
+      return;
+    }
+
     table.forEach((row) => {
-      row.forEach((cell) => {
-        cell.firstChild.text = '';
+      (row as TableRow).forEach((cell) => {
+        ((cell as TableBodyCell).firstChild as TableCellContent).text = '';
       });
     });
   }
 
-  insertRow(offset) {
+  insertRow(offset: number) {
     const { columnCount } = this;
     const firstRowState = this.getState().children[0];
     const currentRow =
       offset > 0
-        ? (this.firstChild as any).find(offset - 1)
-        : (this.firstChild as any).find(offset);
+        ? (this.firstChild as TableInner).find(offset - 1)
+        : (this.firstChild as TableInner).find(offset);
     const state = {
       name: 'table.row',
       children: [...new Array(columnCount)].map((_, i) => {
@@ -141,17 +152,18 @@ class Table extends Parent {
     const rowBlock = ScrollPage.loadBlock('table.row').create(this.muya, state);
 
     if (offset > 0) {
-      (this.firstChild as any).insertAfter(rowBlock, currentRow);
+      (this.firstChild as TableInner).insertAfter(rowBlock, currentRow as TableRow);
     } else {
-      (this.firstChild as any).insertBefore(rowBlock, currentRow);
+      (this.firstChild as TableInner).insertBefore(rowBlock, currentRow as TableRow);
     }
 
     return rowBlock.firstContentInDescendant();
   }
 
-  insertColumn(offset, align = 'none') {
-    const tableInner: any = this.firstChild;
-    let firstCellInNewColumn = null;
+  insertColumn(offset: number, align = 'none') {
+    const tableInner = this.firstChild as TableInner;
+    let firstCellInNewColumn: Nullable<TableBodyCell> = null;
+
     tableInner.forEach((row) => {
       const state = {
         name: 'table.cell',
@@ -159,48 +171,56 @@ class Table extends Parent {
         text: '',
       };
       const cell = ScrollPage.loadBlock('table.cell').create(this.muya, state);
-      const ref = row.find(offset);
-      row.insertBefore(cell, ref);
+      const ref = (row as TableRow).find(offset);
+
+      (row as TableRow).insertBefore(cell, ref as TableBodyCell);
       if (!firstCellInNewColumn) {
         firstCellInNewColumn = cell;
       }
     });
 
-    return firstCellInNewColumn.firstChild;
+    return firstCellInNewColumn!.firstChild as TableCellContent;
   }
 
-  removeRow(offset) {
-    const row = (this.firstChild as any).find(offset);
+  removeRow(offset: number) {
+    const row = (this.firstChild as TableInner).find(offset);
+    if (row == null) {
+      return;
+    }
+
     row.remove();
   }
 
-  removeColumn(offset) {
+  removeColumn(offset: number) {
     const { columnCount } = this;
     if (offset < 0 || offset >= columnCount) {
       debug.warn(`column at ${offset} is not existed.`);
+      return;
     }
 
-    const table: any = this.firstChild;
+    const table = this.firstChild as TableInner;
     if (this.columnCount === 1) {
       return this.remove();
     }
 
     table.forEach((row) => {
-      const cell = row.find(offset);
+      const cell = (row as TableRow).find(offset);
       if (cell) {
         cell.remove();
       }
     });
   }
 
-  alignColumn(offset, value) {
+  alignColumn(offset: number, value: string) {
     const { columnCount } = this;
     if (offset < 0 || offset >= columnCount) {
       debug.warn(`Column at ${offset} is not existed.`);
+      return;
     }
-    const table: any = this.firstChild;
+
+    const table = this.firstChild as TableInner;
     table.forEach((row) => {
-      const cell = row.find(offset);
+      const cell = (row as TableRow).find(offset) as TableBodyCell;
       if (cell) {
         const { align: oldValue } = cell;
         cell.align = oldValue === value ? 'none' : value;
@@ -214,8 +234,8 @@ class Table extends Parent {
     });
   }
 
-  getState(): ITableState {
-    return (this.firstChild as any).getState();
+  override getState(): ITableState {
+    return (this.firstChild as TableInner).getState();
   }
 }
 

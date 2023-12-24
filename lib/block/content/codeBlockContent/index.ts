@@ -86,9 +86,9 @@ function hasStateMeta(
 
 class CodeBlockContent extends Content {
   public initialLang: string;
-  public parent: Code | null = null;
+  public override parent: Code | null = null;
 
-  static blockName = 'codeblock.content';
+  static override blockName = 'codeblock.content';
 
   static create(muya: Muya, state: CodeContentState) {
     const content = new CodeBlockContent(muya, state);
@@ -132,7 +132,7 @@ class CodeBlockContent extends Content {
     this.createDomNode();
   }
 
-  getAnchor() {
+  override getAnchor() {
     return this.outContainer;
   }
 
@@ -143,7 +143,7 @@ class CodeBlockContent extends Content {
     }
   }
 
-  update(_cursor: Cursor, highlights = []) {
+  override update(_cursor: Cursor, highlights = []) {
     const { lang, text } = this;
     // transform alias to original language
     const fullLengthLang = transformAliasToOrigin([lang])[0];
@@ -170,7 +170,7 @@ class CodeBlockContent extends Content {
     }
   }
 
-  inputHandler(event: Event): void {
+  override inputHandler(event: Event): void {
     if (this.isComposed) {
       return;
     }
@@ -198,7 +198,7 @@ class CodeBlockContent extends Content {
     }
   }
 
-  enterHandler(event: KeyboardEvent): void {
+  override enterHandler(event: KeyboardEvent): void {
     event.preventDefault();
 
     // Shift + Enter to jump out of code block.
@@ -247,7 +247,7 @@ class CodeBlockContent extends Content {
     this.setCursor(offset, offset, true);
   }
 
-  tabHandler(event: KeyboardEvent): void {
+  override tabHandler(event: KeyboardEvent): void {
     event.preventDefault();
     const { start, end } = this.getCursor()!;
     const { lang, text } = this;
@@ -324,7 +324,7 @@ class CodeBlockContent extends Content {
     }
   }
 
-  backspaceHandler(event: KeyboardEvent): void {
+  override backspaceHandler(event: KeyboardEvent): void {
     const { start, end } = this.getCursor()!;
     // If the cursor is in the first position of the code block text, 
     // when backspace is pressed, this time the code block should be converted to a normal paragraph
@@ -392,7 +392,7 @@ class CodeBlockContent extends Content {
     }
   }
 
-  keyupHandler(): void {
+  override keyupHandler(): void {
     if (this.isComposed) {
       return;
     }

@@ -1,3 +1,4 @@
+import LinkedList from '@muya/block/base/linkedList/linkedList';
 import Parent from '@muya/block/base/parent';
 import ContainerQueryBlock from '@muya/block/mixins/containerQueryBlock';
 import ScrollPage from '@muya/block/scrollPage';
@@ -8,7 +9,9 @@ import TableBodyCell from './cell';
 
 @mixins(ContainerQueryBlock)
 class TableRow extends Parent {
-  static blockName = 'table.row';
+  override children: LinkedList<TableBodyCell> = new LinkedList();
+
+  static override blockName = 'table.row';
 
   static create(muya: Muya, state: ITableRowState) {
     const row = new TableRow(muya);
@@ -22,7 +25,7 @@ class TableRow extends Parent {
     return row;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -37,7 +40,7 @@ class TableRow extends Parent {
     this.createDomNode();
   }
 
-  getState(): ITableRowState {
+  override getState(): ITableRowState {
     const state: ITableRowState = {
       name: 'table.row',
       children: this.map((node) => (node as TableBodyCell).getState()),

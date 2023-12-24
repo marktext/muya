@@ -10,7 +10,7 @@ import TaskListItem from '../taskListItem';
 class TaskList extends Parent {
   public meta: ITaskListMeta;
 
-  static blockName = 'task-list';
+  static override blockName = 'task-list';
 
   static create(muya: Muya, state: ITaskListState) {
     const taskList = new TaskList(muya, state);
@@ -24,7 +24,7 @@ class TaskList extends Parent {
     return taskList;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -54,26 +54,26 @@ class TaskList extends Parent {
       return;
     }
 
-    let first = this.firstChild;
-    let last = this.lastChild;
+    let first = this.firstChild as TaskListItem;
+    let last = this.lastChild as TaskListItem;
     let anchor = first;
 
     while (first !== last) {
       if (!first.checked) {
-        first = first.next;
+        first = first.next as TaskListItem;
         anchor = first;
       } else if (last.checked) {
-        last = last.prev;
+        last = last.prev as TaskListItem;
       } else {
         const temp = last;
-        last = last.prev;
+        last = last.prev as TaskListItem;
         temp.insertInto(this, anchor);
         anchor = temp;
       }
     }
   }
 
-  getState(): ITaskListState {
+  override getState(): ITaskListState {
     const state: ITaskListState = {
       name: 'task-list',
       meta: { ...this.meta },

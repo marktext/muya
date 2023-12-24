@@ -18,7 +18,7 @@ interface IBlurFocus {
 class ScrollPage extends Parent {
   private _blurFocus: IBlurFocus = { blur: null, focus: null };
 
-  static blockName = 'scrollpage';
+  static override blockName = 'scrollpage';
 
   static registeredBlocks = new Map();
 
@@ -51,7 +51,7 @@ class ScrollPage extends Parent {
     return scrollPage;
   }
 
-  get path() {
+  override get path() {
     return [];
   }
 
@@ -66,7 +66,7 @@ class ScrollPage extends Parent {
     this.listenDomEvent();
   }
 
-  getState() {
+  override getState() {
     debug.warn('You can never call `getState` in scrollPage');
 
     return {} as TState;
@@ -101,7 +101,8 @@ class ScrollPage extends Parent {
 
     const p = path.shift() as number;
     const block = this.find(p) as Parent;
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return block && path.length ? block.queryBlock(path) : block;
   }
 

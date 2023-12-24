@@ -4,7 +4,7 @@ import Muya from '@muya/index';
 import { Cursor } from '@muya/selection/types';
 
 class ThematicBreakContent extends Format {
-  static blockName = 'thematicbreak.content';
+  static override blockName = 'thematicbreak.content';
 
   static create(muya: Muya, text: string) {
     const content = new ThematicBreakContent(muya, text);
@@ -18,11 +18,11 @@ class ThematicBreakContent extends Format {
     this.createDomNode();
   }
 
-  getAnchor() {
+  override getAnchor() {
     return this.parent;
   }
 
-  update(cursor: Cursor, highlights = []) {
+  override update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
@@ -30,7 +30,7 @@ class ThematicBreakContent extends Format {
    * Create an empty paragraph bellow.
    * @param {*} event
    */
-  enterHandler(event: Event) {
+  override enterHandler(event: Event) {
     const { text, muya } = this;
     const { start, end } = this.getCursor()!;
     if (start.offset === end.offset && start.offset === 0) {
@@ -51,7 +51,7 @@ class ThematicBreakContent extends Format {
     }
   }
 
-  backspaceHandler(event: Event) {
+  override backspaceHandler(event: Event) {
     const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       // Remove the text content and convert it to paragraph

@@ -22,7 +22,7 @@ class Content extends TreeNode {
   public _text: string;
   public isComposed: boolean;
 
-  static blockName = 'content';
+  static override blockName = 'content';
 
   get hasSelection() {
     return !!this.getCursor();
@@ -197,7 +197,7 @@ class Content extends TreeNode {
     }
   }
 
-  createDomNode() {
+  override createDomNode() {
     super.createDomNode();
     this.update();
   }
@@ -537,7 +537,7 @@ class Content extends TreeNode {
     return commonAncestors;
   }
 
-  remove(source = 'user') {
+  override remove(source = 'user') {
     super.remove(source);
 
     return this;

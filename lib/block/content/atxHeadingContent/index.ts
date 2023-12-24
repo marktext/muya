@@ -5,9 +5,9 @@ import Muya from '@muya/index';
 import { Cursor } from '@muya/selection/types';
 
 class AtxHeadingContent extends Format {
-  public parent: AtxHeading | null = null;
+  public override parent: AtxHeading | null = null;
 
-  static blockName = 'atxheading.content';
+  static override blockName = 'atxheading.content';
 
   static create(muya: Muya, text: string) {
     const content = new AtxHeadingContent(muya, text);
@@ -21,15 +21,15 @@ class AtxHeadingContent extends Format {
     this.createDomNode();
   }
 
-  getAnchor() {
+  override getAnchor() {
     return this.parent;
   }
 
-  update(cursor: Cursor, highlights = []) {
+  override update(cursor: Cursor, highlights = []) {
     return this.inlineRenderer.patch(this, cursor, highlights);
   }
 
-  enterHandler(event: Event) {
+  override enterHandler(event: Event) {
     const { start, end } = this.getCursor()!;
     const { level } = this.parent!.meta;
 
@@ -50,7 +50,7 @@ class AtxHeadingContent extends Format {
     }
   }
 
-  backspaceHandler(event: Event) {
+  override backspaceHandler(event: Event) {
     const { start, end } = this.getCursor()!;
     if (start.offset === 0 && end.offset === 0) {
       event.preventDefault();

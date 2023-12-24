@@ -11,7 +11,7 @@ const debug = logger('htmlPreview:');
 class HTMLPreview extends Parent {
   public html: string;
 
-  static blockName = 'html-preview';
+  static override blockName = 'html-preview';
 
   static create(muya: Muya, state: IHtmlBlockState) {
     const htmlBlock = new HTMLPreview(muya, state);
@@ -19,7 +19,7 @@ class HTMLPreview extends Parent {
     return htmlBlock;
   }
 
-  get path() {
+  override get path() {
     debug.warn('You can never call `get path` in htmlPreview');
     return [];
   }
@@ -65,7 +65,7 @@ class HTMLPreview extends Parent {
     }
   }
 
-  getState(): TState {
+  override getState(): TState {
     debug.warn('You can never call `getState` in htmlPreview');
     return {} as TState;
   }

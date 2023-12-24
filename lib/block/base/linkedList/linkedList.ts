@@ -1,17 +1,20 @@
-import LinkedNode from './linkedNode';
+import { Nullable } from '@muya/types';
+import type { LinkedNode } from './linkedNode';
 
-class LinkedList<T extends LinkedNode<T>> {
-  public head: T | null = null;
-  public tail: T | null = null;
-  public length: number = 0;
+class LinkedList<T extends LinkedNode> {
+  head: Nullable<T> = null;
 
-  *iterator(curNode: T | null = this.head, length = this.length) {
+  tail: Nullable<T> = null;
+
+  length: number = 0;
+
+  *iterator(curNode = this.head, length = this.length) {
     let count = 0;
 
     while (count < length && curNode) {
       yield curNode;
       count++;
-      curNode = curNode.next;
+      curNode = curNode.next as T;
     }
   }
 
@@ -74,11 +77,11 @@ class LinkedList<T extends LinkedNode<T>> {
     }
 
     if (this.head === node) {
-      this.head = node.next;
+      this.head = node.next as T;
     }
 
     if (this.tail === node) {
-      this.tail = node.prev;
+      this.tail = node.prev as T;
     }
     this.length -= 1;
   }
@@ -95,7 +98,11 @@ class LinkedList<T extends LinkedNode<T>> {
     return [...this.iterator()].forEach(callback);
   }
 
-  forEachAt(index: number, length: number = this.length, callback: (cur: T, i: number) => void) {
+  forEachAt(
+    index: number,
+    length: number = this.length,
+    callback: (cur: T, i: number) => void
+  ) {
     const curNode = this.find(index);
 
     return [...this.iterator(curNode, length)].forEach((node, i) => {

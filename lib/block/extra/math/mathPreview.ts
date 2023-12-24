@@ -10,7 +10,7 @@ const debug = logger('mathPreview:');
 class MathPreview extends Parent {
   public math: string;
 
-  static blockName = 'math-preview';
+  static override blockName = 'math-preview';
 
   static create(muya: Muya, state: IMathBlockState) {
     const mathBlock = new MathPreview(muya, state);
@@ -18,7 +18,7 @@ class MathPreview extends Parent {
     return mathBlock;
   }
 
-  get path() {
+  override get path() {
     debug.warn('You can never call `get path` in htmlPreview');
     return [];
   }
@@ -37,7 +37,7 @@ class MathPreview extends Parent {
     this.update();
   }
 
-  getState(): TState {
+  override getState(): TState {
     debug.warn('You can never call `getState` in mathPreview');
     return {} as TState;
   }

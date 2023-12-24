@@ -10,7 +10,7 @@ import { ISetextHeadingState } from '../../../state/types';
 class SetextHeading extends Parent {
   public meta: ISetextHeadingState['meta'];
 
-  static blockName = 'setext-heading';
+  static override blockName = 'setext-heading';
 
   static create(muya: Muya, state: ISetextHeadingState) {
     const heading = new SetextHeading(muya, state);
@@ -22,7 +22,7 @@ class SetextHeading extends Parent {
     return heading;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -37,7 +37,7 @@ class SetextHeading extends Parent {
     this.createDomNode();
   }
 
-  getState(): ISetextHeadingState {
+  override getState(): ISetextHeadingState {
     return {
       name: 'setext-heading',
       meta: this.meta,

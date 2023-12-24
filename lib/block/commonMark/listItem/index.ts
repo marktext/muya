@@ -8,9 +8,9 @@ import { IListItemState } from '../../../state/types';
 
 @mixins(ContainerQueryBlock)
 class ListItem extends Parent {
-  public children: LinkedList<Parent> = new LinkedList();
+  public override children: LinkedList<Parent> = new LinkedList();
 
-  static blockName = 'list-item';
+  static override blockName = 'list-item';
 
   static create(muya: Muya, state: IListItemState) {
     const listItem = new ListItem(muya);
@@ -24,7 +24,7 @@ class ListItem extends Parent {
     return listItem;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -38,7 +38,7 @@ class ListItem extends Parent {
     this.createDomNode();
   }
 
-  getState(): IListItemState {
+  override getState(): IListItemState {
     const state: IListItemState = {
       name: 'list-item',
       children: this.children.map((child) => child.getState()),

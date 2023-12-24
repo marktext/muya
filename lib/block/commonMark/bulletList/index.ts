@@ -8,9 +8,9 @@ import { mixins } from '@muya/utils';
 
 @mixins(ContainerQueryBlock)
 class BulletList extends Parent {
-  public children: LinkedList<Parent> = new LinkedList();
+  public override children: LinkedList<Parent> = new LinkedList();
 
-  static blockName = 'bullet-list';
+  static override blockName = 'bullet-list';
 
   static create(muya: Muya, state: IBulletListState) {
     const bulletList = new BulletList(muya, state);
@@ -24,7 +24,7 @@ class BulletList extends Parent {
     return bulletList;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -47,7 +47,7 @@ class BulletList extends Parent {
     this.createDomNode();
   }
 
-  getState(): IBulletListState {
+  override getState(): IBulletListState {
     const state: IBulletListState = {
       name: 'bullet-list',
       meta: { ...this.meta },

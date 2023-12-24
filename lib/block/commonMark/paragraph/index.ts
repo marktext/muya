@@ -8,7 +8,7 @@ import { IParagraphState } from '../../../state/types';
 
 @mixins(LeafQueryBlock)
 class Paragraph extends Parent {
-  static blockName = 'paragraph';
+  static override blockName = 'paragraph';
 
   static create(muya: Muya, state: IParagraphState) {
     const paragraph = new Paragraph(muya);
@@ -20,7 +20,7 @@ class Paragraph extends Parent {
     return paragraph;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -34,7 +34,7 @@ class Paragraph extends Parent {
     this.createDomNode();
   }
 
-  getState(): IParagraphState {
+  override getState(): IParagraphState {
     return {
       name: 'paragraph',
       text: (this.children.head as ParagraphContent).text,

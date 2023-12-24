@@ -9,11 +9,11 @@ import { ITaskListItemMeta, ITaskListItemState } from '../../../state/types';
 
 @mixins(ContainerQueryBlock)
 class TaskListItem extends Parent {
-  public children: LinkedList<Parent> = new LinkedList();
+  override children: LinkedList<Parent> = new LinkedList();
 
-  public meta: ITaskListItemMeta;
+  meta: ITaskListItemMeta;
 
-  static blockName = 'task-list-item';
+  static override blockName = 'task-list-item';
 
   static create(muya: Muya, state: ITaskListItemState) {
     const listItem = new TaskListItem(muya, state);
@@ -31,7 +31,7 @@ class TaskListItem extends Parent {
     return listItem;
   }
 
-  get path(): TBlockPath {
+  override get path(): TBlockPath {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -63,7 +63,7 @@ class TaskListItem extends Parent {
     this.createDomNode();
   }
 
-  getState(): ITaskListItemState {
+  override getState(): ITaskListItemState {
     const state: ITaskListItemState = {
       name: 'task-list-item',
       meta: { ...this.meta },

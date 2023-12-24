@@ -13,7 +13,7 @@ const debug = logger('codeblock:');
 
 class CodeBlock extends Parent {
   public meta: ICodeBlockState['meta'];
-  static blockName = 'code-block';
+  static override blockName = 'code-block';
 
   static create(muya: Muya, state: ICodeBlockState) {
     const codeBlock = new CodeBlock(muya, state);
@@ -76,7 +76,7 @@ class CodeBlock extends Parent {
         });
   }
 
-  get path(): TBlockPath {
+  override get path(): TBlockPath {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -105,7 +105,7 @@ class CodeBlock extends Parent {
     }
   }
 
-  getState(): ICodeBlockState {
+  override getState(): ICodeBlockState {
     const state: ICodeBlockState = {
       name: 'code-block',
       meta: { ...this.meta },

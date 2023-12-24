@@ -6,7 +6,7 @@ import Muya from '@muya/index';
 import { IHtmlBlockState } from '../../../state/types';
 
 class HTMLBlock extends Parent {
-  static blockName = 'html-block';
+  static override blockName = 'html-block';
 
   static create(muya: Muya, state: IHtmlBlockState) {
     const htmlBlock = new HTMLBlock(muya);
@@ -26,7 +26,7 @@ class HTMLBlock extends Parent {
     return htmlBlock;
   }
 
-  get path() {
+  override get path() {
     const { path: pPath } = this.parent!;
     const offset = this.parent!.offset(this);
 
@@ -50,7 +50,7 @@ class HTMLBlock extends Parent {
       : this;
   }
 
-  getState(): IHtmlBlockState {
+  override getState(): IHtmlBlockState {
     const state: IHtmlBlockState = {
       name: 'html-block',
       text: this.firstContentInDescendant()?.text ?? '',
