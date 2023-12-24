@@ -134,11 +134,11 @@ class MarkdownToHtml {
    *
    * @param {*} options Document options
    */
-  async generate(options: { title?: string; extraCss?: string } = {}) {
+  async generate(options: { title?: string; extraCSS?: string } = {}) {
     const html = await this.renderHtml();
 
-    // `extraCss` may changed in the mean time.
-    const { title = '', extraCss = '' } = options;
+    // `extraCSS` may changed in the mean time.
+    const { title = '', extraCSS = '' } = options;
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,7 +152,7 @@ class MarkdownToHtml {
   <!-- https://cdnjs.com/libraries/prism -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism.min.css" integrity="sha512-/mZ1FHPkg6EKcxo0fKXF51ak6Cr2ocgDi5ytaTBjsQZIH/RNs6GF6+oId/vPe3eJB836T36nXwVh/WBl/cWT4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>${exportStyle}</style>
-  <style>${extraCss}</style>
+  <style>${extraCSS}</style>
 </head>
 <body>
   ${html}
