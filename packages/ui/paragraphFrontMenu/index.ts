@@ -57,7 +57,7 @@ class FrontMenu extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     const { container } = this;
     const { eventCenter } = this.muya;
     super.listen();

@@ -25,7 +25,7 @@ class FormatPicker extends BaseFloat {
   private oldVNode: VNode | null = null;
   private block: Format | null = null;
   private formats: Token[] = [];
-  public options: BaseOptions;
+  public override options: BaseOptions;
   private icons: FormatToolIcon[] = icons;
   private formatContainer: HTMLDivElement = document.createElement('div');
 
@@ -40,7 +40,7 @@ class FormatPicker extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     const { eventCenter, domNode, editor } = this.muya;
     super.listen();
     eventCenter.subscribe('muya-format-picker', ({ reference, block }) => {

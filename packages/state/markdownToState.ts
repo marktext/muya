@@ -26,20 +26,20 @@ const DEFAULT_OPTIONS = {
 };
 
 class MarkdownToState {
-  constructor(private options: MarkdownToStateOptions = DEFAULT_OPTIONS) {}
+  constructor(private _options: MarkdownToStateOptions = DEFAULT_OPTIONS) {}
 
   generate(markdown: string): TState[] {
-    return this.convertMarkdownToState(markdown);
+    return this._convertMarkdownToState(markdown);
   }
 
-  convertMarkdownToState(markdown: string): TState[] {
+  private _convertMarkdownToState(markdown: string): TState[] {
     const {
       footnote = false,
       math = true,
       isGitlabCompatibilityEnabled = true,
       trimUnnecessaryCodeBlockEmptyLines = false,
       frontMatter = true,
-    } = this.options;
+    } = this._options;
 
     const tokens = lexBlock(markdown, {
       footnote,
@@ -198,13 +198,13 @@ class MarkdownToState {
           const isSingleImage = /^<img[^<>]+>$/.test(text);
           if (isSingleImage) {
             state = {
-              name: 'paragraph',
+              name: 'paragraph' as const,
               text,
             };
             parentList[0].push(state);
           } else {
             state = {
-              name: 'html-block',
+              name: 'html-block' as const,
               text,
             };
             parentList[0].push(state);
@@ -216,7 +216,7 @@ class MarkdownToState {
           const text = token.text.trim();
           const { mathStyle = '' } = token;
           const state = {
-            name: 'math-block',
+            name: 'math-block' as const,
             text,
             meta: { mathStyle },
           };
@@ -241,7 +241,7 @@ class MarkdownToState {
         case 'paragraph': {
           value = token.text;
           state = {
-            name: 'paragraph',
+            name: 'paragraph' as const,
             text: value,
           };
           parentList[0].push(state);
@@ -250,7 +250,7 @@ class MarkdownToState {
 
         case 'blockquote': {
           state = {
-            name: 'block-quote',
+            name: 'block-quote' as const,
             children: [],
           };
           parentList[0].push(state);
@@ -262,10 +262,11 @@ class MarkdownToState {
 
         case 'list': {
           const { listType, loose, start } = token;
-          const bulletMarkerOrDelimiter = token.items[0].bulletMarkerOrDelimiter;
+          const bulletMarkerOrDelimiter =
+            token.items[0].bulletMarkerOrDelimiter;
           const meta: any = {
             loose,
-          }
+          };
           if (listType === 'order') {
             meta.start = /^\d+$/.test(start) ? start : 1;
             meta.delimiter = bulletMarkerOrDelimiter || '.';

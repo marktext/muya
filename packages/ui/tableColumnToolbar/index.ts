@@ -39,7 +39,7 @@ class TableColumnTools extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     const { eventCenter } = this.muya;
     super.listen();
 
@@ -150,7 +150,7 @@ class TableColumnTools extends BaseFloat {
     }
     const offset = block.parent.offset(block);
     const { table, row } = block;
-    const columnCount = row.offset(this.block);
+    const columnCount = row.offset(this.block!);
 
     switch (item.type) {
       case 'remove': {

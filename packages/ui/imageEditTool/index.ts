@@ -33,7 +33,7 @@ const defaultOptions = {
 };
 
 class ImageEditTool extends BaseFloat {
-  public options: Options;
+  public override options: Options;
   static pluginName = 'imageSelector';
   private oldVNode: VNode | null = null;
   private imageInfo: {
@@ -59,7 +59,7 @@ class ImageEditTool extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     super.listen();
     const { eventCenter } = this.muya;
     eventCenter.on('muya-image-selector', ({ block, reference, imageInfo }) => {

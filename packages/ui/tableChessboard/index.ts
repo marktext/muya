@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import BaseFloat from '../baseFloat';
 import { patch, h } from '@muya/utils/snabbdom';
 import { EVENT_KEYS } from '@muya/config';
@@ -76,6 +78,7 @@ class TablePicker extends BaseFloat {
                 this.select = { row: r, column: c };
                 this.render();
               },
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               click: (_) => {
                 this.selectItem();
               },
@@ -115,6 +118,7 @@ class TablePicker extends BaseFloat {
         'button',
         {
           on: {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             click: (_) => {
               this.selectItem();
             },

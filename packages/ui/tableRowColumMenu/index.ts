@@ -39,7 +39,7 @@ class TableBarTools extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     super.listen();
     const { eventCenter } = this.muya;
     eventCenter.subscribe(
@@ -98,7 +98,7 @@ class TableBarTools extends BaseFloat {
 
     const { table, row } = this.block!;
     const rowCount = (table.firstChild as TableInner).offset(row);
-    const columnCount = row.offset(this.block);
+    const columnCount = row.offset(this.block!);
     const { location, action, target } = item;
 
     if (action === 'insert') {

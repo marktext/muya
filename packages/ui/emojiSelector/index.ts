@@ -22,8 +22,8 @@ class EmojiSelector extends BaseScrollFloat {
   private _renderObj: Record<string, EmojiType[]> | null = null;
   private oldVNode: VNode | null = null;
   private emoji: Emoji = new Emoji();
-  public renderArray: EmojiType[] = [];
-  public activeItem: EmojiType | null = null;
+  public override renderArray: EmojiType[] = [];
+  public override activeItem: EmojiType | null = null;
 
   constructor(muya: Muya) {
     const name = 'mu-emoji-picker';
@@ -50,7 +50,7 @@ class EmojiSelector extends BaseScrollFloat {
     }
   }
 
-  listen() {
+  override listen() {
     super.listen();
     const { eventCenter } = this.muya;
     eventCenter.on('muya-emoji-picker', ({ reference, emojiText, block }) => {
@@ -118,7 +118,7 @@ class EmojiSelector extends BaseScrollFloat {
     return this.floatBox!.querySelector(`[data-label="${label}"]`) as HTMLElement;
   }
 
-  destroy() {
+  override destroy() {
     super.destroy();
     this.emoji.destroy();
   }

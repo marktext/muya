@@ -37,7 +37,7 @@ class PreviewTools extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     const { eventCenter } = this.muya;
     super.listen();
 

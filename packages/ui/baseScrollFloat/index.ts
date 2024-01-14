@@ -32,7 +32,7 @@ abstract class BaseScrollFloat extends BaseFloat {
     }
   }
 
-  listen() {
+  override listen() {
     super.listen();
     const { eventCenter, domNode } = this.muya;
     const handler = (event: Event) => {
@@ -61,12 +61,12 @@ abstract class BaseScrollFloat extends BaseFloat {
     eventCenter.attachDOMEvent(domNode, 'keydown', handler);
   }
 
-  hide() {
+  override hide() {
     super.hide();
     this.reference = null;
   }
 
-  show(reference: Element | ReferenceObject, cb: (...args: unknown[]) => void = noop) {
+  override show(reference: Element | ReferenceObject, cb: (...args: unknown[]) => void = noop) {
     this.cb = cb;
 
     if (reference instanceof HTMLElement) {

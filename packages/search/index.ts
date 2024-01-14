@@ -4,6 +4,7 @@ import Muya from '@muya/index';
 import { buildRegexValue, matchString } from '@muya/utils/search';
 import { Highlight } from '../inlineRenderer/types';
 import { IMatch } from './types';
+import TreeNode from '@muya/block/base/treeNode';
 
 class Search {
   public value: string = '';
@@ -16,7 +17,7 @@ class Search {
 
   constructor(public muya: Muya) {}
 
-  private updateMatches(isClear = false) {
+  private _updateMatches(isClear = false) {
     const { matches, index } = this;
     let i;
     const len = matches.length;
@@ -132,8 +133,8 @@ class Search {
 
     this.index = index;
 
-    this.updateMatches(true);
-    this.updateMatches();
+    this._updateMatches(true);
+    this._updateMatches();
 
     return this;
   }
@@ -150,11 +151,11 @@ class Search {
     let index = -1;
 
     // Empty last search.
-    this.updateMatches(true);
+    this._updateMatches(true);
 
     // Highlight current search.
     if (value) {
-      this.scrollPage.depthFirstTraverse((block) => {
+      this.scrollPage.depthFirstTraverse((block: TreeNode) => {
         if (block.isContent()) {
           const { text } = block;
           if (text && typeof text === 'string') {
@@ -185,7 +186,7 @@ class Search {
 
     Object.assign(this, { value, matches, index });
 
-    this.updateMatches();
+    this._updateMatches();
 
     return this;
   }

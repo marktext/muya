@@ -43,7 +43,7 @@ class ImageToolbar extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     const { eventCenter } = this.muya;
     super.listen();
     eventCenter.on('muya-image-toolbar', ({ block, reference, imageInfo }) => {

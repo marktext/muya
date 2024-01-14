@@ -33,7 +33,7 @@ class CodePicker extends BaseScrollFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     super.listen();
     const { eventCenter } = this.muya;
 
@@ -135,7 +135,7 @@ class CodePicker extends BaseScrollFloat {
     return this.floatBox!.querySelector(`[data-label="${name}"]`)!;
   }
 
-  selectItem(item: { name: string }) {
+  override selectItem(item: { name: string }) {
     const { block, muya } = this;
     const { name } = item;
 

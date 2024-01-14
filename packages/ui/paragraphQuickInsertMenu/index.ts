@@ -32,7 +32,7 @@ class QuickInsert extends BaseScrollFloat {
 
   public oldVNode: VNode | null = null;
   public block: ParagraphContent | null = null;
-  public activeItem: QuickInsertMenuItem['children'][number] | null = null;
+  public override activeItem: QuickInsertMenuItem['children'][number] | null = null;
   private _renderData: QuickInsertMenuItem[] = [];
   // private renderArray: QuickInsertMenuItem["children"][number] = [];
 
@@ -61,7 +61,7 @@ class QuickInsert extends BaseScrollFloat {
     }
   }
 
-  listen() {
+  override listen() {
     super.listen();
     const { eventCenter, editor, domNode, i18n } = this.muya;
 
@@ -101,7 +101,7 @@ class QuickInsert extends BaseScrollFloat {
           event.preventDefault();
           replaceBlockByLabel({
             label,
-            block: anchorBlock.parent,
+            block: anchorBlock.parent!,
             muya: this.muya,
           });
         }
@@ -225,11 +225,11 @@ class QuickInsert extends BaseScrollFloat {
     this.render();
   }
 
-  selectItem({ label }: QuickInsertMenuItem['children'][number]) {
+  override selectItem({ label }: QuickInsertMenuItem['children'][number]) {
     const { block, muya } = this;
     replaceBlockByLabel({
       label,
-      block: block!.parent,
+      block: block!.parent!,
       muya,
     });
     // delay hide to avoid dispatch enter handler

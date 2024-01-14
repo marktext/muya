@@ -118,7 +118,7 @@ class TableDragBar extends BaseFloat {
     this.listen();
   }
 
-  listen() {
+  override listen() {
     const { eventCenter } = this.muya;
     const { container } = this;
     super.listen();
