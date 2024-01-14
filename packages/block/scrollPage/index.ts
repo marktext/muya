@@ -22,7 +22,8 @@ class ScrollPage extends Parent {
 
   static registeredBlocks = new Map();
 
-  static register(Block: Parent | Content) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static register(Block: any) {
     const { blockName } = Block;
     this.registeredBlocks.set(blockName, Block);
   }

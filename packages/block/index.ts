@@ -80,4 +80,6 @@ ScrollPage.register(DiagramBlock);
 ScrollPage.register(DiagramContainer);
 ScrollPage.register(DiagramPreview);
 
-export default ScrollPage;
+const ScrollPageForExport = ScrollPage;
+
+export default ScrollPageForExport;

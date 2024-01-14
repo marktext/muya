@@ -1,18 +1,12 @@
 import { BLOCK_DOM_PROPERTY } from '@muya/config';
 import Muya from '@muya/index';
-import type { TState } from '@muya/state/types';
 import { Nullable } from '@muya/types';
 import { createDomNode } from '@muya/utils/dom';
 import type { Attributes, Datasets } from '@muya/utils/types';
 import Content from './content';
 import type { LinkedNode } from './linkedList/linkedNode';
 import Parent from './parent';
-
-interface IConstructor<T> {
-  blockName: string;
-  create: (muya: Muya, state: TState) => T;
-  new (muya: Muya): T;
-}
+import { IConstructor } from '../types';
 
 class TreeNode implements LinkedNode {
   prev: Nullable<TreeNode> = null;

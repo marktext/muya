@@ -19,6 +19,11 @@ import type {
   ITaskListItemState,
 } from '../../../state/types';
 
+enum UnindentType {
+  INDENT = 'INDENT',
+  REPLACEMENT = 'REPLACEMENT',
+}
+
 const debug = logger('paragraph:content');
 
 const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
@@ -59,6 +64,7 @@ const parseTableHeader = (text: string) => {
 
   return rowHeader;
 };
+
 /**
  * ParagraphContent
  */
@@ -109,15 +115,14 @@ class ParagraphContent extends Format {
 
     switch (type) {
       case 'paragraph':
-        return this.handleBackspaceInParagraph();
+        return this._handleBackspaceInParagraph();
 
       case 'block-quote':
-        return this.handleBackspaceInBlockQuote();
+        return this._handleBackspaceInBlockQuote();
 
-      case 'list-item':
-      // fall through
+      case 'list-item': // fall through
       case 'task-list-item':
-        return this.handleBackspaceInList();
+        return this._handleBackspaceInList();
 
       default:
         debug.error('Unknown backspace type');
@@ -132,9 +137,10 @@ class ParagraphContent extends Format {
     eventCenter.emit('content-change', { block: this });
   }
 
-  enterConvert(event: Event) {
+  private _enterConvert(event: Event) {
     event.preventDefault();
     event.stopPropagation();
+
     const TABLE_BLOCK_REG = /^\|.*?(\\*)\|.*?(\\*)\|/;
     const MATH_BLOCK_REG = /^\$\$/;
     const { text } = this;
@@ -213,7 +219,7 @@ class ParagraphContent extends Format {
     }
   }
 
-  enterInBlockQuote(event: Event) {
+  private _enterInBlockQuote(event: Event) {
     const { text, parent } = this;
     if (text.length !== 0) {
       return super.enterHandler(event as KeyboardEvent);
@@ -266,7 +272,7 @@ class ParagraphContent extends Format {
     (newNode.children.head as ParagraphContent).setCursor(0, 0, true);
   }
 
-  enterInListItem(event: Event) {
+  private _enterInListItem(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -399,11 +405,11 @@ class ParagraphContent extends Format {
     const type = this._paragraphParentType();
 
     if (type === 'block-quote') {
-      this.enterInBlockQuote(event);
+      this._enterInBlockQuote(event);
     } else if (type === 'list-item' || type === 'task-list-item') {
-      this.enterInListItem(event);
+      this._enterInListItem(event);
     } else {
-      this.enterConvert(event);
+      this._enterConvert(event);
     }
   }
 
@@ -433,7 +439,7 @@ class ParagraphContent extends Format {
     return type;
   }
 
-  handleBackspaceInParagraph(this: ParagraphContent) {
+  private _handleBackspaceInParagraph(this: ParagraphContent) {
     const previousContentBlock = this.previousContentInContext();
     // Handle no previous content block, the first paragraph in document.
     if (!previousContentBlock) {
@@ -446,13 +452,13 @@ class ParagraphContent extends Format {
     previousContentBlock.setCursor(offset, offset, true);
   }
 
-  handleBackspaceInBlockQuote() {
+  private _handleBackspaceInBlockQuote() {
     const parent = this.parent!;
     const blockQuote = parent!.parent!;
     let cursorBlock: Content | null;
 
     if (!parent!.isOnlyChild() && !parent!.isFirstChild()) {
-      return this.handleBackspaceInParagraph();
+      return this._handleBackspaceInParagraph();
     }
 
     if (parent.isOnlyChild()) {
@@ -468,13 +474,13 @@ class ParagraphContent extends Format {
     cursorBlock!.setCursor(0, 0, true);
   }
 
-  handleBackspaceInList() {
+  private _handleBackspaceInList() {
     const parent = this.parent!;
     const listItem = parent.parent!;
     const list = listItem.parent!;
 
     if (!parent.isFirstChild()) {
-      return this.handleBackspaceInParagraph();
+      return this._handleBackspaceInParagraph();
     }
 
     if (listItem.isOnlyChild()) {
@@ -511,25 +517,25 @@ class ParagraphContent extends Format {
     }
   }
 
-  isUnindentableListItem() {
+  private _getUnindentType(): Nullable<UnindentType> {
+    if (!this.isCollapsed) {
+      return null;
+    }
+
     const { parent } = this;
     const listItem = parent!.parent;
     const list = listItem?.parent;
     const listParent = list?.parent;
-
-    if (!this.isCollapsed) {
-      return false;
-    }
 
     if (
       listParent &&
       (listParent.blockName === 'list-item' ||
         listParent.blockName === 'task-list-item')
     ) {
-      return list.prev ? 'INDENT' : 'REPLACEMENT';
+      return list.prev ? UnindentType.INDENT : UnindentType.REPLACEMENT;
     }
 
-    return false;
+    return null;
   }
 
   private _canIndentListItem() {
@@ -557,7 +563,7 @@ class ParagraphContent extends Format {
     return list && /ol|ul/.test(list.tagName) && listItem.prev;
   }
 
-  private _unindentListItem(type: string) {
+  private _unindentListItem(type: UnindentType) {
     const { parent } = this;
     const listItem = parent?.parent;
     const list = listItem?.parent;
@@ -578,7 +584,7 @@ class ParagraphContent extends Format {
 
     const cursorParagraphOffset = listItem.offset(parent);
 
-    if (type === 'REPLACEMENT') {
+    if (type === UnindentType.REPLACEMENT) {
       const paragraph = parent.clone() as Paragraph;
       listParent.insertBefore(paragraph, list);
 
@@ -587,7 +593,7 @@ class ParagraphContent extends Format {
       } else {
         listItem.remove();
       }
-    } else if (type === 'INDENT') {
+    } else if (type === UnindentType.INDENT) {
       const newListItem = listItem.clone() as Parent;
       listParent.parent!.insertAfter(newListItem, listParent);
 
@@ -612,7 +618,11 @@ class ParagraphContent extends Format {
         const offset = list.offset(listItem);
 
         list.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild?.append((node as Parent).clone(), 'user');
+          (newListItem.lastChild as Parent).append(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (node as any).clone(),
+            'user'
+          );
           node.remove();
         });
       }
@@ -620,7 +630,11 @@ class ParagraphContent extends Format {
       if (list.next) {
         const offset = listParent.offset(list);
         listParent.forEachAt(offset + 1, undefined, (node) => {
-          newListItem.lastChild?.append((node as Parent).clone(), 'user');
+          (newListItem.lastChild as Parent).append(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (node as any).clone(),
+            'user'
+          );
           node.remove();
         });
       }
@@ -636,13 +650,15 @@ class ParagraphContent extends Format {
         return;
       }
 
-      const cursorBlock = (newListItem.find(cursorParagraphOffset) as Parent).firstContentInDescendant();
+      const cursorBlock = (
+        newListItem.find(cursorParagraphOffset) as Parent
+      ).firstContentInDescendant();
 
       cursorBlock?.setCursor(start.offset, end.offset, true);
     }
   }
 
-  indentListItem() {
+  private _indentListItem() {
     const { parent, muya } = this;
     const listItem = parent?.parent;
     const list = listItem?.parent;
@@ -662,18 +678,20 @@ class ParagraphContent extends Format {
     if (!newList || !/ol|ul/.test(newList.tagName)) {
       const state = {
         name: list.blockName,
-        meta: { ...list.meta },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        meta: { ...(list as any).meta },
         children: [listItem.getState()],
       };
       newList = ScrollPage.loadBlock(state.name).create(muya, state);
-      prevListItem!.append(newList, 'user');
+      prevListItem!.append(newList as Parent, 'user');
     } else {
-      newList.append(listItem.clone(), 'user');
+      (newList as Parent).append(listItem.clone() as Parent, 'user');
     }
 
     listItem.remove();
 
-    const cursorBlock = newList!.lastChild
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cursorBlock = ((newList as Parent).lastChild as any)
       .find(offset)
       .firstContentInDescendant();
     cursorBlock.setCursor(start.offset, end.offset, true);
@@ -837,13 +855,13 @@ class ParagraphContent extends Format {
     }
 
     if (event.shiftKey) {
-      const unindentType = this.isUnindentableListItem();
+      const unindentType = this._getUnindentType();
 
-      if (unindentType) {
-        this._unindentListItem(unindentType);
+      if (unindentType == null) {
+        return;
       }
 
-      return;
+      this._unindentListItem(unindentType);
     }
 
     // Handle `tab` to jump to the end of format when the cursor is at the end of format content.
@@ -859,7 +877,7 @@ class ParagraphContent extends Format {
     }
 
     if (this._canIndentListItem()) {
-      this.indentListItem();
+      this._indentListItem();
       return;
     }
 
