@@ -9,7 +9,7 @@ export default defineConfig({
     alias: [
       {
         find: '@muya',
-        replacement: fileURLToPath(new URL('./lib', import.meta.url)),
+        replacement: fileURLToPath(new URL('./packages', import.meta.url)),
       },
     ],
   },
@@ -19,7 +19,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    dts({ entryRoot: 'lib' }),
+    dts({ entryRoot: 'packages' }),
     libAssetsPlugin({
       outputPath: (url) => {
         return url.endsWith('.png') ? 'assets/icons' : 'assets/fonts';
@@ -31,15 +31,15 @@ export default defineConfig({
     sourcemap: false,
     lib: {
       entry: {
-        index: resolve(__dirname, 'lib/index.ts'),
-        'locales/en': resolve(__dirname, 'lib/locales/en.ts'),
-        'locales/ja': resolve(__dirname, 'lib/locales/ja.ts'),
-        'locales/zh': resolve(__dirname, 'lib/locales/zh.ts'),
+        index: resolve(__dirname, 'packages/index.ts'),
+        'locales/en': resolve(__dirname, 'packages/locales/en.ts'),
+        'locales/ja': resolve(__dirname, 'packages/locales/ja.ts'),
+        'locales/zh': resolve(__dirname, 'packages/locales/zh.ts'),
         'state/markdownToHtml': resolve(
           __dirname,
-          'lib/state/markdownToHtml.ts'
+          'packages/state/markdownToHtml.ts'
         ),
-        'ui/index': resolve(__dirname, 'lib/ui/index.ts'),
+        'ui/index': resolve(__dirname, 'packages/ui/index.ts'),
       },
       formats: ['es'],
     },

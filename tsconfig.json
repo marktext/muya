@@ -23,8 +23,8 @@
     "noErrorTruncation": true,
     "noImplicitOverride": true,
     "paths": {
-      "@muya/*": ["./lib/*"],
+      "@muya/*": ["./packages/*"],
     }
   },
-  "include": ["src", "lib"]
+  "include": ["examples", "packages"]
 }

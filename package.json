@@ -10,7 +10,7 @@
     "build": "vite build && tsc",
     "test": "jest --env=jsdom",
     "lint:ts": "eslint lib",
-    "lint:ts:fix": "eslint --fix lib",
+    "lint:ts:fix": "eslint --fix packages",
     "lint:css": "stylelint \"**/*.css\"",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
