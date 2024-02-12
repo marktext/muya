@@ -17,7 +17,7 @@ import prism, {
   loadedLanguages,
   transformAliasToOrigin,
   walkTokens
-} from '@muya/utils/prism/';
+} from '@muya/utils/prism/index';
 
 const checkAutoIndent = (text: string, offset: number) => {
   const pairStr = text.substring(offset - 1, offset + 1);
