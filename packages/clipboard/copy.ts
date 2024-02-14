@@ -92,7 +92,7 @@ class Copy extends Base {
         const listItemBlockName =
           outBlock!.blockName === 'task-list' ? 'task-list-item' : 'list-item';
         const listItem = block.farthestBlock(listItemBlockName);
-        const offset = (outBlock as Parent).offset(listItem);
+        const offset = (outBlock as Parent).offset(listItem!);
         const { name, meta, children } = (outBlock as any).getState();
         copyState.push({
           name,
@@ -130,10 +130,10 @@ class Copy extends Base {
         const focusFarthestListItem =
           focusBlock.farthestBlock(listItemBlockName);
         const anchorOffset = (anchorOutMostBlock as Parent).offset(
-          anchorFarthestListItem
+          anchorFarthestListItem!
         );
         const focusOffset = (anchorOutMostBlock as Parent).offset(
-          focusFarthestListItem
+          focusFarthestListItem!
         );
         const minOffset = Math.min(anchorOffset, focusOffset);
         const maxOffset = Math.max(anchorOffset, focusOffset);
