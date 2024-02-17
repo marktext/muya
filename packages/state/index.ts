@@ -27,8 +27,10 @@ class JSONState {
     return json1.type.transform(op, otherOp, type);
   }
 
-  public operationCache: JSONOpList[] = [];
-  private isGoing: boolean = false;
+  private _operationCache: JSONOpList[] = [];
+
+  private _isGoing = false;
+
   private state: TState[] = [];
 
   constructor(public muya: Muya, stateOrMarkdown: TState[] | string) {
@@ -75,7 +77,7 @@ class JSONState {
   insertOperation(path: Path, state: TState) {
     const operation = json1.insertOp(path, state as unknown as Doc)!;
 
-    this.operationCache.push(operation);
+    this._operationCache.push(operation);
 
     this._emitStateChange();
   }
@@ -83,7 +85,7 @@ class JSONState {
   removeOperation(path: Path) {
     const operation = json1.removeOp(path)!;
 
-    this.operationCache.push(operation);
+    this._operationCache.push(operation);
 
     this._emitStateChange();
   }
@@ -92,7 +94,7 @@ class JSONState {
   editOperation(path: Path, diff: TDiff[]) {
     const operation = json1.editOp(path, 'text-unicode', diff)!;
 
-    this.operationCache.push(operation);
+    this._operationCache.push(operation);
 
     this._emitStateChange();
   }
@@ -100,28 +102,9 @@ class JSONState {
   replaceOperation(path: Path, oldValue: Doc, newValue: Doc) {
     const operation = json1.replaceOp(path, oldValue, newValue)!;
 
-    this.operationCache.push(operation);
+    this._operationCache.push(operation);
 
     this._emitStateChange();
-  }
-
-  private _emitStateChange() {
-    if (!this.isGoing) {
-      this.isGoing = true;
-      requestAnimationFrame(() => {
-        const op = this.operationCache.reduce(json1.type.compose);
-        this.apply(op);
-        // TODO: remove doc in future
-        const doc = this.getState();
-        this.muya.eventCenter.emit('json-change', {
-          op,
-          source: 'user',
-          doc,
-        });
-        this.operationCache = [];
-        this.isGoing = false;
-      });
-    }
   }
 
   dispatch(op: JSONOpList, source = 'user' /* user, api */) {
@@ -145,6 +128,28 @@ class JSONState {
     const mdGenerator = new StateToMarkdown();
 
     return mdGenerator.generate(state);
+  }
+
+  private _emitStateChange() {
+    if (this._isGoing) {
+      return;
+    }
+
+    this._isGoing = true;
+
+    requestAnimationFrame(() => {
+      const op = this._operationCache.reduce(json1.type.compose);
+      this.apply(op);
+      // TODO: remove doc in future
+      const doc = this.getState();
+      this.muya.eventCenter.emit('json-change', {
+        op,
+        source: 'user',
+        doc,
+      });
+      this._operationCache = [];
+      this._isGoing = false;
+    });
   }
 }
 
