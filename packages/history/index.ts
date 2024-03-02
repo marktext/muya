@@ -143,6 +143,10 @@ class History {
     }
   }
 
+  canRedo() {
+    return this.stack.redo.length > 0;
+  }
+
   redo() {
     this.change('redo', 'undo');
   }
@@ -150,6 +154,10 @@ class History {
   transform(op: JSONOpList) {
     transformStack(this.stack.undo, op);
     transformStack(this.stack.redo, op);
+  }
+
+  canUndo() {
+    return this.stack.undo.length > 0;
   }
 
   undo() {
