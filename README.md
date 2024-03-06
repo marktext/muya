@@ -19,6 +19,7 @@ import Muya from '@marktext/muya'
 
 const container = document.querySelector('#editor')
 const muya = new Muya(container)
+muya.init();
 ```
 
 ## Documents
