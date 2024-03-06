@@ -16,6 +16,7 @@ yarn add @marktext/muya
 
 ```javascript
 import Muya from '@marktext/muya'
+import '@marktext/muya/dist/assets/style.css'
 
 const container = document.querySelector('#editor')
 const muya = new Muya(container)
