@@ -43,9 +43,9 @@
     "intl-segmenter-polyfill": "^0.4.4",
     "joplin-turndown-plugin-gfm": "^1.0.12",
     "katex": "0.16.9",
-    "marked": "^12.0.0",
+    "marked": "^12.0.1",
     "marked-highlight": "^2.1.1",
-    "mermaid": "10.8.0",
+    "mermaid": "10.9.0",
     "ot-json1": "^1.0.2",
     "ot-text-unicode": "^4.0.0",
     "plantuml-encoder": "^1.4.0",
@@ -54,7 +54,7 @@
     "snabbdom": "^3.6.2",
     "snabbdom-to-html": "^7.1.0",
     "turndown": "^7.1.2",
-    "vega": "^5.27.0",
+    "vega": "^5.28.0",
     "vega-embed": "^6.24.0",
     "vega-lite": "^5.16.3"
   },
@@ -66,8 +66,8 @@
     "@types/popper.js": "^1.11.0",
     "@types/prismjs": "^1.26.3",
     "@types/turndown": "^5.0.4",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
-    "@typescript-eslint/parser": "^7.1.0",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
     "commitlint": "^19.0.3",
     "eslint": "^8.57.0",
     "husky": "9.0.11",
@@ -79,8 +79,8 @@
     "stylelint-config-rational-order": "^0.1.2",
     "stylelint-config-standard": "^36.0.0",
     "stylelint-order": "^6.0.4",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.5",
     "vite-plugin-dts": "^3.7.3"
   }
 }
