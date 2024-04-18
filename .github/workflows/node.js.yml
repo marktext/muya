@@ -24,9 +24,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Install yarn
-      run: npm install -g yarn
+    - name: Install bun
+      run: npm install -g bun
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: bun install --frozen-lockfile
     - name: lint
-      run: yarn lint:ts
+      run: bun run lint:ts

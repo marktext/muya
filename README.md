@@ -9,17 +9,17 @@
 ## Installing
 
 ```sh
-yarn add @marktext/muya
+npm install @marktext/muya
 ```
 
 ## Usage
 
 ```javascript
-import Muya from '@marktext/muya'
-import '@marktext/muya/dist/assets/style.css'
+import Muya from '@marktext/muya';
+import '@marktext/muya/dist/assets/style.css';
 
-const container = document.querySelector('#editor')
-const muya = new Muya(container)
+const container = document.querySelector('#editor');
+const muya = new Muya(container);
 muya.init();
 ```
 
@@ -33,15 +33,15 @@ Coming soon!!!
 
 ```sh
 # step1: install dependencies
-yarn
+bun install
 # step2: run the development codes
-yarn dev
+bun run dev
 ```
 
 ## Build
 
 ```sh
-yarn build
+bun build
 ```
 
 ## publish
