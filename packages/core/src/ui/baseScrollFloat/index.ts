@@ -1,5 +1,5 @@
-import type { Muya } from '@muya/core';
 import type { ReferenceObject } from 'popper.js';
+import type { Muya } from '../../muya';
 import BaseFloat from '../baseFloat';
 import { EVENT_KEYS } from '../../config';
 import { isKeyboardEvent, noop } from '../../utils';

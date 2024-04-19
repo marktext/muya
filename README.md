@@ -29,7 +29,7 @@ import {
     TableDragBar,
     TableRowColumMenu,
     zh,
-} from '@muya/core';
+} from '@muyajs/core';
 
 Muya.use(EmojiSelector);
 Muya.use(InlineFormatToolbar);
@@ -45,7 +45,7 @@ Muya.use(TableDragBar);
 Muya.use(TableRowColumMenu);
 Muya.use(PreviewToolBar);
 
-import '@muya/core/lib/style.css';
+import '@muyajs/core/lib/style.css';
 
 const container = document.querySelector('#editor');
 const muya = new Muya(container, {

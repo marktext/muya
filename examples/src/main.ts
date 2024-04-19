@@ -1,6 +1,6 @@
 import type {
     TState,
-} from '@muya/core';
+} from '@muyajs/core';
 import {
     CodeBlockLanguageSelector,
     EmojiSelector,
@@ -18,7 +18,7 @@ import {
     TableDragBar,
     TableRowColumMenu,
     zh,
-} from '@muya/core';
+} from '@muyajs/core';
 
 import { DEFAULT_MARKDOWN } from './data';
 

@@ -1,4 +1,4 @@
-import type { Muya } from '@muya/core';
+import type { Muya } from '../muya';
 import type BaseFloat from './baseFloat';
 
 export class Ui {
