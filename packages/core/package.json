@@ -1,5 +1,5 @@
 {
-    "name": "@muya/core",
+    "name": "@muyajs/core",
     "version": "0.0.32",
     "description": "Core package for muya.",
     "author": "jocs <ransixi@gmail.com>",
