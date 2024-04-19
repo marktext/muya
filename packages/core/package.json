@@ -1,6 +1,6 @@
 {
     "name": "@muya/core",
-    "version": "0.0.1",
+    "version": "0.0.32",
     "description": "Core package for muya.",
     "author": "jocs <ransixi@gmail.com>",
     "license": "MIT",
