@@ -1,6 +1,4 @@
-<p  align="center"><img  src="./public/logo.jpg"  alt="muya"  height="150"></p>
-
-
+<p  align="center"><img  src="./docs/logo.jpg"  alt="muya"  height="150"></p>
 
 **Muya** originated from [MarkText](https://github.com/marktext/marktext), which was originally used in the MarkText and provides Markdown editing support for MarkText. Today, Muya is available as a stand-alone library that provides an efficient Markdown editing experience for many web browser applications.
 
@@ -33,15 +31,15 @@ Coming soon!!!
 
 ```sh
 # step1: install dependencies
-bun install
+pnpm install
 # step2: run the development codes
-bun run dev
+pnpm run dev
 ```
 
 ## Build
 
 ```sh
-bun build
+pnpm build
 ```
 
 ## publish

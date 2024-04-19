@@ -1,0 +1,88 @@
+{
+    "name": "@muya/core",
+    "version": "0.0.1",
+    "description": "Core package for muya.",
+    "author": "jocs <ransixi@gmail.com>",
+    "license": "MIT",
+    "keywords": [
+        "markdown"
+    ],
+    "exports": {
+        ".": "./src/index.ts",
+        "./*": "./src/*"
+    },
+    "main": "./lib/cjs/index.js",
+    "module": "./lib/es/index.js",
+    "types": "./lib/types/index.d.ts",
+    "publishConfig": {
+        "access": "public",
+        "main": "./lib/cjs/index.js",
+        "module": "./lib/es/index.js",
+        "exports": {
+            ".": {
+                "import": "./lib/es/index.js",
+                "require": "./lib/cjs/index.js",
+                "types": "./lib/types/index.d.ts"
+            },
+            "./*": {
+                "import": "./lib/es/*",
+                "require": "./lib/cjs/*",
+                "types": "./lib/types/index.d.ts"
+            },
+            "./lib/*": "./lib/*"
+        }
+    },
+    "directories": {
+        "lib": "lib"
+    },
+    "files": [
+        "lib"
+    ],
+    "engines": {
+        "node": ">=16.0.0",
+        "npm": ">=8.0.0"
+    },
+    "scripts": {
+        "lint:types": "tsc --noEmit",
+        "build": "tsc && vite build",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "coverage": "vitest run --coverage"
+    },
+    "dependencies": {
+        "@marktext/file-icons": "^1.0.4",
+        "dompurify": "^3.0.11",
+        "execall": "^3.0.0",
+        "fast-diff": "^1.3.0",
+        "fuse.js": "^7.0.0",
+        "html-tags": "^3.3.1",
+        "joplin-turndown-plugin-gfm": "^1.0.12",
+        "katex": "0.16.10",
+        "marked": "^12.0.1",
+        "marked-highlight": "^2.1.1",
+        "mermaid": "10.9.0",
+        "ot-json1": "^1.0.2",
+        "ot-text-unicode": "^4.0.0",
+        "plantuml-encoder": "^1.4.0",
+        "popper.js": "^1.16.1",
+        "prismjs": "^1.29.0",
+        "snabbdom": "^3.6.2",
+        "snabbdom-to-html": "^7.1.0",
+        "turndown": "^7.1.3",
+        "vega": "^5.28.0",
+        "vega-embed": "^6.24.0",
+        "vega-lite": "^5.17.0"
+    },
+    "devDependencies": {
+        "@types/dompurify": "^3.0.5",
+        "@types/katex": "^0.16.7",
+        "@types/plantuml-encoder": "^1.4.2",
+        "@types/popper.js": "^1.11.0",
+        "@types/prismjs": "^1.26.3",
+        "@types/turndown": "^5.0.4",
+        "@vitest/coverage-istanbul": "^1.5.0",
+        "typescript": "^5.4.5",
+        "vite": "^5.2.9",
+        "vitest": "^1.5.0"
+    }
+}

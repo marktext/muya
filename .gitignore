@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+lib
 coverage
 *.local
 
@@ -22,3 +23,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# turbo
+.turbo
+.vercel

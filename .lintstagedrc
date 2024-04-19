@@ -1,4 +1,4 @@
 {
   "*.ts": ["eslint --fix"],
-  "*.{html,css}": ["stylelint \"/**/*.css\" --fix"]
+  "*.{html,css}": ["stylelint \"**/*.css\" --fix"]
 }

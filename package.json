@@ -1,86 +1,61 @@
 {
-  "name": "@marktext/muya",
-  "version": "0.2.5",
-  "description": "Future markdown editor",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build && tsc",
-    "test": "jest --env=jsdom",
-    "lint:ts": "eslint lib",
-    "lint:ts:fix": "eslint --fix packages",
-    "lint:css": "stylelint \"**/*.css\"",
-    "postinstall": "husky install",
-    "prepublishOnly": "pinst --disable",
-    "postpublish": "pinst --enable",
-    "pub": "npm publish --access public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/marktext/muya.git"
-  },
-  "keywords": [
-    "markdown",
-    "editor",
-    "web",
-    "desktop"
-  ],
-  "author": "ransixi@gmail.com",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/marktext/muya/issues"
-  },
-  "homepage": "https://github.com/marktext/muya#readme",
-  "dependencies": {
-    "@marktext/file-icons": "^1.0.4",
-    "dompurify": "^3.0.11",
-    "execall": "^3.0.0",
-    "fast-diff": "^1.3.0",
-    "fuse.js": "^7.0.0",
-    "html-tags": "^3.3.1",
-    "intl-segmenter-polyfill": "^0.4.4",
-    "joplin-turndown-plugin-gfm": "^1.0.12",
-    "katex": "0.16.10",
-    "marked": "^12.0.1",
-    "marked-highlight": "^2.1.1",
-    "mermaid": "10.9.0",
-    "ot-json1": "^1.0.2",
-    "ot-text-unicode": "^4.0.0",
-    "plantuml-encoder": "^1.4.0",
-    "popper.js": "^1.16.1",
-    "prismjs": "^1.29.0",
-    "snabbdom": "^3.6.2",
-    "snabbdom-to-html": "^7.1.0",
-    "turndown": "^7.1.3",
-    "vega": "^5.28.0",
-    "vega-embed": "^6.24.0",
-    "vega-lite": "^5.17.0"
-  },
-  "devDependencies": {
-    "@laynezh/vite-plugin-lib-assets": "0.5.2",
-    "@types/dompurify": "^3.0.5",
-    "@types/katex": "^0.16.7",
-    "@types/plantuml-encoder": "^1.4.2",
-    "@types/popper.js": "^1.11.0",
-    "@types/prismjs": "^1.26.3",
-    "@types/turndown": "^5.0.4",
-    "@typescript-eslint/eslint-plugin": "^7.5.0",
-    "@typescript-eslint/parser": "^7.5.0",
-    "commitlint": "^19.2.1",
-    "eslint": "^9.0.0",
-    "husky": "9.0.11",
-    "jest": "^29.7.0",
-    "lint-staged": "^15.2.2",
-    "pinst": "^3.0.0",
-    "stylelint": "^16.3.1",
-    "stylelint-config-prettier": "^9.0.5",
-    "stylelint-config-rational-order": "^0.1.2",
-    "stylelint-config-standard": "^36.0.0",
-    "stylelint-order": "^6.0.4",
-    "typescript": "^5.4.4",
-    "vite": "^5.2.8",
-    "vite-plugin-dts": "^3.8.1"
-  }
+    "name": "muya",
+    "type": "module",
+    "version": "0.0.1",
+    "description": "Future markdown editor",
+    "author": "jocs <ransixi@gmail.com>",
+    "license": "MIT",
+    "homepage": "https://github.com/marktext/muya#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/marktext/muya.git"
+    },
+    "bugs": {
+        "url": "https://github.com/marktext/muya/issues"
+    },
+    "keywords": [
+        "markdown",
+        "editor",
+        "web"
+    ],
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.5.0"
+    },
+    "scripts": {
+        "prepare": "husky install",
+        "pre-commit": "lint-staged",
+        "dev": "turbo dev:demo",
+        "lint:types": "turbo lint:types",
+        "build": "turbo build",
+        "test": "turbo test -- --passWithNoTests",
+        "coverage": "turbo coverage -- --passWithNoTests",
+        "lint": "eslint packages",
+        "lint:fix": "eslint packages --fix",
+        "lint:css": "stylelint \"**/*.css\"",
+        "postinstall": "husky install",
+        "release": "release-it"
+    },
+    "devDependencies": {
+        "@antfu/eslint-config": "^2.15.0",
+        "@laynezh/vite-plugin-lib-assets": "0.5.2",
+        "@release-it-plugins/workspaces": "^4.2.0",
+        "@release-it/conventional-changelog": "^8.0.1",
+        "@typescript-eslint/parser": "^7.5.0",
+        "commitlint": "^19.2.1",
+        "eslint": "^9.0.0",
+        "eslint-plugin-format": "^0.1.1",
+        "husky": "9.0.11",
+        "lint-staged": "^15.2.2",
+        "release-it": "^17.2.0",
+        "stylelint": "^16.3.1",
+        "stylelint-config-prettier": "^9.0.5",
+        "stylelint-config-rational-order": "^0.1.2",
+        "stylelint-config-standard": "^36.0.0",
+        "stylelint-order": "^6.0.4",
+        "turbo": "^1.13.2",
+        "typescript": "^5.4.4",
+        "vite": "^5.2.9",
+        "vite-plugin-dts": "^3.8.1"
+    }
 }
