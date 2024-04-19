@@ -7,19 +7,57 @@
 ## Installing
 
 ```sh
-npm install @marktext/muya
+npm install @muyajs/core
 ```
 
-## Usage
+## Quick Start
 
-```javascript
-import Muya from '@marktext/muya';
-import '@marktext/muya/dist/assets/style.css';
+```typescript
+import {
+    CodeBlockLanguageSelector,
+    EmojiSelector,
+    ImageResizeBar,
+    ImageToolBar,
+    InlineFormatToolbar,
+    MarkdownToHtml,
+    Muya,
+    ParagraphFrontButton,
+    ParagraphFrontMenu,
+    ParagraphQuickInsertMenu,
+    PreviewToolBar,
+    TableColumnToolbar,
+    TableDragBar,
+    TableRowColumMenu,
+    zh,
+} from '@muya/core';
+
+Muya.use(EmojiSelector);
+Muya.use(InlineFormatToolbar);
+Muya.use(ImageToolBar);
+Muya.use(ImageResizeBar);
+Muya.use(CodeBlockLanguageSelector);
+
+Muya.use(ParagraphFrontButton);
+Muya.use(ParagraphFrontMenu);
+Muya.use(TableColumnToolbar);
+Muya.use(ParagraphQuickInsertMenu);
+Muya.use(TableDragBar);
+Muya.use(TableRowColumMenu);
+Muya.use(PreviewToolBar);
+
+import '@muya/core/lib/style.css';
 
 const container = document.querySelector('#editor');
-const muya = new Muya(container);
+const muya = new Muya(container, {
+    markdown: 'Hello world',
+});
+
+muya.locale(zh);
+
 muya.init();
 ```
+
+There is also an [example](https://github.com/marktext/muya/tree/master/examples) of how to use muya in Typescript.
 
 ## Documents
 
@@ -45,8 +83,10 @@ pnpm build
 ## publish
 
 ```sh
-# update version numbers
-npm run pub
+# update version numbers.
+pnpm run release
+# publish to npm.
+pnpm -r publish
 ```
 
 ## FAQ

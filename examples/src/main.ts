@@ -24,8 +24,6 @@ import { DEFAULT_MARKDOWN } from './data';
 
 import './style.css';
 
-// import "../packages/assets/style.css";
-
 // Fix Intl.Segmenter is not work on firefox.
 if (!(Intl as any).Segmenter) {
     const polyfill = await import('intl-segmenter-polyfill/dist/bundled');
