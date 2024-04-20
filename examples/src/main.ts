@@ -1,6 +1,4 @@
-import type {
-    TState,
-} from '@muyajs/core';
+import type { TState } from '@muyajs/core';
 import {
     CodeBlockLanguageSelector,
     EmojiSelector,
