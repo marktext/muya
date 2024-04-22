@@ -1,0 +1,24 @@
+name: ⭕️ CI Circular Dependences Check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  circular-dependences:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
+
+      - name: 🧬 Circular dependences checking
+        run: npm run check-circular

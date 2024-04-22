@@ -1,5 +1,5 @@
 import type { VNode } from 'snabbdom';
-import ScrollPage from '../../block/scrollPage';
+import { ScrollPage } from '../../block/scrollPage';
 import emptyStates from '../../config/emptyStates';
 import BaseFloat from '../baseFloat';
 import type { IQuickInsertMenuItem } from '../paragraphQuickInsertMenu/config';

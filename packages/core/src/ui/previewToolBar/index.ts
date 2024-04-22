@@ -1,7 +1,7 @@
 import type { VNode } from 'snabbdom';
 import BaseFloat from '../baseFloat';
 import { isMouseEvent, throttle } from '../../utils';
-import ScrollPage from '../../block';
+import { ScrollPage } from '../../block/scrollPage';
 import { h, patch } from '../../utils/snabbdom';
 import { BLOCK_DOM_PROPERTY } from '../../config';
 import type MathBlock from '../../block/extra/math';

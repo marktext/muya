@@ -1,7 +1,7 @@
 import Content from '../../base/content';
 import type Code from '../../commonMark/codeBlock/code';
 import type HTMLPreview from '../../commonMark/html/htmlPreview';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';

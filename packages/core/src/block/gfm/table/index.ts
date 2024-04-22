@@ -2,7 +2,7 @@ import diff from 'fast-diff';
 import LinkedList from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
 import type TableCellContent from '../../content/tableCell';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { TBlockPath } from '../../types';
 import type { Muya } from '../../../muya';
 import type { Nullable } from '../../../types';

@@ -1,4 +1,4 @@
-import ScrollPage from './scrollPage';
+import { ScrollPage } from './scrollPage';
 // leaf block
 import Paragraph from './commonMark/paragraph';
 import AtxHeading from './commonMark/atxHeading';
@@ -38,48 +38,46 @@ import HTMLPreview from './commonMark/html/htmlPreview';
 import MathPreview from './extra/math/mathPreview';
 import DiagramPreview from './extra/diagram/diagramPreview';
 
-// Register itself
-ScrollPage.register(ScrollPage);
-ScrollPage.register(Paragraph);
-ScrollPage.register(ParagraphContent);
-ScrollPage.register(AtxHeading);
-ScrollPage.register(AtxHeadingContent);
-ScrollPage.register(SetextHeading);
-ScrollPage.register(SetextHeadingContent);
-ScrollPage.register(BlockQuote);
-ScrollPage.register(ThematicBreak);
-ScrollPage.register(ThematicBreakContent);
-ScrollPage.register(CodeBlock);
-ScrollPage.register(Code);
-ScrollPage.register(LangInputContent);
-ScrollPage.register(CodeBlockContent);
-ScrollPage.register(OrderList);
-ScrollPage.register(ListItem);
-ScrollPage.register(BulletList);
-ScrollPage.register(TaskList);
-ScrollPage.register(TaskListItem);
-ScrollPage.register(TaskListCheckbox);
-// Table
-ScrollPage.register(Table);
-ScrollPage.register(TableInner);
-ScrollPage.register(TableRow);
-ScrollPage.register(Cell);
-ScrollPage.register(TableCellContent);
-// HTML
-ScrollPage.register(HTMLBlock);
-ScrollPage.register(HTMLPreview);
-ScrollPage.register(HTMLContainer);
-// Math
-ScrollPage.register(MathBlock);
-ScrollPage.register(MathPreview);
-ScrollPage.register(MathContainer);
-// FrontMatter
-ScrollPage.register(Frontmatter);
-// Diagram
-ScrollPage.register(DiagramBlock);
-ScrollPage.register(DiagramContainer);
-ScrollPage.register(DiagramPreview);
-
-const ScrollPageForExport = ScrollPage;
-
-export default ScrollPageForExport;
+export function registerBlocks() {
+    // Register itself
+    ScrollPage.register(ScrollPage);
+    ScrollPage.register(Paragraph);
+    ScrollPage.register(ParagraphContent);
+    ScrollPage.register(AtxHeading);
+    ScrollPage.register(AtxHeadingContent);
+    ScrollPage.register(SetextHeading);
+    ScrollPage.register(SetextHeadingContent);
+    ScrollPage.register(BlockQuote);
+    ScrollPage.register(ThematicBreak);
+    ScrollPage.register(ThematicBreakContent);
+    ScrollPage.register(CodeBlock);
+    ScrollPage.register(Code);
+    ScrollPage.register(LangInputContent);
+    ScrollPage.register(CodeBlockContent);
+    ScrollPage.register(OrderList);
+    ScrollPage.register(ListItem);
+    ScrollPage.register(BulletList);
+    ScrollPage.register(TaskList);
+    ScrollPage.register(TaskListItem);
+    ScrollPage.register(TaskListCheckbox);
+    // Table
+    ScrollPage.register(Table);
+    ScrollPage.register(TableInner);
+    ScrollPage.register(TableRow);
+    ScrollPage.register(Cell);
+    ScrollPage.register(TableCellContent);
+    // HTML
+    ScrollPage.register(HTMLBlock);
+    ScrollPage.register(HTMLPreview);
+    ScrollPage.register(HTMLContainer);
+    // Math
+    ScrollPage.register(MathBlock);
+    ScrollPage.register(MathPreview);
+    ScrollPage.register(MathContainer);
+    // FrontMatter
+    ScrollPage.register(Frontmatter);
+    // Diagram
+    ScrollPage.register(DiagramBlock);
+    ScrollPage.register(DiagramContainer);
+    ScrollPage.register(DiagramPreview);
+}

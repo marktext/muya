@@ -20,7 +20,7 @@ import quoteIcon from '../../assets/icons/quote_block/2.png';
 import todoListIcon from '../../assets/icons/todolist/2.png';
 import { isOsx } from '../../config';
 
-import ScrollPage from '../../block/scrollPage';
+import { ScrollPage } from '../../block/scrollPage';
 import emptyStates from '../../config/emptyStates';
 import { deepClone } from '../../utils';
 

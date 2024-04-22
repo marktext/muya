@@ -1,5 +1,5 @@
 import type { VNode } from 'snabbdom';
-import ScrollPage from '../../block/scrollPage';
+import { ScrollPage } from '../../block/scrollPage';
 import { search } from '../../utils/prism';
 import { h, patch } from '../../utils/snabbdom';
 import BaseScrollFloat from '../baseScrollFloat';

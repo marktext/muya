@@ -1,6 +1,6 @@
 import Parent from '../../base/parent';
 import IContainerQueryBlock from '../../mixins/containerQueryBlock';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
 import { mixins } from '../../../utils';
 import type { ITaskListMeta, ITaskListState } from '../../../state/types';

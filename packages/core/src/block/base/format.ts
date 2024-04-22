@@ -1,5 +1,5 @@
 /* eslint-disable no-fallthrough */
-import ScrollPage from '../../block';
+import { ScrollPage } from '../../block/scrollPage';
 import Content from '../../block/base/content';
 import {
     CLASS_NAMES,
@@ -15,11 +15,11 @@ import type {
     TextToken,
     Token,
 } from '../../inlineRenderer/types';
-import Selection from '../../selection';
+import Selection, { getCursorReference } from '../../selection';
 import { getTextContent } from '../../selection/dom';
 import type { ICursor } from '../../selection/types';
 import type { IBulletListState, IOrderListState } from '../../state/types';
-import { conflict, getCursorReference, isMouseEvent } from '../../utils';
+import { conflict, isMouseEvent } from '../../utils';
 import type { IImageInfo } from '../../utils/image';
 import { correctImageSrc, getImageInfo } from '../../utils/image';
 import logger from '../../utils/logger';

@@ -1,4 +1,4 @@
-import ScrollPage from '../..';
+import { ScrollPage } from '../../scrollPage';
 import Format from '../../base/format';
 import type Table from '../../gfm/table';
 import type Cell from '../../gfm/table/cell';

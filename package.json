@@ -34,7 +34,8 @@
         "lint:fix": "eslint packages --fix",
         "lint:css": "stylelint \"**/*.css\"",
         "postinstall": "husky install",
-        "release": "release-it"
+        "release": "release-it",
+        "check-circular": "madge --circular packages/core/src/index.ts"
     },
     "devDependencies": {
         "@antfu/eslint-config": "^2.15.0",
@@ -54,6 +55,7 @@
         "stylelint-config-standard": "^36.0.0",
         "stylelint-order": "^6.0.4",
         "turbo": "^1.13.2",
+        "madge": "^7.0.0",
         "typescript": "^5.4.4",
         "vite": "^5.2.10",
         "vite-plugin-dts": "^3.8.1"

@@ -15,7 +15,7 @@ interface IBlurFocus {
     focus: Nullable<Content>;
 }
 
-class ScrollPage extends Parent {
+export class ScrollPage extends Parent {
     private _blurFocus: IBlurFocus = { blur: null, focus: null };
 
     static override blockName = 'scrollpage';
@@ -202,5 +202,3 @@ class ScrollPage extends Parent {
         }
     }
 }
-
-export default ScrollPage;

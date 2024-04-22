@@ -1,7 +1,7 @@
 import Parent from '../../base/parent';
 import type SetextHeadingContent from '../../content/setextHeadingContent';
 import LeafQueryBlock from '../../mixins/leafQueryBlock';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
 import { mixins } from '../../../utils';
 import type { ISetextHeadingState } from '../../../state/types';

@@ -1,5 +1,5 @@
 import diff from 'fast-diff';
-import ScrollPage from '../../block/scrollPage';
+import { ScrollPage } from '../../block/scrollPage';
 import TreeNode from '../../block/base/treeNode';
 import { BACK_HASH, BRACKET_HASH, EVENT_KEYS, isFirefox } from '../../config';
 import type { Muya } from '../../muya';

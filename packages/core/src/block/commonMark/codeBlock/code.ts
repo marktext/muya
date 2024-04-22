@@ -1,6 +1,6 @@
 import copyIcon from '../../../assets/icons/copy/2.png';
 import Parent from '../../base/parent';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type I18n from '../../../i18n';
 import type { Muya } from '../../../muya';
 import type { Nullable } from '../../../types';
