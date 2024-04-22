@@ -1,7 +1,7 @@
 import type { Nullable } from '../../../types';
 import type { ILinkedNode } from './linkedNode';
 
-class LinkedList<T extends ILinkedNode> {
+export class LinkedList<T extends ILinkedNode> {
     head: Nullable<T> = null;
 
     tail: Nullable<T> = null;
@@ -118,5 +118,3 @@ class LinkedList<T extends ILinkedNode> {
         return [...this.iterator()].reduce(callback, memo);
     }
 }
-
-export default LinkedList;

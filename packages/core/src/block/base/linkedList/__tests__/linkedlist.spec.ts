@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import LinkedList from '../linkedList';
+import { LinkedList } from '../linkedList';
 import type { ILinkedNode } from '../linkedNode';
 import type { Nullable } from '../../../../types';
 

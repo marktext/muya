@@ -174,7 +174,7 @@ class TreeNode implements ILinkedNode {
      * Find the closest block which blockName is `blockName`. return `null` if not found.
      * @param {string} blockName
      */
-    closestBlock(blockName: string): TreeNode | null {
+    closestBlock(blockName: string): Nullable<TreeNode> {
         if (this.blockName === blockName)
             return this;
 
@@ -190,7 +190,7 @@ class TreeNode implements ILinkedNode {
         return null;
     }
 
-    farthestBlock(blockName: string): TreeNode | null {
+    farthestBlock(blockName: string): Nullable<TreeNode> {
         const results: TreeNode[] = [];
         if (this.blockName === blockName)
             results.push(this);

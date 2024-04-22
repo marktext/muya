@@ -1,4 +1,4 @@
-import LinkedList from '../../base/linkedList/linkedList';
+import { LinkedList } from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
 import type TableCellContent from '../../content/tableCell';
 import LeafQueryBlock from '../../mixins/leafQueryBlock';
