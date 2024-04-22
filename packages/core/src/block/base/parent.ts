@@ -1,4 +1,4 @@
-import LinkedList from '../../block/base/linkedList/linkedList';
+import { LinkedList } from '../../block/base/linkedList/linkedList';
 import TreeNode from '../../block/base/treeNode';
 import { CLASS_NAMES } from '../../config';
 import type { TState } from '../../state/types';

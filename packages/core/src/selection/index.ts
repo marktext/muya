@@ -1,7 +1,4 @@
-import type {
-    // eslint-disable-next-line import/no-named-default
-    default as ContentBlock,
-} from '../block/base/content';
+import type Content from '../block/base/content';
 import type Format from '../block/base/format';
 import type Parent from '../block/base/parent';
 import type ListItem from '../block/commonMark/listItem';
@@ -134,9 +131,9 @@ class Selection {
 
     public doc: Document = document;
     public anchorPath: (string | number)[] = [];
-    public anchorBlock: ContentBlock | null = null;
+    public anchorBlock: Content | null = null;
     public focusPath: (string | number)[] = [];
-    public focusBlock: ContentBlock | null = null;
+    public focusBlock: Content | null = null;
     public anchor: INodeOffset | null = null;
     public focus: INodeOffset | null = null;
     public selectedImage: {
@@ -228,8 +225,8 @@ class Selection {
         if (!anchorDomNode || !focusDomNode)
             return null;
 
-        const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
-        const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as ContentBlock;
+        const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as Content;
+        const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as Content;
         const anchorPath = anchorBlock.path;
         const focusPath = focusBlock.path;
 

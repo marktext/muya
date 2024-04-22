@@ -1,4 +1,4 @@
-import LinkedList from '../../base/linkedList/linkedList';
+import { LinkedList } from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
 import IContainerQueryBlock from '../../mixins/containerQueryBlock';
 import { ScrollPage } from '../../scrollPage';

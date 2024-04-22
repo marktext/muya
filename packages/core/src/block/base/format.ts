@@ -26,6 +26,7 @@ import logger from '../../utils/logger';
 import type AtxHeading from '../commonMark/atxHeading';
 import type BulletList from '../commonMark/bulletList';
 import type SetextHeading from '../commonMark/setextHeading';
+import type { Nullable } from '../../types';
 import type Parent from './parent';
 
 interface IOffset {
@@ -228,7 +229,7 @@ class Format extends Content {
         text: string,
         offset: number,
         type: Token['type'],
-    ): Token | null {
+    ): Nullable<Token> {
         const tokens = tokenizer(text, {
             hasBeginRules: false,
             options: this.muya.options,
@@ -436,7 +437,7 @@ class Format extends Content {
 
         const selector = `#${imageId.includes('_') ? imageId : `${imageId}_${token.range.start}`
       } img`;
-        const image: HTMLImageElement | null = document.querySelector(selector);
+        const image: Nullable<HTMLElement> = document.querySelector<HTMLElement>(selector);
 
         if (image)
             image.click();
