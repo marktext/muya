@@ -5,7 +5,7 @@ import type BulletList from '../../commonMark/bulletList';
 import type OrderList from '../../commonMark/orderList';
 import type Paragraph from '../../commonMark/paragraph';
 import type TaskList from '../../gfm/taskList';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
 import type { Muya } from '../../../index';
 import { tokenizer } from '../../../inlineRenderer/lexer';

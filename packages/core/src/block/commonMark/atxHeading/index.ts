@@ -1,7 +1,7 @@
 import type Content from '../../base/content';
 import Parent from '../../base/parent';
 import LeafQueryBlock from '../../mixins/leafQueryBlock';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { TBlockPath } from '../../types';
 import { mixins } from '../../../utils';
 import type { IAtxHeadingState } from '../../../state/types';

@@ -1,6 +1,6 @@
 import diff from 'fast-diff';
 import Parent from '../../base/parent';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
 import { diffToTextOp } from '../../../utils';
 import { operateClassName } from '../../../utils/dom';

@@ -1,4 +1,4 @@
-import ScrollPage from '../..';
+import { ScrollPage } from '../../scrollPage';
 import Format from '../../base/format';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';

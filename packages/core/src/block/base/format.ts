@@ -1,5 +1,5 @@
 /* eslint-disable no-fallthrough */
-import ScrollPage from '../../block';
+import { ScrollPage } from '../../block/scrollPage';
 import Content from '../../block/base/content';
 import {
     CLASS_NAMES,

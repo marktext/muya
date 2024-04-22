@@ -1,11 +1,31 @@
 import htmlTags from 'html-tags';
 import voidHtmlTags from 'html-tags/void';
-import { genUpper2LowerKeyHash, generateKeyHash } from '../utils';
 import { en } from '../locales/en';
 
 export const VOID_HTML_TAGS = voidHtmlTags;
 export const HTML_TAGS = htmlTags;
 export const BLOCK_DOM_PROPERTY = '__MUYA_BLOCK__';
+
+/**
+ * [genUpper2LowerKeyHash generate constants map hash, the value is lowercase of the key,
+ * also translate `_` to `-`]
+ */
+function genUpper2LowerKeyHash(keys: string[]): Record<string, string> {
+    return keys.reduce((acc, key) => {
+        const value = key.toLowerCase().replace(/_/g, '-');
+
+        return Object.assign(acc, { [key]: value });
+    }, {});
+}
+
+/**
+ * generate constants map, the value is the key.
+ */
+function generateKeyHash(keys: string[]): Record<string, string> {
+    return keys.reduce((acc, key) => {
+        return Object.assign(acc, { [key]: key });
+    }, {});
+}
 
 interface ITag {
     open: string;

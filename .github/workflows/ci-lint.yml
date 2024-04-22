@@ -35,3 +35,16 @@ jobs:
 
       - name: 🧼 Type checking
         run: npm run lint:types
+  
+  circular-dependences:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
+
+      - name: 🧬 Circular dependences checking
+        run: npm run check-circular

@@ -1,5 +1,5 @@
 import * as otText from 'ot-text-unicode';
-import ScrollPage from '../block/scrollPage';
+import { ScrollPage } from '../block/scrollPage';
 import type Content from '../block/base/content';
 import type Format from '../block/base/format';
 import Clipboard from '../clipboard';
@@ -14,6 +14,7 @@ import type { Nullable } from '../types';
 import { hasPick } from '../utils';
 import logger from '../utils/logger';
 import type { Muya } from '../muya';
+import { registerBlocks } from '../block';
 
 const debug = logger('editor:');
 
@@ -55,6 +56,8 @@ class Editor {
     }
 
     init() {
+        registerBlocks();
+
         const { muya } = this;
         const state = this.jsonState.getState();
 

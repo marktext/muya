@@ -1,7 +1,7 @@
 import Parent from '../../base/parent';
 import type ParagraphContent from '../../content/paragraphContent';
 import LeafQueryBlock from '../../mixins/leafQueryBlock';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
 import { mixins } from '../../../utils';
 import type { IParagraphState } from '../../../state/types';

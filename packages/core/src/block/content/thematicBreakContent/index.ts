@@ -1,5 +1,5 @@
 import Format from '../../base/format';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
 

@@ -1,4 +1,4 @@
-import ScrollPage from '../..';
+import { ScrollPage } from '../../scrollPage';
 import Format from '../../base/format';
 import type AtxHeading from '../../commonMark/atxHeading';
 import type { Muya } from '../../../muya';

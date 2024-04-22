@@ -175,27 +175,6 @@ export function wordCount(markdown: string) {
     return { word, paragraph, character, all };
 }
 
-/**
- * [genUpper2LowerKeyHash generate constants map hash, the value is lowercase of the key,
- * also translate `_` to `-`]
- */
-export function genUpper2LowerKeyHash(keys: string[]): Record<string, string> {
-    return keys.reduce((acc, key) => {
-        const value = key.toLowerCase().replace(/_/g, '-');
-
-        return Object.assign(acc, { [key]: value });
-    }, {});
-}
-
-/**
- * generate constants map, the value is the key.
- */
-export function generateKeyHash(keys: string[]): Record<string, string> {
-    return keys.reduce((acc, key) => {
-        return Object.assign(acc, { [key]: key });
-    }, {});
-}
-
 export function sanitize(html: string, purifyOptions: Config, disableHtml: boolean) {
     if (disableHtml)
         return runSanitize(escapeHTML(html), purifyOptions);

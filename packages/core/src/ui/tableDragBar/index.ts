@@ -1,4 +1,4 @@
-import ScrollPage from '../../block/scrollPage';
+import { ScrollPage } from '../../block/scrollPage';
 import { BLOCK_DOM_PROPERTY } from '../../config';
 import { isMouseEvent, throttle } from '../../utils';
 import BaseFloat from '../baseFloat';

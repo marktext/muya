@@ -1,7 +1,7 @@
 import LinkedList from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
 import IContainerQueryBlock from '../../mixins/containerQueryBlock';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
 import type { IBulletListState, IListItemState } from '../../../state/types';
 import { mixins } from '../../../utils';

@@ -1,5 +1,5 @@
 import Parent from '../../base/parent';
-import ScrollPage from '../../scrollPage';
+import { ScrollPage } from '../../scrollPage';
 import type { TBlockPath } from '../../types';
 import { CLASS_NAMES } from '../../../config';
 import type { Muya } from '../../../muya';

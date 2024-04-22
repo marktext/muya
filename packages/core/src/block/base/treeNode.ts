@@ -6,7 +6,7 @@ import type { IAttributes, IDatasets } from '../../utils/types';
 import type { IConstructor } from '../types';
 import type Content from './content';
 import type { ILinkedNode } from './linkedList/linkedNode';
-import Parent from './parent';
+import type Parent from './parent';
 
 class TreeNode implements ILinkedNode {
     prev: Nullable<TreeNode> = null;
@@ -80,8 +80,8 @@ class TreeNode implements ILinkedNode {
      * @param this
      * @returns boolean
      */
-    isParent(this: unknown): this is Parent {
-        return this instanceof Parent;
+    isParent(this: TreeNode): this is Parent {
+        return 'children' in this;
     }
 
     /**

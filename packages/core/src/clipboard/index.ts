@@ -1,7 +1,7 @@
 import type Content from '../block/base/content';
 import type Parent from '../block/base/parent';
 import CodeBlockContent from '../block/content/codeBlockContent';
-import ScrollPage from '../block/scrollPage';
+import { ScrollPage } from '../block/scrollPage';
 import { URL_REG } from '../config';
 import emptyStates from '../config/emptyStates';
 import type { Muya } from '../muya';
