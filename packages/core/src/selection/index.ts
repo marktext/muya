@@ -672,4 +672,19 @@ class Selection {
     }
 }
 
+export function getCursorReference() {
+    const rect = Selection.getCursorCoords();
+
+    if (!rect)
+        return null;
+
+    return {
+        getBoundingClientRect() {
+            return rect;
+        },
+        clientWidth: rect.width,
+        clientHeight: rect.height,
+    };
+}
+
 export default Selection;

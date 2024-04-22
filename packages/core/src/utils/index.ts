@@ -1,7 +1,6 @@
 import type { Diff } from 'fast-diff';
 import type Content from '../block/base/content';
 import { EVENT_KEYS } from '../config';
-import Selection from '../selection';
 import type { Config } from './dompurify';
 import runSanitize from './dompurify';
 
@@ -240,21 +239,6 @@ export function diffToTextOp(diffs: Diff[]) {
     }
 
     return op;
-}
-
-export function getCursorReference() {
-    const rect = Selection.getCursorCoords();
-
-    if (!rect)
-        return null;
-
-    return {
-        getBoundingClientRect() {
-            return rect;
-        },
-        clientWidth: rect.width,
-        clientHeight: rect.height,
-    };
 }
 
 // If the next block is header, put cursor after the `#{1,6} *`
