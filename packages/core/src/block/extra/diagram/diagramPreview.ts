@@ -1,3 +1,4 @@
+import { fromEvent } from 'rxjs';
 import Parent from '../../base/parent';
 import { PREVIEW_DOMPURIFY_CONFIG } from '../../../config';
 import type { Muya } from '../../../muya';
@@ -94,13 +95,8 @@ class DiagramPreview extends Parent {
     }
 
     attachDOMEvents() {
-        const { eventCenter } = this.muya;
-
-        eventCenter.attachDOMEvent(
-            this.domNode!,
-            'click',
-            this.clickHandler.bind(this),
-        );
+        const clickObservable = fromEvent(this.domNode!, 'click');
+        clickObservable.subscribe(this.clickHandler.bind(this));
     }
 
     clickHandler(event: Event) {
