@@ -1,4 +1,5 @@
 import * as otText from 'ot-text-unicode';
+import { fromEvent, merge } from 'rxjs';
 import { ScrollPage } from '../block/scrollPage';
 import type Content from '../block/base/content';
 import type Format from '../block/base/format';
@@ -68,7 +69,6 @@ class Editor {
     }
 
     private _dispatchEvents() {
-        const { eventCenter } = this.muya;
         const { domNode } = this.muya;
 
         const eventHandler = (event: Event) => {
@@ -121,12 +121,14 @@ class Editor {
             }
         };
 
-        eventCenter.attachDOMEvent(domNode, 'click', eventHandler);
-        eventCenter.attachDOMEvent(domNode, 'input', eventHandler);
-        eventCenter.attachDOMEvent(domNode, 'keydown', eventHandler);
-        eventCenter.attachDOMEvent(domNode, 'keyup', eventHandler);
-        eventCenter.attachDOMEvent(domNode, 'compositionend', eventHandler);
-        eventCenter.attachDOMEvent(domNode, 'compositionstart', eventHandler);
+        merge(
+            fromEvent(domNode, 'click'),
+            fromEvent(domNode, 'input'),
+            fromEvent(domNode, 'keydown'),
+            fromEvent(domNode, 'keyup'),
+            fromEvent(domNode, 'compositionend'),
+            fromEvent(domNode, 'compositionstart'),
+        ).subscribe(eventHandler);
     }
 
     focus() {
