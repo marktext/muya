@@ -131,6 +131,9 @@ importers:
       prismjs:
         specifier: ^1.29.0
         version: 1.29.0
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
       snabbdom:
         specifier: ^3.6.2
         version: 3.6.2
@@ -8585,7 +8588,6 @@ packages:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
       tslib: 2.6.2
-    dev: true
 
   /sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}

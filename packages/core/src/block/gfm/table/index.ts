@@ -1,4 +1,5 @@
 import diff from 'fast-diff';
+import { fromEvent } from 'rxjs';
 import { LinkedList } from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
 import type TableCellContent from '../../content/tableCell';
@@ -91,11 +92,10 @@ class Table extends Parent {
     }
 
     private _listenDomEvent() {
-        const { eventCenter } = this.muya;
         const { domNode } = this;
 
         // Fix: prevent cursor present at the end of table.
-        const clickHandler = (event: Event) => {
+        const mousedownHandler = (event: Event) => {
             if (event.target === domNode) {
                 event.preventDefault();
                 const cursorBlock = this.lastContentInDescendant()!;
@@ -103,7 +103,9 @@ class Table extends Parent {
                 cursorBlock.setCursor(offset, offset, true);
             }
         };
-        eventCenter.attachDOMEvent(domNode!, 'mousedown', clickHandler);
+
+        const mousedownObservable = fromEvent(domNode!, 'mousedown');
+        mousedownObservable.subscribe(mousedownHandler);
     }
 
     queryBlock(path: TBlockPath) {

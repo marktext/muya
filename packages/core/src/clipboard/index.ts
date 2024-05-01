@@ -1,3 +1,4 @@
+import { fromEvent, merge } from 'rxjs';
 import type Content from '../block/base/content';
 import type Parent from '../block/base/parent';
 import CodeBlockContent from '../block/content/codeBlockContent';
@@ -37,22 +38,22 @@ class Clipboard {
     constructor(public muya: Muya) {}
 
     listen() {
-        const { domNode, eventCenter } = this.muya;
+        const { domNode } = this.muya;
 
-        const copyCutHandler = (event: ClipboardEvent): void => {
+        const copyCutHandler = (event: Event) => {
             event.preventDefault();
             event.stopPropagation();
 
             const isCut = event.type === 'cut';
 
-            this.copyHandler(event);
+            this.copyHandler(event as ClipboardEvent);
 
             if (isCut)
                 this.cutHandler();
         };
 
-        const keydownHandler = (event: KeyboardEvent): void => {
-            const { key, metaKey } = event;
+        const keydownHandler = (event: Event) => {
+            const { key, metaKey } = event as KeyboardEvent;
 
             const { isSelectionInSameBlock } = this.selection.getSelection() ?? {};
             if (isSelectionInSameBlock)
@@ -75,22 +76,15 @@ class Clipboard {
             this.cutHandler();
         };
 
-        const pasteHandler = (event: ClipboardEvent): void => {
-            this.pasteHandler(event);
+        const pasteHandler = (event: Event) => {
+            this.pasteHandler(event as ClipboardEvent);
         };
 
-        eventCenter.attachDOMEvent(
-            domNode,
-            'copy',
-            copyCutHandler as EventListener,
-        );
-        eventCenter.attachDOMEvent(domNode, 'cut', copyCutHandler as EventListener);
-        eventCenter.attachDOMEvent(domNode, 'paste', pasteHandler as EventListener);
-        eventCenter.attachDOMEvent(
-            domNode,
-            'keydown',
-            keydownHandler as EventListener,
-        );
+        merge(fromEvent(domNode, 'copy'), fromEvent(domNode, 'cut'))
+            .subscribe(copyCutHandler);
+
+        fromEvent(domNode, 'paste').subscribe(pasteHandler);
+        fromEvent(domNode, 'keydown').subscribe(keydownHandler);
     }
 
     getClipboardData() {

@@ -1,3 +1,4 @@
+import { fromEvent } from 'rxjs';
 import copyIcon from '../../../assets/icons/copy/2.png';
 import Parent from '../../base/parent';
 import { ScrollPage } from '../../scrollPage';
@@ -79,7 +80,11 @@ class Code extends Parent {
     }
 
     listen() {
-        const { eventCenter, editor } = this.muya;
+        const { editor } = this.muya;
+
+        if (this.domNode == null)
+            return;
+
         // Copy code content to clipboard.
         const clickHandler = (event: Event) => {
             event.preventDefault();
@@ -99,16 +104,11 @@ class Code extends Parent {
             event.preventDefault();
         };
 
-        eventCenter.attachDOMEvent(
-            this.domNode?.firstElementChild as HTMLElement,
-            'click',
-            clickHandler,
-        );
-        eventCenter.attachDOMEvent(
-            this.domNode?.firstElementChild as HTMLElement,
-            'mousedown',
-            mousedownHandler,
-        );
+        const clickObservable = fromEvent(this.domNode.firstElementChild!, 'click');
+        clickObservable.subscribe(clickHandler);
+
+        const mousedownObservable = fromEvent(this.domNode.firstElementChild!, 'mousedown');
+        mousedownObservable.subscribe(mousedownHandler);
     }
 }
 
