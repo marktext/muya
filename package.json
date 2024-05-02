@@ -38,26 +38,26 @@
         "check-circular": "madge --circular packages/core/src/index.ts"
     },
     "devDependencies": {
-        "@antfu/eslint-config": "^2.15.0",
+        "@antfu/eslint-config": "^2.16.1",
         "@laynezh/vite-plugin-lib-assets": "0.5.2",
         "@release-it-plugins/workspaces": "^4.2.0",
         "@release-it/conventional-changelog": "^8.0.1",
-        "@typescript-eslint/parser": "^7.5.0",
-        "commitlint": "^19.2.1",
-        "eslint": "^9.1.0",
+        "@typescript-eslint/parser": "^7.8.0",
+        "commitlint": "^19.3.0",
+        "eslint": "^9.1.1",
         "eslint-plugin-format": "^0.1.1",
         "husky": "9.0.11",
         "lint-staged": "^15.2.2",
-        "release-it": "^17.2.0",
-        "stylelint": "^16.3.1",
+        "madge": "^7.0.0",
+        "release-it": "^17.2.1",
+        "stylelint": "^16.5.0",
         "stylelint-config-prettier": "^9.0.5",
         "stylelint-config-rational-order": "^0.1.2",
         "stylelint-config-standard": "^36.0.0",
         "stylelint-order": "^6.0.4",
-        "turbo": "^1.13.2",
-        "madge": "^7.0.0",
+        "turbo": "^1.13.3",
         "typescript": "^5.4.4",
-        "vite": "^5.2.10",
-        "vite-plugin-dts": "^3.8.1"
+        "vite": "^5.2.11",
+        "vite-plugin-dts": "^3.9.0"
     }
 }
