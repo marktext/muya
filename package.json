@@ -42,7 +42,7 @@
         "@laynezh/vite-plugin-lib-assets": "0.5.21",
         "@release-it-plugins/workspaces": "^4.2.0",
         "@release-it/conventional-changelog": "^8.0.1",
-        "@typescript-eslint/parser": "^7.12.0",
+        "@typescript-eslint/parser": "^7.13.0",
         "commitlint": "^19.3.0",
         "eslint": "^9.4.0",
         "eslint-plugin-format": "^0.1.1",
