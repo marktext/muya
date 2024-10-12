@@ -219,8 +219,9 @@ export class ParagraphFrontButton {
             if (
                 (position === 'down' && block.prev === target)
                 || (position === 'up' && block.next === target)
-            )
+            ) {
                 return;
+            }
 
             if (position === 'up')
                 block.insertInto(block.parent!, target);

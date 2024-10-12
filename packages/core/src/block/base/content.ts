@@ -144,8 +144,9 @@ class Content extends TreeNode {
         if (
             (event.key === EVENT_KEYS.ArrowUp && topOffset > 0)
             || (event.key === EVENT_KEYS.ArrowDown && bottomOffset > 0)
-        )
+        ) {
             return;
+        }
 
         const { muya } = this;
         let cursorBlock = null;
@@ -328,13 +329,13 @@ class Content extends TreeNode {
                 else if (
                     !event.inputType.includes('delete')
                     && inputChar === postInputChar
-                    && ((autoPairQuote && /[']{1}/.test(inputChar))
-                    || (autoPairQuote && /["]{1}/.test(inputChar))
-                    || (autoPairBracket && /[}\])]{1}/.test(inputChar))
-                    || (autoPairMarkdownSyntax && /[$]{1}/.test(inputChar))
+                    && ((autoPairQuote && /'/.test(inputChar))
+                    || (autoPairQuote && /"/.test(inputChar))
+                    || (autoPairBracket && /[}\])]/.test(inputChar))
+                    || (autoPairMarkdownSyntax && /\$/.test(inputChar))
                     || (autoPairMarkdownSyntax
-                    && /[*$`~_]{1}/.test(inputChar)
-                    && /[_*~]{1}/.test(prePreInputChar)))
+                    && /[*$`~_]/.test(inputChar)
+                    && /[_*~]/.test(prePreInputChar)))
                 ) {
                     needRender = true;
                     text = text.substring(0, offset) + text.substring(offset + 1);
@@ -345,16 +346,16 @@ class Content extends TreeNode {
                     if (
                         !/\\/.test(preInputChar)
                         && ((autoPairQuote
-                        && /[']{1}/.test(inputChar)
-                        && !/[a-zA-Z\d]{1}/.test(preInputChar))
-                        || (autoPairQuote && /["]{1}/.test(inputChar))
-                        || (autoPairBracket && /[{[(]{1}/.test(inputChar))
+                        && /'/.test(inputChar)
+                        && !/[a-z\d]/i.test(preInputChar))
+                        || (autoPairQuote && /"/.test(inputChar))
+                        || (autoPairBracket && /[{[(]/.test(inputChar))
                         || (type === 'format'
                         && !isInInlineMath
                         && !isInInlineCode
                         && autoPairMarkdownSyntax
-                        && !/[a-z0-9]{1}/i.test(preInputChar)
-                        && /[*$`~_]{1}/.test(inputChar)))
+                        && !/[a-z0-9]/i.test(preInputChar)
+                        && /[*$`~_]/.test(inputChar)))
                     ) {
                         needRender = true;
                         text

@@ -1,7 +1,7 @@
 import { validEmoji } from '../../../utils/emoji';
 
 const START_REG = /(\s|^):(?!:)/;
-const EMOJI_REG = /^(:)([a-z_\d+-]+?)\1/;
+const EMOJI_REG = /^(:)([a-z_\d+-]+)\1/;
 
 interface IEmojiToken {
     type: string;

@@ -4,7 +4,7 @@ import type { IMatch, ISearchOption } from '../search/types';
 export function matchString(text: string, value: string, options: ISearchOption) {
     const { isCaseSensitive, isWholeWord, isRegexp } = options;
 
-    const SPECIAL_CHAR_REG = /[\[\]\\^$.\|\?\*\+\(\)\/]{1}/g;
+    const SPECIAL_CHAR_REG = /[[\]\\^$.|?*+()/]/g;
 
     let SEARCH_REG = null;
     let regStr = value;

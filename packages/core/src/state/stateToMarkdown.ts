@@ -90,8 +90,9 @@ export default class ExportMarkdown {
                 state.name !== 'order-list'
                 && state.name !== 'bullet-list'
                 && state.name !== 'task-list'
-            )
+            ) {
                 lastListBullet = '';
+            }
 
             switch (state.name) {
                 case 'frontmatter':

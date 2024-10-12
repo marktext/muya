@@ -84,7 +84,7 @@ export function usePluginsAddRules(turndownService: TurndownService) {
             content = content
                 .replace(/^\n+/, '') // remove leading newlines
                 .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
-                .replace(/\n/gm, '\n  '); // indent
+                .replace(/\n/g, '\n  '); // indent
 
             let prefix = `${options.bulletListMarker} `;
             const parent = node.parentNode as HTMLElement;

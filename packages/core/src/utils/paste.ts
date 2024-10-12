@@ -129,7 +129,7 @@ export const getCopyTextType = function (
 ) {
     const getTextType = (text: string) => {
         const match
-      = /^<([a-zA-Z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-zA-Z\d-]+)>$/.exec(
+      = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-z\d-]+)>$/i.exec(
           text.trim(),
       );
         if (match && match[1]) {

@@ -135,8 +135,9 @@ export class MarkdownToState {
                     if (
                         trimUnnecessaryCodeBlockEmptyLines
                         && (value.endsWith('\n') || value.startsWith('\n'))
-                    )
+                    ) {
                         value = value.replace(/\n+$/, '').replace(/^\n+/, '');
+                    }
 
                     if (/mermaid|vega-lite|plantuml/.test(lang)) {
                         state = {

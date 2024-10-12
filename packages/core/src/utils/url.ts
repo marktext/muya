@@ -5,8 +5,9 @@ export function sanitizeHyperlink(rawLink: string) {
         rawLink
         && typeof rawLink === 'string'
         && isValidAttribute('a', 'href', rawLink)
-    )
+    ) {
         return rawLink;
+    }
 
     return '';
 }

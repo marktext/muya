@@ -10,8 +10,9 @@ function debug(method: TLevel, ...args: unknown[]) {
         levels.indexOf(method) <= levels.indexOf(level)
         // eslint-disable-next-line node/prefer-global/process
         && process.env.NODE_ENV !== 'production'
-    )
-        console[method](...args); // eslint-disable-line no-console
+    ) {
+        console[method](...args);
+    }
 }
 
 function namespace(ns: string): Ilogger {

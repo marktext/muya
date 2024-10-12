@@ -94,8 +94,9 @@ abstract class BaseFloat {
                 this.status
                 && event.target
                 && Math.abs((event.target as Element).scrollTop - this.lastScrollTop) > 50
-            )
+            ) {
                 this.hide();
+            }
         };
 
         eventCenter.attachDOMEvent(document, 'click', this.hide.bind(this));

@@ -19,14 +19,15 @@ import { registerBlocks } from '../block';
 
 const debug = logger('editor:');
 
-class Editor {
-    public jsonState: JSONState;
-    public inlineRenderer: InlineRenderer;
-    public selection: Selection;
-    public searchModule: Search;
-    public clipboard: Clipboard;
-    public history: History;
-    public scrollPage: Nullable<ScrollPage> = null;
+export class Editor {
+    jsonState: JSONState;
+    inlineRenderer: InlineRenderer;
+    selection: Selection;
+    searchModule: Search;
+    clipboard: Clipboard;
+    history: History;
+    scrollPage: Nullable<ScrollPage> = null;
+
     private _activeContentBlock: Nullable<Content> = null;
 
     constructor(public muya: Muya) {
@@ -334,5 +335,3 @@ class Editor {
             this.focus();
     }
 }
-
-export default Editor;

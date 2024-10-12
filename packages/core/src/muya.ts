@@ -2,7 +2,7 @@ import {
     CLASS_NAMES,
     MUYA_DEFAULT_OPTIONS,
 } from './config/index';
-import Editor from './editor/index';
+import { Editor } from './editor/index';
 import EventCenter from './event/index';
 import I18n from './i18n/index';
 import { Ui } from './ui/ui';

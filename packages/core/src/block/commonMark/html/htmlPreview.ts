@@ -45,7 +45,7 @@ class HTMLPreview extends Parent {
         const htmlContent = sanitize(html, PREVIEW_DOMPURIFY_CONFIG, disableHtml) as string;
 
         // handle empty html bock
-        if (/^<([a-z][a-z\d]*)[^>]*?>(\s*)<\/\1>$/.test(htmlContent.trim())) {
+        if (/^<([a-z][a-z\d]*)[^>]*>(\s*)<\/\1>$/.test(htmlContent.trim())) {
             this.domNode!.innerHTML
         = '<div class="mu-empty">&lt;Empty HTML Block&gt;</div>';
         }

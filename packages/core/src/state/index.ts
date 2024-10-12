@@ -107,6 +107,7 @@ class JSONState {
     }
 
     dispatch(op: JSONOpList, source = 'user' /* user, api */) {
+        const prevDoc = this.getState();
         this.apply(op);
         // TODO: remove doc in future
         const doc = this.getState();
@@ -114,6 +115,7 @@ class JSONState {
         this.muya.eventCenter.emit('json-change', {
             op,
             source,
+            prevDoc,
             doc,
         });
     }
@@ -137,12 +139,14 @@ class JSONState {
 
         requestAnimationFrame(() => {
             const op = this._operationCache.reduce(json1.type.compose as any);
+            const prevDoc = this.getState();
             this.apply(op);
             // TODO: remove doc in future
             const doc = this.getState();
             this.muya.eventCenter.emit('json-change', {
                 op,
                 source: 'user',
+                prevDoc,
                 doc,
             });
             this._operationCache = [];

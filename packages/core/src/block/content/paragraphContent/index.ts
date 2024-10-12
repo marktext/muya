@@ -20,13 +20,13 @@ import type {
 } from '../../../state/types';
 
 enum UnindentType {
-    INDENT = 'INDENT',
-    REPLACEMENT = 'REPLACEMENT',
+    INDENT,
+    REPLACEMENT,
 }
 
 const debug = logger('paragraph:content');
 
-const HTML_BLOCK_REG = /^<([a-zA-Z\d-]+)(?=\s|>)[^<>]*?>$/;
+const HTML_BLOCK_REG = /^<([a-z\d-]+)(?=\s|>)[^<>]*>$/i;
 
 const BOTH_SIDES_FORMATS = [
     'strong',
@@ -137,6 +137,7 @@ class ParagraphContent extends Format {
         event.preventDefault();
         event.stopPropagation();
 
+        // eslint-disable-next-line regexp/no-super-linear-backtracking
         const TABLE_BLOCK_REG = /^\|.*?(\\*)\|.*?(\\*)\|/;
         const MATH_BLOCK_REG = /^\$\$/;
         const { text } = this;
@@ -523,8 +524,9 @@ class ParagraphContent extends Format {
             listParent
             && (listParent.blockName === 'list-item'
             || listParent.blockName === 'task-list-item')
-        )
+        ) {
             return list.prev ? UnindentType.INDENT : UnindentType.REPLACEMENT;
+        }
 
         return null;
     }
@@ -545,8 +547,9 @@ class ParagraphContent extends Format {
             (listItem.blockName !== 'list-item'
             && listItem.blockName !== 'task-list-item')
             || !this.isCollapsed
-        )
+        ) {
             return false;
+        }
 
         return list && /ol|ul/.test(list.tagName) && listItem.prev;
     }
@@ -564,8 +567,9 @@ class ParagraphContent extends Format {
             || list == null
             || listParent == null
             || cursor == null
-        )
+        ) {
             return;
+        }
 
         const { start, end } = cursor;
 
@@ -705,6 +709,7 @@ class ParagraphContent extends Format {
         });
         let result = null;
 
+        // eslint-disable-next-line complexity
         const walkTokens = (ts: Token[]) => {
             for (const token of ts) {
                 const { type, range } = token;

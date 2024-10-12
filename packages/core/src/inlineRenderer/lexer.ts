@@ -20,7 +20,7 @@ import {
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html
 const disallowedHtmlTag
-  = /(?:title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext)/i;
+  = /title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext/i;
 
 function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: InlineRules, pos = 0, top: boolean, labels: Labels, options: ITokenizerFacOptions) {
     const originSrc = src;
@@ -183,8 +183,9 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
                 if (
                     rule === 'emoji'
                     && !lowerPriority(src, to[0].length, validateRules)
-                )
+                ) {
                     break;
+                }
                 inChunk = true;
                 pushPending();
                 const range = {
@@ -445,7 +446,7 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
         if (
             autoLinkExtTo
             && top
-            && (pos === 0 || /[* _~(]{1}/.test(originSrc[pos - 1]))
+            && (pos === 0 || /[* _~(]/.test(originSrc[pos - 1]))
         ) {
             pushPending();
             tokens.push({

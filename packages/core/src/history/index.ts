@@ -21,7 +21,10 @@ interface IStack {
     redo: IOperation[];
 }
 
-type HistoryAction = 'undo' | 'redo';
+enum HistoryAction {
+    UNDO = 'undo',
+    REDO = 'redo',
+}
 
 const DEFAULT_OPTIONS = {
     delay: 1000,
@@ -30,10 +33,10 @@ const DEFAULT_OPTIONS = {
 };
 
 class History {
-    private lastRecorded: number = 0;
-    private ignoreChange: boolean = false;
-    private selectionStack: (Nullable<ISelection>)[] = [];
-    private stack: IStack = {
+    private _lastRecorded: number = 0;
+    private _ignoreChange: boolean = false;
+    private _selectionStack: (Nullable<ISelection>)[] = [];
+    private _stack: IStack = {
         undo: [],
         redo: [],
     };
@@ -43,121 +46,120 @@ class History {
     }
 
     constructor(public muya: Muya, private options: IOptions = DEFAULT_OPTIONS) {
-        this.listen();
+        this._listen();
     }
 
-    listen() {
+    private _listen() {
         this.muya.eventCenter.on(
             'json-change',
             ({
                 op,
                 source,
-                doc,
+                prevDoc,
             }: {
                 op: JSONOpList;
                 source: string;
+                prevDoc: TState[];
                 doc: TState[];
             }) => {
-                if (this.ignoreChange)
+                if (this._ignoreChange)
                     return;
 
                 if (!this.options.userOnly || source === 'user')
-                    this.record(op, doc);
+                    this._record(op, prevDoc);
                 else
                     this.transform(op);
             },
         );
     }
 
-    change(source: HistoryAction, dest: HistoryAction) {
-        if (this.stack[source].length === 0)
+    private _change(source: HistoryAction, dest: HistoryAction) {
+        if (this._stack[source].length === 0)
             return;
 
-        const { operation, selection } = this.stack[source].pop()!;
+        const { operation, selection } = this._stack[source].pop()!;
         const inverseOperation = json1.type.invert(operation);
 
-        this.stack[dest].push({
+        this._stack[dest].push({
             operation: inverseOperation as JSONOpList,
             selection: this.selection.getSelection(),
         });
 
-        this.lastRecorded = 0;
-        this.ignoreChange = true;
+        this._lastRecorded = 0;
+        this._ignoreChange = true;
         this.muya.editor.updateContents(operation, selection, 'user');
-        this.ignoreChange = false;
+        this._ignoreChange = false;
 
         this.getLastSelection();
     }
 
     clear() {
-        this.stack = { undo: [], redo: [] };
+        this._stack = { undo: [], redo: [] };
     }
 
     cutoff() {
-        this.lastRecorded = 0;
+        this._lastRecorded = 0;
     }
 
     getLastSelection() {
-        this.selectionStack.push(this.selection.getSelection());
+        this._selectionStack.push(this.selection.getSelection());
 
-        if (this.selectionStack.length > 2)
-            this.selectionStack.shift();
+        if (this._selectionStack.length > 2)
+            this._selectionStack.shift();
 
-        return this.selectionStack.length === 2 ? this.selectionStack[0] : null;
+        return this._selectionStack.length === 2 ? this._selectionStack[0] : null;
     }
 
-    record(op: JSONOpList, doc: TState[]) {
+    private _record(op: JSONOpList, doc: TState[]) {
         if (op.length === 0)
             return;
 
         let selection = this.getLastSelection();
-        this.stack.redo = [];
-        let undoOperation = json1.type.invert(op);
+        this._stack.redo = [];
+        let undoOperation = json1.type.invertWithDoc(op, doc as unknown as Doc);
+
         const timestamp = Date.now();
         if (
-            this.lastRecorded + this.options.delay > timestamp
-            && this.stack.undo.length > 0
+            this._lastRecorded + this.options.delay > timestamp
+            && this._stack.undo.length > 0
         ) {
             const { operation: lastOperation, selection: lastSelection }
-        = this.stack.undo.pop()!;
+        = this._stack.undo.pop()!;
             selection = lastSelection;
-            undoOperation = json1.type.makeInvertible(
-                json1.type.compose(undoOperation, lastOperation),
-                doc as unknown as Doc,
-            );
+            undoOperation = json1.type.compose(undoOperation, lastOperation);
         }
         else {
-            this.lastRecorded = timestamp;
+            this._lastRecorded = timestamp;
         }
 
         if (!undoOperation || undoOperation.length === 0)
             return;
 
-        this.stack.undo.push({ operation: undoOperation, selection });
+        this._stack.undo.push({ operation: undoOperation, selection });
 
-        if (this.stack.undo.length > this.options.maxStack)
-            this.stack.undo.shift();
+        if (this._stack.undo.length > this.options.maxStack)
+            this._stack.undo.shift();
     }
 
     canRedo() {
-        return this.stack.redo.length > 0;
+        return this._stack.redo.length > 0;
     }
 
     redo() {
-        this.change('redo', 'undo');
+        this._change(HistoryAction.REDO, HistoryAction.UNDO);
     }
 
     transform(op: JSONOpList) {
-        transformStack(this.stack.undo, op);
-        transformStack(this.stack.redo, op);
+        transformStack(this._stack.undo, op);
+        transformStack(this._stack.redo, op);
     }
 
     canUndo() {
-        return this.stack.undo.length > 0;
+        return this._stack.undo.length > 0;
     }
 
     undo() {
-        this.change('undo', 'redo');
+        this._change(HistoryAction.UNDO, HistoryAction.REDO);
     }
 }
 

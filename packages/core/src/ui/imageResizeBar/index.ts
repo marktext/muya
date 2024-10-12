@@ -51,8 +51,9 @@ export class ImageResizeBar {
                 !this.resizing
                 && this.status
                 && Math.abs((event.target as HTMLElement).scrollTop - this.lastScrollTop) > 50
-            )
+            ) {
                 this.hide();
+            }
         };
 
         eventCenter.on('muya-transformer', ({ block, reference, imageInfo }) => {

@@ -93,8 +93,9 @@ export default function image(
             selectedImage
             && selectedImage.token.attrs.src === src
             && selectedImage.imageId !== id
-        )
+        ) {
             selectedImage.imageId = id;
+        }
 
         src = this.urlMap.get(src)!;
         isSuccess = true;
@@ -128,14 +129,15 @@ export default function image(
                 && SelectedImageBlock === block
                 && selectedToken.range.start === token.range.start
                 && selectedToken.range.end === token.range.end
-            )
+            ) {
                 wrapperSelector += `.${CLASS_NAMES.MU_INLINE_IMAGE_SELECTED}`;
+            }
         }
 
         const renderImage = () => {
             const data = {
                 props: {
-                    alt: alt.replace(/[`*{}[\]()#+\-.!_>~:|<>$]/g, ''),
+                    alt: alt.replace(/[`*{}[\]()#+\-.!_>~:|<$]/g, ''),
                     src,
                     title,
                 },

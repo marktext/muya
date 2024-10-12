@@ -64,8 +64,9 @@ class Clipboard {
                 /Alt|Option|Meta|Shift|CapsLock|ArrowUp|ArrowDown|ArrowLeft|ArrowRight/.test(
                     key,
                 )
-            )
+            ) {
                 return;
+            }
 
             if (metaKey)
                 return;
@@ -606,8 +607,9 @@ class Clipboard {
                 if (
                     originWrapperBlock?.blockName === 'paragraph'
                     && (originWrapperBlock.getState() as any).text === ''
-                )
+                ) {
                     originWrapperBlock.remove();
+                }
 
                 const cursorBlock = wrapperBlock?.firstContentInDescendant();
                 const offset = cursorBlock?.text.length;
