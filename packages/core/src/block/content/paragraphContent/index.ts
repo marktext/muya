@@ -20,8 +20,8 @@ import type {
 } from '../../../state/types';
 
 enum UnindentType {
-    INDENT = 'INDENT',
-    REPLACEMENT = 'REPLACEMENT',
+    INDENT,
+    REPLACEMENT,
 }
 
 const debug = logger('paragraph:content');
