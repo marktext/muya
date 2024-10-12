@@ -41,8 +41,9 @@ export function getTextContent(node: Node, blackList: string[] = []) {
         && blackList.some(
             className => node.classList && node.classList.contains(className),
         )
-    )
+    ) {
         return text;
+    }
 
     if (node.nodeType === Node.TEXT_NODE) {
         text += node.textContent;

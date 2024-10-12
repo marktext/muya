@@ -103,8 +103,9 @@ export class ParagraphFrontMenu extends BaseFloat {
                 if (
                     label.startsWith(block.blockName)
                     && label.endsWith(String((block as AtxHeading).meta.level))
-                )
+                ) {
                     itemSelector += '.active';
+                }
             }
             else if (label === block?.blockName) {
                 itemSelector += '.active';
@@ -238,14 +239,15 @@ export class ParagraphFrontMenu extends BaseFloat {
                     if (
                         block.blockName === 'atx-heading'
                         && label.split(' ')[1] === String((oldState as IAtxHeadingState).meta.level)
-                    )
+                    ) {
                         break;
+                    }
 
                     const rawText = (oldState as IAtxHeadingState).text;
                     const text
             = block.blockName === 'paragraph'
                 ? rawText
-                : rawText.replace(/^ {0,3}#{1,6}(?:\s{1,}|$)/, '');
+                : rawText.replace(/^ {0,3}#{1,6}(?:\s+|$)/, '');
                     replaceBlockByLabel({
                         block,
                         label,

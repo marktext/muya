@@ -29,7 +29,7 @@ export function getImageSrc(src: string) {
     const EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
     // http[s] (domain or IPv4 or localhost or IPv6) [port] /not-white-space
     const URL_REG
-    = /^http(s)?:\/\/([a-z0-9\-._~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:[0-9]{1,5})?\/[\S]+/i;
+    = /^http(s)?:\/\/([\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:\d{1,5})?\/\S+/i;
     const DATA_URL_REG
     = /^data:image\/[\w+-]+(;[\w-]+=[\w-]+|;base64)*,[a-zA-Z0-9+/]+={0,2}$/;
     const imageExtension = EXT_REG.test(src);
@@ -109,8 +109,9 @@ export async function checkImageContentType(url: string) {
             contentType
             && res.status === 200
             && /^image\/(?:jpeg|png|gif|svg\+xml|webp)$/.test(contentType)
-        )
+        ) {
             return true;
+        }
 
         return false;
     }
@@ -122,7 +123,7 @@ export async function checkImageContentType(url: string) {
 export function correctImageSrc(src: string) {
     if (src) {
     // Fix ASCII and UNC paths on Windows (#1997).
-        if (isWin && /^(?:[a-zA-Z]:\\|[a-zA-Z]:\/).+/.test(src)) {
+        if (isWin && /^(?:[a-z]:\\|[a-z]:\/).+/i.test(src)) {
             src = `file:///${src.replace(/\\/g, '/')}`;
         }
         else if (isWin && /^\\\\\?\\.+/.test(src)) {

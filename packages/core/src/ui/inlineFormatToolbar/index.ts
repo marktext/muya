@@ -133,8 +133,9 @@ export class InlineFormatToolbar extends BaseFloat {
                     f =>
                         f.type === i.type || (f.type === 'html_tag' && f.tag === i.type),
                 )
-            )
+            ) {
                 itemSelector += '.active';
+            }
 
             return h(
                 itemSelector,

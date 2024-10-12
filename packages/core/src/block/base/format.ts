@@ -326,8 +326,9 @@ class Format extends Content {
                     [Math.max(0, start - 1), Math.min(textLen, end + 1)],
                     [focusOffset, focusOffset],
                 )
-            )
+            ) {
                 return true;
+            }
         }
 
         return false;
@@ -567,8 +568,9 @@ class Format extends Content {
         if (
             this.isComposed
             || /historyUndo|historyRedo/.test((event as InputEvent).inputType)
-        )
+        ) {
             return;
+        }
 
         const { domNode } = this;
         const { start, end } = this.getCursor()!;
@@ -720,7 +722,7 @@ class Format extends Content {
         for (const l of lines) {
             const THEMATIC_BREAK_REG
 
-        = / {0,3}(?:\* *\* *\*|- *- *-|_ *_ *_)[ \*\-\_]*$/;
+        = / {0,3}(?:\* *\* *\*|- *- *-|_ *_ *_)[ *\-_]*$/;
             if (THEMATIC_BREAK_REG.test(l) && !thematicLineHasPushed) {
                 thematicLine = l;
                 thematicLineHasPushed = true;
@@ -844,15 +846,16 @@ class Format extends Content {
         const { preferLooseListItem } = muya.options;
         const listItem = parent!.parent!;
         const list = listItem?.parent as BulletList;
-        const matches = text.match(/^\[([x ]{1})\] {1,4}([\s\S]*)$/i);
+        const matches = text.match(/^\[([x ])\] {1,4}([\s\S]*)$/i);
 
         if (
             !list
             || list.blockName !== 'bullet-list'
             || !parent!.isFirstChild()
             || matches == null
-        )
+        ) {
             return;
+        }
 
         const listState = {
             name: 'task-list',
@@ -937,8 +940,9 @@ class Format extends Content {
         if (
             this.parent!.blockName === 'atx-heading'
             && (this.parent as AtxHeading).meta.level === level
-        )
+        ) {
             return;
+        }
 
         const { hasSelection } = this;
         const { start, end } = this.getCursor()!;
@@ -950,7 +954,7 @@ class Format extends Content {
         let atxLineHasPushed = false;
 
         for (const l of lines) {
-            if (/^ {0,3}#{1,6}(?=\s{1,}|$)/.test(l) && !atxLineHasPushed) {
+            if (/^ {0,3}#{1,6}(?=\s+|$)/.test(l) && !atxLineHasPushed) {
                 atxLine = l;
                 atxLineHasPushed = true;
             }
@@ -1017,8 +1021,9 @@ class Format extends Content {
         if (
             this.parent?.blockName === 'setext-heading'
             && (this.parent as SetextHeading).meta.level === level
-        )
+        ) {
             return;
+        }
 
         const { hasSelection } = this;
         const { text, muya } = this;
@@ -1028,7 +1033,7 @@ class Format extends Content {
         let setextLineHasPushed = false;
 
         for (const l of lines) {
-            if (/^ {0,3}(?:={3,}|-{3,})(?= {1,}|$)/.test(l) && !setextLineHasPushed)
+            if (/^ {0,3}(?:={3,}|-{3,})(?= +|$)/.test(l) && !setextLineHasPushed)
                 setextLineHasPushed = true;
             else if (!setextLineHasPushed)
                 setextLines.push(l);
@@ -1211,8 +1216,9 @@ class Format extends Content {
             !force
             && (this.parent!.blockName === 'setext-heading'
             || this.parent!.blockName === 'paragraph')
-        )
+        ) {
             return;
+        }
 
         const { text, muya, hasSelection } = this;
         const { start, end } = this.getCursor()!;
@@ -1335,8 +1341,9 @@ class Format extends Content {
             needRemovedBlock
             && needRemovedBlock.isOnlyChild()
             && !needRemovedBlock.isScrollPage
-        )
+        ) {
             needRemovedBlock = needRemovedBlock.parent;
+        }
 
         this.text = text + nextBlock.text;
         this.setCursor(start.offset, end.offset, true);
@@ -1396,8 +1403,9 @@ class Format extends Content {
                     checkTokenIsInlineFormat(token)
                     && start.offset >= token.range.start
                     && end.offset <= token.range.end
-                )
+                ) {
                     formats.push(token);
+                }
 
                 if (
                     checkTokenIsInlineFormat(token)
@@ -1407,8 +1415,9 @@ class Format extends Content {
                     && end.offset <= token.range.end)
                     || (start.offset <= token.range.start
                     && token.range.end <= end.offset))
-                )
+                ) {
                     neighbors.push(token);
+                }
 
                 if ('children' in token && Array.isArray(token.children))
                     iterator(token.children);

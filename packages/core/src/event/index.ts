@@ -141,8 +141,9 @@ class EventCenter {
                 && event === cEvent
                 && listener === cListener
                 && capture === cCapture
-            )
+            ) {
                 return true;
+            }
         }
 
         return false;

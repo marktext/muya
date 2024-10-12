@@ -449,27 +449,33 @@ export class TableDragBar extends BaseFloat {
                 : 0;
             if (barType === 'bottom') {
                 cursorRowOffset = rowOffset;
-                if (columnOffset === index)
+                if (columnOffset === index) {
                     cursorColumnOffset = curIndex;
+                }
                 else if (
                     columnOffset >= Math.min(index, curIndex)
                     && columnOffset <= Math.max(index, curIndex)
-                )
+                ) {
                     cursorColumnOffset = columnOffset + (offset > 0 ? -1 : 1);
-                else
+                }
+                else {
                     cursorColumnOffset = columnOffset;
+                }
             }
             else {
                 cursorColumnOffset = columnOffset;
-                if (rowOffset === index)
+                if (rowOffset === index) {
                     cursorRowOffset = curIndex;
+                }
                 else if (
                     rowOffset >= Math.min(index, curIndex)
                     && rowOffset <= Math.max(index, curIndex)
-                )
+                ) {
                     cursorRowOffset = rowOffset + (offset > 0 ? -1 : 1);
-                else
+                }
+                else {
                     cursorRowOffset = rowOffset;
+                }
             }
         }
 

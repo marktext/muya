@@ -380,7 +380,7 @@ export const isWin
   && /win32|wow32|win64|wow64/i.test(window.navigator.userAgent);
 // http[s] (domain or IPv4 or localhost or IPv6) [port] /not-white-space
 export const URL_REG
-  = /^http(s)?:\/\/([a-z0-9\-._~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:[0-9]{1,5})?\/[\S]+/i;
+  = /^http(s)?:\/\/([\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:\d{1,5})?\/\S+/i;
 export const PREVIEW_DOMPURIFY_CONFIG = {
     // do not forbid `class` because `code` element use class to present language
     FORBID_ATTR: ['style', 'contenteditable'],

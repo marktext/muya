@@ -137,7 +137,7 @@ export function escapeHTML(str: string) {
 
 export function unescapeHTML(str: string) {
     return str.replace(
-        /(?:&amp;|&lt;|&gt;|&quot;|&#39;)/g,
+        /&amp;|&lt;|&gt;|&quot;|&#39;/g,
         tag =>
             ({
                 '&amp;': '&',
@@ -165,7 +165,7 @@ export function wordCount(markdown: string) {
     let all = 0;
 
     const removedChinese = markdown.replace(/[\u4E00-\u9FA5]/g, '');
-    const tokens = removedChinese.split(/[\s\n]+/).filter(t => t);
+    const tokens = removedChinese.split(/\s+/).filter(t => t);
     const chineseWordLength = markdown.length - removedChinese.length;
     word += chineseWordLength + tokens.length;
     character += tokens.reduce((acc, t) => acc + t.length, 0) + chineseWordLength;
@@ -247,7 +247,7 @@ export function adjustOffset<T extends Content>(offset: number, block: T, event:
         block.parent?.blockName === 'atx-heading'
         && event.key === EVENT_KEYS.ArrowDown
     ) {
-        const match = /^\s{0,3}(?:#{1,6})(?:\s{1,}|$)/.exec(block.text);
+        const match = /^\s{0,3}#{1,6}(?:\s+|$)/.exec(block.text);
         if (match)
             return match[0].length;
     }
