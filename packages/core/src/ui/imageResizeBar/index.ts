@@ -50,7 +50,8 @@ export class ImageResizeBar {
             if (
                 !this.resizing
                 && this.status
-                && Math.abs((event.target as HTMLElement).scrollTop - this.lastScrollTop) > 50
+                && Math.abs((event.target as HTMLElement).scrollTop - this.lastScrollTop)
+                > 50
             ) {
                 this.hide();
             }
@@ -181,8 +182,7 @@ export class ImageResizeBar {
         event.preventDefault();
         const { eventCenter } = this.muya;
         if (this.eventId.length) {
-            for (const id of this.eventId)
-                eventCenter.detachDOMEvent(id);
+            for (const id of this.eventId) eventCenter.detachDOMEvent(id);
 
             this.eventId = [];
         }
@@ -203,5 +203,10 @@ export class ImageResizeBar {
         Array.from(circles).forEach(c => c.remove());
         this.status = false;
         eventCenter.emit('muya-float', this, false);
+    }
+
+    destroy() {
+        if (this.container)
+            this.container?.remove();
     }
 }

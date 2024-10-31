@@ -72,6 +72,7 @@ const allBtn: HTMLButtonElement = document.querySelector('#all')!;
 const setContentBtn: HTMLButtonElement
   = document.querySelector('#set-content')!;
 const selectAllBtn: HTMLButtonElement = document.querySelector('#select-all')!;
+const destroyBtn: HTMLButtonElement = document.querySelector('#destroy')!;
 
 const muya = new Muya(container, {
     markdown: DEFAULT_MARKDOWN,
@@ -113,6 +114,10 @@ allBtn.addEventListener('click', () => {
 
 selectAllBtn.addEventListener('click', () => {
     muya.selectAll();
+});
+
+destroyBtn.addEventListener('click', () => {
+    muya.destroy();
 });
 
 const content = [

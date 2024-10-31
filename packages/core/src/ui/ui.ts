@@ -27,4 +27,12 @@ export class Ui {
         for (const btn of this.shownButton)
             btn.hide();
     }
+
+    destroy() {
+        for (const tool of this.shownFloat)
+            tool.destroy();
+
+        for (const btn of this.shownButton)
+            btn.destroy();
+    }
 }
