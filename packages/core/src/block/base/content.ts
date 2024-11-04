@@ -211,16 +211,16 @@ class Content extends TreeNode {
         const {
             anchor,
             focus,
-            anchorBlock,
-            focusBlock,
+            // anchorBlock,
+            // focusBlock,
             isCollapsed,
             isSelectionInSameBlock, // This is always be true.
             direction,
             type,
         } = selection;
 
-        if (anchorBlock !== this || focusBlock !== this)
-            return null;
+        // if (anchorBlock !== this || focusBlock !== this)
+        //     return null;
 
         return {
             start: { offset: Math.min(anchor.offset, focus.offset) },

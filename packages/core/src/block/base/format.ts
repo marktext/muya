@@ -337,8 +337,23 @@ class Format extends Content {
     override blurHandler() {
         super.blurHandler();
         const needRender = this.checkNeedRender();
+        const _cursor = this.getCursor();
+        let cursor = null;
+        if (_cursor) {
+            const { start, end } = _cursor;
+            cursor = {
+                path: this.path,
+                block: this,
+                anchor: {
+                    offset: start.offset,
+                },
+                focus: {
+                    offset: end.offset,
+                },
+            };
+        }
         if (needRender)
-            this.update();
+            cursor ? this.update(cursor) : this.update();
     }
 
     /**
