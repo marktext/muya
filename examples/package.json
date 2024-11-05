@@ -1,15 +1,15 @@
 {
-  "name": "muya-examples",
-  "version": "0.0.1",
-  "description": "Muya vanilla ts demo project",
-  "author": "jocs <ransixi@gmail.com>",
-  "scripts": {
-    "dev:demo": "vite"
-  },
-  "keywords": [],
-  "license": "MIT",
-  "dependencies": {
-    "@muyajs/core": "workspace:*",
-    "intl-segmenter-polyfill": "^0.4.4"
-  }
+    "name": "muya-examples",
+    "version": "0.0.1",
+    "description": "Muya vanilla ts demo project",
+    "author": "jocs <ransixi@gmail.com>",
+    "license": "MIT",
+    "keywords": [],
+    "scripts": {
+        "dev:demo": "vite"
+    },
+    "dependencies": {
+        "@muyajs/core": "workspace:*",
+        "intl-segmenter-polyfill": "^0.4.4"
+    }
 }

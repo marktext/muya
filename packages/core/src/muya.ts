@@ -142,8 +142,14 @@ export class Muya {
             this.domNode.remove();
 
         // Hide all float tools.
-        if (this.ui)
+        if (this.ui) {
             this.ui.hideAllFloatTools();
+            this.ui.destroy();
+        }
+
+        for (const plugin of Object.values(this._uiPlugins)) {
+            plugin?.destroy?.();
+        }
     }
 }
 
