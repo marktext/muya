@@ -65,7 +65,7 @@
         "ot-text-unicode": "^4.0.0",
         "plantuml-encoder": "^1.4.0",
         "popper.js": "^1.16.1",
-        "prismjs": "^1.29.0",
+        "prismjs": "^1.30.0",
         "rxjs": "^7.8.1",
         "snabbdom": "^3.6.2",
         "snabbdom-to-html": "^7.1.0",
