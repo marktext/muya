@@ -58,7 +58,7 @@
         "stylelint-order": "^6.0.4",
         "turbo": "^2.0.3",
         "typescript": "^5.4.5",
-        "vite": "^5.2.13",
+        "vite": "^5.4.16",
         "vite-plugin-dts": "^3.9.1"
     }
 }
