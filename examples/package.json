@@ -9,7 +9,7 @@
   "keywords": [],
   "license": "MIT",
   "dependencies": {
-    "@muyajs/core": "workspace:*",
+    "@muyajs/core": "0.0.32",
     "intl-segmenter-polyfill": "^0.4.4"
   }
 }
