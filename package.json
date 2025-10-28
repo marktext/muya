@@ -1,7 +1,7 @@
 {
     "name": "muya",
     "type": "module",
-    "version": "0.0.32",
+    "version": "0.0.33",
     "packageManager": "pnpm@9.11.0",
     "description": "Future markdown editor",
     "author": "jocs <ransixi@gmail.com>",
