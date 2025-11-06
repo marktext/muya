@@ -36,7 +36,7 @@ export async function getPageTitle(url: string) {
     }
 }
 
-export const normalizePastedHTML = async function (html: string) {
+export async function normalizePastedHTML(html: string) {
     // Only extract the `body.innerHTML` when the `html` is a full HTML Document.
     if (/<body>[\s\S]*<\/body>/.test(html)) {
         const match = /<body>([\s\S]*)<\/body>/.exec(html);
@@ -112,7 +112,7 @@ export const normalizePastedHTML = async function (html: string) {
     }
 
     return tempWrapper.innerHTML;
-};
+}
 
 /**
  *
@@ -122,16 +122,12 @@ export const normalizePastedHTML = async function (html: string) {
  * return html | text | code, if the return value is html, we'll use html as paste data, we'll use text
  * as paste data if the return value is text, we'll create a html code block if the result is code.
  */
-export const getCopyTextType = function (
-    html: string,
-    text: string,
-    pasteType: string,
-) {
+export function getCopyTextType(html: string, text: string, pasteType: string) {
     const getTextType = (text: string) => {
         const match
-      = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-z\d-]+)>$/i.exec(
-          text.trim(),
-      );
+            = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-z\d-]+)>$/i.exec(
+                text.trim(),
+            );
         if (match && match[1]) {
             const tag = match[1];
 
@@ -145,4 +141,4 @@ export const getCopyTextType = function (
         return html && text ? 'html' : getTextType(text);
     else
         return getTextType(text);
-};
+}

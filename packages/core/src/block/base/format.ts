@@ -1,6 +1,19 @@
 /* eslint-disable no-fallthrough */
-import { ScrollPage } from '../../block/scrollPage';
+import type {
+    CodeEmojiMathToken,
+    TextToken,
+    Token,
+} from '../../inlineRenderer/types';
+import type { ICursor } from '../../selection/types';
+import type { IBulletListState, IOrderListState } from '../../state/types';
+import type { Nullable } from '../../types';
+import type { IImageInfo } from '../../utils/image';
+import type AtxHeading from '../commonMark/atxHeading';
+import type BulletList from '../commonMark/bulletList';
+import type SetextHeading from '../commonMark/setextHeading';
+import type Parent from './parent';
 import Content from '../../block/base/content';
+import { ScrollPage } from '../../block/scrollPage';
 import {
     CLASS_NAMES,
     FORMAT_MARKER_MAP,
@@ -10,24 +23,11 @@ import {
     THEMATIC_BREAK_STATE,
 } from '../../config';
 import { generator, tokenizer } from '../../inlineRenderer/lexer';
-import type {
-    CodeEmojiMathToken,
-    TextToken,
-    Token,
-} from '../../inlineRenderer/types';
 import Selection, { getCursorReference } from '../../selection';
 import { getTextContent } from '../../selection/dom';
-import type { ICursor } from '../../selection/types';
-import type { IBulletListState, IOrderListState } from '../../state/types';
 import { conflict, isMouseEvent } from '../../utils';
-import type { IImageInfo } from '../../utils/image';
 import { correctImageSrc, getImageInfo } from '../../utils/image';
 import logger from '../../utils/logger';
-import type AtxHeading from '../commonMark/atxHeading';
-import type BulletList from '../commonMark/bulletList';
-import type SetextHeading from '../commonMark/setextHeading';
-import type { Nullable } from '../../types';
-import type Parent from './parent';
 
 interface IOffset {
     offset: number;
@@ -358,7 +358,7 @@ class Format extends Content {
             const { start, end } = editEmoji.range;
             const oldText = this.text;
             this.text
-        = `${oldText.substring(0, start)}:${text}:${oldText.substring(end)}`;
+                = `${oldText.substring(0, start)}:${text}:${oldText.substring(end)}`;
             const offset = start + text.length + 2;
             this.setCursor(offset, offset, true);
         }
@@ -403,7 +403,7 @@ class Format extends Content {
         }
 
         this.text
-      = oldText.substring(0, start) + imageText + oldText.substring(end);
+            = oldText.substring(0, start) + imageText + oldText.substring(end);
 
         this.update();
     }
@@ -432,12 +432,12 @@ class Format extends Content {
         imageText = imageText.trim();
         imageText += '>';
         this.text
-      = oldText.substring(0, start) + imageText + oldText.substring(end);
+            = oldText.substring(0, start) + imageText + oldText.substring(end);
 
         this.update();
 
         const selector = `#${imageId.includes('_') ? imageId : `${imageId}_${token.range.start}`
-      } img`;
+        } img`;
         const image: Nullable<HTMLElement> = document.querySelector<HTMLElement>(selector);
 
         if (image)
@@ -464,8 +464,8 @@ class Format extends Content {
         // Handler click inline math and inline ruby html.
         const { target } = event;
         const inlineRuleRenderEle
-      = (target as HTMLElement).closest(`.${CLASS_NAMES.MU_MATH_RENDER}`)
-      || (target as HTMLElement).closest(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
+            = (target as HTMLElement).closest(`.${CLASS_NAMES.MU_MATH_RENDER}`)
+                || (target as HTMLElement).closest(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
 
         if (inlineRuleRenderEle)
             return this._handleClickInlineRuleRender(event, inlineRuleRenderEle);
@@ -489,9 +489,9 @@ class Format extends Content {
 
             // TODO: The codes bellow maybe is wrong? and remove use this.selection directly
             const needRender
-        = this.selection.anchorBlock === this
-            ? this.checkNeedRender(cursor) || this.checkNeedRender()
-            : this.checkNeedRender(cursor);
+                = this.selection.anchorBlock === this
+                    ? this.checkNeedRender(cursor) || this.checkNeedRender()
+                    : this.checkNeedRender(cursor);
 
             if (needRender)
                 this.update(cursor);
@@ -722,7 +722,7 @@ class Format extends Content {
         for (const l of lines) {
             const THEMATIC_BREAK_REG
 
-        = / {0,3}(?:\* *\* *\*|- *- *-|_ *_ *_)[ *\-_]*$/;
+                = / {0,3}(?:\* *\* *\*|- *- *-|_ *_ *_)[ *\-_]*$/;
             if (THEMATIC_BREAK_REG.test(l) && !thematicLineHasPushed) {
                 thematicLine = l;
                 thematicLineHasPushed = true;
@@ -1215,7 +1215,7 @@ class Format extends Content {
         if (
             !force
             && (this.parent!.blockName === 'setext-heading'
-            || this.parent!.blockName === 'paragraph')
+                || this.parent!.blockName === 'paragraph')
         ) {
             return;
         }
@@ -1303,7 +1303,7 @@ class Format extends Content {
         if (needSelectImage) {
             event.stopPropagation();
             const images: NodeListOf<HTMLImageElement>
-        = this.domNode!.querySelectorAll(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
+                = this.domNode!.querySelectorAll(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
             const imageWrapper = images[images.length - 1];
             const imageInfo = getImageInfo(imageWrapper);
 
@@ -1357,7 +1357,7 @@ class Format extends Content {
         const { text: oldText } = this;
         const { start, end } = this.getCursor()!;
         this.text
-      = `${oldText.substring(0, start.offset)}\n${oldText.substring(end.offset)}`;
+            = `${oldText.substring(0, start.offset)}\n${oldText.substring(end.offset)}`;
         this.setCursor(start.offset + 1, end.offset + 1, true);
     }
 
@@ -1410,11 +1410,11 @@ class Format extends Content {
                 if (
                     checkTokenIsInlineFormat(token)
                     && ((start.offset >= token.range.start
-                    && start.offset <= token.range.end)
+                        && start.offset <= token.range.end)
                     || (end.offset >= token.range.start
-                    && end.offset <= token.range.end)
+                        && end.offset <= token.range.end)
                     || (start.offset <= token.range.start
-                    && token.range.end <= end.offset))
+                        && token.range.end <= end.offset))
                 ) {
                     neighbors.push(token);
                 }
@@ -1537,11 +1537,11 @@ class Format extends Content {
                 const MARKER = FORMAT_MARKER_MAP[type];
                 const oldText = this.text;
                 this.text
-          = oldText.substring(0, start.offset)
-          + MARKER
-          + oldText.substring(start.offset, end.offset)
-          + MARKER
-          + oldText.substring(end.offset);
+                    = oldText.substring(0, start.offset)
+                        + MARKER
+                        + oldText.substring(start.offset, end.offset)
+                        + MARKER
+                        + oldText.substring(end.offset);
                 start.offset += MARKER.length;
                 end.offset += MARKER.length;
                 break;
@@ -1557,11 +1557,11 @@ class Format extends Content {
                 const MARKER = FORMAT_TAG_MAP[type];
                 const oldText = this.text;
                 this.text
-          = oldText.substring(0, start.offset)
-          + MARKER.open
-          + oldText.substring(start.offset, end.offset)
-          + MARKER.close
-          + oldText.substring(end.offset);
+                    = oldText.substring(0, start.offset)
+                        + MARKER.open
+                        + oldText.substring(start.offset, end.offset)
+                        + MARKER.close
+                        + oldText.substring(end.offset);
                 start.offset += MARKER.open.length;
                 end.offset += MARKER.open.length;
                 break;
@@ -1573,11 +1573,11 @@ class Format extends Content {
                 const oldText = this.text;
                 const anchorTextLen = end.offset - start.offset;
                 this.text
-          = `${oldText.substring(0, start.offset)
-          + (type === 'link' ? '[' : '![')
-          + oldText.substring(start.offset, end.offset)
-           }]()${
-           oldText.substring(end.offset)}`;
+                    = `${oldText.substring(0, start.offset)
+                    + (type === 'link' ? '[' : '![')
+                    + oldText.substring(start.offset, end.offset)
+                    }]()${
+                        oldText.substring(end.offset)}`;
                 // put cursor between `()`
                 start.offset += type === 'link' ? 3 + anchorTextLen : 4 + anchorTextLen;
                 end.offset = start.offset;

@@ -1,11 +1,11 @@
+import type { Muya } from '../../../muya';
+import type { ITableState } from '../../../state/types';
+import type TableRow from './row';
+import { mixins } from '../../../utils';
 import { LinkedList } from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
 import IContainerQueryBlock from '../../mixins/containerQueryBlock';
 import { ScrollPage } from '../../scrollPage';
-import type { Muya } from '../../../muya';
-import { mixins } from '../../../utils';
-import type { ITableState } from '../../../state/types';
-import type TableRow from './row';
 
 @mixins(IContainerQueryBlock)
 class TableInner extends Parent {

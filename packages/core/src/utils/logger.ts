@@ -11,6 +11,7 @@ function debug(method: TLevel, ...args: unknown[]) {
         // eslint-disable-next-line node/prefer-global/process
         && process.env.NODE_ENV !== 'production'
     ) {
+        // eslint-disable-next-line no-console
         console[method](...args);
     }
 }

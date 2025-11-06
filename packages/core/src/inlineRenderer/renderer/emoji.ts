@@ -1,8 +1,8 @@
 import type { VNode } from 'snabbdom';
-import { CLASS_NAMES } from '../../config';
-import { validEmoji } from '../../utils/emoji';
 import type { CodeEmojiMathToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { validEmoji } from '../../utils/emoji';
 
 // render token of emoji to vnode
 export default function emoji(
@@ -14,9 +14,9 @@ export default function emoji(
     const validation = validEmoji(token.content);
     const finalClass = validation ? className : CLASS_NAMES.MU_WARN;
     const contentSelector
-    = finalClass !== CLASS_NAMES.MU_GRAY
-        ? `span.${finalClass}.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_EMOJI_MARKED_TEXT}`
-        : `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_EMOJI_MARKED_TEXT}`;
+        = finalClass !== CLASS_NAMES.MU_GRAY
+            ? `span.${finalClass}.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_EMOJI_MARKED_TEXT}`
+            : `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_EMOJI_MARKED_TEXT}`;
 
     let startMarkerSelector = `span.${finalClass}.${CLASS_NAMES.MU_EMOJI_MARKER}`;
     let endMarkerSelector = startMarkerSelector;
@@ -57,17 +57,17 @@ export default function emoji(
 
     const emojiVNode = validation
         ? h(
-            contentSelector,
-            {
-                attrs: {
-                    spellcheck: 'false',
+                contentSelector,
+                {
+                    attrs: {
+                        spellcheck: 'false',
+                    },
+                    dataset: {
+                        emoji: validation.emoji,
+                    },
                 },
-                dataset: {
-                    emoji: validation.emoji,
-                },
-            },
-            content,
-        )
+                content,
+            )
         : h(contentSelector, content);
 
     return [

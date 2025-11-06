@@ -1,3 +1,4 @@
+import type { ILexOption } from './types';
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import Prism from 'prismjs';
@@ -6,7 +7,6 @@ import mathExtension from './extensions/math';
 import superSubScriptExtension from './extensions/superSubscript';
 import fm, { frontMatterRender } from './frontMatter';
 import { DEFAULT_OPTIONS } from './options';
-import type { ILexOption } from './types';
 import walkTokens from './walkTokens';
 
 const DIAGRAM_TYPE = [
@@ -38,7 +38,7 @@ const marked = new Marked(
 export function getHighlightHtml(src: string, options: ILexOption = {}) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
     const { frontMatter, math, isGitlabCompatibilityEnabled, superSubScript }
-    = options;
+        = options;
 
     let html = '';
 

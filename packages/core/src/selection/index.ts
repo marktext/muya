@@ -3,9 +3,10 @@ import type Format from '../block/base/format';
 import type Parent from '../block/base/parent';
 import type ListItem from '../block/commonMark/listItem';
 import type TaskListItem from '../block/gfm/taskListItem';
-import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from '../config';
-import type { Muya } from '../muya';
 import type { ImageToken } from '../inlineRenderer/types';
+import type { Muya } from '../muya';
+import type { ICursor, INodeOffset, ISelection } from './types';
+import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from '../config';
 import { isElement, isKeyboardEvent, isMouseEvent } from '../utils';
 import { getImageInfo } from '../utils/image';
 import {
@@ -14,7 +15,6 @@ import {
     getNodeAndOffset,
     getOffsetOfParagraph,
 } from './dom';
-import type { ICursor, INodeOffset, ISelection } from './types';
 
 class Selection {
     /**
@@ -48,7 +48,7 @@ class Selection {
                 let rects: DOMRectList | null = range.getClientRects();
                 if (rects.length === 0) {
                     rects
-            = range.startContainer && isElement(range.startContainer)
+                        = range.startContainer && isElement(range.startContainer)
                             ? range.startContainer.getClientRects()
                             : null;
                 }
@@ -67,7 +67,7 @@ class Selection {
     static getSelectionStart() {
         const node = document.getSelection()!.anchorNode;
         const startNode
-      = node && node.nodeType === Node.TEXT_NODE ? node.parentNode : node;
+            = node && node.nodeType === Node.TEXT_NODE ? node.parentNode : node;
 
         return startNode;
     }
@@ -146,9 +146,9 @@ class Selection {
         isSelect: boolean;
         selection: ICursor | null;
     } = {
-            isSelect: false,
-            selection: null,
-        };
+        isSelect: false,
+        selection: null,
+    };
 
     constructor(public muya: Muya) {
         this.listenSelectActions();
@@ -231,13 +231,13 @@ class Selection {
         const focusPath = focusBlock.path;
 
         const aOffset
-      = getOffsetOfParagraph(anchorNode, anchorDomNode) + anchorOffset;
+            = getOffsetOfParagraph(anchorNode, anchorDomNode) + anchorOffset;
         const fOffset = getOffsetOfParagraph(focusNode, focusDomNode) + focusOffset;
         const anchor = { offset: aOffset };
         const focus = { offset: fOffset };
 
         const isCollapsed
-      = anchorBlock === focusBlock && anchor.offset === focus.offset;
+            = anchorBlock === focusBlock && anchor.offset === focus.offset;
 
         const isSelectionInSameBlock = anchorBlock === focusBlock;
         let direction = 'none';
@@ -274,13 +274,13 @@ class Selection {
 
     setSelection({
         anchor,
-    focus,
-    block,
-    path,
-    anchorBlock,
-    anchorPath,
-    focusBlock,
-    focusPath,
+        focus,
+        block,
+        path,
+        anchorBlock,
+        anchorPath,
+        focusBlock,
+        focusPath,
     }: ICursor) {
         this.anchor = anchor ?? null;
         this.focus = focus ?? null;
@@ -418,9 +418,9 @@ class Selection {
                 /bullet-list|order-list|task-list/.test(anchorOutMostBlock.blockName)
             ) {
                 const listItemBlockName
-          = anchorOutMostBlock.blockName === 'task-list'
-              ? 'task-list-item'
-              : 'list-item';
+                    = anchorOutMostBlock.blockName === 'task-list'
+                        ? 'task-list-item'
+                        : 'list-item';
                 const listItem = anchorBlock.farthestBlock(listItemBlockName) as
                     | ListItem
                     | TaskListItem;
@@ -442,9 +442,9 @@ class Selection {
                 /bullet-list|order-list|task-list/.test(focusOutMostBlock.blockName)
             ) {
                 const listItemBlockName
-          = focusOutMostBlock.blockName === 'task-list'
-              ? 'task-list-item'
-              : 'list-item';
+                    = focusOutMostBlock.blockName === 'task-list'
+                        ? 'task-list-item'
+                        : 'list-item';
                 const listItem = focusBlock.farthestBlock(listItemBlockName) as
                     | ListItem
                     | TaskListItem;
@@ -475,7 +475,7 @@ class Selection {
         const handleClick = (event: Event) => {
             const { target } = event;
             const imageWrapper = (target as HTMLElement)?.closest(
-        `.${CLASS_NAMES.MU_INLINE_IMAGE}`,
+                `.${CLASS_NAMES.MU_INLINE_IMAGE}`,
             );
             this.selectedImage = null;
             if (imageWrapper)
@@ -552,7 +552,7 @@ class Selection {
             const imageSelector = `#${imageInfo.imageId}`;
 
             const imageContainer = document.querySelector(
-        `${imageSelector} .${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
+                `${imageSelector} .${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
             );
 
             eventCenter.emit('muya-transformer', {

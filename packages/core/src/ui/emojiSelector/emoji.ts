@@ -1,6 +1,6 @@
+import type { Emoji as EmojiType } from '../../config/emojis';
 import Fuse from 'fuse.js';
 import emojis from '../../config/emojis';
-import type { Emoji as EmojiType } from '../../config/emojis';
 
 const emojisForSearch: Record<string, EmojiType[]> = {};
 

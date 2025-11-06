@@ -1,10 +1,10 @@
-import Parent from '../../base/parent';
-import { ScrollPage } from '../../scrollPage';
-import type { TBlockPath } from '../../types';
 import type { Muya } from '../../../muya';
+import type { IDiagramMeta, IDiagramState } from '../../../state/types';
+import type { TBlockPath } from '../../types';
 import logger from '../../../utils/logger';
 import { loadLanguage } from '../../../utils/prism';
-import type { IDiagramMeta, IDiagramState } from '../../../state/types';
+import Parent from '../../base/parent';
+import { ScrollPage } from '../../scrollPage';
 
 const debug = logger('diagram:');
 

@@ -1,5 +1,5 @@
-import unlinkIcon from '../../assets/icons/unlink/2.png';
 import linkJumpIcon from '../../assets/icons/link_jump/2.png';
+import unlinkIcon from '../../assets/icons/unlink/2.png';
 
 const icons = [
     {

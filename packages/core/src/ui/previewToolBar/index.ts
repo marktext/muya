@@ -1,12 +1,12 @@
 import type { VNode } from 'snabbdom';
-import BaseFloat from '../baseFloat';
-import { isMouseEvent, throttle } from '../../utils';
-import { ScrollPage } from '../../block/scrollPage';
-import { h, patch } from '../../utils/snabbdom';
-import { BLOCK_DOM_PROPERTY } from '../../config';
-import type MathBlock from '../../block/extra/math';
 import type HTMLBlock from '../../block/commonMark/html';
+import type MathBlock from '../../block/extra/math';
 import type { Muya } from '../../index';
+import { ScrollPage } from '../../block/scrollPage';
+import { BLOCK_DOM_PROPERTY } from '../../config';
+import { isMouseEvent, throttle } from '../../utils';
+import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
 import ICONS from './config';
 
 import './index.css';

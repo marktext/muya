@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from '../../config';
-import { htmlToVNode } from '../../utils/snabbdom';
 import type { HTMLTagToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { htmlToVNode } from '../../utils/snabbdom';
 
 export default function htmlRuby(
     this: Renderer,
@@ -24,8 +24,8 @@ export default function htmlRuby(
         ? [
                 h(`span.${className}.${CLASS_NAMES.MU_RUBY}`, [
                     h(
-            `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_RUBY_TEXT}`,
-            content,
+                        `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_RUBY_TEXT}`,
+                        content,
                     ),
                     h(
                         previewSelector,
@@ -47,8 +47,8 @@ export default function htmlRuby(
         : [
                 h(`span.${className}.${CLASS_NAMES.MU_RUBY}`, [
                     h(
-            `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_RUBY_TEXT}`,
-            content,
+                        `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_RUBY_TEXT}`,
+                        content,
                     ),
                 ]),
             ];

@@ -1,7 +1,7 @@
 import type { Diff } from 'fast-diff';
 import type Content from '../block/base/content';
-import { EVENT_KEYS } from '../config';
 import type { Config } from './dompurify';
+import { EVENT_KEYS } from '../config';
 import runSanitize from './dompurify';
 
 interface IUnion {
@@ -18,12 +18,12 @@ interface IDefer<T> {
     promise: Promise<T>;
 }
 
-export const uniqueIdGenerator = function* () {
+export function* uniqueIdGenerator() {
     let id = 0;
 
     while (true)
         yield id++;
-};
+}
 
 const ID_PREFIX = 'mu-';
 const uniqueIdIterator = uniqueIdGenerator();

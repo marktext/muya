@@ -1,8 +1,8 @@
-import { getUniqueId } from '../../utils';
-import { loadImage } from '../../utils/image';
-import { insertAfter, operateClassName } from '../../utils/dom';
-import { CLASS_NAMES } from '../../config';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { getUniqueId } from '../../utils';
+import { insertAfter, operateClassName } from '../../utils/dom';
+import { loadImage } from '../../utils/image';
 
 export default function loadImageAsync(
     this: Renderer,
@@ -43,7 +43,7 @@ export default function loadImageAsync(
                 if (imageText) {
                     if (imageText.classList.contains(`${CLASS_NAMES.MU_INLINE_IMAGE}`)) {
                         const imageContainer = imageText.querySelector(
-              `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
+                            `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
                         );
                         const oldImage = imageContainer!.querySelector('img');
                         if (oldImage)

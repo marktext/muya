@@ -1,14 +1,14 @@
 import type { VNode } from 'snabbdom';
-import { EVENT_KEYS, URL_REG, isWin } from '../../config';
-import { getUniqueId, isKeyboardEvent } from '../../utils';
-import { getImageInfo, getImageSrc } from '../../utils/image';
-import { h, patch } from '../../utils/snabbdom';
-import BaseFloat from '../baseFloat';
-import type { IBaseOptions } from '../types';
-
 import type Format from '../../block/base/format';
 import type { Muya } from '../../index';
 import type { ImageToken } from '../../inlineRenderer/types';
+import type { IBaseOptions } from '../types';
+import { EVENT_KEYS, isWin, URL_REG } from '../../config';
+import { getUniqueId, isKeyboardEvent } from '../../utils';
+
+import { getImageInfo, getImageSrc } from '../../utils/image';
+import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
 import './index.css';
 
 interface IState {
@@ -143,7 +143,7 @@ export class ImageEditTool extends BaseFloat {
                     this.muya.editor.inlineRenderer.renderer.urlMap.set(nSrc, localPath);
 
                 const imageWrapper = this.muya.domNode.querySelector(
-          `span[data-id=${id}]`,
+                    `span[data-id=${id}]`,
                 ) as HTMLElement;
 
                 if (imageWrapper) {
@@ -178,16 +178,16 @@ export class ImageEditTool extends BaseFloat {
 
         const moreButton = this.options.imagePathPicker
             ? h(
-                'span.more',
-                {
-                    on: {
-                        click: () => {
-                            this.handleMoreClick();
+                    'span.more',
+                    {
+                        on: {
+                            click: () => {
+                                this.handleMoreClick();
+                            },
                         },
                     },
-                },
-                h('span.more-inner'),
-            )
+                    h('span.more-inner'),
+                )
             : null;
 
         const srcInput = h('input.src', {

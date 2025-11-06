@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from '../../config';
 import type { ISyntaxRenderOptions, SuperSubScriptToken } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
 
 export default function superSubScript(
     this: Renderer,
@@ -36,13 +36,13 @@ export default function superSubScript(
     return [
         h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, startMarker),
         h(
-      `${tagName}.${CLASS_NAMES.MU_INLINE_RULE}`,
-      {
-          attrs: {
-              spellcheck: 'false',
-          },
-      },
-      content,
+            `${tagName}.${CLASS_NAMES.MU_INLINE_RULE}`,
+            {
+                attrs: {
+                    spellcheck: 'false',
+                },
+            },
+            content,
         ),
         h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, endMarker),
     ];

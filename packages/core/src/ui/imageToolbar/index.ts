@@ -1,13 +1,13 @@
 import type { ReferenceObject } from 'popper.js';
 import type { VNode } from 'snabbdom';
-import { h, patch } from '../../utils/snabbdom';
-import BaseFloat from '../baseFloat';
-
 import type Format from '../../block/base/format';
 import type { Muya } from '../../index';
+
 import type { ImageToken } from '../../inlineRenderer/types';
-import icons from './config';
 import type { Icon } from './config';
+import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import icons from './config';
 import './index.css';
 
 const defaultOptions = {

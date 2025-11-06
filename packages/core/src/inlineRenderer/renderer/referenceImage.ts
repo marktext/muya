@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from '../../config';
-import { getImageSrc } from '../../utils/image';
 import type { ISyntaxRenderOptions, ReferenceImageToken } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { getImageSrc } from '../../utils/image';
 
 // reference_image
 export default function referenceImage(

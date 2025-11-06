@@ -1,14 +1,14 @@
-import { fromEvent } from 'rxjs';
-import copyIcon from '../../../assets/icons/copy/2.png';
-import Parent from '../../base/parent';
-import { ScrollPage } from '../../scrollPage';
 import type I18n from '../../../i18n';
 import type { Muya } from '../../../muya';
+import type { ICodeBlockState, TState } from '../../../state/types';
 import type { Nullable } from '../../../types';
+import type CodeBlock from './index';
+import { fromEvent } from 'rxjs';
+import copyIcon from '../../../assets/icons/copy/2.png';
 import logger from '../../../utils/logger';
 import { h, toHTML } from '../../../utils/snabbdom';
-import type { ICodeBlockState, TState } from '../../../state/types';
-import type CodeBlock from './index';
+import Parent from '../../base/parent';
+import { ScrollPage } from '../../scrollPage';
 
 const debug = logger('code:');
 

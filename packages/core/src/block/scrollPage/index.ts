@@ -1,12 +1,12 @@
-import Parent from '../base/parent';
-import { BLOCK_DOM_PROPERTY } from '../../config';
 import type { Muya } from '../../muya';
-import type { Nullable } from '../../types';
-import { isMouseEvent } from '../../utils';
-import logger from '../../utils/logger';
 import type { TState } from '../../state/types';
+import type { Nullable } from '../../types';
 import type Content from '../base/content';
 import type { TBlockPath } from '../types';
+import { BLOCK_DOM_PROPERTY } from '../../config';
+import { isMouseEvent } from '../../utils';
+import logger from '../../utils/logger';
+import Parent from '../base/parent';
 
 const debug = logger('scrollpage:');
 

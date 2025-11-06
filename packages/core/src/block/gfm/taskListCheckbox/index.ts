@@ -1,12 +1,12 @@
-import TreeNode from '../../base/treeNode';
-import { isFirefox } from '../../../config';
 import type { Muya } from '../../../muya';
 import type { ITaskListItemMeta } from '../../../state/types';
+import type TaskList from '../taskList';
+import type TaskListItem from '../taskListItem';
+import { isFirefox } from '../../../config';
 import { isMouseEvent } from '../../../utils';
 import { operateClassName } from '../../../utils/dom';
 import logger from '../../../utils/logger';
-import type TaskList from '../taskList';
-import type TaskListItem from '../taskListItem';
+import TreeNode from '../../base/treeNode';
 
 const debug = logger('tasklistCheckbox:');
 

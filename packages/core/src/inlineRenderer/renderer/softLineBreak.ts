@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from '../../config';
 import type { ISyntaxRenderOptions, SoftLineBreakToken } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
 
 export default function softLineBreak(
     this: Renderer,

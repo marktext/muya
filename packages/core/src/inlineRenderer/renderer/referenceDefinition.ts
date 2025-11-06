@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from '../../config';
 import type { ISyntaxRenderOptions, ReferenceDefinitionToken } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
 
 export default function referenceDefinition(
     this: Renderer,
@@ -60,13 +60,13 @@ export default function referenceDefinition(
     return [
         h(`span.${className}`, leftBracketContent),
         h(
-      `span.${CLASS_NAMES.MU_REFERENCE_LABEL}`,
-      {
-          attrs: {
-              spellcheck: 'false',
-          },
-      },
-      labelContent,
+            `span.${CLASS_NAMES.MU_REFERENCE_LABEL}`,
+            {
+                attrs: {
+                    spellcheck: 'false',
+                },
+            },
+            labelContent,
         ),
         ...this.backlashInToken(
             h,
@@ -76,23 +76,23 @@ export default function referenceDefinition(
             token,
         ),
         h(
-      `span.${className}`,
-      {
-          attrs: {
-              spellcheck: 'false',
-          },
-      },
-      middleContent,
+            `span.${className}`,
+            {
+                attrs: {
+                    spellcheck: 'false',
+                },
+            },
+            middleContent,
         ),
         h(`span.${CLASS_NAMES.MU_REFERENCE_TITLE}`, titleContent),
         h(
-      `span.${className}`,
-      {
-          attrs: {
-              spellcheck: 'false',
-          },
-      },
-      rightContent,
+            `span.${className}`,
+            {
+                attrs: {
+                    spellcheck: 'false',
+                },
+            },
+            rightContent,
         ),
     ];
 }

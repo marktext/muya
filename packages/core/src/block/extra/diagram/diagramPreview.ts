@@ -1,11 +1,11 @@
-import { fromEvent } from 'rxjs';
-import Parent from '../../base/parent';
-import { PREVIEW_DOMPURIFY_CONFIG } from '../../../config';
 import type { Muya } from '../../../muya';
+import type { IDiagramState, TState } from '../../../state/types';
+import { fromEvent } from 'rxjs';
+import { PREVIEW_DOMPURIFY_CONFIG } from '../../../config';
 import { sanitize } from '../../../utils';
 import loadRenderer from '../../../utils/diagram';
 import logger from '../../../utils/logger';
-import type { IDiagramState, TState } from '../../../state/types';
+import Parent from '../../base/parent';
 
 const debug = logger('diagramPreview:');
 
@@ -131,14 +131,14 @@ class DiagramPreview extends Parent {
             }
             catch (err) {
                 this.domNode!.innerHTML = `<div class="mu-diagram-error">&lt; ${i18n.t(
-          'Invalid Diagram Code',
-        )} &gt;</div>`;
+                    'Invalid Diagram Code',
+                )} &gt;</div>`;
             }
         }
         else {
             this.domNode!.innerHTML = `<div class="mu-empty">&lt; ${i18n.t(
-        'Empty Diagram',
-      )} &gt;</div>`;
+                'Empty Diagram',
+            )} &gt;</div>`;
         }
     }
 }

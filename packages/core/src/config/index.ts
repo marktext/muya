@@ -1,5 +1,4 @@
-import htmlTags from 'html-tags';
-import voidHtmlTags from 'html-tags/void';
+import htmlTags, { voidHtmlTags } from 'html-tags';
 import { en } from '../locales/en';
 
 export const VOID_HTML_TAGS = voidHtmlTags;
@@ -373,14 +372,14 @@ export const punctuation = [
 export const IMAGE_EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
 export const isFirefox = (navigator.userAgent.includes('Firefox'));
 export const isOsx
-  = window && window.navigator && /Mac/.test(window.navigator.userAgent);
+    = window && window.navigator && /Mac/.test(window.navigator.userAgent);
 export const isWin
-  = window
-  && window.navigator.userAgent
-  && /win32|wow32|win64|wow64/i.test(window.navigator.userAgent);
+    = window
+        && window.navigator.userAgent
+        && /win32|wow32|win64|wow64/i.test(window.navigator.userAgent);
 // http[s] (domain or IPv4 or localhost or IPv6) [port] /not-white-space
 export const URL_REG
-  = /^http(s)?:\/\/([\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:\d{1,5})?\/\S+/i;
+    = /^http(s)?:\/\/([\w\-.~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:\d{1,5})?\/\S+/i;
 export const PREVIEW_DOMPURIFY_CONFIG = {
     // do not forbid `class` because `code` element use class to present language
     FORBID_ATTR: ['style', 'contenteditable'],

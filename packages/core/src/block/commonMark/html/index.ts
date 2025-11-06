@@ -1,9 +1,9 @@
-import Parent from '../../base/parent';
-import { ScrollPage } from '../../scrollPage';
-import type { TBlockPath } from '../../types';
-import { CLASS_NAMES } from '../../../config';
 import type { Muya } from '../../../muya';
 import type { IHtmlBlockState } from '../../../state/types';
+import type { TBlockPath } from '../../types';
+import { CLASS_NAMES } from '../../../config';
+import Parent from '../../base/parent';
+import { ScrollPage } from '../../scrollPage';
 
 class HTMLBlock extends Parent {
     static override blockName = 'html-block';

@@ -1,9 +1,9 @@
+import type { Muya } from '../../../muya';
+import type { IBlockQuoteState } from '../../../state/types';
+import { mixins } from '../../../utils';
 import Parent from '../../base/parent';
 import IContainerQueryBlock from '../../mixins/containerQueryBlock';
 import { ScrollPage } from '../../scrollPage';
-import type { Muya } from '../../../muya';
-import { mixins } from '../../../utils';
-import type { IBlockQuoteState } from '../../../state/types';
 
 @mixins(IContainerQueryBlock)
 class BlockQuote extends Parent {

@@ -1,8 +1,8 @@
-import DOMPurify from 'dompurify';
 import type { Config } from 'dompurify';
+import DOMPurify from 'dompurify';
 
 const { sanitize, isValidAttribute } = DOMPurify();
 
-export { isValidAttribute, Config };
+export { Config, isValidAttribute };
 
 export default sanitize;

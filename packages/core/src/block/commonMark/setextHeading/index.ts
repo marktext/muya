@@ -1,10 +1,10 @@
-import Parent from '../../base/parent';
+import type { Muya } from '../../../muya';
+import type { ISetextHeadingState } from '../../../state/types';
 import type SetextHeadingContent from '../../content/setextHeadingContent';
+import { mixins } from '../../../utils';
+import Parent from '../../base/parent';
 import LeafQueryBlock from '../../mixins/leafQueryBlock';
 import { ScrollPage } from '../../scrollPage';
-import type { Muya } from '../../../muya';
-import { mixins } from '../../../utils';
-import type { ISetextHeadingState } from '../../../state/types';
 
 @mixins(LeafQueryBlock)
 class SetextHeading extends Parent {

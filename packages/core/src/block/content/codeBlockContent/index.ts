@@ -1,8 +1,3 @@
-import Content from '../../base/content';
-import type Code from '../../commonMark/codeBlock/code';
-import type HTMLPreview from '../../commonMark/html/htmlPreview';
-import { ScrollPage } from '../../scrollPage';
-import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
 import type {
@@ -11,9 +6,14 @@ import type {
     IDiagramState,
     IFrontmatterState,
 } from '../../../state/types';
+import type Code from '../../commonMark/codeBlock/code';
+import type HTMLPreview from '../../commonMark/html/htmlPreview';
+import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
 import { adjustOffset, escapeHTML } from '../../../utils';
-import { MARKER_HASH, getHighlightHtml } from '../../../utils/highlightHTML';
+import { getHighlightHtml, MARKER_HASH } from '../../../utils/highlightHTML';
 import prism, { loadedLanguages, transformAliasToOrigin, walkTokens } from '../../../utils/prism/index';
+import Content from '../../base/content';
+import { ScrollPage } from '../../scrollPage';
 
 function checkAutoIndent(text: string, offset: number) {
     const pairStr = text.substring(offset - 1, offset + 1);
@@ -228,11 +228,11 @@ class CodeBlockContent extends Content {
         const indent = getIndentSpace(text);
 
         this.text
-      = `${text.substring(0, start.offset)
-       }\n${
-       autoIndent ? `${indent + ' '.repeat(tabSize)}\n` : ''
-       }${indent
-       }${text.substring(start.offset)}`;
+            = `${text.substring(0, start.offset)
+            }\n${
+                autoIndent ? `${indent + ' '.repeat(tabSize)}\n` : ''
+            }${indent
+            }${text.substring(start.offset)}`;
 
         let offset = start.offset + 1 + indent.length;
 
@@ -250,9 +250,9 @@ class CodeBlockContent extends Content {
 
         if (isMarkupCodeContent) {
             const lastWordBeforeCursor
-        = text.substring(0, start.offset).split(/\s+/).pop() ?? '';
+                = text.substring(0, start.offset).split(/\s+/).pop() ?? '';
             const { tag, isVoid, id, className }
-        = parseSelector(lastWordBeforeCursor);
+                = parseSelector(lastWordBeforeCursor);
 
             if (tag) {
                 const preText = text.substring(

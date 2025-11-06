@@ -1,6 +1,4 @@
 import type { VNode } from 'snabbdom';
-import { CLASS_NAMES } from '../../config';
-import { snakeToCamel } from '../../utils';
 import type {
     DelToken,
     ISyntaxRenderOptions,
@@ -8,6 +6,8 @@ import type {
     Token,
 } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { snakeToCamel } from '../../utils';
 
 // render factory of `del`,`em`,`strong`
 export default function delEmStrongFac(
@@ -26,7 +26,7 @@ export default function delEmStrongFac(
     const { marker } = token;
     const { start, end } = token.range;
     const backlashStart
-    = end - marker.length - token.backlash.length;
+        = end - marker.length - token.backlash.length;
     const content: VNode[] = [
         ...token.children.reduce((acc: VNode[], to: Token) => {
             const chunk = (this as any)[snakeToCamel(to.type)]({

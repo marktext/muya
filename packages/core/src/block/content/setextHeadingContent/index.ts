@@ -1,8 +1,8 @@
-import { ScrollPage } from '../../scrollPage';
-import Format from '../../base/format';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
 import { isKeyboardEvent } from '../../../utils';
+import Format from '../../base/format';
+import { ScrollPage } from '../../scrollPage';
 
 class SetextHeadingContent extends Format {
     static override blockName = 'setextheading.content';

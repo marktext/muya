@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from '../../config';
-import escapeCharactersMap from '../../config/escapeCharacter';
 import type { HTMLEscapeToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import escapeCharactersMap from '../../config/escapeCharacter';
 
 export default function htmlEscape(
     this: Renderer,
@@ -21,13 +21,13 @@ export default function htmlEscape(
 
     return [
         h(
-      `span.${className}.${CLASS_NAMES.MU_HTML_ESCAPE}`,
-      {
-          dataset: {
-              character: escapeCharactersMap[escapeCharacter],
-          },
-      },
-      content,
+            `span.${className}.${CLASS_NAMES.MU_HTML_ESCAPE}`,
+            {
+                dataset: {
+                    character: escapeCharactersMap[escapeCharacter],
+                },
+            },
+            content,
         ),
     ];
 }

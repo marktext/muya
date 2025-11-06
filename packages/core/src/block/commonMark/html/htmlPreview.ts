@@ -1,10 +1,10 @@
-import Parent from '../../base/parent';
-import { PREVIEW_DOMPURIFY_CONFIG } from '../../../config';
 import type { Muya } from '../../../muya';
+import type { IHtmlBlockState, TState } from '../../../state/types';
+import { PREVIEW_DOMPURIFY_CONFIG } from '../../../config';
 import { sanitize } from '../../../utils';
 import { getImageSrc } from '../../../utils/image';
 import logger from '../../../utils/logger';
-import type { IHtmlBlockState, TState } from '../../../state/types';
+import Parent from '../../base/parent';
 
 const debug = logger('htmlPreview:');
 
@@ -47,7 +47,7 @@ class HTMLPreview extends Parent {
         // handle empty html bock
         if (/^<([a-z][a-z\d]*)[^>]*>(\s*)<\/\1>$/.test(htmlContent.trim())) {
             this.domNode!.innerHTML
-        = '<div class="mu-empty">&lt;Empty HTML Block&gt;</div>';
+                = '<div class="mu-empty">&lt;Empty HTML Block&gt;</div>';
         }
         else {
             const parser = new DOMParser();
@@ -61,7 +61,7 @@ class HTMLPreview extends Parent {
             }
 
             this.domNode!.innerHTML
-        = doc.documentElement!.querySelector('body')!.innerHTML;
+                = doc.documentElement!.querySelector('body')!.innerHTML;
         }
     }
 

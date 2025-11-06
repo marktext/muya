@@ -1,11 +1,11 @@
 import type { VNode } from 'snabbdom';
-import BaseFloat from '../baseFloat';
-import { h, patch } from '../../utils/snabbdom';
-import { isMouseEvent, throttle } from '../../utils';
-import { BLOCK_DOM_PROPERTY } from '../../config';
-import type { Muya } from '../../index';
 import type CellBlock from '../../block/gfm/table/cell';
+import type { Muya } from '../../index';
 import type { TableColumnToolIcon } from './config';
+import { BLOCK_DOM_PROPERTY } from '../../config';
+import { isMouseEvent, throttle } from '../../utils';
+import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
 import icons from './config';
 
 import './index.css';
@@ -161,7 +161,7 @@ export class TableColumnToolbar extends BaseFloat {
                 // fall through
             case 'insert right': {
                 const offset
-          = item.type === 'insert left' ? columnCount : columnCount + 1;
+                    = item.type === 'insert left' ? columnCount : columnCount + 1;
                 const cursorBlock = table.insertColumn(offset);
                 if (cursorBlock)
                     cursorBlock.setCursor(0, 0);

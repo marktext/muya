@@ -1,7 +1,7 @@
 import type Format from '../../block/base/format';
-import { union } from '../../utils';
 import type { H, Token } from '../types';
 import type Renderer from './index';
+import { union } from '../../utils';
 
 // change text to highlight vnode
 export default function highlight(

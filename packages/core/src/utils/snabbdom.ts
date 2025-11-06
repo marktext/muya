@@ -5,8 +5,8 @@ import {
     eventListenersModule,
     init,
     propsModule,
-    toVNode as sToVNode,
     h as sh,
+    toVNode as sToVNode,
     styleModule,
 } from 'snabbdom';
 import sToHTML from 'snabbdom-to-html';

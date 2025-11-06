@@ -1,7 +1,7 @@
-import { isEven, union } from '../../utils';
-import { CLASS_NAMES } from '../../config';
 import type { H, Token } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { isEven, union } from '../../utils';
 
 export default function backlashInToken(
     this: Renderer,

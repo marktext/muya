@@ -1,31 +1,31 @@
 import type { VNode } from 'snabbdom';
-import { ScrollPage } from '../../block/scrollPage';
-import emptyStates from '../../config/emptyStates';
-import BaseFloat from '../baseFloat';
-import type { IQuickInsertMenuItem } from '../paragraphQuickInsertMenu/config';
-import { replaceBlockByLabel } from '../paragraphQuickInsertMenu/config';
-import { deepClone } from '../../utils';
-import { h, patch } from '../../utils/snabbdom';
-
 import type Parent from '../../block/base/parent';
 import type AtxHeading from '../../block/commonMark/atxHeading';
 import type { Muya } from '../../index';
 import type { IAtxHeadingState, IBulletListState, IOrderListState, ITaskListState } from '../../state/types';
-import { FRONT_MENU, canTurnIntoMenu } from './config';
+import type { IQuickInsertMenuItem } from '../paragraphQuickInsertMenu/config';
+import { ScrollPage } from '../../block/scrollPage';
+import emptyStates from '../../config/emptyStates';
+
+import { deepClone } from '../../utils';
+import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import { replaceBlockByLabel } from '../paragraphQuickInsertMenu/config';
+import { canTurnIntoMenu, FRONT_MENU } from './config';
 import './index.css';
 
 function renderIcon({ label, icon }: { label: string; icon: string }) {
     return h(
         'i.icon',
         h(
-      `i.icon-${label.replace(/\s/g, '-')}`,
-      {
-          style: {
-              'background': `url(${icon}) no-repeat`,
-              'background-size': '100%',
-          },
-      },
-      '',
+            `i.icon-${label.replace(/\s/g, '-')}`,
+            {
+                style: {
+                    'background': `url(${icon}) no-repeat`,
+                    'background-size': '100%',
+                },
+            },
+            '',
         ),
     );
 }
@@ -245,9 +245,9 @@ export class ParagraphFrontMenu extends BaseFloat {
 
                     const rawText = (oldState as IAtxHeadingState).text;
                     const text
-            = block.blockName === 'paragraph'
-                ? rawText
-                : rawText.replace(/^ {0,3}#{1,6}(?:\s+|$)/, '');
+                        = block.blockName === 'paragraph'
+                            ? rawText
+                            : rawText.replace(/^ {0,3}#{1,6}(?:\s+|$)/, '');
                     replaceBlockByLabel({
                         block,
                         label,
@@ -303,11 +303,11 @@ export class ParagraphFrontMenu extends BaseFloat {
                     }
                     // TODO: @JOCS, remove use this.selection directly.
                     const { anchorPath, anchor, focus, isSelectionInSameBlock }
-            = editor.selection;
+                        = editor.selection;
                     const listBlock = ScrollPage.loadBlock(label).create(muya, state);
                     block.replaceWith(listBlock);
                     const guessCursorBlock
-            = muya.editor.scrollPage?.queryBlock(anchorPath);
+                        = muya.editor.scrollPage?.queryBlock(anchorPath);
                     if (guessCursorBlock && isSelectionInSameBlock) {
                         const begin = Math.min(anchor!.offset, focus!.offset);
                         const end = Math.max(anchor!.offset, focus!.offset);

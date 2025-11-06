@@ -1,11 +1,11 @@
 import type { VNode } from 'snabbdom';
-import { CLASS_NAMES } from '../../config';
-import { getImageSrc } from '../../utils/image';
+import type { H, ImageToken, ISyntaxRenderOptions } from '../types';
+import type Renderer from './index';
+import DeleteIcon from '../../assets/icons/delete/2.png';
 import ImageIcon from '../../assets/icons/image/2.png';
 import ImageFailIcon from '../../assets/icons/image_fail/2.png';
-import DeleteIcon from '../../assets/icons/delete/2.png';
-import type { H, ISyntaxRenderOptions, ImageToken } from '../types';
-import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { getImageSrc } from '../../utils/image';
 
 function renderIcon(h: H, className: string, icon: string) {
     const selector = `a.${className}`;
@@ -57,8 +57,8 @@ export default function image(
 
     let wrapperSelector = id
         ? `span#${isSuccess ? `${id}_${token.range.start}` : id}.${
-        CLASS_NAMES.MU_INLINE_IMAGE
-      }`
+            CLASS_NAMES.MU_INLINE_IMAGE
+        }`
         : `span.${CLASS_NAMES.MU_INLINE_IMAGE}`;
 
     const imageIcons = [

@@ -1,3 +1,4 @@
+/* eslint-disable antfu/no-top-level-await */
 import type { TState } from '@muyajs/core';
 import {
     CodeBlockLanguageSelector,
@@ -69,8 +70,7 @@ const nextBtn: HTMLButtonElement = document.querySelector('#next')!;
 const replaceInput: HTMLInputElement = document.querySelector('#replace')!;
 const singleBtn: HTMLButtonElement = document.querySelector('#single')!;
 const allBtn: HTMLButtonElement = document.querySelector('#all')!;
-const setContentBtn: HTMLButtonElement
-  = document.querySelector('#set-content')!;
+const setContentBtn: HTMLButtonElement = document.querySelector('#set-content')!;
 const selectAllBtn: HTMLButtonElement = document.querySelector('#select-all')!;
 
 const muya = new Muya(container, {

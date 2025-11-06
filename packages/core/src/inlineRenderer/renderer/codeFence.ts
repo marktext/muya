@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from '../../config';
 import type { BeginRuleToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
 
 // Use to render ```
 export default function codeFence(
@@ -22,13 +22,13 @@ export default function codeFence(
     return [
         h(`span.${CLASS_NAMES.MU_GRAY}`, markerContent),
         h(
-      `span.${CLASS_NAMES.MU_LANGUAGE}`,
-      {
-          attrs: {
-              spellcheck: 'false',
-          },
-      },
-      content,
+            `span.${CLASS_NAMES.MU_LANGUAGE}`,
+            {
+                attrs: {
+                    spellcheck: 'false',
+                },
+            },
+            content,
         ),
     ];
 }

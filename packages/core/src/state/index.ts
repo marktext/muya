@@ -1,13 +1,13 @@
-import * as json1 from 'ot-json1';
 import type { Doc, JSONOpList, Path } from 'ot-json1';
 import type { Muya } from '../muya';
 import type { TDiff } from '../utils';
+import type { TState } from './types';
+import * as json1 from 'ot-json1';
 import { deepClone } from '../utils';
 import logger from '../utils/logger';
 import { MarkdownToState } from './markdownToState';
-import StateToMarkdown from './stateToMarkdown';
 
-import type { TState } from './types';
+import StateToMarkdown from './stateToMarkdown';
 
 const debug = logger('jsonState:');
 

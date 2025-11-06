@@ -1,12 +1,12 @@
 import type { IEvent, IListeners, Listener } from './types';
 
 // TODO: @Jocs use the same name function in utils.
-const uniqueIdGenerator = function* () {
+function* uniqueIdGenerator() {
     let id = 0;
 
     while (true)
         yield id++;
-};
+}
 const PREFIX = 'event-';
 const idIterator = uniqueIdGenerator();
 

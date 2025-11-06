@@ -8,7 +8,7 @@ export class LinkedList<T extends ILinkedNode> {
 
     length: number = 0;
 
-    *iterator(curNode = this.head, length = this.length) {
+    * iterator(curNode = this.head, length = this.length) {
         let count = 0;
 
         while (count < length && curNode) {
@@ -98,8 +98,8 @@ export class LinkedList<T extends ILinkedNode> {
 
     forEachAt(
         index: number,
-    length: number = this.length,
-    callback: (cur: T, i: number) => void,
+        length: number = this.length,
+        callback: (cur: T, i: number) => void,
     ) {
         const curNode = this.find(index);
 

@@ -55,7 +55,7 @@ export function getTextContent(node: Node, blackList: string[] = []) {
     // handle inline image
         const raw = node.getAttribute('data-raw');
         const imageContainer = node.querySelector(
-      `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
+            `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
         );
         const hasImg = imageContainer!.querySelector('img');
         const childNodes = imageContainer!.childNodes;
@@ -139,7 +139,7 @@ export function getNodeAndOffset(
                 && child.classList.contains(`${CLASS_NAMES.MU_INLINE_IMAGE}`)
             ) {
                 const imageContainer = child.querySelector(
-          `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
+                    `.${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
                 )!;
                 const hasImg = imageContainer.querySelector('img');
 

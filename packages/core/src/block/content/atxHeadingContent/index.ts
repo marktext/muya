@@ -1,8 +1,8 @@
-import { ScrollPage } from '../../scrollPage';
-import Format from '../../base/format';
-import type AtxHeading from '../../commonMark/atxHeading';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
+import type AtxHeading from '../../commonMark/atxHeading';
+import Format from '../../base/format';
+import { ScrollPage } from '../../scrollPage';
 
 class AtxHeadingContent extends Format {
     public override parent: AtxHeading | null = null;

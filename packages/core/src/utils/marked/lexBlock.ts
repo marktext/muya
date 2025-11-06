@@ -1,10 +1,10 @@
 import type { Token } from 'marked';
+import type { Heading, ILexOption, ListToken } from './types';
 import { Lexer, marked } from 'marked';
 import compatibleTaskList from './compatibleTaskList';
 import mathExtension from './extensions/math';
 import fm from './frontMatter';
 import { DEFAULT_OPTIONS } from './options';
-import type { Heading, ILexOption, ListToken } from './types';
 import walkTokens from './walkTokens';
 
 export function lexBlock(

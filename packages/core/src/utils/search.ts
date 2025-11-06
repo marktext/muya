@@ -1,5 +1,5 @@
-import execAll from 'execall';
 import type { IMatch, ISearchOption } from '../search/types';
+import execAll from 'execall';
 
 export function matchString(text: string, value: string, options: ISearchOption) {
     const { isCaseSensitive, isWholeWord, isRegexp } = options;

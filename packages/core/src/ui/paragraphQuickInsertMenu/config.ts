@@ -1,3 +1,6 @@
+import type Parent from '../../block/base/parent';
+import type { Muya } from '../../index';
+import type { IAtxHeadingState, IBlockQuoteState, IFrontmatterState, IParagraphState } from '../../state/types';
 import bulletListIcon from '../../assets/icons/bullet_list/2.png';
 import vegaIcon from '../../assets/icons/chart/2.png';
 import codeIcon from '../../assets/icons/code/2.png';
@@ -16,17 +19,14 @@ import newTableIcon from '../../assets/icons/new_table/2.png';
 import orderListIcon from '../../assets/icons/order_list/2.png';
 import paragraphIcon from '../../assets/icons/paragraph/2.png';
 import plantumlIcon from '../../assets/icons/plantuml/2.png';
+
 import quoteIcon from '../../assets/icons/quote_block/2.png';
 import todoListIcon from '../../assets/icons/todolist/2.png';
-import { isOsx } from '../../config';
-
 import { ScrollPage } from '../../block/scrollPage';
+
+import { isOsx } from '../../config';
 import emptyStates from '../../config/emptyStates';
 import { deepClone } from '../../utils';
-
-import type Parent from '../../block/base/parent';
-import type { Muya } from '../../index';
-import type { IAtxHeadingState, IBlockQuoteState, IFrontmatterState, IParagraphState } from '../../state/types';
 import logger from '../../utils/logger';
 
 const debug = logger('quickInsert:');

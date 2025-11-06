@@ -1,14 +1,14 @@
-import { LinkedList } from '../../base/linkedList/linkedList';
-import Parent from '../../base/parent';
-import type TableCellContent from '../../content/tableCell';
-import LeafQueryBlock from '../../mixins/leafQueryBlock';
-import { ScrollPage } from '../../scrollPage';
+import type Table from '.';
 import type { Muya } from '../../../muya';
-import { mixins } from '../../../utils';
 import type { ITableCellMeta, ITableCellState } from '../../../state/types';
+import type TableCellContent from '../../content/tableCell';
 import type Row from './row';
 import type TableInner from './table';
-import type Table from '.';
+import { mixins } from '../../../utils';
+import { LinkedList } from '../../base/linkedList/linkedList';
+import Parent from '../../base/parent';
+import LeafQueryBlock from '../../mixins/leafQueryBlock';
+import { ScrollPage } from '../../scrollPage';
 
 @mixins(LeafQueryBlock)
 class TableBodyCell extends Parent {

@@ -1,8 +1,12 @@
-import * as otText from 'ot-text-unicode';
-import { fromEvent, merge } from 'rxjs';
-import { ScrollPage } from '../block/scrollPage';
 import type Content from '../block/base/content';
 import type Format from '../block/base/format';
+import type { Muya } from '../muya';
+import type { TState } from '../state/types';
+import type { Nullable } from '../types';
+import * as otText from 'ot-text-unicode';
+import { fromEvent, merge } from 'rxjs';
+import { registerBlocks } from '../block';
+import { ScrollPage } from '../block/scrollPage';
 import Clipboard from '../clipboard';
 import { BLOCK_DOM_PROPERTY, isFirefox } from '../config';
 import History from '../history';
@@ -10,12 +14,8 @@ import InlineRenderer from '../inlineRenderer';
 import { Search } from '../search';
 import Selection from '../selection';
 import JSONState from '../state';
-import type { TState } from '../state/types';
-import type { Nullable } from '../types';
 import { hasPick } from '../utils';
 import logger from '../utils/logger';
-import type { Muya } from '../muya';
-import { registerBlocks } from '../block';
 
 const debug = logger('editor:');
 
@@ -74,7 +74,7 @@ export class Editor {
 
         const eventHandler = (event: Event) => {
             const { anchorBlock, isSelectionInSameBlock }
-        = this.selection.getSelection() ?? {};
+                = this.selection.getSelection() ?? {};
             // Fix issue that language input can not get focus when it's empty(Firefox only)
             if (
                 event.type === 'click'
@@ -151,8 +151,8 @@ export class Editor {
         };
 
         const needUpdated
-      = firstLeafBlock.blockName === 'paragraph.content'
-      && (firstLeafBlock as Format).checkNeedRender(cursor);
+            = firstLeafBlock.blockName === 'paragraph.content'
+                && (firstLeafBlock as Format).checkNeedRender(cursor);
 
         firstLeafBlock.setCursor(0, 0, needUpdated);
     }
@@ -234,7 +234,7 @@ export class Editor {
                     if (typeof d === 'object')
                         continue;
                     container
-            = key === 'root' ? container[key] : container.queryBlock([key]);
+                        = key === 'root' ? container[key] : container.queryBlock([key]);
                     key = d;
                 }
             }

@@ -1,8 +1,8 @@
 // eslint-disable-next-line ts/ban-ts-comment
 // @ts-nocheck
 
-import './index.css';
 import type { Muya } from '../../index';
+import './index.css';
 
 function position(source, ele) {
     const rect = source.getBoundingClientRect();

@@ -1,13 +1,13 @@
 /* eslint-disable ts/no-unsafe-declaration-merging */
 import type { VNode } from 'snabbdom';
 import type Format from '../../block/base/format';
-import { CLASS_NAMES } from '../../config';
 import type { Muya } from '../../index';
 import type { ICursor } from '../../selection/types';
-import { conflict, methodMixins, snakeToCamel } from '../../utils';
-import { h, toHTML } from '../../utils/snabbdom';
 import type InlineRenderer from '../index';
 import type { Token } from '../types';
+import { CLASS_NAMES } from '../../config';
+import { conflict, methodMixins, snakeToCamel } from '../../utils';
+import { h, toHTML } from '../../utils/snabbdom';
 import autoLink from './autoLink';
 import autoLinkExtension from './autoLinkExtension';
 import backlash from './backlash';
@@ -81,19 +81,19 @@ interface Renderer extends InlineSyntaxRender {}
 @methodMixins(inlineSyntaxRenderer)
 class Renderer {
     public loadMathMap: Map<
-    string,
+        string,
     string | VNode | (string | VNode)[] | undefined
-  > = new Map();
+    > = new Map();
 
     public loadImageMap: Map<
-    string,
-    {
-        id: string;
-        isSuccess: boolean;
-        width?: number;
-        height?: number;
-    }
-  > = new Map();
+        string,
+        {
+            id: string;
+            isSuccess: boolean;
+            width?: number;
+            height?: number;
+        }
+    > = new Map();
 
     public urlMap: Map<string, string> = new Map();
 

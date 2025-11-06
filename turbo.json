@@ -1,6 +1,5 @@
 {
     "$schema": "https://turbo.build/schema.json",
-    "extends": ["//"],
     "tasks": {
         "test": {
             "cache": false
@@ -11,7 +10,8 @@
         "build": {},
         "lint:types": {},
         "dev:demo": {
-            "cache": false
+            "cache": false,
+            "persistent": true
         }
     }
 }

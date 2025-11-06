@@ -1,11 +1,11 @@
-import copyIcon from '../../assets/icons/copy/2.png';
-import deleteIcon from '../../assets/icons/delete/2.png';
-import newIcon from '../../assets/icons/paragraph/2.png';
 import type Parent from '../../block/base/parent';
-import { isOsx } from '../../config';
 import type {
     IQuickInsertMenuItem,
 } from '../paragraphQuickInsertMenu/config';
+import copyIcon from '../../assets/icons/copy/2.png';
+import deleteIcon from '../../assets/icons/delete/2.png';
+import newIcon from '../../assets/icons/paragraph/2.png';
+import { isOsx } from '../../config';
 import {
     MENU_CONFIG,
 } from '../paragraphQuickInsertMenu/config';
@@ -50,7 +50,7 @@ export function canTurnIntoMenu(block: Parent) {
                 return ALL_MENU_CONFIG.filter(item => item.label !== 'frontmatter');
 
             const PARAGRAPH_TURN_INTO_REG
-        = /paragraph|atx-heading|block-quote|order-list|bullet-list|task-list/;
+                = /paragraph|atx-heading|block-quote|order-list|bullet-list|task-list/;
 
             return ALL_MENU_CONFIG.filter(item =>
                 PARAGRAPH_TURN_INTO_REG.test(item.label),

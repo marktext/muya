@@ -28,9 +28,9 @@ export default class Diagram {
     insertImgElement(container: string | HTMLElement) {
         const PLANTUML_URL = 'https://www.plantuml.com/plantuml';
         const div
-      = typeof container === 'string'
-          ? document.getElementById(container)
-          : container;
+            = typeof container === 'string'
+                ? document.getElementById(container)
+                : container;
         if (div === null || !div.tagName)
             throw new Error(`Invalid container: ${container}`);
 

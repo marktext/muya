@@ -1,5 +1,5 @@
-import EditIcon from '../../assets/icons/edit.png';
 import DeleteIcon from '../../assets/icons/delete/2.png';
+import EditIcon from '../../assets/icons/edit.png';
 
 export default [
     {

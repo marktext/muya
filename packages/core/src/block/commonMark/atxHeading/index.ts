@@ -1,11 +1,11 @@
+import type { Muya } from '../../../muya';
+import type { IAtxHeadingState } from '../../../state/types';
 import type Content from '../../base/content';
+import type { TBlockPath } from '../../types';
+import { mixins } from '../../../utils';
 import Parent from '../../base/parent';
 import LeafQueryBlock from '../../mixins/leafQueryBlock';
 import { ScrollPage } from '../../scrollPage';
-import type { TBlockPath } from '../../types';
-import { mixins } from '../../../utils';
-import type { IAtxHeadingState } from '../../../state/types';
-import type { Muya } from '../../../muya';
 
 @mixins(LeafQueryBlock)
 class AtxHeading extends Parent {

@@ -1,6 +1,6 @@
-import BaseFloat from '../baseFloat';
-import { h, patch } from '../../parser/render/snabbdom';
 import WarningIcon from '../../assets/pngicon/warning/2.png';
+import { h, patch } from '../../parser/render/snabbdom';
+import BaseFloat from '../baseFloat';
 
 import './index.css';
 

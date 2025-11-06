@@ -1,6 +1,6 @@
+import type { TState } from './types';
 import logger from '../utils/logger';
 import { lexBlock } from '../utils/marked';
-import type { TState } from './types';
 
 const debug = logger('import markdown: ');
 function restoreTableEscapeCharacters(text: string) {
@@ -104,7 +104,7 @@ export class MarkdownToState {
                 case 'heading': {
                     const { headingStyle, depth, text, marker } = token as any;
                     const name
-            = headingStyle === 'atx' ? 'atx-heading' : 'setext-heading';
+                        = headingStyle === 'atx' ? 'atx-heading' : 'setext-heading';
                     const meta: any = {
                         level: depth,
                     };
@@ -112,7 +112,7 @@ export class MarkdownToState {
                         meta.underline = marker;
 
                     value
-            = name === 'atx-heading' ? `${'#'.repeat(+depth)} ${text}` : text;
+                        = name === 'atx-heading' ? `${'#'.repeat(+depth)} ${text}` : text;
 
                     state = {
                         name,
@@ -267,7 +267,7 @@ export class MarkdownToState {
                 case 'list': {
                     const { listType, loose, start } = token as any;
                     const bulletMarkerOrDelimiter
-            = token.items[0].bulletMarkerOrDelimiter;
+                        = token.items[0].bulletMarkerOrDelimiter;
                     const meta: any = {
                         loose,
                     };

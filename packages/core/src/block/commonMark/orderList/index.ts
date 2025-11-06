@@ -1,11 +1,11 @@
+import type { Muya } from '../../../muya';
+import type { IOrderListState } from '../../../state/types';
+import type ListItem from '../listItem';
+import { mixins } from '../../../utils';
 import { LinkedList } from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
 import IContainerQueryBlock from '../../mixins/containerQueryBlock';
 import { ScrollPage } from '../../scrollPage';
-import type { Muya } from '../../../muya';
-import { mixins } from '../../../utils';
-import type { IOrderListState } from '../../../state/types';
-import type ListItem from '../listItem';
 
 @mixins(IContainerQueryBlock)
 class OrderList extends Parent {

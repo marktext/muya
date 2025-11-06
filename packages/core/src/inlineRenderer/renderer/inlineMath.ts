@@ -1,9 +1,9 @@
-import katex from 'katex';
-import 'katex/dist/contrib/mhchem.min.js';
-import { CLASS_NAMES } from '../../config';
-import { htmlToVNode } from '../../utils/snabbdom';
 import type { CodeEmojiMathToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import katex from 'katex';
+import { CLASS_NAMES } from '../../config';
+import { htmlToVNode } from '../../utils/snabbdom';
+import 'katex/dist/contrib/mhchem.min.js';
 
 import 'katex/dist/katex.min.css';
 
@@ -17,9 +17,9 @@ export default function inlineMath(this: Renderer, {
     const className = this.getClassName(outerClass, block, token, cursor);
     const { i18n } = this.muya;
     const mathSelector
-    = className === CLASS_NAMES.MU_HIDE
-        ? `span.${className}.${CLASS_NAMES.MU_MATH}`
-        : `span.${CLASS_NAMES.MU_MATH}`;
+        = className === CLASS_NAMES.MU_HIDE
+            ? `span.${className}.${CLASS_NAMES.MU_MATH}`
+            : `span.${CLASS_NAMES.MU_MATH}`;
 
     const { start, end } = token.range;
     const { marker } = token;
@@ -69,11 +69,11 @@ export default function inlineMath(this: Renderer, {
         h(`span.${className}.${CLASS_NAMES.MU_MATH_MARKER}`, startMarker),
         h(mathSelector, [
             h(
-        `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_MATH_TEXT}`,
-        {
-            attrs: { spellcheck: 'false' },
-        },
-        content,
+                `span.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_MATH_TEXT}`,
+                {
+                    attrs: { spellcheck: 'false' },
+                },
+                content,
             ),
             h(
                 previewSelector,

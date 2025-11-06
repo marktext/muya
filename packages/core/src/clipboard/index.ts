@@ -1,19 +1,19 @@
-import { fromEvent, merge } from 'rxjs';
 import type Content from '../block/base/content';
 import type Parent from '../block/base/parent';
+import type { Muya } from '../muya';
+import type { IBlockQuoteState, IParagraphState } from '../state/types';
+import type { Nullable } from '../types';
+import { fromEvent, merge } from 'rxjs';
 import CodeBlockContent from '../block/content/codeBlockContent';
 import { ScrollPage } from '../block/scrollPage';
 import { URL_REG } from '../config';
 import emptyStates from '../config/emptyStates';
-import type { Muya } from '../muya';
 import HtmlToMarkdown from '../state/htmlToMarkdown';
 import { MarkdownToState } from '../state/markdownToState';
-import type { IBlockQuoteState, IParagraphState } from '../state/types';
+import StateToMarkdown from '../state/stateToMarkdown';
 import { deepClone } from '../utils';
 import { getClipBoardHtml } from '../utils/marked';
 import { getCopyTextType, normalizePastedHTML } from '../utils/paste';
-import StateToMarkdown from '../state/stateToMarkdown';
-import type { Nullable } from '../types';
 
 class Clipboard {
     public copyType: string = 'normal'; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
@@ -109,7 +109,7 @@ class Clipboard {
         }
 
         const { isSelectionInSameBlock, anchor, anchorBlock, focus, focusBlock }
-      = selection;
+            = selection;
 
         if (anchorBlock == null || focusBlock == null) {
             return {
@@ -144,7 +144,7 @@ class Clipboard {
         const anchorOutMostBlock = anchorBlock.outMostBlock!;
         const focusOutMostBlock = focusBlock.outMostBlock!;
         const anchorOutMostBlockOffset
-      = this.scrollPage?.offset(anchorOutMostBlock);
+            = this.scrollPage?.offset(anchorOutMostBlock);
         const focusOutMostBlockOffset = this.scrollPage?.offset(focusOutMostBlock);
         if (anchorOutMostBlockOffset == null || focusOutMostBlockOffset == null) {
             return {
@@ -154,29 +154,29 @@ class Clipboard {
         }
 
         const startOutBlock
-      = anchorOutMostBlockOffset <= focusOutMostBlockOffset
-          ? anchorOutMostBlock
-          : focusOutMostBlock;
+            = anchorOutMostBlockOffset <= focusOutMostBlockOffset
+                ? anchorOutMostBlock
+                : focusOutMostBlock;
         const endOutBlock
-      = anchorOutMostBlockOffset <= focusOutMostBlockOffset
-          ? focusOutMostBlock
-          : anchorOutMostBlock;
+            = anchorOutMostBlockOffset <= focusOutMostBlockOffset
+                ? focusOutMostBlock
+                : anchorOutMostBlock;
         const startBlock
-      = anchorOutMostBlockOffset <= focusOutMostBlockOffset
-          ? anchorBlock
-          : focusBlock;
+            = anchorOutMostBlockOffset <= focusOutMostBlockOffset
+                ? anchorBlock
+                : focusBlock;
         const endBlock
-      = anchorOutMostBlockOffset <= focusOutMostBlockOffset
-          ? focusBlock
-          : anchorBlock;
+            = anchorOutMostBlockOffset <= focusOutMostBlockOffset
+                ? focusBlock
+                : anchorBlock;
         const startOffset
-      = anchorOutMostBlockOffset <= focusOutMostBlockOffset
-          ? anchor.offset
-          : focus.offset;
+            = anchorOutMostBlockOffset <= focusOutMostBlockOffset
+                ? anchor.offset
+                : focus.offset;
         const endOffset
-      = anchorOutMostBlockOffset <= focusOutMostBlockOffset
-          ? focus.offset
-          : anchor.offset;
+            = anchorOutMostBlockOffset <= focusOutMostBlockOffset
+                ? focus.offset
+                : anchor.offset;
 
         const getPartialState = (position: 'start' | 'end') => {
             const outBlock = position === 'start' ? startOutBlock : endOutBlock;
@@ -191,7 +191,7 @@ class Clipboard {
             }
             else if (/bullet-list|order-list|task-list/.test(outBlock!.blockName)) {
                 const listItemBlockName
-          = outBlock!.blockName === 'task-list' ? 'task-list-item' : 'list-item';
+                    = outBlock!.blockName === 'task-list' ? 'task-list-item' : 'list-item';
                 const listItem = block.farthestBlock(listItemBlockName);
                 const offset = (outBlock as Parent).offset(listItem!);
                 const { name, meta, children } = (outBlock as any).getState();
@@ -226,13 +226,13 @@ class Clipboard {
             }
             else {
                 const listItemBlockName
-          = anchorOutMostBlock!.blockName === 'task-list'
-              ? 'task-list-item'
-              : 'list-item';
+                    = anchorOutMostBlock!.blockName === 'task-list'
+                        ? 'task-list-item'
+                        : 'list-item';
                 const anchorFarthestListItem
-          = anchorBlock.farthestBlock(listItemBlockName);
+                    = anchorBlock.farthestBlock(listItemBlockName);
                 const focusFarthestListItem
-          = focusBlock.farthestBlock(listItemBlockName);
+                    = focusBlock.farthestBlock(listItemBlockName);
                 const anchorOffset = (anchorOutMostBlock as Parent).offset(
                     anchorFarthestListItem!,
                 );
@@ -329,11 +329,11 @@ class Clipboard {
         if (isSelectionInSameBlock) {
             const { text } = anchorBlock;
             const startOffset
-        = direction === 'forward' ? anchor.offset : focus.offset;
+                = direction === 'forward' ? anchor.offset : focus.offset;
             const endOffset = direction === 'forward' ? focus.offset : anchor.offset;
 
             anchorBlock.text
-        = text.substring(0, startOffset) + text.substring(endOffset);
+                = text.substring(0, startOffset) + text.substring(endOffset);
 
             return anchorBlock.setCursor(startOffset, startOffset, true);
         }
@@ -342,9 +342,9 @@ class Clipboard {
         const focusOutMostBlock = focusBlock.outMostBlock;
 
         const startOutBlock
-      = direction === 'forward' ? anchorOutMostBlock : focusOutMostBlock;
+            = direction === 'forward' ? anchorOutMostBlock : focusOutMostBlock;
         const endOutBlock
-      = direction === 'forward' ? focusOutMostBlock : anchorOutMostBlock;
+            = direction === 'forward' ? focusOutMostBlock : anchorOutMostBlock;
 
         if (startOutBlock == null || endOutBlock == null)
             return;
@@ -367,9 +367,9 @@ class Clipboard {
             ) {
                 if (position === 'start') {
                     const state
-            = outBlock.blockName === 'block-quote'
-                ? deepClone(emptyStates['block-quote'])
-                : deepClone(emptyStates.paragraph);
+                        = outBlock.blockName === 'block-quote'
+                            ? deepClone(emptyStates['block-quote'])
+                            : deepClone(emptyStates.paragraph);
                     const newBlock = ScrollPage.loadBlock(
                         (state as IBlockQuoteState | IParagraphState).name,
                     ).create(this.muya, state);
@@ -383,7 +383,7 @@ class Clipboard {
             }
             else if (/bullet-list|order-list|task-list/.test(outBlock.blockName)) {
                 const listItemBlockName
-          = outBlock.blockName === 'task-list' ? 'task-list-item' : 'list-item';
+                    = outBlock.blockName === 'task-list' ? 'task-list-item' : 'list-item';
                 const listItem = block.farthestBlock(listItemBlockName)!;
                 const offset = outBlock.offset(listItem);
                 outBlock.forEach((item, index) => {
@@ -456,13 +456,13 @@ class Clipboard {
             }
             else {
                 const listItemBlockName
-          = anchorOutMostBlock?.blockName === 'task-list'
-              ? 'task-list-item'
-              : 'list-item';
+                    = anchorOutMostBlock?.blockName === 'task-list'
+                        ? 'task-list-item'
+                        : 'list-item';
                 const anchorFarthestListItem
-          = anchorBlock.farthestBlock(listItemBlockName)!;
+                    = anchorBlock.farthestBlock(listItemBlockName)!;
                 const focusFarthestListItem
-          = focusBlock.farthestBlock(listItemBlockName)!;
+                    = focusBlock.farthestBlock(listItemBlockName)!;
                 const anchorOffset = anchorOutMostBlock?.offset(anchorFarthestListItem);
                 const focusOffset = anchorOutMostBlock?.offset(focusFarthestListItem);
 
@@ -575,9 +575,9 @@ class Clipboard {
 
         if (/html|text/.test(copyType)) {
             let markdown
-        = copyType === 'html' && anchorBlock.blockName !== 'codeblock.content'
-            ? new HtmlToMarkdown({ bulletListMarker }).generate(html)
-            : text;
+                = copyType === 'html' && anchorBlock.blockName !== 'codeblock.content'
+                    ? new HtmlToMarkdown({ bulletListMarker }).generate(html)
+                    : text;
 
             if (
                 /\n\n/.test(markdown)
@@ -585,7 +585,7 @@ class Clipboard {
             ) {
                 if (start.offset !== end.offset) {
                     anchorBlock.text
-            = content.substring(0, start.offset) + content.substring(end.offset);
+                        = content.substring(0, start.offset) + content.substring(end.offset);
                     anchorBlock.update();
                 }
                 // Has multiple paragraphs.
@@ -624,9 +624,9 @@ class Clipboard {
                     markdown = markdown.replace(/\n/g, '<br/>');
 
                 anchorBlock.text
-          = content.substring(0, start.offset)
-          + markdown
-          + content.substring(end.offset);
+                    = content.substring(0, start.offset)
+                        + markdown
+                        + content.substring(end.offset);
                 const offset = start.offset + markdown.length;
                 anchorBlock.setCursor(offset, offset, true);
                 // Update html preview if the out container is `html-block`

@@ -1,14 +1,14 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import { isLengthEven, union } from '../utils';
 import type { BeginRules, InlineRules } from './rules';
-import { beginRules, inlineRules, validateRules } from './rules';
 import type {
     ITokenizerFacOptions,
     ITokenizerOptions,
     Labels,
     Token,
 } from './types';
+import { isLengthEven, union } from '../utils';
+import { beginRules, inlineRules, validateRules } from './rules';
 import {
     correctUrl,
     getAttributes,
@@ -20,7 +20,7 @@ import {
 // const CAN_NEST_RULES = ['strong', 'em', 'link', 'del', 'a_link', 'reference_link', 'html_tag']
 // disallowed html tags in https://github.github.com/gfm/#raw-html
 const disallowedHtmlTag
-  = /title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext/i;
+    = /title|textarea|style|xmp|iframe|noembed|noframes|script|plaintext/i;
 
 function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: InlineRules, pos = 0, top: boolean, labels: Labels, options: ITokenizerFacOptions) {
     const originSrc = src;
@@ -237,7 +237,7 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
         // superscript and subscript
         if (superSubScript) {
             const superSubTo
-        = inlineRules.superscript.exec(src) || inlineRules.subscript.exec(src);
+                = inlineRules.superscript.exec(src) || inlineRules.subscript.exec(src);
             if (superSubTo) {
                 pushPending();
                 tokens.push({
@@ -535,14 +535,14 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
                 content: htmlTo[4],
                 children: htmlTo[4]
                     ? tokenizerFac(
-                        htmlTo[4],
-                        null,
-                        inlineRules,
-                        pos + htmlTo[2].length,
-                        false,
-                        labels,
-                        options,
-                    )
+                            htmlTo[4],
+                            null,
+                            inlineRules,
+                            pos + htmlTo[2].length,
+                            false,
+                            labels,
+                            options,
+                        )
                     : [],
                 range: {
                     start: pos,

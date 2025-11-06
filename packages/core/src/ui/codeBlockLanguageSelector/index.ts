@@ -1,13 +1,13 @@
 import type { VNode } from 'snabbdom';
-import { ScrollPage } from '../../block/scrollPage';
-import { search } from '../../utils/prism';
-import { h, patch } from '../../utils/snabbdom';
-import BaseScrollFloat from '../baseScrollFloat';
-import fileIcons from '../utils/fileIcons';
-
 import type LangInputContent from '../../block/content/langInputContent';
 import type ParagraphContent from '../../block/content/paragraphContent';
 import type { Muya } from '../../index';
+import { ScrollPage } from '../../block/scrollPage';
+import { search } from '../../utils/prism';
+
+import { h, patch } from '../../utils/snabbdom';
+import BaseScrollFloat from '../baseScrollFloat';
+import fileIcons from '../utils/fileIcons';
 
 import './index.css';
 
@@ -89,11 +89,11 @@ export class CodeBlockLanguageSelector extends BaseScrollFloat {
 
             if (iconClassNames) {
                 const iconSelector
-        = `span${
-         iconClassNames
-            .split(/\s/)
-            .map((s: string) => `.${s}`)
-            .join('')}`;
+                    = `span${
+                        iconClassNames
+                            .split(/\s/)
+                            .map((s: string) => `.${s}`)
+                            .join('')}`;
                 const icon = h('div.icon-wrapper', h(iconSelector));
                 itemContent.push(icon);
             }
@@ -149,22 +149,22 @@ export class CodeBlockLanguageSelector extends BaseScrollFloat {
 
         if (isParagraphContent(block)) {
             const state
-        = muya.options.isGitlabCompatibilityEnabled && name === 'math'
-            ? {
-                    name: 'math-block',
-                    meta: {
-                        mathStyle: 'gitlab',
-                    },
-                    text: '',
-                }
-            : {
-                    name: 'code-block',
-                    meta: {
-                        lang: name,
-                        type: 'fenced',
-                    },
-                    text: '',
-                };
+                = muya.options.isGitlabCompatibilityEnabled && name === 'math'
+                    ? {
+                            name: 'math-block',
+                            meta: {
+                                mathStyle: 'gitlab',
+                            },
+                            text: '',
+                        }
+                    : {
+                            name: 'code-block',
+                            meta: {
+                                lang: name,
+                                type: 'fenced',
+                            },
+                            text: '',
+                        };
 
             const newBlock = ScrollPage.loadBlock(state.name).create(
                 this.muya,

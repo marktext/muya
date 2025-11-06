@@ -1,15 +1,15 @@
-import Popper from 'popper.js';
 import type { VNode } from 'snabbdom';
+import type Parent from '../../block/base/parent';
+import type { Muya } from '../../index';
+import type { IBaseOptions } from '../types';
+import Popper from 'popper.js';
+
+import dragIcon from '../../assets/icons/drag/2.png';
+import BulletList from '../../block/commonMark/bulletList';
+import OrderList from '../../block/commonMark/orderList';
 import { BLOCK_DOM_PROPERTY } from '../../config';
 import { isMouseEvent, throttle, verticalPositionInRect } from '../../utils';
 import { h, patch } from '../../utils/snabbdom';
-
-import dragIcon from '../../assets/icons/drag/2.png';
-import type Parent from '../../block/base/parent';
-import BulletList from '../../block/commonMark/bulletList';
-import OrderList from '../../block/commonMark/orderList';
-import type { Muya } from '../../index';
-import type { IBaseOptions } from '../types';
 import { getIcon } from './config';
 import './index.css';
 
@@ -29,17 +29,17 @@ function defaultOptions() {
 
 function renderIcon(i: string, className: string) {
     return h(
-    `i.icon${className ? `.${className}` : ''}`,
-    h(
-        'i.icon-inner',
-        {
-            style: {
-                'background': `url(${i}) no-repeat`,
-                'background-size': '100%',
+        `i.icon${className ? `.${className}` : ''}`,
+        h(
+            'i.icon-inner',
+            {
+                style: {
+                    'background': `url(${i}) no-repeat`,
+                    'background-size': '100%',
+                },
             },
-        },
-        '',
-    ),
+            '',
+        ),
     );
 }
 
@@ -230,7 +230,7 @@ export class ParagraphFrontButton {
 
             // TODO: @JOCS, remove use this.selection directly.
             const { anchorBlock, anchor, focus, isSelectionInSameBlock }
-        = block.muya.editor.selection ?? {};
+                = block.muya.editor.selection ?? {};
 
             if (
                 isSelectionInSameBlock

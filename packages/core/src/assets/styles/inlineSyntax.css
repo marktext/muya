@@ -33,8 +33,7 @@ code.mu-inline-rule {
 
     color: var(--editor-color);
     font-size: 0.8em;
-    font-family: 'DejaVu Sans Mono', 'Source Code Pro', 'Droid Sans Mono',
-        Consolas, monospace;
+    font-family: 'DejaVu Sans Mono', 'Source Code Pro', 'Droid Sans Mono', Consolas, monospace;
 
     background-color: var(--code-block-bg-color);
     border-radius: 3px;
@@ -219,10 +218,7 @@ div .mu-math-error,
     border-bottom-color: var(--float-bg-color);
 }
 
-.mu-gray.mu-ruby
-    > .mu-ruby-render::before
-    .mu-gray.mu-math
-    > .mu-math-render::before {
+.mu-gray.mu-ruby > .mu-ruby-render::before .mu-gray.mu-math > .mu-math-render::before {
     position: absolute;
     bottom: 100%;
     left: 50%;
@@ -236,10 +232,7 @@ div .mu-math-error,
     content: '';
 }
 
-.mu-hide.mu-ruby
-    > .mu-ruby-render::before
-    .mu-hide.mu-math
-    > .mu-math-render::before {
+.mu-hide.mu-ruby > .mu-ruby-render::before .mu-hide.mu-math > .mu-math-render::before {
     content: none;
 }
 
@@ -420,9 +413,7 @@ blockquote .mu-hide.mu-math > .mu-math-render {
     opacity: 0.3;
 }
 
-.mu-inline-image.mu-image-success.mu-inline-image-selected
-    .mu-image-container
-    img {
+.mu-inline-image.mu-image-success.mu-inline-image-selected .mu-image-container img {
     filter: brightness(80%);
 }
 

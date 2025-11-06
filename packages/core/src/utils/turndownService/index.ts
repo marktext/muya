@@ -1,5 +1,5 @@
-import * as turndownPluginGfm from 'joplin-turndown-plugin-gfm';
 import type { Filter, Node } from 'turndown';
+import * as turndownPluginGfm from 'joplin-turndown-plugin-gfm';
 import TurndownService from 'turndown';
 import { identity } from '../../utils';
 
@@ -39,10 +39,10 @@ export function usePluginsAddRules(turndownService: TurndownService) {
             else {
                 return (
                     `\n\n${
-           '#'.repeat(hLevel)
-           } ${
-           content.replace(/\n+/, '')
-           }\n\n`
+                        '#'.repeat(hLevel)
+                    } ${
+                        content.replace(/\n+/, '')
+                    }\n\n`
                 );
             }
         },
@@ -65,8 +65,8 @@ export function usePluginsAddRules(turndownService: TurndownService) {
 
         replacement(content: string, node: Node) {
             const isTaskListItemParagraph
-        = node instanceof HTMLElement
-        && node.firstElementChild?.tagName === 'INPUT';
+                = node instanceof HTMLElement
+                    && node.firstElementChild?.tagName === 'INPUT';
             return isTaskListItemParagraph
                 ? `${content.replace(/\]\s+\n/, '] ')}\n\n`
                 : `\n\n${content}\n\n`;

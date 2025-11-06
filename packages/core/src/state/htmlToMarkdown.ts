@@ -1,6 +1,6 @@
+import type { ITurnoverOptions } from './types';
 import { DEFAULT_TURNDOWN_CONFIG } from '../config';
 import TurndownService, { usePluginsAddRules } from '../utils/turndownService';
-import type { ITurnoverOptions } from './types';
 
 // Just because turndown change `\n`(soft line break) to space, So we add `span.ag-soft-line-break` to workaround.
 function turnSoftBreakToSpan(html: string) {
@@ -17,17 +17,17 @@ function turnSoftBreakToSpan(html: string) {
                 let endLen = 0;
                 const text
                     = node.nodeValue
-                    ?? ''
-                        .replace(/^(\n+)/, (_, p) => {
-                            startLen = p.length;
+                        ?? ''
+                            .replace(/^(\n+)/, (_, p) => {
+                                startLen = p.length;
 
-                            return '';
-                        })
-                        .replace(/(\n+)$/, (_, p) => {
-                            endLen = p.length;
+                                return '';
+                            })
+                            .replace(/(\n+)$/, (_, p) => {
+                                endLen = p.length;
 
-                            return '';
-                        });
+                                return '';
+                            });
                 if (/\n/.test(text)) {
                     const tokens = text.split('\n');
                     const params = [];

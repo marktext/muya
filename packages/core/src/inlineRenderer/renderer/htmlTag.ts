@@ -1,9 +1,9 @@
 import type { VNode } from 'snabbdom';
+import type { HTMLTagToken, ImageToken, ISyntaxRenderOptions, Token } from '../types';
+import type Renderer from './index';
 import { BLOCK_TYPE6, CLASS_NAMES } from '../../config';
 import { snakeToCamel } from '../../utils';
 import sanitize, { isValidAttribute } from '../../utils/dompurify';
-import type { HTMLTagToken, ISyntaxRenderOptions, ImageToken, Token } from '../types';
-import type Renderer from './index';
 
 export default function htmlTag(
     this: Renderer,
@@ -21,7 +21,7 @@ export default function htmlTag(
         ? this.getClassName(outerClass, block, token, cursor)
         : CLASS_NAMES.MU_GRAY;
     const tagClassName
-    = className === CLASS_NAMES.MU_HIDE ? className : CLASS_NAMES.MU_HTML_TAG;
+        = className === CLASS_NAMES.MU_HIDE ? className : CLASS_NAMES.MU_HTML_TAG;
     const { start, end } = token.range;
     const openContent = this.highlight(
         h,
@@ -35,19 +35,19 @@ export default function htmlTag(
         : '';
 
     const anchor
-    = Array.isArray(children) && children.length && tag !== 'ruby' // important
-        ? children.reduce((acc: VNode[], to: Token) => {
-            const chunk = (this as any)[snakeToCamel(to.type)]({
-                h,
-                cursor,
-                block,
-                token: to,
-                className,
-            });
+        = Array.isArray(children) && children.length && tag !== 'ruby' // important
+            ? children.reduce((acc: VNode[], to: Token) => {
+                    const chunk = (this as any)[snakeToCamel(to.type)]({
+                        h,
+                        cursor,
+                        block,
+                        token: to,
+                        className,
+                    });
 
-            return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
-        }, [])
-        : '';
+                    return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];
+                }, [])
+            : '';
 
     switch (tag) {
     // Handle html img.
@@ -79,7 +79,7 @@ export default function htmlTag(
                 // we also recommand user not use block level element in paragraph. use block element in html block.
                 // Use code !sanitize(`<${tag}>`) to filter some malicious tags. for example: <embed>.
                 let selector
-          = BLOCK_TYPE6.includes(tag) || !sanitize(`<${tag}>`) ? 'span' : tag;
+                    = BLOCK_TYPE6.includes(tag) || !sanitize(`<${tag}>`) ? 'span' : tag;
                 selector += `.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_RAW_HTML}`;
                 const data = {
                     attrs: {} as Record<string, string>,
@@ -114,23 +114,23 @@ export default function htmlTag(
 
                 return [
                     h(
-            `span.${tagClassName}.${CLASS_NAMES.MU_OUTPUT_REMOVE}`,
-            {
-                attrs: {
-                    spellcheck: 'false',
-                },
-            },
-            openContent,
+                        `span.${tagClassName}.${CLASS_NAMES.MU_OUTPUT_REMOVE}`,
+                        {
+                            attrs: {
+                                spellcheck: 'false',
+                            },
+                        },
+                        openContent,
                     ),
                     h(`${selector}`, data, anchor),
                     h(
-            `span.${tagClassName}.${CLASS_NAMES.MU_OUTPUT_REMOVE}`,
-            {
-                attrs: {
-                    spellcheck: 'false',
-                },
-            },
-            closeContent,
+                        `span.${tagClassName}.${CLASS_NAMES.MU_OUTPUT_REMOVE}`,
+                        {
+                            attrs: {
+                                spellcheck: 'false',
+                            },
+                        },
+                        closeContent,
                     ),
                 ];
             }

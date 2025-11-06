@@ -1,8 +1,8 @@
 import type { ReferenceObject } from 'popper.js';
 import type { Muya } from '../../muya';
-import BaseFloat from '../baseFloat';
 import { EVENT_KEYS } from '../../config';
 import { isKeyboardEvent, noop } from '../../utils';
+import BaseFloat from '../baseFloat';
 
 abstract class BaseScrollFloat extends BaseFloat {
     public scrollElement: HTMLElement | null = null;

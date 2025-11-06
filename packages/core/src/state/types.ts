@@ -146,28 +146,28 @@ export interface IDiagramState {
     text: string;
 }
 
-export type TLeafState =
-    | IParagraphState
-    | IAtxHeadingState
-    | ISetextHeadingState
-    | IThematicBreakState
-    | ICodeBlockState
-    | IHtmlBlockState
-    | ILinkReferenceDefinitionState
-    | IMathBlockState
-    | IFrontmatterState
-    | IDiagramState
-    | ITableCellState;
+export type TLeafState
+    = | IParagraphState
+        | IAtxHeadingState
+        | ISetextHeadingState
+        | IThematicBreakState
+        | ICodeBlockState
+        | IHtmlBlockState
+        | ILinkReferenceDefinitionState
+        | IMathBlockState
+        | IFrontmatterState
+        | IDiagramState
+        | ITableCellState;
 
-export type TContainerState =
-    | IBlockQuoteState
-    | IOrderListState
-    | IBulletListState
-    | ITableState
-    | ITaskListState
-    | ITaskListItemState
-    | IListItemState
-    | ITableRowState;
+export type TContainerState
+    = | IBlockQuoteState
+        | IOrderListState
+        | IBulletListState
+        | ITableState
+        | ITaskListState
+        | ITaskListItemState
+        | IListItemState
+        | ITableRowState;
 
 export type TState = TLeafState | TContainerState;
 

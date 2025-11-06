@@ -1,12 +1,12 @@
-import { BLOCK_DOM_PROPERTY } from '../../config';
 import type { Muya } from '../../muya';
 import type { Nullable } from '../../types';
-import { createDomNode } from '../../utils/dom';
 import type { IAttributes, IDatasets } from '../../utils/types';
 import type { IConstructor } from '../types';
 import type Content from './content';
 import type { ILinkedNode } from './linkedList/linkedNode';
 import type Parent from './parent';
+import { BLOCK_DOM_PROPERTY } from '../../config';
+import { createDomNode } from '../../utils/dom';
 
 class TreeNode implements ILinkedNode {
     prev: Nullable<TreeNode> = null;

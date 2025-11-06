@@ -1,9 +1,9 @@
 import type { Doc, JSONOpList } from 'ot-json1';
-import * as json1 from 'ot-json1';
 import type { Muya } from '../muya';
-import type { Nullable } from '../types';
 import type { ISelection } from '../selection/types';
 import type { TState } from '../state/types';
+import type { Nullable } from '../types';
+import * as json1 from 'ot-json1';
 
 interface IOptions {
     delay: number;
@@ -124,7 +124,7 @@ class History {
             && this._stack.undo.length > 0
         ) {
             const { operation: lastOperation, selection: lastSelection }
-        = this._stack.undo.pop()!;
+                = this._stack.undo.pop()!;
             selection = lastSelection;
             undoOperation = json1.type.compose(undoOperation, lastOperation);
         }

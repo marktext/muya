@@ -1,9 +1,9 @@
-import Popper from 'popper.js';
 import type { ReferenceObject } from 'popper.js';
-import { isKeyboardEvent, noop } from '../../utils';
-import { EVENT_KEYS } from '../../config';
 import type { Muya } from '../../index';
 import type { IBaseOptions } from '../types';
+import Popper from 'popper.js';
+import { EVENT_KEYS } from '../../config';
+import { isKeyboardEvent, noop } from '../../utils';
 
 import './index.css';
 

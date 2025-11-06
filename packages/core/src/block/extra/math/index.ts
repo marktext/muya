@@ -1,8 +1,8 @@
-import Parent from '../../base/parent';
-import { ScrollPage } from '../../scrollPage';
-import type { TBlockPath } from '../../types';
 import type { Muya } from '../../../muya';
 import type { IMathBlockState, IMathMeta } from '../../../state/types';
+import type { TBlockPath } from '../../types';
+import Parent from '../../base/parent';
+import { ScrollPage } from '../../scrollPage';
 
 class MathBlock extends Parent {
     public meta: IMathMeta;

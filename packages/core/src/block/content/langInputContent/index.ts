@@ -1,9 +1,9 @@
-import Content from '../../base/content';
-import type CodeBlock from '../../commonMark/codeBlock';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
 import type { ICodeBlockState } from '../../../state/types';
+import type CodeBlock from '../../commonMark/codeBlock';
 import { getHighlightHtml } from '../../../utils/highlightHTML';
+import Content from '../../base/content';
 
 class LangInputContent extends Content {
     public override parent: CodeBlock | null = null;

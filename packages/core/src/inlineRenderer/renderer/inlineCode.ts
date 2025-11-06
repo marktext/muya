@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from '../../config';
 import type { CodeEmojiMathToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
 
 export default function inlineCode(
     this: Renderer,
@@ -35,13 +35,13 @@ export default function inlineCode(
     return [
         h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, startMarker),
         h(
-      `code.${CLASS_NAMES.MU_INLINE_RULE}`,
-      {
-          attrs: {
-              spellcheck: 'false',
-          },
-      },
-      content,
+            `code.${CLASS_NAMES.MU_INLINE_RULE}`,
+            {
+                attrs: {
+                    spellcheck: 'false',
+                },
+            },
+            content,
         ),
         h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, endMarker),
     ];

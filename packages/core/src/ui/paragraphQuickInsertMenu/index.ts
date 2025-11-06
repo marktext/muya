@@ -1,16 +1,16 @@
-import Fuse from 'fuse.js';
 import type { VNode } from 'snabbdom';
-import ParagraphContent from '../../block/content/paragraphContent';
-import BaseScrollFloat from '../baseScrollFloat';
-import { deepClone } from '../../utils';
-import { h, patch } from '../../utils/snabbdom';
 import type { Muya } from '../../index';
 import type {
     IQuickInsertMenuItem,
 } from './config';
+import Fuse from 'fuse.js';
+import ParagraphContent from '../../block/content/paragraphContent';
+import { deepClone } from '../../utils';
+import { h, patch } from '../../utils/snabbdom';
+import BaseScrollFloat from '../baseScrollFloat';
 import {
-    MENU_CONFIG,
     getLabelFromEvent,
+    MENU_CONFIG,
     replaceBlockByLabel,
 } from './config';
 
@@ -91,7 +91,7 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
 
         const handleKeydown = (event: Event) => {
             const { anchorBlock, isSelectionInSameBlock }
-        = editor.selection.getSelection() ?? {};
+                = editor.selection.getSelection() ?? {};
             if (isSelectionInSameBlock && anchorBlock instanceof ParagraphContent) {
                 if (anchorBlock.text)
                     return;
@@ -125,14 +125,14 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
                     h(
                         'i.icon',
                         h(
-              `i.icon-${label.replace(/\s/g, '-')}`,
-              {
-                  style: {
-                      'background': `url(${icon}) no-repeat`,
-                      'background-size': '100%',
-                  },
-              },
-              '',
+                            `i.icon-${label.replace(/\s/g, '-')}`,
+                            {
+                                style: {
+                                    'background': `url(${icon}) no-repeat`,
+                                    'background-size': '100%',
+                                },
+                            },
+                            '',
                         ),
                     ),
                 );
@@ -148,7 +148,7 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
                 ]);
                 const shortCutVnode = h('div.short-cut', [h('span', shortCut)]);
                 const selector
-          = activeItem!.label === label ? 'div.item.active' : 'div.item';
+                    = activeItem!.label === label ? 'div.item.active' : 'div.item';
                 items.push(
                     h(
                         selector,
@@ -190,7 +190,8 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
         if (!canInsertFrontMatter) {
             menuConfig
                 .find(menu => menu.name === 'basic blocks')
-                ?.children.splice(2, 1);
+                ?.children
+                .splice(2, 1);
         }
         let result = menuConfig;
         if (text !== '') {
@@ -240,7 +241,7 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
         const { label } = item;
 
         return this.scrollElement!.querySelector(
-      `[data-label="${label}"]`,
+            `[data-label="${label}"]`,
         ) as HTMLElement;
     }
 }

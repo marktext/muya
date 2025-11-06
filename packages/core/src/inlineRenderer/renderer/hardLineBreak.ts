@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from '../../config';
 import type { HardLineBreakToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
 
 export default function hardLineBreak(
     this: Renderer,

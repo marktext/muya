@@ -75,7 +75,6 @@
         "vega-lite": "^6.4.1"
     },
     "devDependencies": {
-        "@types/dompurify": "^3.2.0",
         "@types/katex": "^0.16.7",
         "@types/plantuml-encoder": "^1.4.2",
         "@types/popper.js": "^1.11.0",

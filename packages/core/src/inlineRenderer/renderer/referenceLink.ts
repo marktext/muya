@@ -1,9 +1,9 @@
 import type { VNode } from 'snabbdom';
+import type { ISyntaxRenderOptions, ReferenceLinkToken, Token } from '../types';
+import type Renderer from './index';
 import { CLASS_NAMES } from '../../config';
 import { snakeToCamel } from '../../utils';
 import { sanitizeHyperlink } from '../../utils/url';
-import type { ISyntaxRenderOptions, ReferenceLinkToken, Token } from '../types';
-import type Renderer from './index';
 
 export default function referenceLink(
     this: Renderer,
@@ -17,9 +17,9 @@ export default function referenceLink(
 ) {
     const className = this.getClassName(outerClass, block, token, cursor);
     const labelClass
-    = className === CLASS_NAMES.MU_GRAY
-        ? CLASS_NAMES.MU_REFERENCE_LABEL
-        : className;
+        = className === CLASS_NAMES.MU_GRAY
+            ? CLASS_NAMES.MU_REFERENCE_LABEL
+            : className;
 
     const { start, end } = token.range;
     const { anchor, children, backlash, isFullLink, label } = token;

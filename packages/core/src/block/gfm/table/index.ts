@@ -1,18 +1,18 @@
-import diff from 'fast-diff';
-import { fromEvent } from 'rxjs';
-import { LinkedList } from '../../base/linkedList/linkedList';
-import Parent from '../../base/parent';
-import type TableCellContent from '../../content/tableCell';
-import { ScrollPage } from '../../scrollPage';
-import type { TBlockPath } from '../../types';
 import type { Muya } from '../../../muya';
-import type { Nullable } from '../../../types';
-import { diffToTextOp } from '../../../utils';
-import logger from '../../../utils/logger';
 import type { ITableState } from '../../../state/types';
+import type { Nullable } from '../../../types';
+import type TableCellContent from '../../content/tableCell';
+import type { TBlockPath } from '../../types';
 import type TableBodyCell from './cell';
 import type TableRow from './row';
 import type TableInner from './table';
+import diff from 'fast-diff';
+import { fromEvent } from 'rxjs';
+import { diffToTextOp } from '../../../utils';
+import logger from '../../../utils/logger';
+import { LinkedList } from '../../base/linkedList/linkedList';
+import Parent from '../../base/parent';
+import { ScrollPage } from '../../scrollPage';
 
 const debug = logger('table:');
 
@@ -131,9 +131,9 @@ class Table extends Parent {
         const { columnCount } = this;
         const firstRowState = this.getState().children[0];
         const currentRow
-      = offset > 0
-          ? (this.firstChild as TableInner).find(offset - 1)
-          : (this.firstChild as TableInner).find(offset);
+            = offset > 0
+                ? (this.firstChild as TableInner).find(offset - 1)
+                : (this.firstChild as TableInner).find(offset);
         const state = {
             name: 'table.row',
             // eslint-disable-next-line unicorn/no-new-array

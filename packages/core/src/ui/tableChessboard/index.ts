@@ -1,8 +1,8 @@
-// eslint-disable-next-line ts/ban-ts-comment
+import { EVENT_KEYS } from '../../config';
+import { h, patch } from '../../utils/snabbdom';
+
 // @ts-nocheck
 import BaseFloat from '../baseFloat';
-import { h, patch } from '../../utils/snabbdom';
-import { EVENT_KEYS } from '../../config';
 
 import './index.css';
 
@@ -20,7 +20,7 @@ class TablePicker extends BaseFloat {
         this.current = null;
         this.select = null;
         const tableContainer = (this.tableContainer
-      = document.createElement('div'));
+            = document.createElement('div'));
         this.container.appendChild(tableContainer);
         this.listen();
     }

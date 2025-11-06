@@ -1,12 +1,12 @@
 import type { VNode } from 'snabbdom';
-import { h, patch } from '../../utils/snabbdom';
-import BaseFloat from '../baseFloat';
-
 import type TableBodyCell from '../../block/gfm/table/cell';
 import type TableInner from '../../block/gfm/table/table';
+
 import type { Muya } from '../../index';
-import { toolList } from './config';
 import type { MenuItem } from './config';
+import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import { toolList } from './config';
 import './index.css';
 
 const defaultOptions = {

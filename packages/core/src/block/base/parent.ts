@@ -1,11 +1,11 @@
+import type { TState } from '../../state/types';
+import type { Nullable } from '../../types';
+import type { TBlockPath } from '../types';
 import { LinkedList } from '../../block/base/linkedList/linkedList';
 import TreeNode from '../../block/base/treeNode';
 import { CLASS_NAMES } from '../../config';
-import type { TState } from '../../state/types';
-import type { Nullable } from '../../types';
 import { operateClassName } from '../../utils/dom';
 import logger from '../../utils/logger';
-import type { TBlockPath } from '../types';
 
 const debug = logger('parent:');
 
@@ -107,7 +107,7 @@ class Parent extends TreeNode {
     append(...children: Parent[]): void;
     append(...args: unknown[]) {
         const source
-      = typeof args[args.length - 1] === 'string' ? args.pop() : 'api';
+            = typeof args[args.length - 1] === 'string' ? args.pop() : 'api';
 
         (args as Parent[]).forEach((node) => {
             node.parent = this;
@@ -143,8 +143,8 @@ class Parent extends TreeNode {
 
     forEachAt(
         index: number,
-    length: number = this.length(),
-    callback: (cur: TreeNode, i: number) => void,
+        length: number = this.length(),
+        callback: (cur: TreeNode, i: number) => void,
     ) {
         return this.children.forEachAt(index, length, callback);
     }
@@ -184,8 +184,8 @@ class Parent extends TreeNode {
 
     insertBefore(
         newNode: Parent,
-    refNode: Nullable<Parent> = null,
-    source = 'user',
+        refNode: Nullable<Parent> = null,
+        source = 'user',
     ) {
         newNode.parent = this;
         this.children.insertBefore(newNode, refNode);

@@ -1,13 +1,13 @@
-import { ScrollPage } from '../../scrollPage';
-import Format from '../../base/format';
+import type { Muya } from '../../../muya';
+import type { ICursor } from '../../../selection/types';
 import type Table from '../../gfm/table';
 import type Cell from '../../gfm/table/cell';
 import type Row from '../../gfm/table/row';
 import type TableInner from '../../gfm/table/table';
 import { EVENT_KEYS, isOsx } from '../../../config';
-import type { Muya } from '../../../muya';
-import type { ICursor } from '../../../selection/types';
 import { isKeyboardEvent } from '../../../utils';
+import Format from '../../base/format';
+import { ScrollPage } from '../../scrollPage';
 
 class TableCellContent extends Format {
     public hasZeroWidthSpaceAtBeginning: boolean = false;
@@ -71,7 +71,7 @@ class TableCellContent extends Format {
         const br = '<br/>';
 
         this.text
-      = text.substring(0, start.offset) + br + text.substring(end.offset);
+            = text.substring(0, start.offset) + br + text.substring(end.offset);
         const offset = start.offset + br.length;
         this.setCursor(offset, offset, true);
     }
@@ -214,7 +214,7 @@ class TableCellContent extends Format {
         if (
             !previousContentBlock
             || (previousContentBlock.blockName !== 'table.cell.content'
-            && this.table.isEmpty())
+                && this.table.isEmpty())
         ) {
             const state = {
                 name: 'paragraph',

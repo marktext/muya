@@ -137,8 +137,7 @@
 
     color: var(--editor-color-50);
     font-size: 90%;
-    font-family: 'DejaVu Sans Mono', 'Source Code Pro', 'Droid Sans Mono',
-        Consolas, monospace;
+    font-family: 'DejaVu Sans Mono', 'Source Code Pro', 'Droid Sans Mono', Consolas, monospace;
     line-height: 1.6;
 
     background: var(--code-block-bg-color);
@@ -464,8 +463,7 @@ figure.mu-active.mu-diagram-block .mu-diagram-container {
     opacity: 1;
 }
 
-figure:not(.mu-active, .mu-disable-html-render).mu-html-block
-    .mu-html-container,
+figure:not(.mu-active, .mu-disable-html-render).mu-html-block .mu-html-container,
 figure:not(.mu-active).mu-math-block .mu-math-container,
 figure:not(.mu-active).mu-diagram-block .mu-diagram-container {
     overflow: hidden;
@@ -639,9 +637,7 @@ pre.mu-active.mu-fenced-code::after {
     content: '\200B';
 }
 
-.mu-show-quick-insert-hint
-    .mu-paragraph.mu-active
-    > .mu-paragraph-content:first-of-type::after {
+.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type::after {
     padding-left: 8px;
 
     color: var(--editor-color-30);
@@ -649,9 +645,7 @@ pre.mu-active.mu-fenced-code::after {
     content: attr(placeholder);
 }
 
-.mu-show-quick-insert-hint
-    .mu-paragraph.mu-active
-    > .mu-paragraph-content:first-of-type:empty::after {
+.mu-show-quick-insert-hint .mu-paragraph.mu-active > .mu-paragraph-content:first-of-type:empty::after {
     color: var(--editor-color-30);
 
     content: attr(empty-hint);

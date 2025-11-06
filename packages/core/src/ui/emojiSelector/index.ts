@@ -1,9 +1,9 @@
 import type { VNode } from 'snabbdom';
-import BaseScrollFloat from '../baseScrollFloat';
-import { h, patch } from '../../utils/snabbdom';
-
 import type { Emoji as EmojiType } from '../../config/emojis';
 import type { Muya } from '../../index';
+
+import { h, patch } from '../../utils/snabbdom';
+import BaseScrollFloat from '../baseScrollFloat';
 import Emoji from './emoji';
 import './index.css';
 

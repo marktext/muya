@@ -1,8 +1,8 @@
 // eslint-disable-next-line ts/ban-ts-comment
 // @ts-nocheck
 
-import BaseFloat from '../baseFloat';
 import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
 import icons from './config';
 
 import './index.css';

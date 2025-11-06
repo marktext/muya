@@ -1,20 +1,20 @@
-import diff from 'fast-diff';
-import { ScrollPage } from '../../block/scrollPage';
-import TreeNode from '../../block/base/treeNode';
-import { BACK_HASH, BRACKET_HASH, EVENT_KEYS, isFirefox } from '../../config';
-import type { Muya } from '../../muya';
 import type { IHighlight } from '../../inlineRenderer/types';
-import Selection from '../../selection';
+import type { Muya } from '../../muya';
 import type { ICursor, INodeOffset } from '../../selection/types';
+import type { Nullable } from '../../types';
+import type { TBlockPath } from '../types';
+import type Parent from './parent';
+import diff from 'fast-diff';
+import TreeNode from '../../block/base/treeNode';
+import { ScrollPage } from '../../block/scrollPage';
+import { BACK_HASH, BRACKET_HASH, EVENT_KEYS, isFirefox } from '../../config';
+import Selection from '../../selection';
 import {
     adjustOffset,
     diffToTextOp,
     isInputEvent,
     isKeyboardEvent,
 } from '../../utils';
-import type { TBlockPath } from '../types';
-import type { Nullable } from '../../types';
-import type Parent from './parent';
 
 // import logger from './utils/logger'
 
@@ -282,9 +282,9 @@ class Content extends TreeNode {
         text: string,
         start: INodeOffset,
         end: INodeOffset,
-    isInInlineMath = false,
-    isInInlineCode = false,
-    type = 'format',
+        isInInlineMath = false,
+        isInInlineCode = false,
+        type = 'format',
     ) {
     // TODO: @JOCS, remove use this selection directly.
         const { anchor, focus } = this.selection;
@@ -299,7 +299,7 @@ class Content extends TreeNode {
             if (start.offset === end.offset && event.type === 'input') {
                 const { offset } = start;
                 const { autoPairBracket, autoPairMarkdownSyntax, autoPairQuote }
-          = this.muya.options;
+                    = this.muya.options;
                 const inputChar = text.charAt(+offset - 1);
                 const preInputChar = text.charAt(+offset - 2);
                 const prePreInputChar = text.charAt(+offset - 3);
@@ -330,12 +330,12 @@ class Content extends TreeNode {
                     !event.inputType.includes('delete')
                     && inputChar === postInputChar
                     && ((autoPairQuote && /'/.test(inputChar))
-                    || (autoPairQuote && /"/.test(inputChar))
-                    || (autoPairBracket && /[}\])]/.test(inputChar))
-                    || (autoPairMarkdownSyntax && /\$/.test(inputChar))
-                    || (autoPairMarkdownSyntax
-                    && /[*$`~_]/.test(inputChar)
-                    && /[_*~]/.test(prePreInputChar)))
+                        || (autoPairQuote && /"/.test(inputChar))
+                        || (autoPairBracket && /[}\])]/.test(inputChar))
+                        || (autoPairMarkdownSyntax && /\$/.test(inputChar))
+                        || (autoPairMarkdownSyntax
+                            && /[*$`~_]/.test(inputChar)
+                            && /[_*~]/.test(prePreInputChar)))
                 ) {
                     needRender = true;
                     text = text.substring(0, offset) + text.substring(offset + 1);
@@ -346,20 +346,20 @@ class Content extends TreeNode {
                     if (
                         !/\\/.test(preInputChar)
                         && ((autoPairQuote
-                        && /'/.test(inputChar)
-                        && !/[a-z\d]/i.test(preInputChar))
+                            && /'/.test(inputChar)
+                            && !/[a-z\d]/i.test(preInputChar))
                         || (autoPairQuote && /"/.test(inputChar))
                         || (autoPairBracket && /[{[(]/.test(inputChar))
                         || (type === 'format'
-                        && !isInInlineMath
-                        && !isInInlineCode
-                        && autoPairMarkdownSyntax
-                        && !/[a-z0-9]/i.test(preInputChar)
-                        && /[*$`~_]/.test(inputChar)))
+                            && !isInInlineMath
+                            && !isInInlineCode
+                            && autoPairMarkdownSyntax
+                            && !/[a-z0-9]/i.test(preInputChar)
+                            && /[*$`~_]/.test(inputChar)))
                     ) {
                         needRender = true;
                         text
-              = typeof event.data === 'string' && BRACKET_HASH[event.data]
+                            = typeof event.data === 'string' && BRACKET_HASH[event.data]
                                 ? text.substring(0, offset)
                                 + BRACKET_HASH[inputChar]
                                 + text.substring(offset)
@@ -369,11 +369,11 @@ class Content extends TreeNode {
                     // Delete the last `*` of `**` when you insert one space between `**` to create a bullet list.
                     if (
                         type === 'format'
-                            && typeof event.data === 'string'
-                            && /\s/.test(event.data)
-                            && /^\* /.test(text)
-                            && preInputChar === '*'
-                            && postInputChar === '*'
+                        && typeof event.data === 'string'
+                        && /\s/.test(event.data)
+                        && /^\* /.test(text)
+                        && preInputChar === '*'
+                        && postInputChar === '*'
                     ) {
                         text = text.substring(0, offset) + text.substring(offset + 1);
                         needRender = true;
@@ -417,9 +417,9 @@ class Content extends TreeNode {
 
         if (this.isCollapsed) {
             this.text
-        = text.substring(0, start.offset)
-        + tabCharacter
-        + text.substring(end.offset);
+                = text.substring(0, start.offset)
+                    + tabCharacter
+                    + text.substring(end.offset);
             const offset = start.offset + tabCharacter.length;
 
             this.setCursor(offset, offset, true);
@@ -434,10 +434,10 @@ class Content extends TreeNode {
         if (
             this.muya.ui.shownFloat.size > 0
             && (event.key === EVENT_KEYS.Enter
-            || event.key === EVENT_KEYS.Escape
-            || event.key === EVENT_KEYS.Tab
-            || event.key === EVENT_KEYS.ArrowUp
-            || event.key === EVENT_KEYS.ArrowDown)
+                || event.key === EVENT_KEYS.Escape
+                || event.key === EVENT_KEYS.Tab
+                || event.key === EVENT_KEYS.ArrowUp
+                || event.key === EVENT_KEYS.ArrowDown)
         ) {
             let needPreventDefault = false;
 

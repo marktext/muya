@@ -1,13 +1,13 @@
+import type { Muya } from '../../../muya';
+import type { IFrontmatterMeta, IFrontmatterState } from '../../../state/types';
+// import { operateClassName } from '../../../utils/dom'
+import type { TBlockPath } from '../../types';
+import logger from '../../../utils/logger';
+// import { diffToTextOp } from '../../../utils'
+import { loadLanguage } from '../../../utils/prism';
 // import diff from 'fast-diff'
 import Parent from '../../base/parent';
 import { ScrollPage } from '../../scrollPage';
-// import { diffToTextOp } from '../../../utils'
-import { loadLanguage } from '../../../utils/prism';
-// import { operateClassName } from '../../../utils/dom'
-import type { TBlockPath } from '../../types';
-import type { Muya } from '../../../muya';
-import logger from '../../../utils/logger';
-import type { IFrontmatterMeta, IFrontmatterState } from '../../../state/types';
 
 const debug = logger('frontmatter:');
 

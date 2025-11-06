@@ -1,23 +1,23 @@
+import type { Muya } from '../../../index';
+import type { ImageToken, LinkToken, Token } from '../../../inlineRenderer/types';
+import type { ICursor } from '../../../selection/types';
+import type {
+    IBlockQuoteState,
+    ITaskListItemState,
+} from '../../../state/types';
+import type { Nullable } from '../../../types';
 import type Content from '../../base/content';
-import Format from '../../base/format';
 import type Parent from '../../base/parent';
 import type BulletList from '../../commonMark/bulletList';
 import type OrderList from '../../commonMark/orderList';
 import type Paragraph from '../../commonMark/paragraph';
 import type TaskList from '../../gfm/taskList';
-import { ScrollPage } from '../../scrollPage';
 import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
-import type { Muya } from '../../../index';
 import { tokenizer } from '../../../inlineRenderer/lexer';
-import type { ImageToken, LinkToken, Token } from '../../../inlineRenderer/types';
-import type { ICursor } from '../../../selection/types';
-import type { Nullable } from '../../../types';
 import { isKeyboardEvent, isLengthEven } from '../../../utils';
 import logger from '../../../utils/logger';
-import type {
-    IBlockQuoteState,
-    ITaskListItemState,
-} from '../../../state/types';
+import Format from '../../base/format';
+import { ScrollPage } from '../../scrollPage';
 
 enum UnindentType {
     INDENT,
@@ -146,7 +146,7 @@ class ParagraphContent extends Format {
         const htmlMatch = HTML_BLOCK_REG.exec(text);
         const mathMath = MATH_BLOCK_REG.exec(text);
         const tagName
-      = htmlMatch && htmlMatch[1] && HTML_TAGS.find(t => t === htmlMatch[1]);
+            = htmlMatch && htmlMatch[1] && HTML_TAGS.find(t => t === htmlMatch[1]);
 
         if (mathMath) {
             const state = {
@@ -523,7 +523,7 @@ class ParagraphContent extends Format {
         if (
             listParent
             && (listParent.blockName === 'list-item'
-            || listParent.blockName === 'task-list-item')
+                || listParent.blockName === 'task-list-item')
         ) {
             return list.prev ? UnindentType.INDENT : UnindentType.REPLACEMENT;
         }
@@ -545,7 +545,7 @@ class ParagraphContent extends Format {
 
         if (
             (listItem.blockName !== 'list-item'
-            && listItem.blockName !== 'task-list-item')
+                && listItem.blockName !== 'task-list-item')
             || !this.isCollapsed
         ) {
             return false;
@@ -690,9 +690,9 @@ class ParagraphContent extends Format {
 
         if (this.isCollapsed) {
             this.text
-        = text.substring(0, start.offset)
-        + tabCharacter
-        + text.substring(end.offset);
+                = text.substring(0, start.offset)
+                    + tabCharacter
+                    + text.substring(end.offset);
             const offset = start.offset + tabCharacter.length;
 
             this.setCursor(offset, offset, true);
@@ -752,7 +752,7 @@ class ParagraphContent extends Format {
                             const hrefAndTitle = (token as LinkToken).hrefAndTitle;
                             const linkTitleLen = (srcAndTitle || hrefAndTitle).length;
                             const secondLashLen
-                = backlash && backlash.second ? backlash.second.length : 0;
+                                = backlash && backlash.second ? backlash.second.length : 0;
                             if (offset === end - 3 - (linkTitleLen + secondLashLen)) {
                                 result = {
                                     offset: 2,
@@ -776,7 +776,7 @@ class ParagraphContent extends Format {
                             const { backlash, isFullLink, label } = token;
                             const labelLen = label ? label.length : 0;
                             const secondLashLen
-                = backlash && backlash.second ? backlash.second.length : 0;
+                                = backlash && backlash.second ? backlash.second.length : 0;
                             if (isFullLink) {
                                 if (offset === end - 3 - labelLen - secondLashLen) {
                                     result = {

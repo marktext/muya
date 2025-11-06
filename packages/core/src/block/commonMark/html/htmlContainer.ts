@@ -1,8 +1,8 @@
+import type { Muya } from '../../../muya';
+import type { IHtmlBlockState, TState } from '../../../state/types';
+import logger from '../../../utils/logger';
 import Parent from '../../base/parent';
 import { ScrollPage } from '../../scrollPage';
-import type { Muya } from '../../../muya';
-import logger from '../../../utils/logger';
-import type { IHtmlBlockState, TState } from '../../../state/types';
 
 const debug = logger('htmlContainer:');
 

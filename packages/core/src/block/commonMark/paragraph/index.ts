@@ -1,10 +1,10 @@
-import Parent from '../../base/parent';
+import type { Muya } from '../../../muya';
+import type { IParagraphState } from '../../../state/types';
 import type ParagraphContent from '../../content/paragraphContent';
+import { mixins } from '../../../utils';
+import Parent from '../../base/parent';
 import LeafQueryBlock from '../../mixins/leafQueryBlock';
 import { ScrollPage } from '../../scrollPage';
-import type { Muya } from '../../../muya';
-import { mixins } from '../../../utils';
-import type { IParagraphState } from '../../../state/types';
 
 @mixins(LeafQueryBlock)
 class Paragraph extends Parent {

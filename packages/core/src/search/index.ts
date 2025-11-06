@@ -1,10 +1,10 @@
 import type Content from '../block/base/content';
-import { DEFAULT_SEARCH_OPTIONS } from '../config';
-import type { Muya } from '../muya';
-import { buildRegexValue, matchString } from '../utils/search';
-import type { IHighlight } from '../inlineRenderer/types';
 import type TreeNode from '../block/base/treeNode';
+import type { IHighlight } from '../inlineRenderer/types';
+import type { Muya } from '../muya';
 import type { IMatch } from './types';
+import { DEFAULT_SEARCH_OPTIONS } from '../config';
+import { buildRegexValue, matchString } from '../utils/search';
 
 export class Search {
     public value: string = '';

@@ -1,20 +1,20 @@
+import type { Listener } from './event/types';
+import type { ILocale } from './i18n/types';
+import type { TState } from './state/types';
+import type { IMuyaOptions } from './types';
 import {
     CLASS_NAMES,
     MUYA_DEFAULT_OPTIONS,
 } from './config/index';
 import { Editor } from './editor/index';
+
 import EventCenter from './event/index';
 import I18n from './i18n/index';
 import { Ui } from './ui/ui';
-import type { IMuyaOptions } from './types';
-
 import './assets/styles/blockSyntax.css';
 import './assets/styles/index.css';
 import './assets/styles/inlineSyntax.css';
 import './assets/styles/prismjs/light.theme.css';
-import type { ILocale } from './i18n/types';
-import type { Listener } from './event/types';
-import type { TState } from './state/types';
 
 interface IPlugin {
     plugin: any;

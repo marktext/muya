@@ -1,7 +1,8 @@
 import { resolve } from 'node:path';
 import libAssetsPlugin from '@laynezh/vite-plugin-lib-assets';
-import { defineConfig } from 'vitest/config';
 import dts from 'vite-plugin-dts';
+import { defineConfig } from 'vitest/config';
+
 import pkg from './package.json';
 
 // eslint-disable-next-line node/prefer-global/process

@@ -1,12 +1,12 @@
-import { ScrollPage } from '../../block/scrollPage';
-import { BLOCK_DOM_PROPERTY } from '../../config';
-import { isMouseEvent, throttle } from '../../utils';
-import BaseFloat from '../baseFloat';
-
 import type Table from '../../block/gfm/table';
 import type TableBodyCell from '../../block/gfm/table/cell';
 import type TableInner from '../../block/gfm/table/table';
 import type { Muya } from '../../index';
+
+import { ScrollPage } from '../../block/scrollPage';
+import { BLOCK_DOM_PROPERTY } from '../../config';
+import { isMouseEvent, throttle } from '../../utils';
+import BaseFloat from '../baseFloat';
 import './index.css';
 
 type BarType = 'bottom' | 'right';
@@ -245,7 +245,7 @@ export class TableDragBar extends BaseFloat {
         const { barType } = this.dragInfo;
         const attrName = barType === 'bottom' ? 'clientX' : 'clientY';
         const offset = (this.dragInfo.offset
-      = event[attrName] - this.dragInfo[attrName]);
+            = event[attrName] - this.dragInfo[attrName]);
         if (Math.abs(offset) < 5)
             return;
 
@@ -396,7 +396,7 @@ export class TableDragBar extends BaseFloat {
             return;
 
         const { dragCells, barType, curIndex, index, aspects, offset }
-      = this.dragInfo;
+            = this.dragInfo;
         let move = 0;
         let i;
         if (offset > 0) {
@@ -436,7 +436,7 @@ export class TableDragBar extends BaseFloat {
         if (table.active) {
             // TODO: @JOCS remove use this.selection directly
             const { anchorBlock, anchor, focus, isSelectionInSameBlock }
-        = this.muya.editor.selection ?? {};
+                = this.muya.editor.selection ?? {};
             const { rowOffset, columnOffset } = anchorBlock?.closestBlock(
                 'table.cell',
             ) as TableBodyCell;

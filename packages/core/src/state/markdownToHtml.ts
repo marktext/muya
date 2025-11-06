@@ -1,10 +1,10 @@
-import { EXPORT_DOMPURIFY_CONFIG } from '../config';
 import type { Muya } from '../muya';
+import exportStyle from '../assets/styles/exportStyle.css?inline';
+import { EXPORT_DOMPURIFY_CONFIG } from '../config';
 import { sanitize, unescapeHTML } from '../utils';
 import loadRenderer from '../utils/diagram';
-import { getHighlightHtml } from '../utils/marked';
 
-import exportStyle from '../assets/styles/exportStyle.css?inline';
+import { getHighlightHtml } from '../utils/marked';
 
 export class MarkdownToHtml {
     private exportContainer: HTMLDivElement | null = null;
@@ -46,7 +46,7 @@ export class MarkdownToHtml {
 
     async renderDiagram() {
         const selector
-      = 'code.language-vega-lite, code.language-plantuml';
+            = 'code.language-vega-lite, code.language-plantuml';
         const codes = this.exportContainer!.querySelectorAll(selector);
 
         for (const code of codes) {
@@ -100,7 +100,7 @@ export class MarkdownToHtml {
         html = sanitize(html, EXPORT_DOMPURIFY_CONFIG, false) as string;
 
         const exportContainer = (this.exportContainer
-      = document.createElement('div'));
+            = document.createElement('div'));
         exportContainer.classList.add('mu-render-container');
         exportContainer.innerHTML = html;
         document.body.appendChild(exportContainer);

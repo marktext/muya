@@ -1,5 +1,5 @@
-import { getLongUniqueId } from '../utils';
 import type { IHighlight } from '../inlineRenderer/types';
+import { getLongUniqueId } from '../utils';
 
 // TODO: @jocs any better solutions?
 export const MARKER_HASH = {
@@ -24,10 +24,10 @@ export function getHighlightHtml(text: string, highlights: IHighlight[], escape 
         let highlightContent = text.substring(start, end);
         if (handleLineEnding && text.endsWith('\n') && end === text.length) {
             highlightContent
-        = highlightContent.substring(start, end - 1)
-        + (escape
-            ? getEscapeHTML('mu-line-end', '\n')
-            : '<span class="mu-line-end">\n</span>');
+                = highlightContent.substring(start, end - 1)
+                    + (escape
+                        ? getEscapeHTML('mu-line-end', '\n')
+                        : '<span class="mu-line-end">\n</span>');
         }
         code += escape
             ? getEscapeHTML(className, highlightContent)
@@ -38,10 +38,10 @@ export function getHighlightHtml(text: string, highlights: IHighlight[], escape 
     if (pos !== text.length) {
         if (handleLineEnding && text.endsWith('\n')) {
             code
-        += text.substring(pos, text.length - 1)
-        + (escape
-            ? getEscapeHTML('mu-line-end', '\n')
-            : '<span class="mu-line-end">\n</span>');
+                += text.substring(pos, text.length - 1)
+                    + (escape
+                        ? getEscapeHTML('mu-line-end', '\n')
+                        : '<span class="mu-line-end">\n</span>');
         }
         else {
             code += text.substring(pos);

@@ -93,7 +93,7 @@ function initLoadLanguage(Prism: any) {
             else {
                 delete Prism.languages[lang];
                 await import(
-          `../../../node_modules/prismjs/components/prism-${lang}.js`
+                    `../../../node_modules/prismjs/components/prism-${lang}.js`,
                 );
                 defer.resolve({
                     lang,

@@ -1,13 +1,13 @@
-import diff from 'fast-diff';
-import Parent from '../../base/parent';
-import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
+import type { ICodeBlockState } from '../../../state/types';
+import type { TBlockPath } from '../../types';
+import diff from 'fast-diff';
 import { diffToTextOp } from '../../../utils';
 import { operateClassName } from '../../../utils/dom';
 import logger from '../../../utils/logger';
 import { loadLanguage } from '../../../utils/prism';
-import type { ICodeBlockState } from '../../../state/types';
-import type { TBlockPath } from '../../types';
+import Parent from '../../base/parent';
+import { ScrollPage } from '../../scrollPage';
 
 const debug = logger('codeblock:');
 

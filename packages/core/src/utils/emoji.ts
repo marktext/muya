@@ -1,5 +1,5 @@
-import emojis from '../config/emojis';
 import { CLASS_NAMES } from '../config';
+import emojis from '../config/emojis';
 
 /**
  * check if one emoji code is in emojis, return undefined or found emoji

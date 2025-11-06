@@ -1,6 +1,6 @@
-import { CLASS_NAMES } from '../../config';
 import type { FootnoteIdentifierToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
 
 export default function footnoteIdentifier(
     this: Renderer,
@@ -34,20 +34,20 @@ export default function footnoteIdentifier(
 
     return [
         h(
-      `sup#noteref-${token.content}.${CLASS_NAMES.MU_INLINE_FOOTNOTE_IDENTIFIER}.${CLASS_NAMES.MU_INLINE_RULE}`,
-      [
-          h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, startMarker),
-          h(
-              'a',
-              {
-                  attrs: {
-                      spellcheck: 'false',
-                  },
-              },
-              content,
-          ),
-          h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, endMarker),
-      ],
+            `sup#noteref-${token.content}.${CLASS_NAMES.MU_INLINE_FOOTNOTE_IDENTIFIER}.${CLASS_NAMES.MU_INLINE_RULE}`,
+            [
+                h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, startMarker),
+                h(
+                    'a',
+                    {
+                        attrs: {
+                            spellcheck: 'false',
+                        },
+                    },
+                    content,
+                ),
+                h(`span.${className}.${CLASS_NAMES.MU_REMOVE}`, endMarker),
+            ],
         ),
     ];
 }

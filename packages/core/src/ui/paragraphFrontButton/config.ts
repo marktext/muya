@@ -1,3 +1,7 @@
+import type Parent from '../../block/base/parent';
+import type AtxHeading from '../../block/commonMark/atxHeading';
+import type SetextHeading from '../../block/commonMark/setextHeading';
+import type DiagramBlock from '../../block/extra/diagram';
 import bulletListIcon from '../../assets/icons/bullet_list/2.png';
 import vegaIcon from '../../assets/icons/chart/2.png';
 import codeIcon from '../../assets/icons/code/2.png';
@@ -18,10 +22,6 @@ import paragraphIcon from '../../assets/icons/paragraph/2.png';
 import plantumlIcon from '../../assets/icons/plantuml/2.png';
 import quoteIcon from '../../assets/icons/quote_block/2.png';
 import taskListIcon from '../../assets/icons/todolist/2.png';
-import type Parent from '../../block/base/parent';
-import type AtxHeading from '../../block/commonMark/atxHeading';
-import type SetextHeading from '../../block/commonMark/setextHeading';
-import type DiagramBlock from '../../block/extra/diagram';
 
 const HEADING_ICONS = [
     header1Icon,

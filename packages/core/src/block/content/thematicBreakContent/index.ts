@@ -1,7 +1,7 @@
-import Format from '../../base/format';
-import { ScrollPage } from '../../scrollPage';
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
+import Format from '../../base/format';
+import { ScrollPage } from '../../scrollPage';
 
 class ThematicBreakContent extends Format {
     static override blockName = 'thematicbreak.content';

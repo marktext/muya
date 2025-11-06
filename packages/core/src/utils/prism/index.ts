@@ -55,5 +55,5 @@ loadLanguage('latex');
 loadLanguage('yaml');
 
 export { walkTokens } from './walkToken';
-export { loadLanguage, loadedLanguages, search, transformAliasToOrigin };
+export { loadedLanguages, loadLanguage, search, transformAliasToOrigin };
 export default prism;

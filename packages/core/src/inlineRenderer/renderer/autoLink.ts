@@ -1,7 +1,7 @@
-import { CLASS_NAMES } from '../../config';
-import { sanitizeHyperlink } from '../../utils/url';
 import type { AutoLinkToken, ISyntaxRenderOptions } from '../types';
 import type Renderer from './index';
+import { CLASS_NAMES } from '../../config';
+import { sanitizeHyperlink } from '../../utils/url';
 
 // render auto_link to VNode
 export default function autoLink(
@@ -33,17 +33,17 @@ export default function autoLink(
     return [
         h(`span.${className}`, startMarker),
         h(
-      `a.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_AUTO_LINK}`,
-      {
-          attrs: {
-              spellcheck: 'false',
-          },
-          props: {
-              href: sanitizeHyperlink(hyperlink),
-              target: '_blank',
-          },
-      },
-      content,
+            `a.${CLASS_NAMES.MU_INLINE_RULE}.${CLASS_NAMES.MU_AUTO_LINK}`,
+            {
+                attrs: {
+                    spellcheck: 'false',
+                },
+                props: {
+                    href: sanitizeHyperlink(hyperlink),
+                    target: '_blank',
+                },
+            },
+            content,
         ),
         h(`span.${className}`, endMarker),
     ];

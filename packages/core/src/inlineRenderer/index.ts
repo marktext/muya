@@ -1,13 +1,13 @@
 import type Format from '../block/base/format';
 import type ParagraphContent from '../block/content/paragraphContent';
 import type { Muya } from '../muya';
-import logger from '../utils/logger';
 import type { ICursor } from '../selection/types';
 import type { IParagraphState, TContainerState, TState } from '../state/types';
+import type { IHighlight, Labels } from './types';
+import logger from '../utils/logger';
 import { tokenizer } from './lexer';
 import Renderer from './renderer';
 import { beginRules } from './rules';
-import type { IHighlight, Labels } from './types';
 
 const debug = logger('inlineRenderer:');
 
@@ -28,9 +28,9 @@ class InlineRenderer {
         // eg: atxheading.content has no soft|hard line break
         // setextheading.content has no heading rules.
         const hasBeginRules
-      = /thematicbreak\.content|paragraph\.content|atxheading\.content/.test(
-          block.blockName,
-      );
+            = /thematicbreak\.content|paragraph\.content|atxheading\.content/.test(
+                block.blockName,
+            );
 
         return tokenizer(text, { hasBeginRules, labels, options, highlights });
     }

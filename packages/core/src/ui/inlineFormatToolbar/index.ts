@@ -1,14 +1,14 @@
 import type { VNode } from 'snabbdom';
-import { isKeyboardEvent } from '../../utils';
-import { h, patch } from '../../utils/snabbdom';
-import BaseFloat from '../baseFloat';
-
-import Format from '../../block/base/format';
 import type { Muya } from '../../index';
 import type { Token } from '../../inlineRenderer/types';
 import type { IBaseOptions } from '../types';
-import icons from './config';
+
 import type { FormatToolIcon } from './config';
+import Format from '../../block/base/format';
+import { isKeyboardEvent } from '../../utils';
+import { h, patch } from '../../utils/snabbdom';
+import BaseFloat from '../baseFloat';
+import icons from './config';
 import './index.css';
 
 const defaultOptions = {
@@ -169,7 +169,7 @@ export class InlineFormatToolbar extends BaseFloat {
         const { selection } = this.muya.editor;
         // TODO: @JOCS, remove use this.selection directly.
         const { anchor, focus, anchorBlock, anchorPath, focusBlock, focusPath }
-      = selection;
+            = selection;
         const { block } = this;
 
         selection.setSelection({

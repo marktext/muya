@@ -1,17 +1,4 @@
 /* eslint-disable no-fallthrough */
-/**
- * Hi contributors!
- *
- * Before you edit or update codes in this file,
- * make sure you have read this bellow:
- * Commonmark Spec: https://spec.commonmark.org/0.29/
- * GitHub Flavored Markdown Spec: https://github.github.com/gfm/
- * Pandoc Markdown: https://pandoc.org/MANUAL.html#pandocs-markdown
- * The output markdown needs to obey the standards of these Spec.
- */
-import { deepClone } from '../utils';
-import logger from '../utils/logger';
-
 import type {
     IAtxHeadingState,
     IBlockQuoteState,
@@ -31,6 +18,19 @@ import type {
     IThematicBreakState,
     TState,
 } from './types';
+/**
+ * Hi contributors!
+ *
+ * Before you edit or update codes in this file,
+ * make sure you have read this bellow:
+ * Commonmark Spec: https://spec.commonmark.org/0.29/
+ * GitHub Flavored Markdown Spec: https://github.github.com/gfm/
+ * Pandoc Markdown: https://pandoc.org/MANUAL.html#pandocs-markdown
+ * The output markdown needs to obey the standards of these Spec.
+ */
+import { deepClone } from '../utils';
+
+import logger from '../utils/logger';
 
 const debug = logger('export markdown: ');
 function escapeText(str: string) {
@@ -48,11 +48,11 @@ export default class ExportMarkdown {
     private listIndentationCount: number;
 
     constructor(
-    {
-      listIndentation,
-    }: IExportMarkdownOptions = {
-      listIndentation: 1,
-    },
+        {
+            listIndentation,
+        }: IExportMarkdownOptions = {
+            listIndentation: 1,
+        },
     ) {
         this.listType = []; // 'ul' or 'ol'
         // helper to translate the first tight item in a nested list
@@ -78,8 +78,8 @@ export default class ExportMarkdown {
 
     convertStatesToMarkdown(
         states: TState[],
-    indent = '',
-    listIndent = '',
+        indent = '',
+        listIndent = '',
     ): string {
         const result = [];
         // helper for CommonMark 264
@@ -157,8 +157,8 @@ export default class ExportMarkdown {
 
                     // Start a new list without separation due changing the bullet or ordered list delimiter starts a new list.
                     const bulletMarkerOrDelimiter
-            = (meta as IOrderListState['meta']).delimiter
-            || (meta as IBulletListState['meta']).marker;
+                        = (meta as IOrderListState['meta']).delimiter
+                            || (meta as IBulletListState['meta']).marker;
 
                     if (lastListBullet && lastListBullet !== bulletMarkerOrDelimiter)
                         insertNewLine = false;
@@ -273,7 +273,7 @@ export default class ExportMarkdown {
 
         return (
             `${lines.map(line => `${indent}${line}`).join('\n')
-       }\n${indent}${underline.trim()}\n`
+            }\n${indent}${underline.trim()}\n`
         );
     }
 
@@ -382,45 +382,45 @@ export default class ExportMarkdown {
 
         tableData.forEach((r, i) => {
             const rs
-        = `${indent
-         }|${
-         r
-            .map((cell, j) => {
-                const raw = ` ${cell + ' '.repeat(columnWidth[j].width)}`;
+                = `${indent
+                }|${
+                    r
+                        .map((cell, j) => {
+                            const raw = ` ${cell + ' '.repeat(columnWidth[j].width)}`;
 
-                return raw.substring(0, columnWidth[j].width);
-            })
-            .join('|')
-         }|`;
+                            return raw.substring(0, columnWidth[j].width);
+                        })
+                        .join('|')
+                }|`;
             result.push(rs);
             if (i === 0) {
                 const cutOff
-          = `${indent
-           }|${
-           columnWidth
-              .map(({ width, align }) => {
-                  let raw = '-'.repeat(width - 2);
-                  switch (align) {
-                      case 'left':
-                          raw = `:${raw} `;
-                          break;
+                    = `${indent
+                    }|${
+                        columnWidth
+                            .map(({ width, align }) => {
+                                let raw = '-'.repeat(width - 2);
+                                switch (align) {
+                                    case 'left':
+                                        raw = `:${raw} `;
+                                        break;
 
-                      case 'center':
-                          raw = `:${raw}:`;
-                          break;
+                                    case 'center':
+                                        raw = `:${raw}:`;
+                                        break;
 
-                      case 'right':
-                          raw = ` ${raw}:`;
-                          break;
-                      default:
-                          raw = ` ${raw} `;
-                          break;
-                  }
+                                    case 'right':
+                                        raw = ` ${raw}:`;
+                                        break;
+                                    default:
+                                        raw = ` ${raw} `;
+                                        break;
+                                }
 
-                  return raw;
-              })
-              .join('|')
-           }|`;
+                                return raw;
+                            })
+                            .join('|')
+                    }|`;
                 result.push(cutOff);
             }
         });
