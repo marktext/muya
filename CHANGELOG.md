@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.34](https://github.com/marktext/muya/compare/v0.0.33...v0.0.34) (2025-11-06)
+
+
+### Bug Fixes
+
+* some lint error ([f6af8e0](https://github.com/marktext/muya/commit/f6af8e04ae7531f55e2dff378b281049d8e83fbf))
+
 ## [0.0.33](https://github.com/marktext/muya/compare/v0.0.32...v0.0.33) (2025-10-28)
 
 
