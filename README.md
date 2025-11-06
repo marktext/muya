@@ -85,6 +85,8 @@ pnpm build
 ```sh
 # update version numbers.
 pnpm run release
+# build to generate `lib` folder.
+pnpm run build
 # publish to npm.
 pnpm -r publish
 ```
