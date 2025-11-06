@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.35](https://github.com/marktext/muya/compare/v0.0.34...v0.0.35) (2025-11-06)
+
+
+### Bug Fixes
+
+* TS error in table picker ([ab1f81f](https://github.com/marktext/muya/commit/ab1f81f57b1ce9e3e5c66ab8c7d2d42c1d78f3cd))
+
 ## [0.0.34](https://github.com/marktext/muya/compare/v0.0.33...v0.0.34) (2025-11-06)
 
 
