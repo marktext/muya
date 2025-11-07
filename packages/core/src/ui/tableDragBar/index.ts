@@ -82,20 +82,20 @@ const OFFSET = 20;
 
 const rightOptions = {
     placement: 'right' as const,
-    modifiers: {
-        offset: {
-            offset: '0, 0',
-        },
+    offsetOptions: {
+        mainAxis: 0,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };
 
 const bottomOptions = {
     placement: 'bottom' as const,
-    modifiers: {
-        offset: {
-            offset: '0, 0',
-        },
+    offsetOptions: {
+        mainAxis: 0,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };
@@ -191,7 +191,9 @@ export class TableDragBar extends BaseFloat {
             this.mouseTimer = null;
             if (barType === 'right') {
                 eventCenter.emit('muya-table-bar', {
-                    reference: container,
+                    reference: {
+                        getBoundingClientRect: () => container!.getBoundingClientRect(),
+                    },
                     tableInfo: {
                         barType,
                     },

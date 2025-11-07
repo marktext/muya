@@ -26,10 +26,10 @@ function getFootnoteText(block) {
 
 const defaultOptions = {
     placement: 'bottom',
-    modifiers: {
-        offset: {
-            offset: '0, 5',
-        },
+    offsetOptions: {
+        mainAxis: 5,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };

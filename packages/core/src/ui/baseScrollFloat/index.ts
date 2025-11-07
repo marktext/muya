@@ -1,4 +1,4 @@
-import type { ReferenceObject } from 'popper.js';
+import type { ReferenceElement } from '@floating-ui/dom';
 import type { Muya } from '../../muya';
 import { EVENT_KEYS } from '../../config';
 import { isKeyboardEvent, noop } from '../../utils';
@@ -6,7 +6,7 @@ import BaseFloat from '../baseFloat';
 
 abstract class BaseScrollFloat extends BaseFloat {
     public scrollElement: HTMLElement | null = null;
-    public reference: Element | ReferenceObject | null = null;
+    public reference: Element | ReferenceElement | null = null;
     public activeItem: unknown | null = null;
     public renderArray: unknown[] = [];
 
@@ -67,7 +67,7 @@ abstract class BaseScrollFloat extends BaseFloat {
         this.reference = null;
     }
 
-    override show(reference: Element | ReferenceObject, cb: (...args: unknown[]) => void = noop) {
+    override show(reference: Element | ReferenceElement, cb: (...args: unknown[]) => void = noop) {
         this.cb = cb;
 
         if (reference instanceof HTMLElement) {

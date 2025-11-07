@@ -84,3 +84,13 @@
 .mu-shadow > * {
     margin: 10px 0;
 }
+
+.mu-front-button-wrapper {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    z-index: 1000;
+
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}

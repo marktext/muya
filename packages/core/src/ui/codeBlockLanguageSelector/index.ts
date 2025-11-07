@@ -12,11 +12,11 @@ import fileIcons from '../utils/fileIcons';
 import './index.css';
 
 const defaultOptions = {
-    placement: 'bottom-start',
-    modifiers: {
-        offset: {
-            offset: '0, 0',
-        },
+    placement: 'bottom-start' as const,
+    offsetOptions: {
+        mainAxis: 0,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };

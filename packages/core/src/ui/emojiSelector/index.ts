@@ -9,10 +9,10 @@ import './index.css';
 
 const defaultOptions = {
     placement: 'bottom' as const,
-    modifiers: {
-        offset: {
-            offset: '0, 12',
-        },
+    offsetOptions: {
+        mainAxis: 12,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };

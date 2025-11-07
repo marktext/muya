@@ -1,11 +1,7 @@
-import type { Placement } from 'popper.js';
+import type { OffsetOptions, Placement } from '@floating-ui/dom';
 
 export interface IBaseOptions {
     placement: Placement;
-    modifiers: {
-        offset: {
-            offset: string;
-        };
-    };
+    offsetOptions: OffsetOptions;
     showArrow: boolean;
 }
