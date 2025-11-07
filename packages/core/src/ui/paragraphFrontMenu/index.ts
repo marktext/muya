@@ -31,11 +31,11 @@ function renderIcon({ label, icon }: { label: string; icon: string }) {
 }
 
 const defaultOptions = {
-    placement: 'bottom',
-    modifiers: {
-        offset: {
-            offset: '0, 10',
-        },
+    placement: 'bottom' as const,
+    offsetOptions: {
+        mainAxis: 0,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };
@@ -62,10 +62,12 @@ export class ParagraphFrontMenu extends BaseFloat {
         const { container } = this;
         const { eventCenter } = this.muya;
         super.listen();
+
         eventCenter.subscribe('muya-front-menu', ({ reference, block }) => {
             if (reference) {
                 this.block = block;
                 this.reference = reference;
+
                 setTimeout(() => {
                     this.show(reference);
                     this.render();

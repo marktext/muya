@@ -10,11 +10,11 @@ import { toolList } from './config';
 import './index.css';
 
 const defaultOptions = {
-    placement: 'bottom-center',
-    modifiers: {
-        offset: {
-            offset: '0, 5',
-        },
+    placement: 'bottom' as const,
+    offsetOptions: {
+        mainAxis: 0,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };

@@ -1,8 +1,9 @@
+import type { ReferenceElement } from '@floating-ui/dom';
 import type { VNode } from 'snabbdom';
 import type Parent from '../../block/base/parent';
 import type { Muya } from '../../index';
 import type { IBaseOptions } from '../types';
-import Popper from 'popper.js';
+import { autoUpdate, computePosition, flip, offset } from '@floating-ui/dom';
 
 import dragIcon from '../../assets/icons/drag/2.png';
 import BulletList from '../../block/commonMark/bulletList';
@@ -11,6 +12,7 @@ import { BLOCK_DOM_PROPERTY } from '../../config';
 import { isMouseEvent, throttle, verticalPositionInRect } from '../../utils';
 import { h, patch } from '../../utils/snabbdom';
 import { getIcon } from './config';
+
 import './index.css';
 
 const LEFT_OFFSET = 100;
@@ -18,10 +20,10 @@ const LEFT_OFFSET = 100;
 function defaultOptions() {
     return {
         placement: 'left-start' as const,
-        modifiers: {
-            offset: {
-                offset: '0, 8',
-            },
+        offsetOptions: {
+            mainAxis: 0,
+            crossAxis: 0,
+            alignmentAxis: 10,
         },
         showArrow: false,
     };
@@ -50,34 +52,34 @@ function isOrderOrBulletList(block: Parent): block is OrderList | BulletList {
 export class ParagraphFrontButton {
     public name: string = 'mu-front-button';
     public resizeObserver: ResizeObserver | null = null;
-    private options: IBaseOptions;
-    private block: Parent | null = null;
-    private oldVNode: VNode | null = null;
-    private status: boolean = false;
-    private floatBox: HTMLDivElement = document.createElement('div');
-    private container: HTMLDivElement = document.createElement('div');
-    private iconWrapper: HTMLDivElement = document.createElement('div');
-    private popper: Popper | null = null;
-    private dragTimer: ReturnType<typeof setTimeout> | null = null;
-    private dragInfo: {
+    private _options: IBaseOptions;
+    private _block: Parent | null = null;
+    private _oldVNode: VNode | null = null;
+    private _status: boolean = false;
+    private _floatBox: HTMLDivElement = document.createElement('div');
+    private _container: HTMLDivElement = document.createElement('div');
+    private _iconWrapper: HTMLDivElement = document.createElement('div');
+    private _cleanup: (() => void) | null = null;
+    private _dragTimer: ReturnType<typeof setTimeout> | null = null;
+    private _dragInfo: {
         block: Parent;
         target?: Parent | null;
         position?: 'down' | 'up' | null;
     } | null = null;
 
-    private ghost: HTMLDivElement | null = null;
-    private shadow: HTMLDivElement | null = null;
-    private disableListen: boolean = false;
-    private dragEvents: string[] = [];
+    private _ghost: HTMLDivElement | null = null;
+    private _shadow: HTMLDivElement | null = null;
+    private _disableListen: boolean = false;
+    private _dragEvents: string[] = [];
 
     constructor(public muya: Muya, options = {}) {
-        this.options = Object.assign({}, defaultOptions(), options);
+        this._options = Object.assign({}, defaultOptions(), options);
         this.init();
         this.listen();
     }
 
     init() {
-        const { floatBox, container, iconWrapper } = this;
+        const { _floatBox: floatBox, _container: container, _iconWrapper: iconWrapper } = this;
         // Use to remember which float container is shown.
         container.classList.add(this.name);
         container.appendChild(iconWrapper);
@@ -95,18 +97,18 @@ export class ParagraphFrontButton {
                 height: `${offsetHeight}px`,
             });
 
-            this.popper && this.popper.update();
+            // Position will be updated by autoUpdate
         }));
 
         resizeObserver.observe(container);
     }
 
     listen() {
-        const { container } = this;
+        const { _container: container } = this;
         const { eventCenter } = this.muya;
 
         const mousemoveHandler = throttle((event: MouseEvent) => {
-            if (this.disableListen)
+            if (this._disableListen)
                 return;
 
             const { x, y } = event;
@@ -130,8 +132,10 @@ export class ParagraphFrontButton {
 
         const clickHandler = () => {
             eventCenter.emit('muya-front-menu', {
-                reference: container,
-                block: this.block,
+                reference: {
+                    getBoundingClientRect: () => container.getBoundingClientRect(),
+                },
+                block: this._block,
             });
         };
 
@@ -144,21 +148,21 @@ export class ParagraphFrontButton {
     dragBarMouseDown = (event: Event) => {
         event.preventDefault();
         event.stopPropagation();
-        this.dragTimer = setTimeout(() => {
+        this._dragTimer = setTimeout(() => {
             this.startDrag();
-            this.dragTimer = null;
+            this._dragTimer = null;
         }, 300);
     };
 
     dragBarMouseUp = () => {
-        if (this.dragTimer) {
-            clearTimeout(this.dragTimer);
-            this.dragTimer = null;
+        if (this._dragTimer) {
+            clearTimeout(this._dragTimer);
+            this._dragTimer = null;
         }
     };
 
     mouseMove = (event: Event) => {
-        if (!this.dragInfo || !isMouseEvent(event))
+        if (!this._dragInfo || !isMouseEvent(event))
             return;
 
         event.preventDefault();
@@ -177,7 +181,7 @@ export class ParagraphFrontButton {
 
         if (
             outMostElement
-            && outMostElement[BLOCK_DOM_PROPERTY] !== this.dragInfo.block
+            && outMostElement[BLOCK_DOM_PROPERTY] !== this._dragInfo.block
             && (outMostElement[BLOCK_DOM_PROPERTY] as Parent).blockName !== 'frontmatter'
         ) {
             const block = outMostElement[BLOCK_DOM_PROPERTY];
@@ -185,17 +189,17 @@ export class ParagraphFrontButton {
             const position = verticalPositionInRect(event, rect);
             this.createStyledGhost(rect, position);
 
-            Object.assign(this.dragInfo, {
+            Object.assign(this._dragInfo, {
                 target: block,
                 position,
             });
         }
         else {
-            if (this.ghost) {
-                this.ghost.remove();
-                this.ghost = null;
-                this.dragInfo.target = null;
-                this.dragInfo.position = null;
+            if (this._ghost) {
+                this._ghost.remove();
+                this._ghost = null;
+                this._dragInfo.target = null;
+                this._dragInfo.position = null;
             }
         }
     };
@@ -203,17 +207,18 @@ export class ParagraphFrontButton {
     mouseUp = (event: Event) => {
         event.preventDefault();
         event.stopPropagation();
-        this.disableListen = false;
+
+        this._disableListen = false;
         const { eventCenter } = this.muya;
-        this.dragEvents.forEach(eventId => eventCenter.detachDOMEvent(eventId));
-        this.dragEvents = [];
-        if (this.ghost)
-            this.ghost.remove();
+        this._dragEvents.forEach(eventId => eventCenter.detachDOMEvent(eventId));
+        this._dragEvents = [];
+        if (this._ghost)
+            this._ghost.remove();
 
         this.destroyShadow();
         document.body.style.cursor = 'auto';
-        this.dragTimer = null;
-        const { block, target, position } = this.dragInfo || {};
+        this._dragTimer = null;
+        const { block, target, position } = this._dragInfo || {};
 
         if (target && position && block) {
             if (
@@ -243,17 +248,17 @@ export class ParagraphFrontButton {
             }
         }
 
-        this.dragInfo = null;
+        this._dragInfo = null;
     };
 
     startDrag = () => {
-        const { block } = this;
+        const { _block: block } = this;
         // Frontmatter should not be drag.
         if (!block || (block && block.blockName === 'frontmatter'))
             return;
 
-        this.disableListen = true;
-        this.dragInfo = {
+        this._disableListen = true;
+        this._dragInfo = {
             block,
         };
         this.createStyledShadow();
@@ -262,7 +267,7 @@ export class ParagraphFrontButton {
 
         document.body.style.cursor = 'grabbing';
 
-        this.dragEvents = [
+        this._dragEvents = [
             eventCenter.attachDOMEvent(
                 document,
                 'mousemove',
@@ -273,12 +278,12 @@ export class ParagraphFrontButton {
     };
 
     createStyledGhost(rect: DOMRect, position: 'down' | 'up') {
-        let ghost = this.ghost;
+        let ghost = this._ghost;
         if (!ghost) {
             ghost = document.createElement('div');
             document.body.appendChild(ghost);
             ghost.classList.add('mu-line-ghost');
-            this.ghost = ghost;
+            this._ghost = ghost;
         }
 
         Object.assign(ghost.style, {
@@ -289,7 +294,7 @@ export class ParagraphFrontButton {
     }
 
     createStyledShadow() {
-        const { domNode } = this.block!;
+        const { domNode } = this._block!;
         const { width, top, left } = domNode!.getBoundingClientRect();
         const shadow = document.createElement('div');
         shadow.classList.add('mu-shadow');
@@ -300,11 +305,11 @@ export class ParagraphFrontButton {
         });
         shadow.appendChild(domNode!.cloneNode(true));
         document.body.appendChild(shadow);
-        this.shadow = shadow;
+        this._shadow = shadow;
     }
 
     moveShadow(event: Event) {
-        const { shadow } = this;
+        const { _shadow: shadow } = this;
         // The shadow already be removed.
         if (!shadow || !isMouseEvent(event))
             return;
@@ -316,15 +321,15 @@ export class ParagraphFrontButton {
     }
 
     destroyShadow() {
-        const { shadow } = this;
+        const { _shadow: shadow } = this;
         if (shadow) {
             shadow.remove();
-            this.shadow = null;
+            this._shadow = null;
         }
     }
 
     render() {
-        const { container, iconWrapper, block, oldVNode } = this;
+        const { _container: container, _iconWrapper: iconWrapper, _block: block, _oldVNode: oldVNode } = this;
 
         const iconWrapperSelector = 'div.mu-icon-wrapper';
         const i = getIcon(block!);
@@ -338,7 +343,7 @@ export class ParagraphFrontButton {
         else
             patch(iconWrapper, vnode);
 
-        this.oldVNode = vnode;
+        this._oldVNode = vnode;
 
         // Reset float box style height
         const { lineHeight } = getComputedStyle(block!.domNode!);
@@ -346,53 +351,93 @@ export class ParagraphFrontButton {
     }
 
     hide() {
-        if (!this.status)
+        if (!this._status)
             return;
 
-        this.block = null;
-        this.status = false;
+        this._block = null;
+        this._status = false;
         const { eventCenter } = this.muya;
-        if (this.popper && this.popper.destroy)
-            this.popper.destroy();
+        if (this._cleanup) {
+            this._cleanup();
+            this._cleanup = null;
+        }
 
-        this.floatBox.style.opacity = '0';
+        if (this._floatBox) {
+            Object.assign(this._floatBox.style, {
+                left: `-9999px`,
+                top: `-9999px`,
+                opacity: '0',
+            });
+        }
+
         eventCenter.emit('muya-float-button', this, false);
     }
 
     show(block: Parent) {
-        if (this.block && this.block === block)
+        if (this._block && this._block === block)
             return;
 
-        this.block = block;
+        this._block = block;
         const { domNode } = block;
-        const { floatBox } = this;
-        const { placement, modifiers } = this.options;
+        const { _floatBox: floatBox } = this;
+        const { placement, offsetOptions } = this._options;
         const { eventCenter } = this.muya;
-        floatBox.style.opacity = '1';
-        if (this.popper && this.popper.destroy)
-            this.popper.destroy();
+
+        if (this._cleanup) {
+            this._cleanup();
+            this._cleanup = null;
+        }
 
         const styles = window.getComputedStyle(domNode!);
         const paddingTop = Number.parseFloat(styles.paddingTop);
 
         const isLooseList = isOrderOrBulletList(block) && block.meta.loose;
-        modifiers.offset.offset = `${isLooseList ? paddingTop * 2 : paddingTop}, 8`;
+        const dynamicMainAxis = isLooseList ? paddingTop * 2 : paddingTop;
 
-        this.popper = new Popper(domNode!, floatBox, {
-            placement,
-            modifiers,
-        });
-        this.status = true;
+        // Extract offset values, handling both number and object types
+        let crossAxisValue = 0;
+        let alignmentAxisValue = 0;
+        if (typeof offsetOptions === 'object' && offsetOptions !== null && !('then' in offsetOptions)) {
+            crossAxisValue = (offsetOptions as { crossAxis?: number }).crossAxis ?? 0;
+            alignmentAxisValue = (offsetOptions as { alignmentAxis?: number | null }).alignmentAxis ?? 0;
+        }
+
+        const updatePosition = () => {
+            computePosition(domNode! as Element | ReferenceElement, floatBox, {
+                placement,
+                middleware: [
+                    offset({
+                        mainAxis: dynamicMainAxis,
+                        crossAxis: crossAxisValue,
+                        alignmentAxis: alignmentAxisValue,
+                    }),
+                    flip(),
+                ],
+            }).then(({ x, y }) => {
+                Object.assign(floatBox.style, {
+                    left: `${x}px`,
+                    top: `${y}px`,
+                    opacity: 1,
+                });
+            });
+        };
+
+        updatePosition();
+        this._cleanup = autoUpdate(domNode! as Element | ReferenceElement, floatBox, updatePosition);
+
+        this._status = true;
         eventCenter.emit('muya-float-button', this, true);
     }
 
     destroy() {
-        if (this.container && this.resizeObserver)
-            this.resizeObserver.unobserve(this.container);
+        if (this._container && this.resizeObserver)
+            this.resizeObserver.unobserve(this._container);
 
-        if (this.popper && this.popper.destroy)
-            this.popper.destroy();
+        if (this._cleanup) {
+            this._cleanup();
+            this._cleanup = null;
+        }
 
-        this.floatBox.remove();
+        this._floatBox.remove();
     }
 }

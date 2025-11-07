@@ -13,10 +13,10 @@ import './index.css';
 
 const defaultOptions = {
     placement: 'top' as const,
-    modifiers: {
-        offset: {
-            offset: '0, 5',
-        },
+    offsetOptions: {
+        mainAxis: 5,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };

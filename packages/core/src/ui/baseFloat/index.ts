@@ -1,19 +1,20 @@
-import type { ReferenceObject } from 'popper.js';
+import type { Placement, ReferenceElement } from '@floating-ui/dom';
 import type { Muya } from '../../index';
 import type { IBaseOptions } from '../types';
-import Popper from 'popper.js';
+import { autoUpdate, computePosition, flip, offset } from '@floating-ui/dom';
 import { EVENT_KEYS } from '../../config';
+
 import { isKeyboardEvent, noop } from '../../utils';
 
 import './index.css';
 
 function defaultOptions() {
     return {
-        placement: 'bottom-start' as const,
-        modifiers: {
-            offset: {
-                offset: '0, 12',
-            },
+        placement: 'bottom-start' as Placement,
+        offsetOptions: {
+            mainAxis: 10,
+            crossAxis: 0,
+            alignmentAxis: 0,
         },
         showArrow: false,
     };
@@ -26,12 +27,17 @@ abstract class BaseFloat {
     public status: boolean = false;
     public floatBox: HTMLElement | null = null;
     public container: HTMLElement | null = null;
-    public popper: Popper | null = null;
     public lastScrollTop: number | null = null;
     public cb: (...args: unknown[]) => void = noop;
-    private resizeObserver: ResizeObserver | null = null;
 
-    constructor(public muya: Muya, public name: string, options = {}) {
+    private _cleanup: (() => void) | null = null;
+    private _resizeObserver: ResizeObserver | null = null;
+
+    constructor(
+        public muya: Muya,
+        public name: string,
+        options = {},
+    ) {
         this.options = Object.assign({}, defaultOptions(), options);
         this.init();
     }
@@ -52,15 +58,13 @@ abstract class BaseFloat {
 
         // Since the size of the container is not fixed and changes according to the change of content,
         // the floatBox needs to set the size according to the container size
-        const resizeObserver = (this.resizeObserver = new ResizeObserver(() => {
+        const resizeObserver = (this._resizeObserver = new ResizeObserver(() => {
             const { offsetWidth, offsetHeight } = container;
 
             Object.assign(floatBox.style, {
                 width: `${offsetWidth}px`,
                 height: `${offsetHeight}px`,
             });
-
-            this.popper && this.popper.update();
         }));
 
         resizeObserver.observe(container);
@@ -113,47 +117,73 @@ abstract class BaseFloat {
             return;
 
         const { eventCenter } = this.muya;
+        const { floatBox } = this;
         this.status = false;
-        if (this.popper && this.popper.destroy)
-            this.popper.destroy();
+
+        if (this._cleanup) {
+            this._cleanup();
+            this._cleanup = null;
+        }
+
+        if (floatBox) {
+            Object.assign(floatBox.style, {
+                opacity: 0,
+                top: '-9999px',
+                left: '-9999px',
+            });
+        }
 
         this.cb = noop;
         this.lastScrollTop = null;
+
         if (BUTTON_GROUP.includes(this.name))
             eventCenter.emit('muya-float-button', this, false);
-        else
-            eventCenter.emit('muya-float', this, false);
+        else eventCenter.emit('muya-float', this, false);
     }
 
-    show(reference: ReferenceObject, cb = noop) {
+    show(reference: ReferenceElement, cb = noop) {
         const { floatBox } = this;
         const { eventCenter } = this.muya;
-        const { placement, modifiers } = this.options;
+        const { placement, offsetOptions } = this.options;
         if (!floatBox) {
             throw new Error('The float box is not existed.');
             return;
         }
-        if (this.popper && this.popper.destroy)
-            this.popper.destroy();
+        if (this._cleanup) {
+            this._cleanup();
+            this._cleanup = null;
+        }
 
         this.cb = cb;
-        this.popper = new Popper(reference, floatBox, {
-            placement,
-            modifiers,
+
+        this._cleanup = autoUpdate(reference, floatBox, () => {
+            computePosition(reference, floatBox, {
+                placement,
+                middleware: [offset(offsetOptions), flip()],
+            }).then(({ x, y }) => {
+                Object.assign(floatBox.style, {
+                    left: `${x}px`,
+                    top: `${y}px`,
+                    opacity: 1,
+                });
+            });
         });
+
         this.status = true;
+
         if (BUTTON_GROUP.includes(this.name))
             eventCenter.emit('muya-float-button', this, true);
-        else
-            eventCenter.emit('muya-float', this, true);
+        else eventCenter.emit('muya-float', this, true);
     }
 
     destroy() {
-        if (this.container && this.resizeObserver)
-            this.resizeObserver.unobserve(this.container);
+        if (this.container && this._resizeObserver)
+            this._resizeObserver.unobserve(this.container);
 
-        if (this.popper && this.popper.destroy)
-            this.popper.destroy();
+        if (this._cleanup) {
+            this._cleanup();
+            this._cleanup = null;
+        }
 
         this.floatBox?.remove();
     }

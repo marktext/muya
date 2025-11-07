@@ -1,4 +1,4 @@
-import type { ReferenceObject } from 'popper.js';
+import type { ReferenceElement } from '@floating-ui/dom';
 import type { VNode } from 'snabbdom';
 import type Format from '../../block/base/format';
 import type { Muya } from '../../index';
@@ -11,11 +11,11 @@ import icons from './config';
 import './index.css';
 
 const defaultOptions = {
-    placement: 'top',
-    modifiers: {
-        offset: {
-            offset: '0, 10',
-        },
+    placement: 'top' as const,
+    offsetOptions: {
+        mainAxis: 10,
+        crossAxis: 0,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };
@@ -29,7 +29,7 @@ export class ImageToolBar extends BaseFloat {
     } | null = null;
 
     private icons: Icon[] = icons;
-    private reference: ReferenceObject | null = null;
+    private reference: ReferenceElement | null = null;
     private block: Format | null = null;
     private toolbarContainer: HTMLDivElement = document.createElement('div');
 

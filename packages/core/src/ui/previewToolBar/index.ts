@@ -13,10 +13,10 @@ import './index.css';
 
 const defaultOptions = {
     placement: 'left-start' as const,
-    modifiers: {
-        offset: {
-            offset: '5, -95',
-        },
+    offsetOptions: {
+        mainAxis: -95,
+        crossAxis: 5,
+        alignmentAxis: 0,
     },
     showArrow: false,
 };
