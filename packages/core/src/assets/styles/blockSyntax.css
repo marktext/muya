@@ -255,11 +255,11 @@ ul.mu-bullet-list {
 }
 
 ol.mu-order-list {
-    list-style-type: decimal outside none;
+    list-style: decimal outside none;
 }
 
 ul.mu-bullet-list {
-    list-style-type: disc outside none;
+    list-style: disc outside none;
 }
 
 ul.mu-bullet-list:first-child,
