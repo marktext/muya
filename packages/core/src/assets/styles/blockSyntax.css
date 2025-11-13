@@ -254,6 +254,14 @@ ul.mu-bullet-list {
     padding-left: 1em;
 }
 
+ol.mu-order-list {
+    list-style-type: decimal outside none;
+}
+
+ul.mu-bullet-list {
+    list-style-type: disc outside none;
+}
+
 ul.mu-bullet-list:first-child,
 ol.mu-order-list:first-child {
     margin-top: 0;
@@ -341,6 +349,7 @@ li.mu-task-list-item > span.mu-task-list-checkbox::after {
     transform-origin: bottom;
 
     transition: all 0.2s ease;
+    box-sizing: content-box;
 
     content: '';
 }
