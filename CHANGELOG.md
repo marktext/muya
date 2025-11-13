@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.37](https://github.com/marktext/muya/compare/v0.0.36...v0.0.37) (2025-11-13)
+
+
+### Bug Fixes
+
+* list style css ([8785f21](https://github.com/marktext/muya/commit/8785f21c75917eaf0899298a5aae7edbadf5c3f5))
+
 ## [0.0.36](https://github.com/marktext/muya/compare/v0.0.35...v0.0.36) (2025-11-13)
 
 
