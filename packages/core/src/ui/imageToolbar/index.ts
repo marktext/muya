@@ -22,16 +22,16 @@ const defaultOptions = {
 
 export class ImageToolBar extends BaseFloat {
     static pluginName = 'imageToolbar';
-    private oldVNode: VNode | null = null;
-    private imageInfo: {
+    private _oldVNode: VNode | null = null;
+    private _imageInfo: {
         token: ImageToken;
         imageId: string;
     } | null = null;
 
-    private icons: Icon[] = icons;
-    private reference: ReferenceElement | null = null;
-    private block: Format | null = null;
-    private toolbarContainer: HTMLDivElement = document.createElement('div');
+    private _icons: Icon[] = icons;
+    private _reference: ReferenceElement | null = null;
+    private _block: Format | null = null;
+    private _toolbarContainer: HTMLDivElement = document.createElement('div');
 
     constructor(muya: Muya, options = {}) {
         const name = 'mu-image-toolbar';
@@ -39,7 +39,7 @@ export class ImageToolBar extends BaseFloat {
 
         super(muya, name, opts);
 
-        this.container!.appendChild(this.toolbarContainer);
+        this.container!.appendChild(this._toolbarContainer);
         this.floatBox!.classList.add('mu-image-toolbar-container');
 
         this.listen();
@@ -49,10 +49,10 @@ export class ImageToolBar extends BaseFloat {
         const { eventCenter } = this.muya;
         super.listen();
         eventCenter.on('muya-image-toolbar', ({ block, reference, imageInfo }) => {
-            this.reference = reference;
+            this._reference = reference;
             if (reference) {
-                this.block = block;
-                this.imageInfo = imageInfo;
+                this._block = block;
+                this._imageInfo = imageInfo;
                 setTimeout(() => {
                     this.show(reference);
                     this.render();
@@ -65,7 +65,7 @@ export class ImageToolBar extends BaseFloat {
     }
 
     render() {
-        const { icons, oldVNode, toolbarContainer, imageInfo } = this;
+        const { _icons: icons, _oldVNode: oldVNode, _toolbarContainer: toolbarContainer, _imageInfo: imageInfo } = this;
         const { i18n } = this.muya;
         const { attrs } = imageInfo!.token;
         const dataAlign = attrs['data-align'];
@@ -116,19 +116,19 @@ export class ImageToolBar extends BaseFloat {
         else
             patch(toolbarContainer, vnode);
 
-        this.oldVNode = vnode;
+        this._oldVNode = vnode;
     }
 
     selectItem(event: Event, item: Icon) {
         event.preventDefault();
         event.stopPropagation();
 
-        const { imageInfo } = this;
+        const { _imageInfo: imageInfo } = this;
 
         switch (item.type) {
             // Delete image.
             case 'delete':
-                this.block!.deleteImage(imageInfo!);
+                this._block!.deleteImage(imageInfo!);
                 // Hide image transformer
                 this.muya.eventCenter.emit('muya-transformer', {
                     reference: null,
@@ -138,7 +138,7 @@ export class ImageToolBar extends BaseFloat {
 
                 // Edit image, for example: editor alt and title, replace image.
             case 'edit': {
-                const rect = this.reference!.getBoundingClientRect();
+                const rect = this._reference!.getBoundingClientRect();
                 const reference = {
                     getBoundingClientRect() {
                         rect.height = 0;
@@ -152,7 +152,7 @@ export class ImageToolBar extends BaseFloat {
                 });
 
                 this.muya.eventCenter.emit('muya-image-selector', {
-                    block: this.block,
+                    block: this._block,
                     reference,
                     imageInfo,
                 });
@@ -167,7 +167,7 @@ export class ImageToolBar extends BaseFloat {
             case 'center':
                 // fall through
             case 'right': {
-                this.block!.updateImage(this.imageInfo!, 'data-align', item.type);
+                this._block!.updateImage(this._imageInfo!, 'data-align', item.type);
 
                 return this.hide();
             }
