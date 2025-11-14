@@ -310,7 +310,7 @@ mindmap
 
 \`\`\`vega-lite
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "A basic bar chart example, with value labels shown upon pointer hover.",
   "width": 400,
   "height": 200,
