@@ -436,7 +436,7 @@ foo bar
   
   foo bar2
 
-- [ ] a
+- [x] a
 - [x] b
 - [ ] c
 - [ ] d
