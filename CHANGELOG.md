@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.38](https://github.com/marktext/muya/compare/v0.0.37...v0.0.38) (2025-11-17)
+
+
+### Bug Fixes
+
+* hide inline format toolbar when necessary ([c515b7f](https://github.com/marktext/muya/commit/c515b7f6f30e2f520032c355f09f3a037f9b8294))
+
 ## [0.0.37](https://github.com/marktext/muya/compare/v0.0.36...v0.0.37) (2025-11-13)
 
 
