@@ -90,14 +90,17 @@ export class ParagraphFrontButton {
         // Since the size of the container is not fixed and changes according to the change of content,
         // the floatBox needs to set the size according to the container size
         const resizeObserver = (this.resizeObserver = new ResizeObserver(() => {
-            const { offsetWidth, offsetHeight } = container;
+            // Use requestAnimationFrame to avoid "ResizeObserver loop completed" warning
+            requestAnimationFrame(() => {
+                const { offsetWidth, offsetHeight } = container;
 
-            Object.assign(floatBox.style, {
-                width: `${offsetWidth}px`,
-                height: `${offsetHeight}px`,
+                Object.assign(floatBox.style, {
+                    width: `${offsetWidth}px`,
+                    height: `${offsetHeight}px`,
+                });
+
+                // Position will be updated by autoUpdate
             });
-
-            // Position will be updated by autoUpdate
         }));
 
         resizeObserver.observe(container);
