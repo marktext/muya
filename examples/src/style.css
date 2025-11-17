@@ -43,6 +43,30 @@ input {
   margin-right: 10px;
 }
 
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 10px;
+}
+
+.language-selector label {
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.language-selector select {
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  outline: none;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
 .editor-container {
   width: 100vw;
   height: 100vh;

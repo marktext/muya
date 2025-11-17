@@ -3,10 +3,12 @@ import type { TState } from '@muyajs/core';
 import {
     CodeBlockLanguageSelector,
     EmojiSelector,
+    en,
     ImageEditTool,
     ImageResizeBar,
     ImageToolBar,
     InlineFormatToolbar,
+    ja,
     MarkdownToHtml,
     Muya,
     ParagraphFrontButton,
@@ -80,6 +82,23 @@ const muya = new Muya(container, {
 muya.locale(zh);
 
 muya.init();
+
+// Language switcher
+const languageSelect: HTMLSelectElement = document.querySelector('#language-select')!;
+languageSelect.addEventListener('change', (event) => {
+    const lang = (event.target as HTMLSelectElement).value;
+    switch (lang) {
+        case 'en':
+            muya.locale(en);
+            break;
+        case 'ja':
+            muya.locale(ja);
+            break;
+        case 'zh':
+            muya.locale(zh);
+            break;
+    }
+});
 
 undoBtn.addEventListener('click', () => {
     muya.undo();

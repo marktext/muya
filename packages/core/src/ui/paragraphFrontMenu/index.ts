@@ -2,7 +2,12 @@ import type { VNode } from 'snabbdom';
 import type Parent from '../../block/base/parent';
 import type AtxHeading from '../../block/commonMark/atxHeading';
 import type { Muya } from '../../index';
-import type { IAtxHeadingState, IBulletListState, IOrderListState, ITaskListState } from '../../state/types';
+import type {
+    IAtxHeadingState,
+    IBulletListState,
+    IOrderListState,
+    ITaskListState,
+} from '../../state/types';
 import type { IQuickInsertMenuItem } from '../paragraphQuickInsertMenu/config';
 import { ScrollPage } from '../../block/scrollPage';
 import emptyStates from '../../config/emptyStates';
@@ -170,8 +175,7 @@ export class ParagraphFrontMenu extends BaseFloat {
 
         if (oldVNode)
             patch(oldVNode, vnode);
-        else
-            patch(frontMenuContainer, vnode);
+        else patch(frontMenuContainer, vnode);
 
         this.oldVNode = vnode;
     }
@@ -179,6 +183,7 @@ export class ParagraphFrontMenu extends BaseFloat {
     selectItem(event: Event, { label }: { label: string }) {
         event.preventDefault();
         event.stopPropagation();
+
         if (!this.block)
             return;
 
@@ -240,7 +245,8 @@ export class ParagraphFrontMenu extends BaseFloat {
 
                     if (
                         block.blockName === 'atx-heading'
-                        && label.split(' ')[1] === String((oldState as IAtxHeadingState).meta.level)
+                        && label.split(' ')[1]
+                        === String((oldState as IAtxHeadingState).meta.level)
                     ) {
                         break;
                     }
@@ -267,7 +273,10 @@ export class ParagraphFrontMenu extends BaseFloat {
                     if (block.blockName === label)
                         break;
 
-                    state = deepClone(oldState) as IOrderListState | ITaskListState | IBulletListState;
+                    state = deepClone(oldState) as
+                    | IOrderListState
+                    | ITaskListState
+                    | IBulletListState;
                     if (block.blockName === 'task-list') {
                         state.children.forEach((listItem) => {
                             listItem.name = 'list-item';

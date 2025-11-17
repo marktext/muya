@@ -21,6 +21,7 @@
     color: var(--editor-color);
     font-size: 13px;
     line-height: 25px;
+    white-space: nowrap;
 
     cursor: pointer;
 }

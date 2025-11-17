@@ -143,7 +143,7 @@ const emptyStates = {
             {
                 name: 'task-list-item',
                 meta: {
-                    checked: true, // true or false
+                    checked: false, // true or false
                 },
                 children: [
                     {
