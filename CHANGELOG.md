@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.39](https://github.com/marktext/muya/compare/v0.0.38...v0.0.39) (2025-11-17)
+
+
+### Bug Fixes
+
+* ResizeObserver loop completed with undelivered notifications. ([58e4789](https://github.com/marktext/muya/commit/58e4789becbb0edda79d96fd483340dd58faaa82))
+
 ## [0.0.38](https://github.com/marktext/muya/compare/v0.0.37...v0.0.38) (2025-11-17)
 
 
