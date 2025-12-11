@@ -47,7 +47,9 @@ class InlineRenderer {
             block,
             cursor && cursor.block === block ? cursor : {},
         );
-        domNode!.innerHTML = html;
+        if (domNode!.innerHTML !== html) {
+            domNode!.innerHTML = html;
+        }
     }
 
     collectReferenceDefinitions() {
