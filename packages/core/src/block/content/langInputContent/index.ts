@@ -2,8 +2,8 @@ import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
 import type { ICodeBlockState } from '../../../state/types';
 import type CodeBlock from '../../commonMark/codeBlock';
-import { getHighlightHtml } from '../../../utils/highlightHTML';
 import Content from '../../base/content';
+import { escapeLangInputInnerHtml } from './escape';
 
 class LangInputContent extends Content {
     public override parent: CodeBlock | null = null;
@@ -28,7 +28,7 @@ class LangInputContent extends Content {
     }
 
     override update(_cursor?: ICursor, highlights = []) {
-        this.domNode!.innerHTML = getHighlightHtml(this.text, highlights);
+        this.domNode!.innerHTML = escapeLangInputInnerHtml(this.text, highlights);
     }
 
     /**

@@ -28,12 +28,13 @@ PR 分组对应方案第三节的 5 个系列：
 | 9ffc5b1b | heading | 空 heading slug crash | PR-1a | `verified-not-applicable`（新仓无 slugger） |
 | bca2ed62 | image | loadImageAsync 失败永久缓存 | PR-1a | `fixed`（含 3 个回归测试） |
 | 36e825c2 | image | getImageInfo 空 firstChild | PR-1a | `verified-not-applicable`（新仓 getImageInfo 不读 firstChild） |
-| fed1dac4 | xss | HTML 表格粘贴 XSS | PR-1b | `pending` |
-| 0dd09cc6 | xss | code lang + 超链接 XSS | PR-1b | `pending` |
-| c959d185 | xss | Mermaid XSS | PR-1b | `pending` |
-| dc54c7b6 | xss | 代码块未 escape HTML | PR-1b | `pending` |
-| c47795e4 | xss | XSS + Electron（部分电子相关跳过） | PR-1b | `pending` |
-| 0baf2e9e / 7de33f11 | xss | #1390 XSS | PR-1b | `pending` |
+| fed1dac4 | xss | HTML 表格粘贴 XSS | PR-1b | `verified-not-applicable`（`utils/paste.ts` 已 `sanitize` 经 DOMPurify；anchor title 改用 `textContent` 比老版更安全） |
+| 0dd09cc6 | xss | code lang + 超链接 XSS | PR-1b | `partial-fixed`：超链接路径 `sanitizeHyperlink` + `htmlTag` `isValidAttribute` 已就位；**langInputContent 残留 XSS 此 PR 实修** + 3 测试 |
+| c959d185 | xss | Mermaid XSS | PR-1b | `verified-not-applicable`（`markdownToHtml.ts` + `diagramPreview.ts` 都已 `securityLevel:'strict'`，mermaid innerHTML 走 `sanitize`） |
+| dc54c7b6 | xss | 代码块未 escape HTML | PR-1b | `verified-not-applicable`（`escapeHTML` 已用含 `&` 的 5 字符版本，codeBlockContent 已 escape）+ 4 个防御测试 |
+| c47795e4 | xss | XSS + Electron（部分电子相关跳过） | PR-1b | `skipped`（Electron-only） |
+| 0baf2e9e / 7de33f11 | xss | #1390 XSS | PR-1b | `pending`（issue 已关闭，影响面待评估；暂不实修） |
+| sanitizeHyperlink 防御 | xss | 锁住 `javascript:/vbscript:/data:` 阻断 | PR-1b | `test-only`（8 个防御测试） |
 | 6293d408 | table-ctrl | 老 tableBlockCtrl 修复，新仓无同名结构 | 待评估 | `pending`（建议 PR-3 验证） |
 | f99addd2 | table-ctrl | selectedTableCells 清理，新仓无对应 | 待评估 | `pending`（建议 PR-3 验证） |
 | 0a3fda63 + 2754e393 + 4b362e52 | architecture | post-refactor 修复合集（拆条） | 待拆 | `pending` |
@@ -145,7 +146,7 @@ PR 分组对应方案第三节的 5 个系列：
 | PR | 计划条数 | 已完成 | 占比 |
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
-| PR-1b | 6 | 0 | 0% |
+| PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
 | PR-2 | 25 | 0 | 0% |
 | PR-3 | 19 | 0 | 0% |
 | PR-4 | 13 | 0 | 0% |
