@@ -1,5 +1,5 @@
 import type { ILexOption } from './types';
-import { marked } from 'marked';
+import { Marked } from 'marked';
 import mathExtension from './extensions/math';
 import superSubScriptExtension from './extensions/superSubscript';
 import fm, { frontMatterRender } from './frontMatter';
@@ -11,6 +11,12 @@ export function getClipBoardHtml(src: string, options: ILexOption = {}) {
     const { frontMatter, math, isGitlabCompatibilityEnabled, superSubScript }
         = options;
     let html = '';
+
+    // Use a fresh Marked instance per call to avoid polluting the global
+    // `marked` singleton — `.use({ walkTokens })` chains rather than replaces,
+    // and the global is shared with anything else in the bundle that imports
+    // `marked`.
+    const marked = new Marked();
 
     marked.use({
         walkTokens: walkTokens({ math, isGitlabCompatibilityEnabled }),
@@ -36,7 +42,7 @@ export function getClipBoardHtml(src: string, options: ILexOption = {}) {
         }
     }
 
-    html += marked(src);
+    html += marked.parse(src);
 
     return html;
 }
