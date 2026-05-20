@@ -1536,14 +1536,27 @@ class Format extends Content {
             case 'inline_math': {
                 const MARKER = FORMAT_MARKER_MAP[type];
                 const oldText = this.text;
+                const wasCollapsed = start.offset === end.offset;
                 this.text
                     = oldText.substring(0, start.offset)
                         + MARKER
                         + oldText.substring(start.offset, end.offset)
                         + MARKER
                         + oldText.substring(end.offset);
-                start.offset += MARKER.length;
-                end.offset += MARKER.length;
+                if (wasCollapsed) {
+                    // Toggle-format-then-type: keep caret between markers
+                    // so the next keystroke is captured INSIDE the format.
+                    start.offset += MARKER.length;
+                    end.offset += MARKER.length;
+                }
+                else {
+                    // Backport of marktext f3b53427: when wrapping a
+                    // non-empty selection, collapse the caret PAST the
+                    // closing marker so the next keystroke lands outside
+                    // the format instead of extending it.
+                    end.offset += MARKER.length * 2;
+                    start.offset = end.offset;
+                }
                 break;
             }
 
@@ -1556,14 +1569,21 @@ class Format extends Content {
             case 'u': {
                 const MARKER = FORMAT_TAG_MAP[type];
                 const oldText = this.text;
+                const wasCollapsed = start.offset === end.offset;
                 this.text
                     = oldText.substring(0, start.offset)
                         + MARKER.open
                         + oldText.substring(start.offset, end.offset)
                         + MARKER.close
                         + oldText.substring(end.offset);
-                start.offset += MARKER.open.length;
-                end.offset += MARKER.open.length;
+                if (wasCollapsed) {
+                    start.offset += MARKER.open.length;
+                    end.offset += MARKER.open.length;
+                }
+                else {
+                    end.offset += MARKER.open.length + MARKER.close.length;
+                    start.offset = end.offset;
+                }
                 break;
             }
 

@@ -121,7 +121,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 141d25d8 | feat | 粘贴链接抓页面标题 | PR-4c | `fixed`（`res.json()`→`res.text()`，5 个测试） |
 | d26f5092 | feat | image resize + inline/block 切换 | `pending` |
 | cb7be189 | feat | inline image / small image | `pending` |
-| 9eff8248 | feat | focus / blur 事件 | `pending` |
+| 9eff8248 | feat | focus / blur 事件 | PR-10a | `fixed`（`muya.ts::_bindFocusBlurEvents` 用 `attachDOMEvent` 监听 `domNode` 的 focus/blur DOM 事件并 `emit('focus')`/`emit('blur')`，destroy 时 `detachAllDomEvents` 自动清理；3 个 happy-dom 测试 + examples 加 demo log） |
 | 8474a997 | feat | prism 语言别名 | `verified-not-applicable`（新仓 `packages/core/src/utils/prism/index.ts:21-36,47` fuse 已含 alias key + `loadLanguage.ts:24-55 transformAliasToOrigin` 已实现） |
 | 8af9605e | feat | code block Solidity 等语言 | `verified-not-applicable`（新仓 `packages/core/src/utils/prism/loadLanguage.ts` 已动态读 `prismjs/components.js`，删掉了上游那张白名单 JSON，Solidity 等天然可用） |
 | 47cb2bbe | feat | indent code block | `verified-not-applicable`（上游核心是"4-space 自动转换"路径，新仓 `packages/core/src/block/base/format.ts:53` regex `^( {4,})` + `_convertToIndentedCodeBlock()` (`:1163-1211`) 已实现；UI 上无显式入口，但上游也没有） |
@@ -132,7 +132,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | c0c8ea4b | feat | 打开外链 / 本地 md | PR-12 `skipped`（Electron `shell.openExternal` 路径，跨 SDK 边界，应用层做） |
 | afe68891 | feat | SM.MS 上传删除链接 | PR-12 `skipped`（uploader 专属，新仓不集成 uploader） |
 | 435dca74 | feat | Unsplash 搜图 | PR-12 `skipped`（网络依赖 + API key + UI 重大改动，对纯 markdown 库过重） |
-| f3b53427 | feat | 跳光标到末尾再格式化 | `pending` |
+| f3b53427 | feat | 跳光标到末尾再格式化 | PR-10b | `fixed`（`format.ts::_addFormat` 在 paired marker (strong/em/inline_code/del/inline_math) 和 tag marker (u/sub/sup/mark) 分支按 `wasCollapsed` 分流：非空选区光标跳到闭合标记之后，单点光标保留在 marker 之间（toggle-then-type）；link/image 保持原"光标落在 `()` 之间"行为；17 个单元测试覆盖每种 marker + 偏移 + collapsed 回归） |
 | efd38644 | feat | 长 footnote 编号 | `pending` |
 | 318bfc6a / fc89d04a / 37b96c88 | feat | footnote 系列 | `pending` |
 
