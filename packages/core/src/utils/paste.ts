@@ -131,7 +131,7 @@ export function getCopyTextType(html: string, text: string, pasteType: string) {
         if (match && match[1]) {
             const tag = match[1];
 
-            return PARAGRAPH_TYPES.find(type => type === tag) ? 'code' : 'text';
+            return PARAGRAPH_TYPES.includes(tag) ? 'code' : 'text';
         }
 
         return 'text';

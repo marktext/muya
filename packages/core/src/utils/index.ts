@@ -31,7 +31,7 @@ const uniqueIdIterator = uniqueIdGenerator();
 export const getUniqueId = () => `${ID_PREFIX}${uniqueIdIterator.next().value}`;
 
 export function getLongUniqueId() {
-    return `${getUniqueId()}-${(+new Date()).toString(32)}`;
+    return `${getUniqueId()}-${(Date.now()).toString(32)}`;
 }
 
 export function noop() {}

@@ -232,7 +232,7 @@ export function validateEmphasize(src: string, offset: number, marker: string, p
     const CLOSE_REG = new RegExp(
         `[^\\${marker.charAt(0)}]\\${marker.split('').join('\\')}`,
     );
-    if (emphasizeText.match(SHORTER_REG) && !emphasizeText.match(CLOSE_REG))
+    if (SHORTER_REG.test(emphasizeText) && !CLOSE_REG.test(emphasizeText))
         return false;
 
     /**
