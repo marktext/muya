@@ -1,5 +1,6 @@
 import type { Listener } from './event/types';
 import type { ILocale } from './i18n/types';
+import type { ITocItem } from './state/getTOC';
 import type { TState } from './state/types';
 import type { IMuyaOptions } from './types';
 import {
@@ -10,6 +11,7 @@ import { Editor } from './editor/index';
 
 import EventCenter from './event/index';
 import I18n from './i18n/index';
+import { getTOC } from './state/getTOC';
 import { Ui } from './ui/ui';
 import './assets/styles/blockSyntax.css';
 import './assets/styles/index.css';
@@ -106,6 +108,20 @@ export class Muya {
 
     getMarkdown() {
         return this.editor.jsonState.getMarkdown();
+    }
+
+    /**
+     * Return a flat table of contents for the current document.
+     *
+     * Mirrors marktext's `tocCtrl.getTOC` (including the 9cb2cbe8 regex
+     * fix). Only top-level atx / setext headings are surfaced; nested
+     * headings inside blockquotes / list items are ignored, same as
+     * marktext. `content` is the raw heading text (inline markdown not
+     * parsed); `slug` is a stable per-block identifier; `githubSlug` is
+     * the GitHub-style anchor derived from `content`.
+     */
+    getTOC(): ITocItem[] {
+        return getTOC(this);
     }
 
     undo() {

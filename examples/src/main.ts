@@ -155,7 +155,12 @@ muya.on('json-change', (_changes) => {
     // console.log(JSON.stringify(muya.getState(), null, 2))
     // console.log(muya.getMarkdown())
     // console.log(JSON.stringify(_changes, null, 2));
+    // eslint-disable-next-line no-console -- demo log for manual TOC verification (PR-15)
+    console.log('[muya] TOC:', muya.getTOC());
 });
+
+// eslint-disable-next-line no-console -- demo log for manual TOC verification (PR-15)
+console.log('[muya] TOC (initial):', muya.getTOC());
 
 muya.on('focus', () => {
     // eslint-disable-next-line no-console -- demo log for manual focus verification
