@@ -90,21 +90,21 @@ PR 分组对应方案第三节的 5 个系列：
 | bbea7eca | autopair | 优化自动补全 | PR-3 | `pending` |
 | 358fa83d | autopair | 引号自动配对 | PR-3 | `pending` |
 | 6a50b5cb | tasklist | 切换 task-list 光标跳末尾 | PR-3 | `pending` |
-| c3f128e7 | tasklist | copy 保留勾选态 | PR-4 | `pending` |
+| c3f128e7 | tasklist | copy 保留勾选态 | PR-4b | `verified-not-applicable`：marktext fix 是其 DOM-based copy 的 checkbox 注入边界，新仓走 marked 渲染（task-list `[x]/[ ]` → `<input checked>`），渲染层一致 |
 | edbab6ed | ime | 中文输入误删 | PR-3 | `pending` |
 | 67e18176 | ime | 中文回车多行 | PR-3 | `pending` |
 | 8a7e6559 | ime | compose bug | PR-3 | `pending` |
 | 63642d39 | typing | 回车 typewriter 抖动 | PR-3 | `pending` |
 | 6b3ead95 | keyboard | 非 US 键盘 | PR-3 | `pending` |
 | ed1b3354 | keyboard | 图片选中按 delete | PR-3 | `pending` |
-| b925f7d6 | clipboard | 移动端 cut | PR-4 | `pending` |
-| 393139e5 | clipboard | clipboard 过度 sanitize | PR-4 | `pending` |
-| 54a3b585 | clipboard | 粘贴 HTML escape | PR-4 | `pending` |
-| 485fcfe0 | clipboard | image paste handler 不执行 | PR-4 | `pending` |
-| 5b1cd85d | clipboard | 末尾 html block 粘贴错误 | PR-4 | `pending` |
-| fb8fca7b | clipboard | copy/paste list | PR-4 | `pending` |
+| b925f7d6 | clipboard | 移动端 cut | PR-4b | `verified-not-applicable`：新仓 `cutHandler` 起手即 `if (selection == null) return;`，等价 marktext 的 `if (!start || !end) return;` 守卫 |
+| 393139e5 | clipboard | clipboard 过度 sanitize | PR-4b | `verified-not-applicable`：新仓 `getClipboardData` 单块/多块路径都 `text = substring(...)`/`mdGenerator.generate(...)` 直出，无 `escapeHtml`；含 2 个防御测试 |
+| 54a3b585 | clipboard | 粘贴 HTML escape | PR-4a | `verified-not-applicable`：`utils/paste.ts` 已 `sanitize(html, PREVIEW_DOMPURIFY_CONFIG, false)` |
+| 485fcfe0 | clipboard | image paste handler 不执行 | PR-4a | `verified-not-applicable`：新仓 pasteHandler 无 image paste 路径；进入 paste handler 后不会因 `!text && !html` 早退 |
+| 5b1cd85d | clipboard | 末尾 html block 粘贴错误 | PR-4a | `pending`：需 examples 手测（marktext 在 contentState 走 `getLastBlock` 递归选末块；新仓多段粘贴直接 `insertAfter` 不递归子树，结构上不会因 html-block `editable===false` 选错末块） |
+| fb8fca7b | clipboard | copy/paste list | PR-4b | `verified-not-applicable`：turndown `paragraph`/`listItem` 规则已在 `utils/turndownService/index.ts`；checkbox 注入是 marktext DOM-based copy 特有，新仓走 marked 渲染不需要 |
 | 067ec485 | clipboard | HTML paste handler | PR-4a | `partial-fixed`：text-only `<table>...</table>` 现在升级到 html 槽走 HtmlToMarkdown；recursion 与 pasteImage 分支新架构不适用（无 pasteImage） |
-| ef59a743 | clipboard | 富文本复制 | PR-4 | `pending` |
+| ef59a743 | clipboard | 富文本复制 | PR-4b | `verified-not-applicable`：copyHandler 'normal' 已 `setData('text/html', html); setData('text/plain', text)`；`getClipBoardHtml` 经 marked 渲染 |
 | c841facd | clipboard | 空内容不写剪贴板 | PR-4b | `fixed`（含 6 个回归测试） |
 
 ## P3 — 体验特性（PR-5 按需）
@@ -149,7 +149,9 @@ PR 分组对应方案第三节的 5 个系列：
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
 | PR-2 | 25 | 0 | 0% |
 | PR-3 | 19 | 0 | 0% |
-| PR-4 | 13 | 0 | 0% |
-| PR-5 | 19+ | 0 | 0% |
+| PR-4a (粘贴) | 5 | 4 | 80%（2 fixed + 2 verified-not-applicable；1 留 examples 手测） |
+| PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
+| PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
+| PR-5 | 18+ | 0 | 0% |
 
 最后更新：2026-05-20
