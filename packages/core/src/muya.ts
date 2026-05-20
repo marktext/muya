@@ -167,6 +167,7 @@ export class Muya {
 
     destroy() {
         this.eventCenter.detachAllDomEvents();
+        this.eventCenter.unsubscribeAll();
         // this.domNode[BLOCK_DOM_PROPERTY] = null;
         if (this.domNode.remove)
             this.domNode.remove();
