@@ -237,10 +237,16 @@ class TableCellContent extends Format {
         event.preventDefault();
         event.stopPropagation();
 
-        const nextContentBlock = this.nextContentInContext();
+        // marktext 5fb130d9 (#2331): Shift+Tab back-navigates inside the
+        // table (header row's first cell stays put when there is no
+        // previous content).
+        const isShiftTab = (event as KeyboardEvent).shiftKey === true;
+        const cursorBlock = isShiftTab
+            ? this.previousContentInContext()
+            : this.nextContentInContext();
 
-        if (nextContentBlock)
-            nextContentBlock.setCursor(0, 0, true);
+        if (cursorBlock)
+            cursorBlock.setCursor(0, 0, true);
     }
 
     // The following code is used to fix a bug in Safari,
