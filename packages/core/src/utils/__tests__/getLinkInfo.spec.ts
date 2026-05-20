@@ -109,4 +109,24 @@ describe('getLinkInfo — guards', () => {
         expect(info).not.toBeNull();
         expect(info!.range).toBeNull();
     });
+
+    // Copilot review #4 on PR #226: `Number(startStr)` produces NaN when
+    // `data-start`/`data-end` are present but non-numeric (e.g. empty string,
+    // garbage). Consumers should never see `{ start: NaN, end: NaN }` —
+    // fall back to a null range instead.
+    it.each([
+        ['empty string', '', '10'],
+        ['non-numeric data-start', 'abc', '10'],
+        ['non-numeric data-end', '0', 'xyz'],
+        ['both non-numeric', 'a', 'b'],
+    ])('returns range=null when data-start/data-end is %s', (_label, start, end) => {
+        const el = makeEl(
+            'a',
+            { raw: '<a href="https://x.com">x</a>', start, end },
+            { href: 'https://x.com' },
+        );
+        const info = getLinkInfo(el);
+        expect(info).not.toBeNull();
+        expect(info!.range).toBeNull();
+    });
 });

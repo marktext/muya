@@ -24,11 +24,10 @@ function makeMuya() {
     };
 }
 
-const cleanup: Array<() => void> = [];
-
 afterEach(() => {
-    while (cleanup.length)
-        cleanup.pop()!();
+    // Each session gets a fresh EventCenter + domNode, so isolation comes
+    // from wiping the DOM here — detached nodes' listeners are GC'd along
+    // with them.
     document.body.innerHTML = '';
 });
 
@@ -50,7 +49,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
     it('emits on mouseover of a markdown link `<span class="mu-link">` in preview mode', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
-        cleanup.push(attachLinkMouseHandlers(muya));
+        attachLinkMouseHandlers(muya);
 
         // Preview-mode link: the leading `[` marker is `.mu-hide`, so the
         // wrapper is the rendered popover target.
@@ -75,7 +74,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
     it('emits on mouseover of a reference link `<a class="mu-reference-link">`', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
-        cleanup.push(attachLinkMouseHandlers(muya));
+        attachLinkMouseHandlers(muya);
 
         // Preview-mode wrapper as before — refLink also has a leading marker.
         const marker = document.createElement('span');
@@ -98,7 +97,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
     it('emits on mouseover of an html_tag `<a class="mu-raw-html">` (no marker required)', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
-        cleanup.push(attachLinkMouseHandlers(muya));
+        attachLinkMouseHandlers(muya);
 
         // html_tag <a> doesn't have a "hidden source marker" sibling —
         // the inline rendering already IS the rendered form.
@@ -119,7 +118,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
     it('emits with reference: null on mouseout of a link', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
-        cleanup.push(attachLinkMouseHandlers(muya));
+        attachLinkMouseHandlers(muya);
 
         const link = document.createElement('a');
         link.classList.add('mu-inline-rule', 'mu-raw-html');
@@ -137,7 +136,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
     it('does NOT emit on mouseover of a non-link element', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
-        cleanup.push(attachLinkMouseHandlers(muya));
+        attachLinkMouseHandlers(muya);
 
         const para = document.createElement('p');
         para.textContent = 'plain text';
@@ -150,7 +149,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
     it('does NOT emit when the markdown link is in EDIT mode (no hidden marker sibling)', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
-        cleanup.push(attachLinkMouseHandlers(muya));
+        attachLinkMouseHandlers(muya);
 
         // Edit-mode link: previous sibling is mu-gray (visible), not mu-hide.
         const marker = document.createElement('span');
@@ -165,10 +164,10 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         expect(emits).toHaveLength(0);
     });
 
-    it('detaches all handlers when the returned cleanup runs (no leakage)', () => {
+    it('detaches all handlers when eventCenter.detachAllDomEvents runs (no leakage)', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
-        const detach = attachLinkMouseHandlers(muya);
+        attachLinkMouseHandlers(muya);
 
         const link = document.createElement('a');
         link.classList.add('mu-inline-rule', 'mu-raw-html');
@@ -176,7 +175,88 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         link.dataset.raw = '<a href="https://x.com">x</a>';
         domNode.appendChild(link);
 
-        detach();
+        eventCenter.detachAllDomEvents();
+        mouseover(link);
+        expect(emits).toHaveLength(0);
+    });
+
+    // Copilot review #1 on PR #226: mouseout fires when the pointer crosses
+    // between descendants of the same wrapper (e.g. text → <strong> → text).
+    // A naive impl hides the popover prematurely. Guard via `relatedTarget`:
+    // if the pointer is moving to another descendant of the same wrapper,
+    // it isn't a real exit.
+    it('does NOT emit reference:null when the pointer moves between descendants of the same wrapper', () => {
+        const { muya, eventCenter, domNode } = makeMuya();
+        const emits = captureEmits(eventCenter);
+        attachLinkMouseHandlers(muya);
+
+        const link = document.createElement('span');
+        link.classList.add('mu-inline-rule', 'mu-link');
+        link.dataset.raw = '[hi](https://x.com)';
+        (link as any).href = 'https://x.com';
+        // Inner spans like emphasis/strong that text children get wrapped in.
+        const innerA = document.createElement('em');
+        innerA.textContent = 'hi-em';
+        const innerB = document.createElement('strong');
+        innerB.textContent = 'hi-strong';
+        link.appendChild(innerA);
+        link.appendChild(innerB);
+        const marker = document.createElement('span');
+        marker.classList.add('mu-hide');
+        domNode.appendChild(marker);
+        domNode.appendChild(link);
+
+        mouseover(link);
+        emits.length = 0;
+
+        // Pointer moves from `innerA` to `innerB` — both still inside `link`.
+        const ev = new MouseEvent('mouseout', { bubbles: true, relatedTarget: innerB });
+        innerA.dispatchEvent(ev);
+
+        expect(emits).toHaveLength(0);
+    });
+
+    it('emits reference:null when the pointer truly leaves the link wrapper', () => {
+        const { muya, eventCenter, domNode } = makeMuya();
+        const emits = captureEmits(eventCenter);
+        attachLinkMouseHandlers(muya);
+
+        const link = document.createElement('a');
+        link.classList.add('mu-inline-rule', 'mu-raw-html');
+        link.setAttribute('href', 'https://x.com');
+        link.dataset.raw = '<a href="https://x.com">x</a>';
+        link.textContent = 'x';
+        const outside = document.createElement('p');
+        outside.textContent = 'outside';
+        domNode.appendChild(link);
+        domNode.appendChild(outside);
+
+        mouseover(link);
+        emits.length = 0;
+
+        const ev = new MouseEvent('mouseout', { bubbles: true, relatedTarget: outside });
+        link.dispatchEvent(ev);
+
+        expect(emits).toHaveLength(1);
+        expect(emits[0].reference).toBeNull();
+    });
+
+    // Copilot review #2 on PR #226: getLinkInfo can return null (e.g. the
+    // wrapper has the right class but no data-raw). Don't emit a reference
+    // with a null linkInfo — the subscriber may not handle it gracefully.
+    it('does NOT emit when the link wrapper has no data-raw (getLinkInfo returns null)', () => {
+        const { muya, eventCenter, domNode } = makeMuya();
+        const emits = captureEmits(eventCenter);
+        attachLinkMouseHandlers(muya);
+
+        // html_tag wrapper but missing data-raw — unlikely in production but
+        // a defensive guard so the popover doesn't show a half-empty payload.
+        const link = document.createElement('a');
+        link.classList.add('mu-inline-rule', 'mu-raw-html');
+        link.setAttribute('href', 'https://x.com');
+        // No dataset.raw assigned.
+        domNode.appendChild(link);
+
         mouseover(link);
         expect(emits).toHaveLength(0);
     });

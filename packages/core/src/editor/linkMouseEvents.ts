@@ -23,8 +23,10 @@ import { getLinkInfo } from '../utils/getLinkInfo';
 // `parentPreSibling.classList.contains('ag-hide')` guard and keeps the
 // popover from flashing while the user types the URL.
 //
-// `attachLinkMouseHandlers` returns a cleanup function the caller is
-// expected to invoke on editor destroy.
+// Cleanup: every listener is attached via `eventCenter.attachDOMEvent`,
+// so `muya.destroy()` → `eventCenter.detachAllDomEvents()` removes them.
+// No explicit cleanup return is needed; tests that want isolation should
+// call `eventCenter.detachAllDomEvents()` directly.
 
 const LINK_SELECTOR = [
     `.${CLASS_NAMES.MU_LINK}`,
@@ -51,7 +53,7 @@ function isPopoverTarget(wrapper: HTMLElement): boolean {
     return !!prev && prev.classList.contains(CLASS_NAMES.MU_HIDE);
 }
 
-export function attachLinkMouseHandlers(muya: Muya): () => void {
+export function attachLinkMouseHandlers(muya: Muya): void {
     const { eventCenter, domNode } = muya;
 
     const overHandler = (event: Event) => {
@@ -59,9 +61,16 @@ export function attachLinkMouseHandlers(muya: Muya): () => void {
         if (!wrapper || !isPopoverTarget(wrapper))
             return;
 
+        // Defensive guard: if a wrapper somehow matches the selector but
+        // doesn't carry the expected dataset (no `data-raw`), bail rather
+        // than emit a half-empty payload that the popover can't act on.
+        const linkInfo = getLinkInfo(wrapper);
+        if (!linkInfo)
+            return;
+
         eventCenter.emit('muya-link-tools', {
             reference: wrapper,
-            linkInfo: getLinkInfo(wrapper),
+            linkInfo,
         });
     };
 
@@ -70,14 +79,19 @@ export function attachLinkMouseHandlers(muya: Muya): () => void {
         if (!wrapper)
             return;
 
+        // Ignore mouseout when the pointer is still inside the same wrapper
+        // (e.g. crossing between a `<strong>` and the surrounding text child).
+        // Without this guard the popover hides every time the pointer crosses
+        // an internal element boundary.
+        if (event instanceof MouseEvent) {
+            const { relatedTarget } = event;
+            if (relatedTarget instanceof Node && wrapper.contains(relatedTarget))
+                return;
+        }
+
         eventCenter.emit('muya-link-tools', { reference: null });
     };
 
-    const overId = eventCenter.attachDOMEvent(domNode, 'mouseover', overHandler);
-    const outId = eventCenter.attachDOMEvent(domNode, 'mouseout', outHandler);
-
-    return () => {
-        eventCenter.detachDOMEvent(overId);
-        eventCenter.detachDOMEvent(outId);
-    };
+    eventCenter.attachDOMEvent(domNode, 'mouseover', overHandler);
+    eventCenter.attachDOMEvent(domNode, 'mouseout', outHandler);
 }

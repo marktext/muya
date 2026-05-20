@@ -32,21 +32,32 @@ function readHref(el: HTMLElement): string | null {
     return null;
 }
 
+function parseRange(startStr: string | undefined, endStr: string | undefined): { start: number; end: number } | null {
+    // Reject missing or empty dataset values up front — `Number('')` is 0,
+    // not NaN, so without this check an empty attribute would silently
+    // produce `{ start: 0, end: 0 }`.
+    if (!startStr || !endStr)
+        return null;
+
+    const start = Number(startStr);
+    const end = Number(endStr);
+    // Reject NaN / Infinity from non-numeric dataset values so consumers
+    // never receive `{ start: NaN, end: NaN }`.
+    if (!Number.isFinite(start) || !Number.isFinite(end))
+        return null;
+
+    return { start, end };
+}
+
 export function getLinkInfo(el: HTMLElement): IExtractedLinkInfo | null {
     const raw = el.dataset.raw;
     if (!raw)
         return null;
 
-    const startStr = el.dataset.start;
-    const endStr = el.dataset.end;
-    const range = startStr != null && endStr != null
-        ? { start: Number(startStr), end: Number(endStr) }
-        : null;
-
     return {
         href: readHref(el),
         raw,
         text: el.textContent ?? '',
-        range,
+        range: parseRange(el.dataset.start, el.dataset.end),
     };
 }
