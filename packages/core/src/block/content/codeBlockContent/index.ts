@@ -10,6 +10,7 @@ import type Code from '../../commonMark/codeBlock/code';
 import type HTMLPreview from '../../commonMark/html/htmlPreview';
 import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
 import { adjustOffset, escapeHTML } from '../../../utils';
+import { LINE_NUMBERS_ROWS_CLASS, renderLineNumbersInnerHTML } from '../../../utils/codeBlockLineNumbers';
 import { getHighlightHtml, MARKER_HASH } from '../../../utils/highlightHTML';
 import prism, { loadedLanguages, transformAliasToOrigin, walkTokens } from '../../../utils/prism/index';
 import Content from '../../base/content';
@@ -163,6 +164,22 @@ class CodeBlockContent extends Content {
         else {
             domNode.innerHTML = code;
         }
+
+        this._updateLineNumbers(text);
+    }
+
+    private _updateLineNumbers(text: string) {
+        if (!this.muya.options.codeBlockLineNumbers)
+            return;
+        const parent = this.domNode?.parentElement;
+        if (parent == null)
+            return;
+        const wrapper = parent.querySelector<HTMLElement>(`:scope > .${LINE_NUMBERS_ROWS_CLASS}`);
+        if (wrapper == null)
+            return;
+        const desired = renderLineNumbersInnerHTML(text);
+        if (wrapper.innerHTML !== desired)
+            wrapper.innerHTML = desired;
     }
 
     override inputHandler(event: Event): void {

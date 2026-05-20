@@ -211,6 +211,55 @@ code.mu-code .mu-code-copy:hover {
     color: var(--editor-color-30);
 }
 
+/* code block line numbers (option: codeBlockLineNumbers) */
+.mu-code-block.mu-line-numbers {
+    padding-left: 3.5em;
+
+    counter-reset: mu-linenumber;
+}
+
+.mu-code-block.mu-line-numbers .mu-code {
+    position: relative;
+}
+
+.mu-line-numbers-rows {
+    position: absolute;
+    top: 0;
+    left: -2.5em;
+    z-index: 0;
+
+    width: 2.5em;
+
+    font-size: 100%;
+    letter-spacing: -1px;
+
+    user-select: none;
+
+    pointer-events: none;
+}
+
+.mu-line-numbers-rows > span {
+    display: block;
+
+    counter-increment: mu-linenumber;
+    pointer-events: none;
+}
+
+.mu-line-numbers-rows > span::before {
+    position: relative;
+    top: 0.05em;
+
+    display: block;
+    padding-right: 0.8em;
+
+    color: var(--editor-color-30);
+    text-align: right;
+
+    transform: scale(0.8);
+
+    content: counter(mu-linenumber);
+}
+
 span.mu-language-input {
     position: absolute;
     top: 0;

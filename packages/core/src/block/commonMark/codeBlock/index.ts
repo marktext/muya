@@ -88,6 +88,8 @@ class CodeBlock extends Parent {
         this.tagName = 'pre';
         this.meta = meta;
         this.classList = ['mu-code-block', `mu-${meta.type}-code`];
+        if (muya.options.codeBlockLineNumbers)
+            this.classList.push('mu-line-numbers');
         this.createDomNode();
     }
 
