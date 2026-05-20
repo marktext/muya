@@ -234,4 +234,36 @@ sep
 `;
         expect(roundTrip(md, 4)).toBe(md);
     });
+
+    // Daring Fireball Markdown Spec: nested list items indent by a hard
+    // 4 spaces regardless of marker width. Backported from marktext
+    // `markdown-list-indentation.spec.js`, last case in the suite.
+    it('indent using Daring Fireball Markdown Spec (dfm) — round-trips marktext fixture', () => {
+        const md = `start
+
+- foo
+- foo
+    - foo
+    - foo
+        - foo
+        - foo
+            - foo
+    - foo
+- foo
+
+sep
+
+1. foo
+2. foo
+    1. foo
+    2. foo
+        1. foo
+    3. foo
+3. foo
+    20. foo
+        99. foo
+            1. foo
+`;
+        expect(roundTrip(md, 'dfm')).toBe(md);
+    });
 });

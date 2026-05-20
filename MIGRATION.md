@@ -172,7 +172,17 @@ Spec runner 用 `renderToStaticHTML(..., { sanitize: false })` 跑——衡量�
 
 `normalizeHtml` 规范化：兼属性名排序、self-closing void 标签统一、相邻 tag 间空白折叠（`>(WS)<` → `><`）、void 标签后空白剥离。`<pre>`/`<code>` 内容（如行末 `\n`）保留——因为 collapse 只匹配纯空白 token 间隔，content 字符不动。
 
-### PR-6b 待办（独立 PR，PR-6a 合并后做）
+### PR-6b 交付（2026-05-20）
+
+完成 marktext 测试补齐三件套：
+
+- **footnote 510 行补齐**：`utils/marked/extensions/__tests__/footnote.spec.ts` 从 13 → 21 个测试，新增 8 个 multi-line body 场景（next-line / next-paragraph / 多段落 body / 嵌套 list / 嵌套 code block / 终止于非缩进段落 / 终止于不足 4-space 缩进）。顺手修了 `footnote.ts` cleanup 路径的小 bug：第一行 4-space 缩进未剥离导致 multi-line body 被误识别成 indented code block（解决方案：cleanup 加一道 `^ {4}` strip）。
+- **markdown-basic round-trip**：新增 `test/spec/roundTrip.spec.ts` + 11 个 marktext fixture（`test/spec/fixtures/marktext-round-trip/{common,gfm}/`）。15 个测试（11 stability + 4 strict identity round-trip）。
+- **list-indentation 5 个策略**：`state/__tests__/listSerialization.spec.ts` 原 11 个 + 新增 `dfm` (Daring Fireball) 策略 → 12 个。
+
+合计 PR-6b 新增 24 个测试，1 个 footnote parser bug fix。
+
+### PR-6b 待办（旧；保留为后续追踪参考）
 
 目标：补足"非 bug regression"的测试覆盖。PR-2~5 的每条 fix 都自带回归测试，但 happy-path、合规性、广覆盖的测试目前稀疏。
 
@@ -218,6 +228,6 @@ Spec runner 用 `renderToStaticHTML(..., { sanitize: false })` 跑——衡量�
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
 | PR-5 | 18+ | 0 | 0% |
 | PR-6a | — | done | spec 合规基础设施落地（CM 572/652 = 87.7%, GFM 580/672 = 86.3%，1324 spec 测试 + 8 normalizer 单测 + 18 个 renderToStaticHTML 单测） |
-| PR-6b | — | 0 | 0%（PR-6a 合并后启动；footnote 510 行 + markdown-basic round-trip + list-indentation 补齐） |
+| PR-6b | — | done | marktext 测试补齐落地（footnote 8 个新测试 + 1 个 parser fix；round-trip 15 个测试 + 11 fixture；list-indent +1 dfm 策略） |
 
 最后更新：2026-05-20
