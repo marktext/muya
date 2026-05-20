@@ -118,6 +118,35 @@ describe('renderToStaticHTML', () => {
             expect(off).not.toMatch(/<sup>/);
         });
 
+        // marktext b8e2cd82 "Fix inline html renderer" added a
+        // `textRenderer.script` method so sup/sub markdown survives the
+        // *HTML output* path (not just the editor render path). The new
+        // muya repo's `superSubscript.ts` extension wires the renderer
+        // directly (`renderer(token) { return '<sup>...</sup>' | '<sub>...</sub>' }`),
+        // so both inline rendering and HTML export go through the same
+        // emitter — there is no separate text-renderer to keep in sync.
+        // These tests lock that behaviour for HTML output specifically.
+        it('emits <sup>/<sub> wrappers when mixed with surrounding text (b8e2cd82 defensive)', () => {
+            // The sup START regex (`SUP_START_REG`) requires a non-space
+            // char (or BOL) before `^`; sub requires the opposite. The
+            // realistic case is mid-paragraph use, which both forms
+            // support side-by-side.
+            const html = renderToStaticHTML('water H~2~O and exp 2^n^ done');
+            expect(html).toMatch(/<sub>2<\/sub>/);
+            expect(html).toMatch(/<sup>n<\/sup>/);
+            // Both wrappers must coexist in the same <p>.
+            expect(html).toMatch(/<p>[^<]*H<sub>2<\/sub>O[^<]*2<sup>n<\/sup>[^<]*<\/p>/);
+        });
+
+        it('emits <sup>/<sub> wrappers inside list items and headings (b8e2cd82 defensive)', () => {
+            const html = renderToStaticHTML('# title H~2~O text\n\n- exp 2^n^ items');
+            // sup/sub must survive nesting in block contexts, mirroring
+            // marktext b8e2cd82's intent (any inline context, not just
+            // bare paragraphs).
+            expect(html).toMatch(/<h1>[^<]*H<sub>2<\/sub>O[^<]*<\/h1>/);
+            expect(html).toMatch(/<li>[^<]*2<sup>n<\/sup>[^<]*<\/li>/);
+        });
+
         it('honours isGitlabCompatibilityEnabled (promotes ```math fences to math blocks)', () => {
             // GitLab-flavoured Markdown lets a fenced code block tagged
             // ` ```math ` render as block math. `walkTokens` rewrites the
