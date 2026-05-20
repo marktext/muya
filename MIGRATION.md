@@ -104,7 +104,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 393139e5 | clipboard | clipboard 过度 sanitize | PR-4b | `verified-not-applicable`：新仓 `getClipboardData` 单块/多块路径都 `text = substring(...)`/`mdGenerator.generate(...)` 直出，无 `escapeHtml`；含 2 个防御测试 |
 | 54a3b585 | clipboard | 粘贴 HTML escape | PR-4a | `verified-not-applicable`：`utils/paste.ts` 已 `sanitize(html, PREVIEW_DOMPURIFY_CONFIG, false)` |
 | 485fcfe0 | clipboard | image paste handler 不执行 | PR-4a | `verified-not-applicable`：新仓 pasteHandler 无 image paste 路径；进入 paste handler 后不会因 `!text && !html` 早退 |
-| 5b1cd85d | clipboard | 末尾 html block 粘贴错误 | PR-4a | `pending`：需 examples 手测（marktext 在 contentState 走 `getLastBlock` 递归选末块；新仓多段粘贴直接 `insertAfter` 不递归子树，结构上不会因 html-block `editable===false` 选错末块） |
+| 5b1cd85d | clipboard | 末尾 html block 粘贴错误 | PR-7d | `verified-not-applicable`：marktext 老 `pasteCtrl.getLastBlock` 递归 children 选最末叶子，遇 `editable===false` 的 html-block 空 children 数组崩。新仓 `pasteHandler` (`clipboard/index.ts:631-635`) 多段粘贴走 `for (state of remaining) … insertAfter(wrapperBlock)` 同层挂载，wrapperBlock 推进到 newBlock 后用 `firstContentInDescendant()` 取末块的可编辑内容；无递归末块查找。`pnpm vite build` 在 examples 通过 |
 | fb8fca7b | clipboard | copy/paste list | PR-4b | `verified-not-applicable`：turndown `paragraph`/`listItem` 规则已在 `utils/turndownService/index.ts`；checkbox 注入是 marktext DOM-based copy 特有，新仓走 marked 渲染不需要 |
 | 067ec485 | clipboard | HTML paste handler | PR-4a | `partial-fixed`：text-only `<table>...</table>` 现在升级到 html 槽走 HtmlToMarkdown；recursion 与 pasteImage 分支新架构不适用（无 pasteImage） |
 | ef59a743 | clipboard | 富文本复制 | PR-4b | `verified-not-applicable`：copyHandler 'normal' 已 `setData('text/html', html); setData('text/plain', text)`；`getClipBoardHtml` 经 marked 渲染 |
@@ -183,10 +183,14 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | PR-3b | 4 | 4 | 100%（1 fixed `358fa83d` + 3 verified-not-applicable；回归测试 13 个） |
 | PR-3c | 3 | 3 | 100%（3 verified-not-applicable；+1 compositionend 防御测试；跨 block+IME 留 examples/ 手测） |
 | PR-3d | 11 | 11 | 100%（2 fixed `5fb130d9`+`ed1b3354` + 6 verified-not-applicable + 2 test-only + 1 转 PR-4；回归测试 8 个） |
-| PR-4a (粘贴) | 5 | 4 | 80%（2 fixed + 2 verified-not-applicable；1 留 examples 手测） |
+| PR-4a (粘贴) | 5 | 4 | 80%（2 fixed + 2 verified-not-applicable；1 转 PR-7d 手测确认） |
 | PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
 | PR-5 | 18+ | 0 | 0% |
 | PR-6 | — | 0 | 0%（等 PR-2~4 后启动） |
+| PR-7a (list/paragraph/clipboard) | 4 | 4 | 100%（4 verified-not-applicable；防御测试 14 个） |
+| PR-7b (嵌套块边界) | 4 | 4 | 100%（1 fixed `6293d408` + 3 verified-not-applicable；回归测试 21 个） |
+| PR-7c (inline html renderer) | 1 | 1 | 100%（verified-not-applicable；防御测试 6 个） |
+| PR-7d (末尾 html-block 粘贴) | 1 | 1 | 100%（verified-not-applicable，结构性 + examples vite build pass） |
 
 最后更新：2026-05-20
