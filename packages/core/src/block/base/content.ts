@@ -343,13 +343,19 @@ class Content extends TreeNode {
                 else {
                     // Not Unicode aware, since things like \p{Alphabetic} or \p{L} are not supported yet
 
+                    // marktext 358fa83d (#2960): only pair quotes/brackets
+                    // when the cursor is at end-of-line or before whitespace.
+                    // Inserting `"foo` would otherwise become `""foo` and force
+                    // the user to immediately delete the spurious closing char.
+                    const postIsNotTouching = !/\S/.test(postInputChar);
                     if (
                         !/\\/.test(preInputChar)
                         && ((autoPairQuote
                             && /'/.test(inputChar)
+                            && postIsNotTouching
                             && !/[a-z\d]/i.test(preInputChar))
-                        || (autoPairQuote && /"/.test(inputChar))
-                        || (autoPairBracket && /[{[(]/.test(inputChar))
+                        || (autoPairQuote && /"/.test(inputChar) && postIsNotTouching)
+                        || (autoPairBracket && /[{[(]/.test(inputChar) && postIsNotTouching)
                         || (type === 'format'
                             && !isInInlineMath
                             && !isInInlineCode
