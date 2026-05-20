@@ -31,10 +31,10 @@ describe('superSubScript marked extension — renderer emits <sup>/<sub> (markte
     it('exposes both `superscript` and `subscript` extensions', () => {
         const ext = superSubScriptExtension();
         expect(ext.extensions).toHaveLength(2);
-        expect(ext.extensions.map(e => e.name)).toEqual([
-            'superscript',
-            'subscript',
-        ]);
+        // Order is not part of the public contract — assert set membership
+        // so a harmless reorder doesn't fail this test.
+        const names = new Set(ext.extensions.map(e => e.name));
+        expect(names).toEqual(new Set(['superscript', 'subscript']));
     });
 
     it('renders a `superscript` token with marker `^` as <sup>...</sup>', () => {
