@@ -63,7 +63,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 9c2f6cb3 | inline | inline math 样式 | — | `skipped`（CSS-only，新仓样式体系自有 inline math 样式） |
 | 6dfa7938 | inline | inline math selection | — | `skipped`（CSS-only，新仓样式体系自有 selection 样式） |
 | d9f64bab | inline | reference link 渲染 | PR-2a | `test-only`（lexer.ts:357 `labels.has(...)` 已就位；2 个回归测试） |
-| b8e2cd82 | inline | inline html renderer | PR-3 | `pending`（textRenderer 改动主要在 muya HTML 导出；与 stateToMarkdown 关系待评估） |
+| b8e2cd82 | inline | inline html renderer | PR-7c | `verified-not-applicable`：marktext 老 `textRenderer.js` 缺 `script` 方法导致 sup/sub 不被渲染为 `<sup>/<sub>`。新仓 `utils/marked/extensions/superSubscript.ts` 的 `renderer(token)` 已实现 `<${tag}>${text}</${tag}>` 等价输出；snabbdom 侧 `inlineRenderer/renderer/superSubScript.ts` 走平行路径也已就位。**新增 6 个回归测试**锁住 renderer + tokenizer 契约 |
 | 962fdf35 | inline | heading emoji 偏移 | — | `skipped`（CSS-only，新仓样式体系自有 emoji 处理） |
 | 8e32838b | inline | 上/下标 | PR-2a | `test-only`（`super_sub_script` token + 渲染器已就位；3 个正负回归测试） |
 | c0853f64 | inline | auto link / extension | PR-2a | `test-only`（auto_link + auto_link_extension + 边界 guard 已就位；4 个回归测试） |
