@@ -1,6 +1,6 @@
 {
     "name": "@muyajs/core",
-    "version": "0.0.39",
+    "version": "0.1.0",
     "description": "Core package for muya.",
     "author": "jocs <ransixi@gmail.com>",
     "license": "MIT",

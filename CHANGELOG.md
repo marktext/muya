@@ -1,5 +1,13 @@
 # Changelog
 
+# [0.1.0](https://github.com/marktext/muya/compare/v0.0.39...v0.1.0) (2026-05-20)
+
+
+### Bug Fixes
+
+* avoid shared Marked state leaking across renderHtml calls ([#202](https://github.com/marktext/muya/issues/202)) ([a1caa67](https://github.com/marktext/muya/commit/a1caa6782d9f8d7d5c5232528641852a9fe34925))
+* **build:** restore lib/types output after vite-plugin-dts v5 upgrade ([6da5a21](https://github.com/marktext/muya/commit/6da5a21641f337f427c36dce6255ccd6622e6306))
+
 ## [0.0.39](https://github.com/marktext/muya/compare/v0.0.38...v0.0.39) (2025-11-17)
 
 
