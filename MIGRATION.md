@@ -44,7 +44,7 @@ PR 分组对应方案第三节的 5 个系列：
 | Hash | 范畴 | 说明 | PR | 状态 |
 |---|---|---|---|---|
 | 1ecc3601 | parser | footnote 解析 + 510 行测试基线 | PR-2a | `fixed`（marked v16 block 扩展 + 12 个回归测试；3 个 negative 用例 marked 自带 `def` 规则替代 paragraph fallback） |
-| 23435ce6 | parser | 任务列表缩进 | PR-2 | `pending` |
+| 23435ce6 | parser | 任务列表缩进 | PR-2a | `test-only`（marked v16 内置 list tokenizer 不共用旧 fork 的缩进 bug；2 个防御测试锁定嵌套） |
 | 57cd04c5 | parser | CommonMark example 475 | PR-2 | `pending` |
 | ad5ddbf9 | parser | GFM example 558 | PR-2 | `pending` |
 | 372fe02f | parser | list 解析 #870 | PR-2 | `pending` |
@@ -147,7 +147,7 @@ PR 分组对应方案第三节的 5 个系列：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 25 | 1 | 4%（1ecc3601 footnote 解析 + 12 测试基线）|
+| PR-2 | 25 | 2 | 8%（1 fixed + 1 test-only）|
 | PR-3 | 19 | 0 | 0% |
 | PR-4 | 13 | 0 | 0% |
 | PR-5 | 19+ | 0 | 0% |
