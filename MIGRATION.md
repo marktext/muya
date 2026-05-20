@@ -122,11 +122,11 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | d26f5092 | feat | image resize + inline/block 切换 | `pending` |
 | cb7be189 | feat | inline image / small image | `pending` |
 | 9eff8248 | feat | focus / blur 事件 | `pending` |
-| 8474a997 | feat | prism 语言别名 | `pending` |
-| 8af9605e | feat | code block Solidity 等语言 | `pending` |
-| 47cb2bbe | feat | indent code block | `pending` |
-| 7aa0d1bf | feat | code block 复制按钮 | `pending` |
-| a028a7c2 | feat | code block 行号 | `pending` |
+| 8474a997 | feat | prism 语言别名 | `verified-not-applicable`（新仓 `packages/core/src/utils/prism/index.ts:21-36,47` fuse 已含 alias key + `loadLanguage.ts:24-55 transformAliasToOrigin` 已实现） |
+| 8af9605e | feat | code block Solidity 等语言 | `verified-not-applicable`（新仓 `packages/core/src/utils/prism/loadLanguage.ts` 已动态读 `prismjs/components.js`，删掉了上游那张白名单 JSON，Solidity 等天然可用） |
+| 47cb2bbe | feat | indent code block | `verified-not-applicable`（上游核心是"4-space 自动转换"路径，新仓 `packages/core/src/block/base/format.ts:53` regex `^( {4,})` + `_convertToIndentedCodeBlock()` (`:1163-1211`) 已实现；UI 上无显式入口，但上游也没有） |
+| 7aa0d1bf | feat | code block 复制按钮 | `verified-not-applicable`（新仓 `packages/core/src/block/commonMark/codeBlock/code.ts:15-41 renderCopyButton` + `:88-101` 点击经 `editor.clipboard.copy('copyCodeContent', ...)`；`.mu-code-copy` 样式见 `blockSyntax.css`） |
+| a028a7c2 | feat | code block 行号 | PR-5a | `fixed`（`codeBlockLineNumbers` 选项默认关闭；`renderLineNumbersInnerHTML` + `.mu-line-numbers-rows` 渲染；仅 `code-block` 容器接入，frontmatter / math / diagram / html 不挂；10 个回归测试） |
 | ef9fe756 | feat | underline 格式 | `pending` |
 | 81af43be | feat | quick insert hint 隐藏 | `pending` |
 | c0c8ea4b | feat | 打开外链 / 本地 md | `pending` |
@@ -226,8 +226,9 @@ Spec runner 用 `renderToStaticHTML(..., { sanitize: false })` 跑——衡量�
 | PR-4a (粘贴) | 5 | 4 | 80%（2 fixed + 2 verified-not-applicable；1 留 examples 手测） |
 | PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
-| PR-5 | 18+ | 0 | 0% |
+| PR-5 | 18+ | 5 | 28%（PR-5a 1 fixed `a028a7c2`（行号，10 个测试）+ 4 verified-not-applicable：`8474a997`/`8af9605e`/`47cb2bbe`/`7aa0d1bf`） |
+| PR-5a (P3 code block 行号) | 1 | 1 | 100%（fixed，10 个测试） |
 | PR-6a | — | done | spec 合规基础设施落地（CM 572/652 = 87.7%, GFM 580/672 = 86.3%，1324 spec 测试 + 8 normalizer 单测 + 18 个 renderToStaticHTML 单测） |
 | PR-6b | — | done | marktext 测试补齐落地（footnote 8 个新测试 + 1 个 parser fix；round-trip 15 个测试 + 11 fixture；list-indent +1 dfm 策略） |
 
-最后更新：2026-05-20
+最后更新：2026-05-20（PR-5a 行号 + P3 4 条 verified-not-applicable）
