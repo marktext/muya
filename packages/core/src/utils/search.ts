@@ -28,7 +28,7 @@ export function matchString(text: string, value: string, options: ISearchOption)
 
         return execAll(SEARCH_REG, text);
     }
-    catch (err) {
+    catch {
         return [];
     }
 }

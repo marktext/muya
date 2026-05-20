@@ -81,7 +81,7 @@ export class MarkdownToHtml {
                 if (functionType === 'vega-lite')
                     await render(diagramContainer, JSON.parse(rawCode), options);
             }
-            catch (err) {
+            catch {
                 diagramContainer.innerHTML = '< Invalid Diagram >';
             }
         }

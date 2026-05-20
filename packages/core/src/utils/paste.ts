@@ -31,7 +31,7 @@ export async function getPageTitle(url: string) {
         }
         return '';
     }
-    catch (err) {
+    catch {
         return '';
     }
 }
@@ -125,7 +125,8 @@ export async function normalizePastedHTML(html: string) {
 export function getCopyTextType(html: string, text: string, pasteType: string) {
     const getTextType = (text: string) => {
         const match
-            = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-z\d-]+)>$/i.exec(
+        // eslint-disable-next-line regexp/no-super-linear-backtracking
+            = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/[a-z\d-]+>$/i.exec(
                 text.trim(),
             );
         if (match && match[1]) {

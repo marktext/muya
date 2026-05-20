@@ -28,7 +28,7 @@ export default function getFrontMatterInfo(text: string) {
         token = {
             type: 'frontmatter',
             raw,
-            text: matches[1],
+            text: matches[1] ?? matches[2] ?? matches[3] ?? matches[4],
             style,
             lang,
         };

@@ -1,7 +1,14 @@
+// These rules are the heart of the inline markdown parser; they are tuned by
+// hand to match the CommonMark / GFM specs. Rewriting them to please the
+// regexp/* rules below is high-risk (parser regressions outweigh the
+// theoretical ReDoS surface — input is the user's own document, not
+// untrusted network data).
+/* eslint-disable regexp/no-super-linear-backtracking, regexp/no-misleading-capturing-group, regexp/optimal-quantifier-concatenation */
+
 import { escapeCharacters } from '../config/escapeCharacter';
 
 export const beginRules = {
-    hr: /^(\*{3,}$|^-{3,}$|^_{3,}$)/,
+    hr: /^(\*{3,}|-{3,}|_{3,})$/,
     code_fence: /^(`{3,})([^`]*)$/,
     header: /(^ {0,3}#{1,6}(\s+|$))/,
     reference_definition:
