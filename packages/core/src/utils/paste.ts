@@ -130,7 +130,9 @@ export function getCopyTextType(html: string, text: string, pasteType: string) {
                 text.trim(),
             );
         if (match && match[1]) {
-            const tag = match[1];
+            // The regex is case-insensitive, so `<P>` yields `tag = 'P'`;
+            // PARAGRAPH_TYPES is all lowercase. Normalize before checking.
+            const tag = match[1].toLowerCase();
 
             return PARAGRAPH_TYPES.includes(tag) ? 'code' : 'text';
         }
