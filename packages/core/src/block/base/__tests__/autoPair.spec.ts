@@ -230,14 +230,16 @@ describe('autoPair — 67e18176 soft-line completion on compositionend', () => {
 // Already covered by `!/[a-z0-9]/i.test(preInputChar)` in the
 // markdown-syntax branch. Defensive test.
 describe('autoPair — bbea7eca skip when preInputChar is alphanumeric', () => {
-    it('does not auto-pair `*` after a letter (typing inside a word)', () => {
+    it('still auto-pairs `*` after whitespace (the negative control)', () => {
+        // Counter-test to anchor the boundary: after `foo `, the
+        // preInputChar is ' ' which is NOT alphanumeric, so the
+        // markdown-syntax branch should still fire and the closer is
+        // inserted. The next two tests prove that swapping the space
+        // for an alphanumeric character flips the result.
         const fakeThis = makeFakeThis('foo ', 4);
         const event = makeInputEvent('insertText', '*');
         const { text, needRender } = invokeAutoPair(fakeThis, event, 'foo *', 5);
 
-        // Note: text is unchanged, but the leading whitespace ensures we
-        // do not hit the `!/[a-z0-9]/i.test(preInputChar)` filter.
-        // After 'foo ' typing '*' at offset 5 → preInputChar is ' '.
         expect(text).toBe('foo **');
         expect(needRender).toBe(true);
     });
