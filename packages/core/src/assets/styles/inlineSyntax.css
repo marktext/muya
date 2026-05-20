@@ -218,7 +218,8 @@ div .mu-math-error,
     border-bottom-color: var(--float-bg-color);
 }
 
-.mu-gray.mu-ruby > .mu-ruby-render::before .mu-gray.mu-math > .mu-math-render::before {
+.mu-gray.mu-ruby > .mu-ruby-render::before,
+.mu-gray.mu-math > .mu-math-render::before {
     position: absolute;
     bottom: 100%;
     left: 50%;
@@ -232,7 +233,8 @@ div .mu-math-error,
     content: '';
 }
 
-.mu-hide.mu-ruby > .mu-ruby-render::before .mu-hide.mu-math > .mu-math-render::before {
+.mu-hide.mu-ruby > .mu-ruby-render::before,
+.mu-hide.mu-math > .mu-math-render::before {
     content: none;
 }
 

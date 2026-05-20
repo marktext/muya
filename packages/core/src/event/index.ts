@@ -99,7 +99,7 @@ class EventCenter {
         const listeners = this.listeners[event];
         if (
             Array.isArray(listeners)
-            && listeners.find(l => l.listener === listener)
+            && listeners.some(l => l.listener === listener)
         ) {
             const index = listeners.findIndex(l => l.listener === listener);
             listeners.splice(index, 1);

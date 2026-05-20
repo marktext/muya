@@ -66,7 +66,7 @@ function inlineKatex(renderer: (token: IMathToken) => string) {
             const index = (match.index || 0) + match[1].length;
             const possibleKatex = src.substring(index);
 
-            if (possibleKatex.match(inlineRule))
+            if (inlineRule.test(possibleKatex))
                 return index;
         },
         tokenizer(src: string) {

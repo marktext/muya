@@ -38,7 +38,7 @@ function getExtension(opts: IOptions) {
             const index = (match.index || 0) + match[1].length;
             const possibleEmoji = src.substring(index);
 
-            if (possibleEmoji.match(EMOJI_REG))
+            if (EMOJI_REG.test(possibleEmoji))
                 return index;
         },
 

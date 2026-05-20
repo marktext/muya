@@ -39,7 +39,7 @@ function getExtension(name: 'superscript' | 'subscript') {
             const index = (match.index || 0) + match[1].length;
             const possibleSubSup = src.substring(index);
 
-            if (possibleSubSup.match(SUP_REG) || possibleSubSup.match(SUB_REG))
+            if (SUP_REG.test(possibleSubSup) || SUB_REG.test(possibleSubSup))
                 return index;
         },
 
