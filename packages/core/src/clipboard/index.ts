@@ -284,26 +284,37 @@ class Clipboard {
         if (!event.clipboardData)
             return;
 
+        // Mirror native copy behaviour: leave the system clipboard untouched
+        // when the selection has nothing to contribute, so a previous copy
+        // from another app isn't silently clobbered (marktext #3130).
         switch (copyType) {
             case 'normal': {
+                if (text.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', html);
                 event.clipboardData.setData('text/plain', text);
                 break;
             }
 
             case 'copyAsHtml': {
+                if (html.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', '');
                 event.clipboardData.setData('text/plain', html);
                 break;
             }
 
             case 'copyAsMarkdown': {
+                if (text.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', '');
                 event.clipboardData.setData('text/plain', text);
                 break;
             }
 
             case 'copyCodeContent': {
+                if (text.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', '');
                 event.clipboardData.setData('text/plain', text);
                 break;

@@ -105,7 +105,7 @@ PR 分组对应方案第三节的 5 个系列：
 | fb8fca7b | clipboard | copy/paste list | PR-4 | `pending` |
 | 067ec485 | clipboard | HTML paste handler | PR-4 | `pending` |
 | ef59a743 | clipboard | 富文本复制 | PR-4 | `pending` |
-| c841facd | clipboard | 空内容不写剪贴板 | PR-4 | `pending` |
+| c841facd | clipboard | 空内容不写剪贴板 | PR-4b | `fixed`（含 6 个回归测试） |
 
 ## P3 — 体验特性（PR-5 按需）
 
