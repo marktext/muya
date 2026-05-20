@@ -7,6 +7,7 @@ export type { TState } from './state/types';
 export { CodeBlockLanguageSelector } from './ui/codeBlockLanguageSelector';
 // Export ui tools.
 export { EmojiSelector } from './ui/emojiSelector';
+export { FootnoteTool } from './ui/footnoteTool';
 export { ImageEditTool } from './ui/imageEditTool';
 export { ImageResizeBar } from './ui/imageResizeBar';
 export { ImageToolBar } from './ui/imageToolbar';

@@ -470,6 +470,15 @@ class Format extends Content {
         if (inlineRuleRenderEle)
             return this._handleClickInlineRuleRender(event, inlineRuleRenderEle);
 
+        // Open the footnote tool when the user clicks an inline `[^id]`
+        // reference. Doesn't early-return: cursor placement below still runs
+        // so the user can also edit the identifier text directly.
+        const footnoteEl = (target as HTMLElement).closest(
+            `.${CLASS_NAMES.MU_INLINE_FOOTNOTE_IDENTIFIER}`,
+        );
+        if (footnoteEl)
+            this._emitFootnoteToolEvent(footnoteEl as HTMLElement);
+
         requestAnimationFrame(() => {
             // TODO: @JOCS, remove use this.selection directly.
             if (event.shiftKey && this.selection.anchorBlock !== this) {
@@ -1598,6 +1607,30 @@ class Format extends Content {
         const endOffset = +inlineRuleRenderEle.getAttribute('data-end')!;
 
         return this.setCursor(startOffset, endOffset, true);
+    }
+
+    private _emitFootnoteToolEvent(reference: HTMLElement) {
+        const identifier = reference.id.replace(/^noteref-/, '');
+        const { scrollPage } = this.muya.editor;
+        if (!scrollPage)
+            return;
+
+        // Collect the first definition for each identifier — duplicates in
+        // the document share the same `#fn-{N}` target on the HTML side.
+        const footnotes = new Map<string, unknown>();
+        scrollPage.breadthFirstTraverse((node) => {
+            if (node.blockName !== 'footnote')
+                return;
+            const id = (node as unknown as { meta?: { identifier?: string } }).meta?.identifier;
+            if (typeof id === 'string' && !footnotes.has(id))
+                footnotes.set(id, node);
+        });
+
+        this.muya.eventCenter.emit('muya-footnote-tool', {
+            reference,
+            identifier,
+            footnotes,
+        });
     }
 }
 

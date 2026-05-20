@@ -4,6 +4,7 @@ import {
     CodeBlockLanguageSelector,
     EmojiSelector,
     en,
+    FootnoteTool,
     ImageEditTool,
     ImageResizeBar,
     ImageToolBar,
@@ -46,6 +47,7 @@ async function imageAction() {
 }
 
 Muya.use(EmojiSelector);
+Muya.use(FootnoteTool);
 Muya.use(InlineFormatToolbar);
 Muya.use(ImageEditTool, {
     imagePathPicker,
