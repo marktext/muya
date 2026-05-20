@@ -5,7 +5,7 @@ import type { Nullable } from '../../../types';
 import type CodeBlock from './index';
 import { fromEvent } from 'rxjs';
 import copyIcon from '../../../assets/icons/copy/2.png';
-import { lineNumbersWrapperHTML } from '../../../utils/codeBlockLineNumbers';
+import { LINE_NUMBERS_ROWS_CLASS, lineNumbersWrapperHTML } from '../../../utils/codeBlockLineNumbers';
 import logger from '../../../utils/logger';
 import { h, toHTML } from '../../../utils/snabbdom';
 import Parent from '../../base/parent';
@@ -47,6 +47,9 @@ class Code extends Parent {
     // math, diagram, and html containers all reuse `Code` but must not show
     // a gutter — so we gate creation on the state name, not just the option.
     private readonly _withLineNumbers: boolean;
+    // Cached reference to the gutter wrapper so CodeBlockContent.update() does
+    // not pay a querySelector on every keystroke.
+    public lineNumbersWrapper: HTMLElement | null = null;
 
     static override blockName = 'code';
 
@@ -81,14 +84,19 @@ class Code extends Parent {
 
     // Create the copy button at the top-right; when codeBlockLineNumbers is on
     // AND this Code is hosted inside a real code-block (not frontmatter / math /
-    // diagram / html), also create an empty line-numbers wrapper.
-    // CodeBlockContent.update() refreshes the row count via the sibling lookup.
+    // diagram / html), also create an empty line-numbers wrapper and cache
+    // its element so CodeBlockContent.update() can sync rows without a
+    // querySelector per keystroke.
     createCopyNode() {
         const { i18n, options } = this.muya;
+        const withLineNumbers = options.codeBlockLineNumbers && this._withLineNumbers;
         let html = toHTML(renderCopyButton(i18n));
-        if (options.codeBlockLineNumbers && this._withLineNumbers)
-            html += lineNumbersWrapperHTML('');
+        if (withLineNumbers)
+            html += lineNumbersWrapperHTML();
         this.domNode!.innerHTML = html;
+        this.lineNumbersWrapper = withLineNumbers
+            ? this.domNode!.querySelector<HTMLElement>(`.${LINE_NUMBERS_ROWS_CLASS}`)
+            : null;
     }
 
     listen() {

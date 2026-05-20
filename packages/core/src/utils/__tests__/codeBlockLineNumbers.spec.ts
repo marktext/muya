@@ -1,14 +1,16 @@
-import { describe, expect, it } from 'vitest';
+// @vitest-environment happy-dom
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
     computeLineCount,
     LINE_NUMBERS_ROWS_CLASS,
     lineNumbersWrapperHTML,
-    renderLineNumbersInnerHTML,
+    syncLineNumbersSpans,
 } from '../codeBlockLineNumbers';
 
-// Mirrors marktext a028a7c2 ("feat: add code block line numbers") row counting.
-// The trailing-newline branch produces an extra visible empty line in
-// contenteditable, matching what the user sees after pressing Enter.
+// Locks the row-count semantics from marktext a028a7c2 ("feat: add code block
+// line numbers"). The implementation switched to a charCode loop to avoid the
+// regex match-array allocation on every code-block update; the behaviour
+// (including the trailing-newline extra row) must stay identical.
 describe('computeLineCount', () => {
     it('counts 1 for empty string', () => {
         expect(computeLineCount('')).toBe(1);
@@ -39,33 +41,61 @@ describe('computeLineCount', () => {
     });
 });
 
-describe('renderLineNumbersInnerHTML', () => {
-    it('emits one <span> per visible line', () => {
-        expect(renderLineNumbersInnerHTML('')).toBe('<span></span>');
-        expect(renderLineNumbersInnerHTML('a\nb')).toBe('<span></span><span></span>');
-        expect(renderLineNumbersInnerHTML('a\nb\nc')).toBe(
-            '<span></span><span></span><span></span>',
-        );
-    });
-
-    it('matches computeLineCount for trailing-newline texts', () => {
-        const text = 'a\nb\n';
-        const innerHTML = renderLineNumbersInnerHTML(text);
-        const spanCount = (innerHTML.match(/<span><\/span>/g) ?? []).length;
-        expect(spanCount).toBe(computeLineCount(text));
-    });
-});
-
 describe('lineNumbersWrapperHTML', () => {
-    it('wraps spans in aria-hidden contenteditable=false container', () => {
-        const html = lineNumbersWrapperHTML('a\nb');
+    it('emits an empty wrapper (rows are filled lazily by syncLineNumbersSpans)', () => {
+        const html = lineNumbersWrapperHTML();
         expect(html).toContain(`class="${LINE_NUMBERS_ROWS_CLASS}"`);
         expect(html).toContain('contenteditable="false"');
         expect(html).toContain('aria-hidden="true"');
-        expect(html).toContain('<span></span><span></span>');
+        expect(html).not.toContain('<span></span>');
     });
 
     it('uses the public class name constant', () => {
         expect(LINE_NUMBERS_ROWS_CLASS).toBe('mu-line-numbers-rows');
+    });
+});
+
+describe('syncLineNumbersSpans', () => {
+    let wrapper: HTMLElement;
+
+    beforeEach(() => {
+        wrapper = document.createElement('span');
+    });
+
+    it('appends N spans when starting from empty', () => {
+        syncLineNumbersSpans(wrapper, 3);
+        expect(wrapper.childElementCount).toBe(3);
+        expect(wrapper.querySelectorAll('span').length).toBe(3);
+    });
+
+    it('is a no-op when the count already matches', () => {
+        syncLineNumbersSpans(wrapper, 5);
+        const before = wrapper.innerHTML;
+        syncLineNumbersSpans(wrapper, 5);
+        expect(wrapper.innerHTML).toBe(before);
+        expect(wrapper.childElementCount).toBe(5);
+    });
+
+    it('adds only the delta when growing (does not rebuild)', () => {
+        syncLineNumbersSpans(wrapper, 3);
+        const firstSpan = wrapper.firstElementChild;
+        syncLineNumbersSpans(wrapper, 5);
+        expect(wrapper.childElementCount).toBe(5);
+        // The original spans must survive — proves no full rebuild.
+        expect(wrapper.firstElementChild).toBe(firstSpan);
+    });
+
+    it('removes from the tail when shrinking', () => {
+        syncLineNumbersSpans(wrapper, 5);
+        const firstSpan = wrapper.firstElementChild;
+        syncLineNumbersSpans(wrapper, 2);
+        expect(wrapper.childElementCount).toBe(2);
+        expect(wrapper.firstElementChild).toBe(firstSpan);
+    });
+
+    it('handles count 0 by removing all children', () => {
+        syncLineNumbersSpans(wrapper, 4);
+        syncLineNumbersSpans(wrapper, 0);
+        expect(wrapper.childElementCount).toBe(0);
     });
 });
