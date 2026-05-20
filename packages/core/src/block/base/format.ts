@@ -1542,8 +1542,12 @@ class Format extends Content {
                         + oldText.substring(start.offset, end.offset)
                         + MARKER
                         + oldText.substring(end.offset);
-                start.offset += MARKER.length;
-                end.offset += MARKER.length;
+                // Backport of marktext f3b53427: after wrapping the
+                // selection with paired markers, collapse the caret PAST
+                // the closing marker so the next keystroke lands outside
+                // the format instead of extending it.
+                end.offset += MARKER.length * 2;
+                start.offset = end.offset;
                 break;
             }
 
@@ -1562,8 +1566,8 @@ class Format extends Content {
                         + oldText.substring(start.offset, end.offset)
                         + MARKER.close
                         + oldText.substring(end.offset);
-                start.offset += MARKER.open.length;
-                end.offset += MARKER.open.length;
+                end.offset += MARKER.open.length + MARKER.close.length;
+                start.offset = end.offset;
                 break;
             }
 

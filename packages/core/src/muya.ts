@@ -49,6 +49,20 @@ export class Muya {
         this.editor = new Editor(this);
         this.ui = new Ui(this);
         this.i18n = new I18n(this, this.options.locale);
+        this._bindFocusBlurEvents();
+    }
+
+    // Backport of marktext 9eff8248: expose `focus` / `blur` lifecycle events
+    // so external SDK consumers can react to editor focus changes. Routed
+    // through attachDOMEvent so cleanup is automatic via detachAllDomEvents
+    // in destroy().
+    private _bindFocusBlurEvents() {
+        this.eventCenter.attachDOMEvent(this.domNode, 'focus', () => {
+            this.eventCenter.emit('focus');
+        });
+        this.eventCenter.attachDOMEvent(this.domNode, 'blur', () => {
+            this.eventCenter.emit('blur');
+        });
     }
 
     init() {

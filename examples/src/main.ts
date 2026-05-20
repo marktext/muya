@@ -151,6 +151,16 @@ muya.on('json-change', (_changes) => {
     // console.log(JSON.stringify(_changes, null, 2));
 });
 
+muya.on('focus', () => {
+    // eslint-disable-next-line no-console -- demo log for manual focus verification
+    console.log('[muya] focus');
+});
+
+muya.on('blur', () => {
+    // eslint-disable-next-line no-console -- demo log for manual focus verification
+    console.log('[muya] blur');
+});
+
 // muya.on('selection-change', changes => {
 //   const { anchor, focus, path } = changes
 //   console.log(JSON.stringify([anchor.offset, focus.offset, path]))
