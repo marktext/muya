@@ -73,7 +73,7 @@ describe('marktext 0baf2e9e/7de33f11 — inline html tag XSS defenses', () => {
     });
 
     describe('data-align attribute whitelist (config side of the fix)', () => {
-        it('eXPORT_DOMPURIFY_CONFIG includes data-align in ADD_ATTR', () => {
+        it('exposes data-align via ADD_ATTR on EXPORT_DOMPURIFY_CONFIG', () => {
             // marktext added `data-align` to WHITELIST_ATTRIBUTES in the
             // same commit pair; the new repo carries that intent via
             // ADD_ATTR on EXPORT_DOMPURIFY_CONFIG so saved/exported markdown
