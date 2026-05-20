@@ -67,3 +67,41 @@ describe('inline lexer — CommonMark 0.29 spec examples (marktext 57cd04c5)', (
         expect(types).toContain('inline_code');
     });
 });
+
+// Defensive regression for marktext commit ad5ddbf9 (GFM example 558, PR #917):
+// the legacy muya parser used to drop the `"title"` portion of a link or image
+// destination. The new muya's `parseSrcAndTitle` in inlineRenderer/utils.ts
+// already splits these, so this test locks the behaviour in.
+describe('inline lexer — GFM link/image title (marktext ad5ddbf9)', () => {
+    it('extracts title from a link with double-quoted title', () => {
+        const tokens = tokenizer('[text](http://example.com "Example title")');
+        const link = tokens.find(t => t.type === 'link') as any;
+        expect(link).toBeDefined();
+        expect(link.href).toBe('http://example.com');
+        expect(link.title).toBe('Example title');
+    });
+
+    it('extracts title from a link with single-quoted title', () => {
+        const tokens = tokenizer(`[text](http://example.com 'Example title')`);
+        const link = tokens.find(t => t.type === 'link') as any;
+        expect(link).toBeDefined();
+        expect(link.href).toBe('http://example.com');
+        expect(link.title).toBe('Example title');
+    });
+
+    it('extracts title from an image', () => {
+        const tokens = tokenizer('![alt](http://example.com/x.png "Pic title")');
+        const image = tokens.find(t => t.type === 'image') as any;
+        expect(image).toBeDefined();
+        expect(image.src).toBe('http://example.com/x.png');
+        expect(image.title).toBe('Pic title');
+    });
+
+    it('leaves title empty when the destination has no title', () => {
+        const tokens = tokenizer('[text](http://example.com)');
+        const link = tokens.find(t => t.type === 'link') as any;
+        expect(link).toBeDefined();
+        expect(link.href).toBe('http://example.com');
+        expect(link.title).toBe('');
+    });
+});
