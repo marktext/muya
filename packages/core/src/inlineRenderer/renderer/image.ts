@@ -46,14 +46,18 @@ export default function image(
     };
     let id: string = '';
     let isSuccess: boolean | undefined;
+    let naturalWidth: number | undefined;
+    let naturalHeight: number | undefined;
     let src = imageSrc.src;
     const alt = token.attrs.alt;
     const title = token.attrs.title;
     const width = token.attrs.width;
     const height = token.attrs.height;
 
-    if (src)
-        ({ id, isSuccess } = this.loadImageAsync(imageSrc, token.attrs));
+    if (src) {
+        ({ id, isSuccess, width: naturalWidth, height: naturalHeight }
+            = this.loadImageAsync(imageSrc, token.attrs));
+    }
 
     let wrapperSelector = id
         ? `span#${isSuccess ? `${id}_${token.range.start}` : id}.${
@@ -114,12 +118,24 @@ export default function image(
 
     if (src) {
     // image is loading...
-        if (typeof isSuccess === 'undefined')
+        if (typeof isSuccess === 'undefined') {
             wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_LOADING}`;
-        else if (isSuccess === true)
+        }
+        else if (isSuccess === true) {
             wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_SUCCESS}`;
-        else
+            // marktext cb7be189 (#1318): mark small images so themes can adjust
+            // the toolbar/handle positions; otherwise the floating UI dwarfs the image.
+            if (
+                typeof naturalWidth === 'number'
+                && typeof naturalHeight === 'number'
+                && (naturalWidth < 100 || naturalHeight < 100)
+            ) {
+                wrapperSelector += `.${CLASS_NAMES.MU_SMALL_IMAGE}`;
+            }
+        }
+        else {
             wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_FAIL}`;
+        }
 
         // Add image selected class name.
         if (selectedImage) {

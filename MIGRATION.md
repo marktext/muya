@@ -119,8 +119,8 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 1ef0d016 | feat | linkTools unlink/jump | PR-9 `test-only`（subscriber + `selectItem` dispatcher 已就位但 `muya-link-tools` 暂无 emitter；删 `@ts-nocheck` 补类型 + 2 个防御测试锁住 unlink / jump 分支） |
 | cb25b3d4 | feat | linkTools 支持 `<a>` 与 ref link | `pending` |
 | 141d25d8 | feat | 粘贴链接抓页面标题 | PR-4c | `fixed`（`res.json()`→`res.text()`，5 个测试） |
-| d26f5092 | feat | image resize + inline/block 切换 | `pending` |
-| cb7be189 | feat | inline image / small image | `pending` |
+| d26f5092 | feat | image resize + inline/block 切换 | PR-11a | `fixed`（切换 UX 在新仓 `imageToolbar` 已就位 + `updateImage`/`data-align` 渲染分支；本 PR 补齐**最后一道 UX 缺口**：`selection/index.ts:_handleClickInlineImage` 在 `imageInfo.token.attrs['data-align'] === 'inline'` 时不再 emit `muya-transformer`，inline 图片不再叠出 resize bar；抽出 `selection/imageDisplay.ts:shouldShowImageResizeBar` 纯函数 + 11 个单元测试锁住规则） |
+| cb7be189 | feat | inline image / small image | PR-11a | `fixed`（`image.ts` 渲染器接住 `loadImageAsync` 已返回的 `width`/`height`，当 `width < 100 || height < 100` 时给 wrapper 追加 `.mu-small-image` 类；`CLASS_NAMES.MU_SMALL_IMAGE` 加入 hash；5 个渲染单测覆盖小宽 / 小高 / 双大 / loading / fail 5 个分支；后续修补：`loadImageAsync` 异步加载成功分支同步加 `.mu-small-image`，避免 cache miss 首次渲染后类延迟到下次 re-render 才出现；新增 3 个 first-load DOM 测试） |
 | 9eff8248 | feat | focus / blur 事件 | PR-10a | `fixed`（`muya.ts::_bindFocusBlurEvents` 用 `attachDOMEvent` 监听 `domNode` 的 focus/blur DOM 事件并 `emit('focus')`/`emit('blur')`，destroy 时 `detachAllDomEvents` 自动清理；3 个 happy-dom 测试 + examples 加 demo log） |
 | 8474a997 | feat | prism 语言别名 | `verified-not-applicable`（新仓 `packages/core/src/utils/prism/index.ts:21-36,47` fuse 已含 alias key + `loadLanguage.ts:24-55 transformAliasToOrigin` 已实现） |
 | 8af9605e | feat | code block Solidity 等语言 | `verified-not-applicable`（新仓 `packages/core/src/utils/prism/loadLanguage.ts` 已动态读 `prismjs/components.js`，删掉了上游那张白名单 JSON，Solidity 等天然可用） |
