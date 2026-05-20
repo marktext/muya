@@ -185,7 +185,7 @@ export function sanitize(html: string, purifyOptions: Config, disableHtml: boole
  * TODO: @jocs remove in the future, because it's not used.
  * @param ele
  * @param id
- * @returns
+ * @returns A floating-ui-compatible virtual reference positioned at the element's bounding rect.
  */
 export function getParagraphReference(ele: HTMLElement, id: string) {
     const { x, y, left, top, bottom, height } = ele.getBoundingClientRect();

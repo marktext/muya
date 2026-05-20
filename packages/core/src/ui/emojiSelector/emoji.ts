@@ -13,10 +13,10 @@ for (const emoji of emojis) {
 
 class Emoji {
     // cache key is the search text, and the value is search results by category.
-    private cache: Map<string, Record<string, EmojiType[]>> = new Map();
+    private _cache: Map<string, Record<string, EmojiType[]>> = new Map();
 
     search(text: string): Record<string, EmojiType[]> {
-        const { cache } = this;
+        const { _cache: cache } = this;
         if (cache.has(text))
             return cache.get(text)!;
 
@@ -37,7 +37,7 @@ class Emoji {
     }
 
     destroy() {
-        return this.cache.clear();
+        return this._cache.clear();
     }
 }
 

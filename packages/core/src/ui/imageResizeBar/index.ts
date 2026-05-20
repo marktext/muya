@@ -12,24 +12,24 @@ const BAR_HEIGHT = 50;
 
 export class ImageResizeBar {
     static pluginName = 'transformer';
-    private reference: HTMLElement | null = null;
-    private block: Format | null = null;
-    private imageInfo: {
+    private _reference: HTMLElement | null = null;
+    private _block: Format | null = null;
+    private _imageInfo: {
         token: ImageToken;
         imageId: string;
     } | null = null;
 
-    private movingAnchor: string | null = null;
-    private status: boolean = false;
-    private width: number | null = null;
-    private eventId: string[] = [];
-    private lastScrollTop: number | null = null;
-    private resizing: boolean = false;
+    private _movingAnchor: string | null = null;
+    private _status: boolean = false;
+    private _width: number | null = null;
+    private _eventId: string[] = [];
+    private _lastScrollTop: number | null = null;
+    private _resizing: boolean = false;
     // A container for storing drag strips
-    private container: HTMLDivElement;
+    private _container: HTMLDivElement;
 
     constructor(public muya: Muya) {
-        const container = (this.container = document.createElement('div'));
+        const container = (this._container = document.createElement('div'));
         container.classList.add('mu-transformer');
         document.body.appendChild(container);
 
@@ -40,27 +40,27 @@ export class ImageResizeBar {
         const { eventCenter, domNode } = this.muya;
 
         const scrollHandler = (event: Event) => {
-            if (typeof this.lastScrollTop !== 'number') {
-                this.lastScrollTop = (event.target as HTMLElement).scrollTop;
+            if (typeof this._lastScrollTop !== 'number') {
+                this._lastScrollTop = (event.target as HTMLElement).scrollTop;
 
                 return;
             }
 
             // only when scroll distance great than 50px, then hide the float box.
             if (
-                !this.resizing
-                && this.status
-                && Math.abs((event.target as HTMLElement).scrollTop - this.lastScrollTop) > 50
+                !this._resizing
+                && this._status
+                && Math.abs((event.target as HTMLElement).scrollTop - this._lastScrollTop) > 50
             ) {
                 this.hide();
             }
         };
 
         eventCenter.on('muya-transformer', ({ block, reference, imageInfo }) => {
-            this.reference = reference;
+            this._reference = reference;
             if (reference) {
-                this.block = block;
-                this.imageInfo = imageInfo;
+                this._block = block;
+                this._imageInfo = imageInfo;
                 setTimeout(() => {
                     this.render();
                 });
@@ -72,17 +72,17 @@ export class ImageResizeBar {
 
         eventCenter.attachDOMEvent(document, 'click', this.hide.bind(this));
         eventCenter.attachDOMEvent(domNode.parentElement!, 'scroll', scrollHandler);
-        eventCenter.attachDOMEvent(this.container, 'dragstart', event =>
+        eventCenter.attachDOMEvent(this._container, 'dragstart', event =>
             event.preventDefault());
         eventCenter.attachDOMEvent(document.body, 'mousedown', this.mouseDown);
     }
 
     render() {
         const { eventCenter } = this.muya;
-        if (this.status)
+        if (this._status)
             this.hide();
 
-        this.status = true;
+        this._status = true;
 
         this.createElements();
         this.update();
@@ -95,14 +95,14 @@ export class ImageResizeBar {
             bar.classList.add('bar');
             bar.classList.add(c);
             bar.setAttribute('data-position', c);
-            this.container.appendChild(bar);
+            this._container.appendChild(bar);
         });
     }
 
     update() {
-        const rect = this.reference!.getBoundingClientRect();
+        const rect = this._reference!.getBoundingClientRect();
         VERTICAL_BAR.forEach((c) => {
-            const bar: HTMLDivElement = this.container.querySelector(`.${c}`)!;
+            const bar: HTMLDivElement = this._container.querySelector(`.${c}`)!;
 
             switch (c) {
                 case 'left':
@@ -124,7 +124,7 @@ export class ImageResizeBar {
             return;
 
         const { eventCenter } = this.muya;
-        this.movingAnchor = target.getAttribute('data-position');
+        this._movingAnchor = target.getAttribute('data-position');
         const mouseMoveId = eventCenter.attachDOMEvent(
             document.body,
             'mousemove',
@@ -135,10 +135,10 @@ export class ImageResizeBar {
             'mouseup',
             this.mouseUp,
         );
-        this.resizing = true;
+        this._resizing = true;
         // Hide image toolbar
         eventCenter.emit('muya-image-toolbar', { reference: null });
-        this.eventId.push(mouseMoveId, mouseUpId);
+        this._eventId.push(mouseMoveId, mouseUpId);
     };
 
     mouseMove = (event: Event) => {
@@ -149,13 +149,13 @@ export class ImageResizeBar {
         const { clientX } = event;
         let width: number | string = '';
         let relativeAnchor: HTMLDivElement;
-        const image = this.reference!.querySelector('img');
+        const image = this._reference!.querySelector('img');
         if (!image)
             return;
 
-        switch (this.movingAnchor) {
+        switch (this._movingAnchor) {
             case 'left':
-                relativeAnchor = this.container.querySelector('.right')!;
+                relativeAnchor = this._container.querySelector('.right')!;
                 width = Math.max(
                     relativeAnchor.getBoundingClientRect().left + CIRCLE_RADIO - clientX,
                     50,
@@ -163,7 +163,7 @@ export class ImageResizeBar {
                 break;
 
             case 'right':
-                relativeAnchor = this.container.querySelector('.left')!;
+                relativeAnchor = this._container.querySelector('.left')!;
                 width = Math.max(
                     clientX - relativeAnchor.getBoundingClientRect().left - CIRCLE_RADIO,
                     50,
@@ -172,7 +172,7 @@ export class ImageResizeBar {
         }
         // Image width/height attribute must be an integer.
         width = Number.parseInt(String(width));
-        this.width = width;
+        this._width = width;
         image.setAttribute('width', String(width));
         this.update();
     };
@@ -180,28 +180,28 @@ export class ImageResizeBar {
     mouseUp = (event: Event) => {
         event.preventDefault();
         const { eventCenter } = this.muya;
-        if (this.eventId.length) {
-            for (const id of this.eventId)
+        if (this._eventId.length) {
+            for (const id of this._eventId)
                 eventCenter.detachDOMEvent(id);
 
-            this.eventId = [];
+            this._eventId = [];
         }
 
-        if (typeof this.width === 'number' && this.block && this.imageInfo) {
-            this.block.updateImage(this.imageInfo, 'width', String(this.width));
+        if (typeof this._width === 'number' && this._block && this._imageInfo) {
+            this._block.updateImage(this._imageInfo, 'width', String(this._width));
             this.hide();
         }
 
-        this.width = null;
-        this.resizing = false;
-        this.movingAnchor = null;
+        this._width = null;
+        this._resizing = false;
+        this._movingAnchor = null;
     };
 
     hide() {
         const { eventCenter } = this.muya;
-        const circles = this.container.querySelectorAll('.bar');
+        const circles = this._container.querySelectorAll('.bar');
         Array.from(circles).forEach(c => c.remove());
-        this.status = false;
+        this._status = false;
         eventCenter.emit('muya-float', this, false);
     }
 }

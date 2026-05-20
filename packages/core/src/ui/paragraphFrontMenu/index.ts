@@ -48,9 +48,9 @@ const defaultOptions = {
 export class ParagraphFrontMenu extends BaseFloat {
     static pluginName = 'frontMenu';
     public reference: HTMLDivElement | null = null;
-    private oldVNode: VNode | null = null;
-    private block: Parent | null = null;
-    private frontMenuContainer: HTMLDivElement = document.createElement('div');
+    private _oldVNode: VNode | null = null;
+    private _block: Parent | null = null;
+    private _frontMenuContainer: HTMLDivElement = document.createElement('div');
 
     constructor(muya: Muya, options = {}) {
         const name = 'mu-front-menu';
@@ -59,7 +59,7 @@ export class ParagraphFrontMenu extends BaseFloat {
         Object.assign((this.container!.parentNode as HTMLElement).style, {
             overflow: 'visible',
         });
-        this.container!.appendChild(this.frontMenuContainer);
+        this.container!.appendChild(this._frontMenuContainer);
         this.listen();
     }
 
@@ -70,7 +70,7 @@ export class ParagraphFrontMenu extends BaseFloat {
 
         eventCenter.subscribe('muya-front-menu', ({ reference, block }) => {
             if (reference) {
-                this.block = block;
+                this._block = block;
                 this.reference = reference;
 
                 setTimeout(() => {
@@ -83,14 +83,14 @@ export class ParagraphFrontMenu extends BaseFloat {
         const enterLeaveHandler = () => {
             this.hide();
             this.reference = null;
-            this.block = null;
+            this._block = null;
         };
 
         eventCenter.attachDOMEvent(container!, 'mouseleave', enterLeaveHandler);
     }
 
     renderSubMenu(subMenu: IQuickInsertMenuItem['children']) {
-        const { block } = this;
+        const { _block: block } = this;
         const { i18n } = this.muya;
         const children = subMenu.map((menuItem) => {
             const { title, label, subTitle } = menuItem;
@@ -136,7 +136,7 @@ export class ParagraphFrontMenu extends BaseFloat {
     }
 
     render() {
-        const { oldVNode, frontMenuContainer, block } = this;
+        const { _oldVNode: oldVNode, _frontMenuContainer: frontMenuContainer, _block: block } = this;
         const { i18n } = this.muya;
         const { blockName } = block!;
         const children = FRONT_MENU.map(({ icon, label, text, shortCut }) => {
@@ -177,17 +177,17 @@ export class ParagraphFrontMenu extends BaseFloat {
             patch(oldVNode, vnode);
         else patch(frontMenuContainer, vnode);
 
-        this.oldVNode = vnode;
+        this._oldVNode = vnode;
     }
 
     selectItem(event: Event, { label }: { label: string }) {
         event.preventDefault();
         event.stopPropagation();
 
-        if (!this.block)
+        if (!this._block)
             return;
 
-        const { block, muya } = this;
+        const { _block: block, muya } = this;
         const { editor } = muya;
         const oldState = block.getState();
         let cursorBlock = null;

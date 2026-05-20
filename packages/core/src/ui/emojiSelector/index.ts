@@ -20,8 +20,8 @@ const defaultOptions = {
 export class EmojiSelector extends BaseScrollFloat {
     static pluginName = 'emojiPicker';
     private _renderObj: Record<string, EmojiType[]> | null = null;
-    private oldVNode: VNode | null = null;
-    private emoji: Emoji = new Emoji();
+    private _oldVNode: VNode | null = null;
+    private _emoji: Emoji = new Emoji();
     public override renderArray: EmojiType[] = [];
     public override activeItem: EmojiType | null = null;
 
@@ -58,7 +58,7 @@ export class EmojiSelector extends BaseScrollFloat {
                 return this.hide();
             const text = emojiText.trim();
             if (text) {
-                this.renderObj = this.emoji.search(text);
+                this.renderObj = this._emoji.search(text);
                 const cb: any = (item: EmojiType) => {
                     if (block && block.setEmoji)
                         block.setEmoji(item.aliases[0]);
@@ -76,7 +76,7 @@ export class EmojiSelector extends BaseScrollFloat {
     }
 
     render() {
-        const { scrollElement, renderObj, activeItem, oldVNode } = this;
+        const { scrollElement, renderObj, activeItem, _oldVNode: oldVNode } = this;
         const { i18n } = this.muya;
 
         const children = Object.keys(renderObj).map((category) => {
@@ -109,7 +109,7 @@ export class EmojiSelector extends BaseScrollFloat {
         else
             patch(scrollElement!, vnode);
 
-        this.oldVNode = vnode;
+        this._oldVNode = vnode;
     }
 
     getItemElement(item: EmojiType) {
@@ -120,6 +120,6 @@ export class EmojiSelector extends BaseScrollFloat {
 
     override destroy() {
         super.destroy();
-        this.emoji.destroy();
+        this._emoji.destroy();
     }
 }

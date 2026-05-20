@@ -76,6 +76,9 @@ const inlineSyntaxRenderer = {
 
 type InlineSyntaxRender = typeof inlineSyntaxRenderer;
 
+// Declaration-merged with the class below to expose mixin method signatures;
+// must share the class name, so the `I` prefix convention does not apply here.
+// eslint-disable-next-line ts/naming-convention
 interface Renderer extends InlineSyntaxRender {}
 
 @methodMixins(inlineSyntaxRenderer)

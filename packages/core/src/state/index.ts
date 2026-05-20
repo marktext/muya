@@ -32,15 +32,15 @@ class JSONState {
 
     private _isGoing = false;
 
-    private state: TState[] = [];
+    private _state: TState[] = [];
 
     constructor(public muya: Muya, stateOrMarkdown: TState[] | string) {
         this.setContent(stateOrMarkdown);
     }
 
     apply(op: JSONOpList) {
-        this.state = json1.type.apply(
-            this.state as unknown as Doc,
+        this._state = json1.type.apply(
+            this._state as unknown as Doc,
             op,
         ) as unknown as TState[];
     }
@@ -53,7 +53,7 @@ class JSONState {
     }
 
     setState(state: TState[]) {
-        this.state = state;
+        this._state = state;
     }
 
     setMarkdown(markdown: string) {
@@ -65,7 +65,7 @@ class JSONState {
             math,
         } = this.muya.options;
 
-        this.state = new MarkdownToState({
+        this._state = new MarkdownToState({
             footnote,
             isGitlabCompatibilityEnabled,
             trimUnnecessaryCodeBlockEmptyLines,
@@ -121,7 +121,7 @@ class JSONState {
     }
 
     getState(): TState[] {
-        return deepClone(this.state);
+        return deepClone(this._state);
     }
 
     getMarkdown() {
