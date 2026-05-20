@@ -55,6 +55,12 @@ export default function loadImageAsync(
                         imageContainer!.appendChild(img);
                         imageText.classList.remove('mu-image-loading');
                         imageText.classList.add('mu-image-success');
+                        // marktext cb7be189 (#1318): apply the small-image class on first
+                        // load too — otherwise the next re-render via `image.ts` is the
+                        // earliest it would appear, and the toolbar/handles can show up
+                        // dwarfing the actual image in the meantime.
+                        if (width < 100 || height < 100)
+                            imageText.classList.add(CLASS_NAMES.MU_SMALL_IMAGE);
                     }
                     else {
                         insertAfter(img, imageText);
