@@ -265,6 +265,16 @@ author: jocs
 
 **strong** *emphasis* \`inline code\` &gt; <u>underline</u> <mark>highlight</mark> <ruby>北京<rt>Beijing</rt></ruby> [Baidu](http://www.baidu.com) H0~2~ X^5^
 
+# Links (hover for tools)
+
+Markdown link: [Anthropic](https://www.anthropic.com).
+
+Reference link: [Wikipedia][wiki] (definition below).
+
+HTML anchor: <a href="https://github.com/marktext/muya">marktext/muya on GitHub</a>.
+
+[wiki]: https://en.wikipedia.org "Wikipedia"
+
 GitHub and Extra
 Inline format
 ===

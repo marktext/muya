@@ -9,6 +9,7 @@ import {
     ImageToolBar,
     InlineFormatToolbar,
     ja,
+    LinkTools,
     MarkdownToHtml,
     Muya,
     ParagraphFrontButton,
@@ -54,6 +55,13 @@ Muya.use(ImageEditTool, {
 Muya.use(ImageToolBar);
 Muya.use(ImageResizeBar);
 Muya.use(CodeBlockLanguageSelector);
+Muya.use(LinkTools, {
+    jumpClick: (linkInfo: { href?: string } | null) => {
+        const href = linkInfo?.href;
+        if (href && /^https?:\/\//.test(href))
+            window.open(href, '_blank', 'noopener,noreferrer');
+    },
+});
 
 Muya.use(ParagraphFrontButton);
 Muya.use(ParagraphFrontMenu);

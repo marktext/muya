@@ -13,6 +13,7 @@ export { ImageEditTool } from './ui/imageEditTool';
 export { ImageResizeBar } from './ui/imageResizeBar';
 export { ImageToolBar } from './ui/imageToolbar';
 export { InlineFormatToolbar } from './ui/inlineFormatToolbar';
+export { default as LinkTools } from './ui/linkTools';
 export { ParagraphFrontButton } from './ui/paragraphFrontButton';
 export { ParagraphFrontMenu } from './ui/paragraphFrontMenu';
 export { ParagraphQuickInsertMenu } from './ui/paragraphQuickInsertMenu';
