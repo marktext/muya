@@ -112,6 +112,51 @@ describe('format._addFormat caret-after-format placement (marktext f3b53427 UX)'
         });
     });
 
+    describe('collapsed selection (start === end) — caret BETWEEN markers so user can type into the format', () => {
+        // Toggle-then-type workflow: cursor at offset X with no selection,
+        // press Ctrl+B → text gets `****` inserted at X, caret stays
+        // between the two markers so the next keystroke is captured INSIDE
+        // the bold. Without this branch, the new "jump past close marker"
+        // logic would put the caret after the closing `**`, breaking the
+        // common UX (the user's next keystroke would be plain text, not
+        // bold). Copilot review on PR-10b flagged this regression.
+
+        it('strong (collapsed at offset 3 in "abcdef"): caret stays between `**…**` (offset 5)', () => {
+            const { text, start, end } = applyAddFormat('abcdef', 3, 3, 'strong');
+            expect(text).toBe('abc****def');
+            expect(start).toBe(5);
+            expect(end).toBe(5);
+        });
+
+        it('em (collapsed at offset 0 in ""): caret stays between `*…*` (offset 1)', () => {
+            const { text, start, end } = applyAddFormat('', 0, 0, 'em');
+            expect(text).toBe('**');
+            expect(start).toBe(1);
+            expect(end).toBe(1);
+        });
+
+        it('inline_code (collapsed at offset 0 in ""): caret between backticks (offset 1)', () => {
+            const { text, start, end } = applyAddFormat('', 0, 0, 'inline_code');
+            expect(text).toBe('``');
+            expect(start).toBe(1);
+            expect(end).toBe(1);
+        });
+
+        it('u (collapsed at offset 2 in "ab"): caret between `<u>` and `</u>` (offset 5)', () => {
+            const { text, start, end } = applyAddFormat('ab', 2, 2, 'u');
+            expect(text).toBe('ab<u></u>');
+            expect(start).toBe(5);
+            expect(end).toBe(5);
+        });
+
+        it('mark (collapsed at offset 0 in ""): caret between `<mark>` and `</mark>` (offset 6)', () => {
+            const { text, start, end } = applyAddFormat('', 0, 0, 'mark');
+            expect(text).toBe('<mark></mark>');
+            expect(start).toBe(6);
+            expect(end).toBe(6);
+        });
+    });
+
     describe('link / image — preserve existing caret-inside-`()` behavior (unchanged)', () => {
         it('link: "abc" -> "[abc]()" with caret between `(` and `)` (offset 6)', () => {
             const { text, start, end } = applyAddFormat('abc', 0, 3, 'link');
