@@ -73,30 +73,30 @@ PR 分组对应方案第三节的 5 个系列：
 
 | Hash | 范畴 | 说明 | PR | 状态 |
 |---|---|---|---|---|
-| 6f1e733c | cursor | codeblock 光标 #2013 | PR-3 | `pending` |
-| 0a3efbf8 | selection | 文本选区 #622 | PR-3 | `pending` |
-| 7936e3f4 | selection | 选区无法取消 #636 | PR-3 | `pending` |
-| 02dbb8af | search | 嵌套 block 搜索 | PR-3 | `pending` |
-| 4c517b16 | search | search group | PR-3 | `pending` |
-| 1a4844f8 | history | undo/redo 不触发 change | PR-3 | `pending` |
-| 16d61572 | render | partialRender 光标已移除 block | PR-3 | `pending` |
-| 701fb9ae | text | text 删除追加 soft-line | PR-3 | `pending` |
-| 0dc4b415 | table | cell backspace | PR-3 | `pending` |
-| 5fb130d9 | table | shift+tab 表格导航 | PR-3 | `pending` |
-| 9e32c4a0 | table | cursor → next cell index 0 | PR-3 | `pending` |
-| 0028a4bc | table | cell copy 异常 | PR-3 | `pending` |
-| 3fa8a9ae | autopair | inline code 内禁用 | PR-3 | `pending` |
-| 4278362f | autopair | inline math 内禁用 | PR-3 | `pending` |
-| bbea7eca | autopair | 优化自动补全 | PR-3 | `pending` |
-| 358fa83d | autopair | 引号自动配对 | PR-3 | `pending` |
-| 6a50b5cb | tasklist | 切换 task-list 光标跳末尾 | PR-3 | `pending` |
+| 6f1e733c | cursor | codeblock 光标 #2013 | PR-3a | `verified-not-applicable`（旧 bug 根因是 `partialRender` + `singleRender` 重渲流程，新仓不存在；`codeBlockContent.backspaceHandler` 已有 `text[start.offset-1] === '\n'` 分支显式处理 `\n`） |
+| 0a3efbf8 | selection | 文本选区 #622 | PR-3a | `verified-not-applicable`（新仓 selection 通过 `selection/index.ts:_listenSelectActions` 独立监听 mouse 事件，不受 `shownFloat` 影响） |
+| 7936e3f4 | selection | 选区无法取消 #636 | PR-3a | `verified-not-applicable`（`content.ts:keydownHandler` 已对 `shownFloat` 内每个浮层细粒度白名单化判定是否 `preventDefault`） |
+| 02dbb8af | search | 嵌套 block 搜索 | PR-3d | `verified-not-applicable`（新仓 `Search.search` 用 `scrollPage.depthFirstTraverse` 自然遍历嵌套 block；无 `CAN_NEST_RULES` 白名单限制） |
+| 4c517b16 | search | search group | PR-3d | `verified-not-applicable`（`utils/search.ts:buildRegexValue` 已采用新仓正则 `(?<!\\)\$\d` + `$0=full match` 语义；新增 5 个防御测试） |
+| 1a4844f8 | history | undo/redo 不触发 change | PR-3d | `verified-not-applicable`（`history._change` → `editor.updateContents` → `jsonState.dispatch` 仍 emit `json-change`；selection 改变由 `editor.updateContents` 末尾 `setCursor` 触发 `selection-change`） |
+| 16d61572 | render | partialRender 光标已移除 block | PR-3a | `verified-not-applicable`（新仓 `Editor.updateContents` 走 ot-json1 + `replaceWith` 路径，无 `partialRender`，光标定位通过 `setCursor` 在已存在 block 上重置） |
+| 701fb9ae | text | text 删除追加 soft-line | PR-3a | `test-only`（旧多段落删除路径不存在；`autoPair` 内 in-block soft-line 保留分支已就位，2 个防御测试；跨 block 删除依赖浏览器原生行为，需 examples/ 手测） |
+| 0dc4b415 | table | cell backspace | PR-3d | `test-only`（`<br/>X` 末尾 backspace 旧路径在 contentState 内被特化；新仓走 `Format.backspaceHandler` token-based + 浏览器原生删除；建议 examples/ 手测 `<br/>` 后字符删除） |
+| 5fb130d9 | table | shift+tab 表格导航 | PR-3d | `fixed`（`tableCell.tabHandler` 新增 `event.shiftKey` 分支 + `previousContentInContext()`；3 个回归测试） |
+| 9e32c4a0 | table | cursor → next cell index 0 | PR-3d | `verified-not-applicable`（`tableCell.tabHandler` 已 `setCursor(0, 0, true)`，不会选中整 cell 文本） |
+| 0028a4bc | table | cell copy 异常 | PR-4 | `pending`（涉及 clipboard / 表格 cell copy，归 PR-4） |
+| 3fa8a9ae | autopair | inline code 内禁用 | PR-3b | `verified-not-applicable`（`content.ts:autoPair` 已有 `isInInlineCode` 参数 + `format.ts` 调用前用 `_checkCursorInTokenType` 计算；defensive 测试 2 个） |
+| 4278362f | autopair | inline math 内禁用 | PR-3b | `verified-not-applicable`（同上，`isInInlineMath` 参数已就位；defensive 测试 1 个） |
+| bbea7eca | autopair | 优化自动补全 | PR-3b | `verified-not-applicable`（`!/[a-z0-9]/i.test(preInputChar)` 已在 markdown-syntax 分支；defensive 测试 3 个） |
+| 358fa83d | autopair | 引号自动配对 | PR-3b | `fixed`（`content.ts:autoPair` 加 `postIsNotTouching` 门控，5 个回归测试） |
+| 6a50b5cb | tasklist | 切换 task-list 光标跳末尾 | PR-3d | `verified-not-applicable`（`taskListCheckbox` click 已 `event.stopPropagation()`，不会触发 editor click → cursor restore；建议 examples/ 手测确认体感 OK） |
 | c3f128e7 | tasklist | copy 保留勾选态 | PR-4 | `pending` |
-| edbab6ed | ime | 中文输入误删 | PR-3 | `pending` |
-| 67e18176 | ime | 中文回车多行 | PR-3 | `pending` |
-| 8a7e6559 | ime | compose bug | PR-3 | `pending` |
-| 63642d39 | typing | 回车 typewriter 抖动 | PR-3 | `pending` |
-| 6b3ead95 | keyboard | 非 US 键盘 | PR-3 | `pending` |
-| ed1b3354 | keyboard | 图片选中按 delete | PR-3 | `pending` |
+| edbab6ed | ime | 中文输入误删 | PR-3c | `verified-not-applicable`（Ctrl+A 在新仓走浏览器原生，多 block 选区被 `editor.ts` 提前 return，`format.inputHandler` 期初也 `if (isComposed) return`；跨 block + IME 边角仍建议 examples/ 手测） |
+| 67e18176 | ime | 中文回车多行 | PR-3c | `verified-not-applicable`（`content.ts:autoPair` 软换行补齐分支已包含 `event.type === 'compositionend'` 条件，新增 1 个 compositionend 防御测试） |
+| 8a7e6559 | ime | compose bug | PR-3c | `verified-not-applicable`（`composeHandler` 翻转 `isComposed`；`keyupHandler` / `inputHandler` / Enter+Arrow 都已用 `!this.isComposed` 门控） |
+| 63642d39 | typing | 回车 typewriter 抖动 | PR-3d | `verified-not-applicable`（新仓无 typewriter 模式，`scrollIntoView` 抖动场景不存在） |
+| 6b3ead95 | keyboard | 非 US 键盘 | PR-3d | `skipped`（marktext 应用层 renderer keybindings 设置页，非 muya 内核） |
+| ed1b3354 | keyboard | 图片选中按 delete | PR-3d | `fixed`（`selection/index.ts:_listenSelectActions` 把 `/Backspace\|Enter/` 替换为 `/^(?:Backspace\|Delete\|Enter)$/`，覆盖 Delete 键 + 锁住完整匹配避免子串碰撞；clipboard 路径无 selectedImage 副作用，无需同步修复） |
 | b925f7d6 | clipboard | 移动端 cut | PR-4 | `pending` |
 | 393139e5 | clipboard | clipboard 过度 sanitize | PR-4 | `pending` |
 | 54a3b585 | clipboard | 粘贴 HTML escape | PR-4 | `pending` |
@@ -148,7 +148,10 @@ PR 分组对应方案第三节的 5 个系列：
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
 | PR-2 | 25 | 0 | 0% |
-| PR-3 | 19 | 0 | 0% |
+| PR-3a | 5 | 5 | 100%（4 verified-not-applicable + 1 test-only；防御测试 2 个 soft-line） |
+| PR-3b | 4 | 4 | 100%（1 fixed `358fa83d` + 3 verified-not-applicable；回归测试 13 个） |
+| PR-3c | 3 | 3 | 100%（3 verified-not-applicable；+1 compositionend 防御测试；跨 block+IME 留 examples/ 手测） |
+| PR-3d | 11 | 11 | 100%（2 fixed `5fb130d9`+`ed1b3354` + 6 verified-not-applicable + 2 test-only + 1 转 PR-4；回归测试 8 个） |
 | PR-4 | 13 | 0 | 0% |
 | PR-5 | 19+ | 0 | 0% |
 
