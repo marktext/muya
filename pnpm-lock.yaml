@@ -168,6 +168,9 @@ importers:
       '@vitest/coverage-istanbul':
         specifier: ^4.1.6
         version: 4.1.6(vitest@4.1.6)
+      commonmark-spec:
+        specifier: ^0.31.2
+        version: 0.31.2
       happy-dom:
         specifier: ^15.11.7
         version: 15.11.7
@@ -2218,6 +2221,9 @@ packages:
 
   commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
+
+  commonmark-spec@0.31.2:
+    resolution: {integrity: sha512-vXKxmclzJPymhOJYD26G0oBjVmIcKC8p5m2DvHIq1A1btr1m0r0dT/PzRA5/nwxUbCAPedMNPEoiQE+zvuOcOw==}
 
   compare-func@2.0.0:
     resolution: {integrity: sha512-zHig5N+tPWARooBnb0Zx1MFcdfpyJrfTJ3Y5L+IFvUm8rM74hHz66z0gw0x4tijh5CorKkKUCnW82R2vmpeCRA==}
@@ -8216,6 +8222,8 @@ snapshots:
       - typescript
 
   commondir@1.0.1: {}
+
+  commonmark-spec@0.31.2: {}
 
   compare-func@2.0.0:
     dependencies:

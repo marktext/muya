@@ -3,6 +3,7 @@ import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import Prism from 'prismjs';
 import emojiExtension from './extensions/emoji';
+import footnoteExtension from './extensions/footnote';
 import mathExtension from './extensions/math';
 import superSubScriptExtension from './extensions/superSubscript';
 import fm, { frontMatterRender } from './frontMatter';
@@ -33,7 +34,7 @@ function highlight(code: string, lang: string) {
 
 export function getHighlightHtml(src: string, options: ILexOption = {}) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
-    const { frontMatter, math, isGitlabCompatibilityEnabled, superSubScript }
+    const { footnote, frontMatter, math, isGitlabCompatibilityEnabled, superSubScript }
         = options;
 
     // Build a fresh Marked instance per call. `Marked.use({ walkTokens })`
@@ -59,6 +60,9 @@ export function getHighlightHtml(src: string, options: ILexOption = {}) {
 
     if (superSubScript)
         marked.use(superSubScriptExtension());
+
+    if (footnote)
+        marked.use(footnoteExtension());
 
     let html = '';
 
