@@ -44,30 +44,30 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 
 | Hash | 范畴 | 说明 | PR | 状态 |
 |---|---|---|---|---|
-| 1ecc3601 | parser | footnote 解析 + 510 行测试基线 | PR-2 | `pending` |
-| 23435ce6 | parser | 任务列表缩进 | PR-2 | `pending` |
-| 57cd04c5 | parser | CommonMark example 475 | PR-2 | `pending` |
-| ad5ddbf9 | parser | GFM example 558 | PR-2 | `pending` |
-| 372fe02f | parser | list 解析 #870 | PR-2 | `pending` |
-| 8891287b | parser | paragraph → list 转换 | PR-2 | `pending` |
-| 270d33f6 | parser | list item lexer/parser | PR-2 | `pending` |
-| 04834032 | parser | tab 缩进 list | PR-2 | `pending` |
-| 240d64aa | parser | 合并不同类型 list #706 | PR-2 | `pending` |
-| 02841ffd | parser | list 后续段落归属 | PR-2 | `pending` |
-| 5f191681 | parser | blockquote 内 list | PR-2 | `pending` |
-| 70d49c30 | parser | `-foo` 误识 list item | PR-2 | `pending` |
-| 7b7a9424 | math | math block 嵌套 | PR-2 | `pending` |
+| 1ecc3601 | parser | footnote 解析 + 510 行测试基线 | PR-2a | `fixed`（marked v16 block 扩展 + 12 个回归测试；3 个 negative 用例 marked 自带 `def` 规则替代 paragraph fallback） |
+| 23435ce6 | parser | 任务列表缩进 | PR-2a | `test-only`（marked v16 内置 list tokenizer 不共用旧 fork 的缩进 bug；2 个防御测试锁定嵌套） |
+| 57cd04c5 | parser | CommonMark example 475 + 353/387/520/521 等 | PR-2a | `fixed`（canOpenEmphasis 阻断 mid-run `_`；link/reference_link 加 lowerPriority；5 个 CM spec 用例） |
+| ad5ddbf9 | parser | GFM example 558（link/image title 支持） | PR-2a | `test-only`（`parseSrcAndTitle` 已就位；4 个回归测试锁定 link/image title） |
+| 372fe02f | parser | list 解析 #870（task + bullet 混排拆分） | PR-2a | `test-only`（`compatibleTaskList` 已就位；1 个回归测试） |
+| 8891287b | parser | paragraph → list 转换 | PR-3 | `pending`（marktext fix 在 `updateCtrl.js` 编辑器键盘逻辑层；PR-2 范围外） |
+| 270d33f6 | parser | list item lexer/parser（CM 264/265 不同 marker 拆表） | PR-2a | `test-only`（marked v16 + `compatibleTaskList` 已就位；2 个 CM spec 测试） |
+| 04834032 | parser | tab 缩进 list | PR-3 | `pending`（marktext fix 在 `tabCtrl.js` 编辑器 keydown 逻辑；PR-2 范围外） |
+| 240d64aa | parser | 合并不同类型 list #706 | PR-4 | `pending`（marktext fix 在 `pasteCtrl.js` 粘贴流程；PR-4 clipboard 系列处理） |
+| 02841ffd | parser | list 后续段落归属（exportMarkdown 缩进配置） | PR-2b | `pending`（stateToMarkdown 序列化细节，留待 PR-2b 配合 list 表格基线评估） |
+| 5f191681 | parser | blockquote 内 list（exportMarkdown） | PR-2b | `pending`（同上） |
+| 70d49c30 | parser | `-foo` 误识 list item | PR-2a | `test-only`（marked v16 已要求 bullet 后接空格；2 个正负回归测试） |
+| 7b7a9424 | math | math block 嵌套 | PR-3 | `pending`（marktext fix 在 `paragraphCtrl.js` 编辑器层；PR-3 范围） |
 | d937fac0 | inline | inline 语法 | PR-2 | `pending` |
 | 9c2f6cb3 | inline | inline math 样式 | PR-2 | `pending` |
 | 6dfa7938 | inline | inline math selection | PR-2 | `pending` |
-| d9f64bab | inline | reference link 渲染 | PR-2 | `pending` |
-| b8e2cd82 | inline | inline html renderer | PR-2 | `pending` |
-| 962fdf35 | inline | heading emoji 偏移 | PR-2 | `pending` |
-| 8e32838b | inline | 上/下标 | PR-2 | `pending` |
-| c0853f64 | inline | auto link / extension | PR-2 | `pending` |
+| d9f64bab | inline | reference link 渲染 | PR-2a | `test-only`（lexer.ts:357 `labels.has(...)` 已就位；2 个回归测试） |
+| b8e2cd82 | inline | inline html renderer | PR-3 | `pending`（textRenderer 改动主要在 muya HTML 导出；与 stateToMarkdown 关系待评估） |
+| 962fdf35 | inline | heading emoji 偏移 | — | `skipped`（CSS-only，新仓样式体系自有 emoji 处理） |
+| 8e32838b | inline | 上/下标 | PR-2a | `test-only`（`super_sub_script` token + 渲染器已就位；3 个正负回归测试） |
+| c0853f64 | inline | auto link / extension | PR-2a | `test-only`（auto_link + auto_link_extension + 边界 guard 已就位；4 个回归测试） |
 | 1c42555a | block | 粘贴多行进 heading | PR-4a | `fixed`（提取 `mergePasteIntoHeading` 纯函数，6 个测试） |
-| dec7502e | block | setext heading | PR-2 | `pending` |
-| f00da152 | block | 嵌套块插表 crash | PR-2 | `pending` |
+| dec7502e | block | setext heading | PR-2a | `test-only`（marked v16 lheading + walkTokens `headingStyle` 已就位；3 个回归测试） |
+| f00da152 | block | 嵌套块插表 crash | PR-3 | `pending`（marktext fix 在 `tableBlockCtrl.js` 编辑器层；PR-3 范围） |
 | 9cb2cbe8 | toc | TOC 更新（如做 TOC 参考） | PR-5 | `pending` |
 
 ## P2 — 编辑 / 光标 / 选择 / IME
@@ -176,7 +176,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 25 | 0 | 0% |
+| PR-2 | 25 | 11 | 44%（PR-2a: 2 fixed + 9 test-only；3 条转 PR-3/PR-4；1 skipped；2 留待 PR-2b 序列化基线）|
 | PR-3a | 5 | 5 | 100%（4 verified-not-applicable + 1 test-only；防御测试 2 个 soft-line） |
 | PR-3b | 4 | 4 | 100%（1 fixed `358fa83d` + 3 verified-not-applicable；回归测试 13 个） |
 | PR-3c | 3 | 3 | 100%（3 verified-not-applicable；+1 compositionend 防御测试；跨 block+IME 留 examples/ 手测） |

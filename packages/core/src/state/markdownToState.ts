@@ -313,6 +313,24 @@ export class MarkdownToState {
                     break;
                 }
 
+                case 'footnote': {
+                    // The footnote extension (utils/marked/extensions/footnote.ts)
+                    // emits a parent token whose `tokens` array holds nested
+                    // block tokens. Mirror that into a `footnote` container
+                    // state and recurse via tokens.unshift / block-end.
+                    const { identifier } = token as any;
+                    state = {
+                        name: 'footnote' as const,
+                        meta: { identifier },
+                        children: [],
+                    };
+                    parentList[0].push(state);
+                    parentList.unshift(state.children);
+                    tokens.unshift({ type: 'block-end', tokenType: 'footnote' } as any);
+                    tokens.unshift(...(token as any).tokens);
+                    break;
+                }
+
                 default:
                     debug.warn(`Unknown type ${token.type}`);
                     break;
