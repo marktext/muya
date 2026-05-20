@@ -178,7 +178,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 26 | 15 | 58%（PR-2a 8 commits + PR-2b 3 commits + PR-2c 1 commit：2 fixed bugs + 11 test-only + 3 skipped；3 条转 PR-3/PR-4；新增 57af8304 入册）|
+| PR-2 | 26 | 15 | 58%（PR-2a 8 commits = 2 fixed bugs + 9 test-only；PR-2b 3 commits = 1 fixed bug + 2 test-only；PR-2c 1 commit = 2 test-only + 3 skipped；3 条转 PR-3/PR-4；新增 57af8304 入册）|
 | PR-3a | 5 | 5 | 100%（4 verified-not-applicable + 1 test-only；防御测试 2 个 soft-line） |
 | PR-3b | 4 | 4 | 100%（1 fixed `358fa83d` + 3 verified-not-applicable；回归测试 13 个） |
 | PR-3c | 3 | 3 | 100%（3 verified-not-applicable；+1 compositionend 防御测试；跨 block+IME 留 examples/ 手测） |

@@ -232,13 +232,20 @@ describe('inline lexer — link / image dest with parens (marktext 57af8304 / #1
         expect(link.href).toBe('path/to/(file).html');
     });
 
-    it('stops at the matching `)` even when more chars follow on the line', () => {
-        const tokens = tokenizer('text before ![alt](x.png) text after');
+    it('stops at the FIRST matching `)` when more `)` appear later on the line', () => {
+        // This is the real shape of the marktext regression: greedy `(.*)` in
+        // the image regexp would gobble all the way to the LAST `)`, swallowing
+        // both `first.png` and the `(parens)` text. `correctUrl` /
+        // `findClosingBracket` walks the destination to the matching `)` so
+        // the image stops at `first.png` and the rest stays as following text.
+        const tokens = tokenizer('see ![alt](first.png) and also (parens) here');
         const image = tokens.find(t => t.type === 'image') as any;
-        expect(image).toBeDefined();
-        expect(image.src).toBe('x.png');
-        // The trailing "text after" must remain as text, not be eaten.
+        expect(image, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(image.src).toBe('first.png');
+        // The trailing text — including the unrelated `(parens)` group — must
+        // remain outside the image token.
         const joined = tokens.map(t => (t as any).raw ?? '').join('');
-        expect(joined).toContain('text after');
+        expect(joined).toContain('and also (parens) here');
+        expect(image.raw).not.toContain('parens');
     });
 });
