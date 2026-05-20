@@ -17,6 +17,7 @@ Run from repo root (Turbo fans out to packages):
 - `pnpm dev` — start the examples Vite dev server (`turbo dev:demo`, persistent task).
 - `pnpm build` — `tsc && vite build` in `packages/core`, emits `lib/{es,umd,cjs}` and `lib/types`.
 - `pnpm test` / `pnpm coverage` — Vitest (`--passWithNoTests`). For a single test in core: `pnpm --filter @muyajs/core exec vitest run path/to/file.test.ts` or `pnpm --filter @muyajs/core test:watch`.
+- `pnpm --filter @muyajs/core test:spec` — run the CommonMark 0.31 + GFM 0.29-gfm fixture suites against `renderToStaticHTML(..., { sanitize: false })`. `test:spec:commonmark` / `test:spec:gfm` scope to one suite. Pass/fail counts are locked by `packages/core/test/spec/expected-failures.json`: any listed example that starts passing fails the suite (remove it from the list), and any unlisted example that starts failing fails the suite. Net effect: compliance can only go up. Baseline lives in `packages/core/test/spec/conformance.md` (CommonMark 87.7% / GFM 86.3% at PR-6a).
 - `pnpm lint` / `pnpm lint:fix` — ESLint over `packages` (antfu config, see below for project-specific rules).
 - `pnpm lint:types` — `tsc --noEmit` per package via Turbo.
 - `pnpm lint:css` — Stylelint over all CSS.
@@ -52,6 +53,8 @@ Concrete blocks live under `src/block/{commonMark,gfm,extra,content}` and **must
 - `JSONState` (`state/index.ts`) is the source-of-truth document. It exposes `ot-json1` `invert`/`compose`/`transform` statics — the architecture is set up for OT-based collaborative editing even if no transport is wired in.
 - `markdownToState.ts` parses Markdown (via `marked`) into the state tree; `stateToMarkdown.ts` serializes back; `markdownToHtml.ts` and `htmlToMarkdown.ts` (using `turndown` + `joplin-turndown-plugin-gfm`) bridge HTML. `MarkdownToHtml` is re-exported from the public API.
 - Inline text edits are encoded as `ot-text-unicode` ops nested inside the json1 ops (see the `d.es` branch in `Editor.updateContents`).
+- **Reference link/image definitions** (`[ref]: url "title"`) are NOT a first-class block type in state. `markdownToState`'s `case 'def'` re-emits the raw definition line back into a `paragraph` state node so it round-trips losslessly through the markdown serializer. `InlineRenderer.collectReferenceDefinitions()` runs over the live block tree on every render pass to populate a labels Map that the lexer consults when expanding `[text][ref]` and `![alt][ref]`. `ILinkReferenceDefinitionState` exists as a deprecated stub for compatibility — do not introduce new code paths that produce it.
+- **TOC** is derived on-demand via `getTOC(muya)` (`state/getTOC.ts`); the public method is `muya.getTOC()` (`packages/core/src/muya.ts`). Slugs follow the marktext-compatible regex carried over in commit `9cb2cbe8`.
 
 ### Inline rendering and DOM
 

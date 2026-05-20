@@ -261,6 +261,21 @@ title: muya
 author: jocs
 ---
 
+# Heading levels
+
+# H1 ATX heading
+## H2 ATX heading
+### H3 ATX heading
+#### H4 ATX heading
+##### H5 ATX heading
+###### H6 ATX heading
+
+Setext H1
+=========
+
+Setext H2
+---------
+
 # Inline Format
 
 **strong** *emphasis* \`inline code\` &gt; <u>underline</u> <mark>highlight</mark> <ruby>北京<rt>Beijing</rt></ruby> [Baidu](http://www.baidu.com) H0~2~ X^5^
@@ -272,6 +287,8 @@ Markdown link: [Anthropic](https://www.anthropic.com).
 Reference link: [Wikipedia][wiki] (definition below).
 
 HTML anchor: <a href="https://github.com/marktext/muya">marktext/muya on GitHub</a>.
+
+Autolink: <https://commonmark.org>.
 
 [wiki]: https://en.wikipedia.org "Wikipedia"
 
@@ -292,6 +309,27 @@ line end
 
 \`\`\`
 const b = "foo"
+\`\`\`
+
+\`\`\`typescript
+// Long fenced code block to showcase PR-5a line numbers
+// (enable via Muya option codeBlockLineNumbers: true).
+import { Muya } from '@muyajs/core';
+
+const container = document.querySelector('#editor')!;
+const muya = new Muya(container, {
+    markdown: '# hello',
+    codeBlockLineNumbers: true,
+});
+
+muya.init();
+
+muya.on('json-change', () => {
+    console.log('changed');
+});
+
+muya.on('focus', () => console.log('focus'));
+muya.on('blur', () => console.log('blur'));
 \`\`\`
 
 \`\`\`math
@@ -455,6 +493,10 @@ foo bar
 
 > foo
 > bar
+>
+> > nested quote level 2
+> >
+> > > nested quote level 3
 
 A short paragraph with a footnote reference[^note] and another[^pandoc].
 

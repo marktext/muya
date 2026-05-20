@@ -88,6 +88,7 @@ const selectAllBtn: HTMLButtonElement = document.querySelector('#select-all')!;
 const muya = new Muya(container, {
     markdown: DEFAULT_MARKDOWN,
     footnote: true,
+    codeBlockLineNumbers: true,
 });
 
 muya.locale(zh);

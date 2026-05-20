@@ -6,10 +6,13 @@
 
 ## Features
 
-- **CommonMark + GFM** blocks: paragraphs, ATX/Setext headings, bullet/ordered/task lists, code fences, tables, block quotes, horizontal rules, raw HTML, images.
+- **CommonMark + GFM** blocks: paragraphs, ATX/Setext headings, bullet/ordered/task lists, code fences, tables, block quotes, horizontal rules, raw HTML, images. Parser baseline tracked against CommonMark 0.31 and GFM 0.29-gfm (see `packages/core/test/spec/conformance.md`).
 - **Inline formats** with a floating toolbar, plus optional super/subscript, footnotes, front matter, and inline math.
+- **Footnotes** end-to-end: `[^id]` references and `[^id]: …` definitions render with an interactive footnote tool and backref anchors on export.
+- **Reference links and images**: `[text][ref]` / `![alt][ref]` resolve from `[ref]: url "title"` definitions on both render and round-trip.
+- **Code block line numbers** — opt in with `codeBlockLineNumbers: true` to render gutters alongside fenced/indented code (and previewable blocks).
 - **Diagrams & rich content**: [KaTeX](https://katex.org/) math, [Mermaid](https://mermaid.js.org/), [Vega/Vega-Lite](https://vega.github.io/), [PlantUML](https://plantuml.com/), and [Prism](https://prismjs.com/) syntax highlighting in code blocks.
-- **Markdown ↔ HTML** round-trip via [`marked`](https://github.com/markedjs/marked) (read path) and [`turndown`](https://github.com/mixmark-io/turndown) + `joplin-turndown-plugin-gfm` (write path). `MarkdownToHtml` is exposed as a standalone utility.
+- **Markdown ↔ HTML** round-trip via [`marked`](https://github.com/markedjs/marked) (read path) and [`turndown`](https://github.com/mixmark-io/turndown) + `joplin-turndown-plugin-gfm` (write path). `MarkdownToHtml` is exposed as a standalone utility; output passes through [DOMPurify](https://github.com/cure53/DOMPurify) (`sanitizeHyperlink` + `isValidAttribute`) for XSS-safe rendering.
 - **Search and replace** with regex support, plus undo/redo history.
 - **i18n** out of the box: English, Chinese, and Japanese locales ship with the package.
 - **JSON state model** built on [`ot-json1`](https://github.com/ottypes/json1) / [`ot-text-unicode`](https://github.com/ottypes/text-unicode) — wire it up to your own transport for collaborative editing.
@@ -31,10 +34,12 @@ Muya is a browser library and expects a bundler (Vite, webpack, Rollup, esbuild,
 import {
     CodeBlockLanguageSelector,
     EmojiSelector,
+    FootnoteTool,
     ImageEditTool,
     ImageResizeBar,
     ImageToolBar,
     InlineFormatToolbar,
+    LinkTools,
     Muya,
     ParagraphFrontButton,
     ParagraphFrontMenu,
@@ -50,6 +55,7 @@ import '@muyajs/core/lib/style.css';
 
 // 1. Register the UI plugins you need (once, globally on the class).
 Muya.use(EmojiSelector);
+Muya.use(FootnoteTool);
 Muya.use(InlineFormatToolbar);
 Muya.use(ImageToolBar);
 Muya.use(ImageResizeBar);
@@ -58,6 +64,13 @@ Muya.use(ImageEditTool, {
     imageAction: async () => 'https://example.com/uploaded.png',
 });
 Muya.use(CodeBlockLanguageSelector);
+Muya.use(LinkTools, {
+    jumpClick: (linkInfo) => {
+        const href = linkInfo?.href;
+        if (href && /^https?:\/\//.test(href))
+            window.open(href, '_blank', 'noopener,noreferrer');
+    },
+});
 Muya.use(ParagraphFrontButton);
 Muya.use(ParagraphFrontMenu);
 Muya.use(ParagraphQuickInsertMenu);
@@ -70,6 +83,8 @@ Muya.use(PreviewToolBar);
 const container = document.querySelector('#editor') as HTMLElement;
 const muya = new Muya(container, {
     markdown: '# Hello, Muya',
+    footnote: true,
+    codeBlockLineNumbers: true,
 });
 
 // 3. Optional: switch the UI language before init.
@@ -97,8 +112,16 @@ The `Muya` instance returned from `new Muya(el, options)` exposes:
 | `find('previous' \| 'next')` | Move the active match. |
 | `replace(value, { isSingle, isRegexp })` | Replace the active match or all matches. |
 | `selectAll()` | Select the entire document. |
+| `getTOC()` | Snapshot the current heading outline as `Array<{ level, text, slug }>`. |
 | `on(event, fn)` / `off(event, fn)` / `once(event, fn)` | Subscribe to editor events. |
 | `destroy()` | Tear down the editor and free DOM listeners. |
+
+Standalone utilities exported from the package root:
+
+| Export | Purpose |
+| --- | --- |
+| `MarkdownToHtml` | Server-safe Markdown → HTML class (`new MarkdownToHtml(md).generate()`). |
+| `renderToStaticHTML(stateOrMarkdown, opts?)` | One-shot static HTML renderer; pass `{ sanitize: false }` only for trusted input (parser conformance tests use this). |
 
 Useful events emitted on the editor:
 
@@ -106,6 +129,7 @@ Useful events emitted on the editor:
 | --- | --- |
 | `json-change` | OT operations describing the latest document mutation. The full state can be read back via `muya.getState()` or serialized to Markdown via `muya.getMarkdown()`. |
 | `selection-change` | New selection (`{ anchor, focus, path }`). |
+| `focus` / `blur` | Fired when the contenteditable surface gains or loses focus. |
 
 The full set of constructor options (font size, list defaults, math/footnote toggles, front matter delimiters, Mermaid/Vega themes, etc.) is described by `IMuyaOptions` in [`packages/core/src/types.ts`](./packages/core/src/types.ts); defaults live in `MUYA_DEFAULT_OPTIONS` in [`packages/core/src/config/index.ts`](./packages/core/src/config/index.ts).
 
@@ -119,6 +143,8 @@ Plugins are floating tools/menus that you opt into with `Muya.use(Plugin, option
 | `EmojiSelector` | `:` trigger emoji picker. |
 | `CodeBlockLanguageSelector` | Language picker inside fenced code blocks. |
 | `ImageToolBar`, `ImageResizeBar`, `ImageEditTool` | Image-related affordances; `ImageEditTool` accepts `imagePathPicker` and `imageAction` callbacks for upload flows. |
+| `LinkTools` | Hover toolbar over native `<a>`, markdown links, and reference links. Takes a `jumpClick` callback to control jump-out behavior. |
+| `FootnoteTool` | Floating popover for editing footnote definitions; requires the `footnote: true` editor option. |
 | `ParagraphFrontButton`, `ParagraphFrontMenu` | The handle and menu that appear to the left of the active block. |
 | `ParagraphQuickInsertMenu` | The `/` slash-command menu for inserting blocks. |
 | `TableColumnToolbar`, `TableDragBar`, `TableRowColumMenu` | Table editing affordances. |
@@ -228,6 +254,17 @@ awk -v v="$VERSION" '$0 ~ "^# \\["v"\\]"{flag=1; next} /^## \[/{flag=0} flag' \
     CHANGELOG.md > /tmp/release-notes.md
 gh release create "v$VERSION" --title "v$VERSION" --notes-file /tmp/release-notes.md
 ```
+
+## Recent updates
+
+**v0.2.0 (in flight)** — the marktext-muya backport batch. 22 PRs (#208–#230) ported the upstream marktext muya tree onto `@muyajs/core` end-to-end:
+
+- New surface: footnote block + tool, reference links/images, `LinkTools`, `getTOC()` public API, `focus` / `blur` events, code block line numbers, image small-image + inline resize-bar suppression.
+- Parser conformance: CommonMark 0.31 and GFM 0.29-gfm fixture runners (`pnpm --filter @muyajs/core test:spec`) with a locked baseline (87.7% / 86.3%) and a regression gate via `expected-failures.json`.
+- Hardening: XSS protections (hyperlink + Mermaid + code-block + langInput input via DOMPurify), normalizeTable crash fix, loadImageAsync failure cache, `stateToMarkdown` serialization baseline, clipboard/paste/copy corrections, editor cursor / IME / autopair / table navigation fixes, EventCenter listener-leak + once-iteration fix.
+- Tests: 1 → 386 unit tests (43 files).
+
+See [`CHANGELOG.md`](./CHANGELOG.md) for the full per-PR list and [`MIGRATION.md`](./MIGRATION.md) for the rolling migration log.
 
 ## Roadmap
 
