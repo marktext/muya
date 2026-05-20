@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import type { Muya } from '../../../muya';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import EventCenter from '../../../event';
 import LinkTools from '../index';
 
@@ -16,19 +16,38 @@ import LinkTools from '../index';
 // then poke `selectItem` directly to verify each branch dispatches to
 // the right collaborator.
 
-function makeFakeMuya(unlink: (info: unknown) => void): Muya {
+interface ITestSession {
+    muya: Muya;
+    tools: LinkTools;
+    domNode: HTMLElement;
+}
+
+const sessions: ITestSession[] = [];
+
+function makeFakeMuya(unlink: (info: unknown) => void): { muya: Muya; domNode: HTMLElement } {
     const eventCenter = new EventCenter();
     const domNode = document.createElement('div');
     document.body.appendChild(domNode);
-    // The constructor of LinkTools chains through BaseFloat.listen(), which
-    // attaches a scroll handler to `domNode.parentElement`. document.body is
-    // the parent so that's fine here.
-    const fakeMuya = {
+    // BaseFloat.listen() attaches a scroll handler to `domNode.parentElement`,
+    // so `domNode` needs a parent — `document.body` here.
+    const muya = {
         eventCenter,
         domNode,
         contentState: { unlink },
     } as unknown as Muya;
-    return fakeMuya;
+    return { muya, domNode };
+}
+
+interface ILinkToolsTestOptions {
+    jumpClick?: (linkInfo: unknown) => void;
+}
+
+function bootLinkTools(unlink: (info: unknown) => void, options: ILinkToolsTestOptions = {}): ITestSession {
+    const { muya, domNode } = makeFakeMuya(unlink);
+    const tools = new LinkTools(muya, options);
+    const session = { muya, tools, domNode };
+    sessions.push(session);
+    return session;
 }
 
 function makeFakeEvent() {
@@ -38,11 +57,23 @@ function makeFakeEvent() {
     } as unknown as Event;
 }
 
+afterEach(() => {
+    // Tear each session down: detach DOM listeners attached via EventCenter,
+    // destroy the floating-tool DOM (resize observers + floatBox), and
+    // unmount the host node from document.body. This prevents listener /
+    // node leakage across tests in the same worker.
+    while (sessions.length) {
+        const { muya, tools, domNode } = sessions.pop()!;
+        tools.destroy();
+        muya.eventCenter.detachAllDomEvents();
+        domNode.remove();
+    }
+});
+
 describe('linkTools.selectItem — dispatches to contentState / jumpClick', () => {
     it('unlink: routes to muya.contentState.unlink with the captured linkInfo', () => {
         const unlink = vi.fn();
-        const muya = makeFakeMuya(unlink);
-        const tools = new LinkTools(muya);
+        const { tools } = bootLinkTools(unlink);
 
         const linkInfo = { href: 'https://example.com', text: 'hi' };
         tools.linkInfo = linkInfo;
@@ -56,8 +87,7 @@ describe('linkTools.selectItem — dispatches to contentState / jumpClick', () =
     it('jump: routes to options.jumpClick with the captured linkInfo', () => {
         const unlink = vi.fn();
         const jumpClick = vi.fn();
-        const muya = makeFakeMuya(unlink);
-        const tools = new LinkTools(muya, { jumpClick });
+        const { tools } = bootLinkTools(unlink, { jumpClick });
 
         const linkInfo = { href: 'https://example.com' };
         tools.linkInfo = linkInfo;

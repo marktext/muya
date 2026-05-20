@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { CLASS_NAMES } from '../../../config';
 import { Muya } from '../../../muya';
 
@@ -20,16 +20,43 @@ import { Muya } from '../../../muya';
 // not the CSS rule itself.
 
 const HINT_CLASS = CLASS_NAMES.MU_SHOW_QUICK_INSERT_HINT;
+const MUYA_VERSION_KEY = 'MUYA_VERSION';
+const bootedHosts: HTMLElement[] = [];
+let originalVersion: unknown;
+let hadVersion = false;
+
+beforeEach(() => {
+    // happy-dom does not define MUYA_VERSION; Muya reads window.MUYA_VERSION
+    // at construct time. Save the current value so afterEach can restore it.
+    hadVersion = MUYA_VERSION_KEY in window;
+    originalVersion = (window as any)[MUYA_VERSION_KEY];
+    (window as any)[MUYA_VERSION_KEY] = 'test';
+});
+
+afterEach(() => {
+    // Remove each editor host node from document.body to avoid DOM growth
+    // across tests in the same worker.
+    while (bootedHosts.length) {
+        const host = bootedHosts.pop()!;
+        host.remove();
+    }
+    // Restore the pre-test value of window.MUYA_VERSION (delete if it was
+    // unset before we ran).
+    if (hadVersion)
+        (window as any)[MUYA_VERSION_KEY] = originalVersion;
+    else
+        delete (window as any)[MUYA_VERSION_KEY];
+});
 
 function bootMuya(options: Partial<ConstructorParameters<typeof Muya>[1]> = {}) {
-    // happy-dom does not define MUYA_VERSION; Muya reads window.MUYA_VERSION
-    // at construct time. Provide a stub so the field-init doesn't throw.
-    (window as any).MUYA_VERSION ??= 'test';
     const host = document.createElement('div');
     document.body.appendChild(host);
     // Constructor wires up the container; we never call init() so no blocks
     // are registered and no editor lifecycle is started.
     const muya = new Muya(host, options as any);
+    // Track the post-`getContainer` node (host is replaced in place, so the
+    // new container shares the body parent).
+    bootedHosts.push(muya.domNode);
     return muya;
 }
 
