@@ -339,6 +339,7 @@ li.mu-task-list-item > span.mu-task-list-checkbox::after {
     left: 4px;
 
     display: inline-block;
+    box-sizing: content-box;
     width: 8px;
     height: 4px;
 
@@ -349,7 +350,6 @@ li.mu-task-list-item > span.mu-task-list-checkbox::after {
     transform-origin: bottom;
 
     transition: all 0.2s ease;
-    box-sizing: content-box;
 
     content: '';
 }
@@ -636,7 +636,7 @@ pre.mu-active.mu-fenced-code::after {
     display: block;
 
     white-space: pre-wrap;
-    word-break: break-word;
+    overflow-wrap: break-word;
 
     outline: none;
 }

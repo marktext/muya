@@ -39,6 +39,7 @@
         local('OpenSans-Light'),
         url('./fonts/open-sans-v15-latin_latin-ext-300.woff') format('woff');
 }
+
 @font-face {
     font-weight: 300;
     font-family: 'Open Sans';
@@ -48,6 +49,7 @@
         local('OpenSans-LightItalic'),
         url('./fonts/open-sans-v15-latin_latin-ext-300italic.woff') format('woff');
 }
+
 @font-face {
     font-weight: 400;
     font-family: 'Open Sans';
@@ -57,6 +59,7 @@
         local('OpenSans-Regular'),
         url('./fonts/open-sans-v15-latin_latin-ext-regular.woff') format('woff');
 }
+
 @font-face {
     font-weight: 400;
     font-family: 'Open Sans';
@@ -66,6 +69,7 @@
         local('OpenSans-Italic'),
         url('./fonts/open-sans-v15-latin_latin-ext-italic.woff') format('woff');
 }
+
 @font-face {
     font-weight: 600;
     font-family: 'Open Sans';
@@ -75,6 +79,7 @@
         local('OpenSans-SemiBold'),
         url('./fonts/open-sans-v15-latin_latin-ext-600.woff') format('woff');
 }
+
 @font-face {
     font-weight: 600;
     font-family: 'Open Sans';
@@ -84,6 +89,7 @@
         local('OpenSans-SemiBoldItalic'),
         url('./fonts/open-sans-v15-latin_latin-ext-600italic.woff') format('woff');
 }
+
 @font-face {
     font-weight: 700;
     font-family: 'Open Sans';
@@ -93,6 +99,7 @@
         local('OpenSans-Bold'),
         url('./fonts/open-sans-v15-latin_latin-ext-700.woff') format('woff');
 }
+
 @font-face {
     font-weight: 700;
     font-family: 'Open Sans';
@@ -110,28 +117,33 @@
     font-family: 'DejaVu Sans Mono';
     src: local('DejaVu Sans Mono'), url('./fonts/DejaVuSansMono.ttf');
 }
+
 @font-face {
     font-weight: bold;
     font-family: 'DejaVu Sans Mono';
     src: url('./fonts/DejaVuSansMono-Bold.ttf');
 }
+
 @font-face {
     font-weight: bold;
     font-family: 'DejaVu Sans Mono';
     font-style: oblique;
     src: url('./fonts/DejaVuSansMono-BoldOblique.ttf');
 }
+
 @font-face {
     font-weight: bold;
     font-family: 'DejaVu Sans Mono';
     font-style: italic;
     src: url('./fonts/DejaVuSansMono-BoldOblique.ttf');
 }
+
 @font-face {
     font-family: 'DejaVu Sans Mono';
     font-style: italic;
     src: url('./fonts/DejaVuSansMono-Oblique.ttf');
 }
+
 @font-face {
     font-family: 'DejaVu Sans Mono';
     font-style: oblique;

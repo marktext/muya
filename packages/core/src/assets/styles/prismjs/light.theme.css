@@ -18,9 +18,9 @@ pre.mu-code-block {
 
     /* font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; */
     text-align: left;
-    word-wrap: normal;
     word-break: normal;
     word-spacing: normal;
+    overflow-wrap: normal;
     tab-size: 4;
     hyphens: none;
 }

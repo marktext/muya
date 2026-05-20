@@ -17,7 +17,7 @@
 /* link and auto-link and reference link */
 a.mu-inline-rule,
 span.mu-inline-rule.mu-link {
-    color: rgb(20, 86, 240);
+    color: rgb(20 86 240);
 
     pointer-events: none;
 }
