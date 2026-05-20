@@ -4,6 +4,7 @@ import {
     CodeBlockLanguageSelector,
     EmojiSelector,
     en,
+    FootnoteTool,
     ImageEditTool,
     ImageResizeBar,
     ImageToolBar,
@@ -46,6 +47,7 @@ async function imageAction() {
 }
 
 Muya.use(EmojiSelector);
+Muya.use(FootnoteTool);
 Muya.use(InlineFormatToolbar);
 Muya.use(ImageEditTool, {
     imagePathPicker,
@@ -83,6 +85,9 @@ const muya = new Muya(container, {
 muya.locale(zh);
 
 muya.init();
+
+// Expose for in-browser debugging during PR-8 manual testing.
+(window as any).muya = muya;
 
 // Language switcher
 const languageSelect: HTMLSelectElement = document.querySelector('#language-select')!;

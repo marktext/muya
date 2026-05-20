@@ -26,7 +26,15 @@
     display: inline-block;
     width: 40px;
 
+    color: var(--theme-color);
+    font-weight: 600;
+    text-align: right;
+
     cursor: pointer;
+}
+
+.mu-footnote-tool .btn:hover {
+    text-decoration: underline;
 }
 
 .mu-footnote-tool .icon-wrapper {

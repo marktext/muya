@@ -470,6 +470,15 @@ class Format extends Content {
         if (inlineRuleRenderEle)
             return this._handleClickInlineRuleRender(event, inlineRuleRenderEle);
 
+        // Open the footnote tool when the user clicks an inline `[^id]`
+        // reference. Doesn't early-return: cursor placement below still runs
+        // so the user can also edit the identifier text directly.
+        const footnoteEl = (target as HTMLElement).closest(
+            `.${CLASS_NAMES.MU_INLINE_FOOTNOTE_IDENTIFIER}`,
+        );
+        if (footnoteEl)
+            this._emitFootnoteToolEvent(footnoteEl as HTMLElement);
+
         requestAnimationFrame(() => {
             // TODO: @JOCS, remove use this.selection directly.
             if (event.shiftKey && this.selection.anchorBlock !== this) {
@@ -1618,6 +1627,54 @@ class Format extends Content {
         const endOffset = +inlineRuleRenderEle.getAttribute('data-end')!;
 
         return this.setCursor(startOffset, endOffset, true);
+    }
+
+    private _emitFootnoteToolEvent(reference: HTMLElement) {
+        const identifier = reference.id.replace(/^noteref-/, '');
+        const { scrollPage } = this.muya.editor;
+        if (!scrollPage)
+            return;
+
+        // Collect the first definition for each identifier — duplicates in
+        // the document share the same `#fn-{N}` target on the HTML side.
+        const footnotes = new Map<string, unknown>();
+        scrollPage.breadthFirstTraverse((node) => {
+            if (node.blockName !== 'footnote')
+                return;
+            const id = (node as unknown as { meta?: { identifier?: string } }).meta?.identifier;
+            if (typeof id === 'string' && !footnotes.has(id))
+                footnotes.set(id, node);
+        });
+
+        // Snapshot the bounding rect now: the requestAnimationFrame later in
+        // `clickHandler` calls `update(cursor)`, which re-renders the inline
+        // content and detaches the `<sup>` we captured. By the time the
+        // FootnoteTool's deferred `show()` calls floating-ui's `autoUpdate`,
+        // the original element is gone (`getBoundingClientRect()` returns
+        // 0/0/0/0) and the float pins to the top-left corner of the viewport.
+        // Hand the tool a static virtual reference instead — it doesn't need
+        // to follow live DOM changes during a single click → choose flow.
+        const rect = reference.getBoundingClientRect();
+        const virtualReference = {
+            getBoundingClientRect: () =>
+                ({
+                    x: rect.x,
+                    y: rect.y,
+                    top: rect.top,
+                    left: rect.left,
+                    right: rect.right,
+                    bottom: rect.bottom,
+                    width: rect.width,
+                    height: rect.height,
+                    toJSON: () => ({}),
+                }) as DOMRect,
+        };
+
+        this.muya.eventCenter.emit('muya-footnote-tool', {
+            reference: virtualReference,
+            identifier,
+            footnotes,
+        });
     }
 }
 
