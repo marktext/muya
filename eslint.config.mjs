@@ -50,6 +50,14 @@ export default antfu(
             css: true,
             html: true,
         },
+        // CommonMark / GFM spec fixtures are generated from upstream sources
+        // (commonmark/CommonMark spec.txt + github/cmark-gfm spec.txt); lint
+        // rules around indent / line length don't apply to data files.
+        ignores: [
+            'packages/core/test/spec/fixtures/**',
+            'packages/core/test/spec/expected-failures.json',
+            'packages/core/test/spec/conformance.md',
+        ],
     },
     {
         files: ['**/*.ts', '**/*.tsx'],

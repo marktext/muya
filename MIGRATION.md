@@ -144,6 +144,31 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 
 ## PR-6 — 测试合规迁移（PR-2~4 落地后做）
 
+PR-6a 已落地（2026-05-20）：CommonMark 0.31 + GFM 0.29-gfm spec 合规基础设施。
+
+### PR-6a 交付
+
+- 新增公开同步 API：`renderToStaticHTML(markdown, options?)`，12 个单元测试（happy-path + DOMPurify XSS 处理 + math/footnote 选项 + mermaid/diagram 占位）
+- `commonmark-spec@^0.31.2` devDep（652 个 example）
+- 自解析 GFM spec：`packages/core/test/spec/fixtures/gfm-spec-0.29-gfm.json`（672 个 example，含 5 个 GFM extension section）
+- spec runner：`test/spec/runner.ts`（normalizeHtml + 防回归 expected-failures 锁）
+- 两份 spec 测试：`commonmark.spec.ts` + `gfm.spec.ts`，每 example 一条 `it.each`，共 1324 测试，全部锁定通过
+- baseline 报告：`test/spec/conformance.md`（按 section 拆 pass-rate）
+- expected-failures.json：CM 201 个 + GFM 217 个待修 example_id
+- vitest 配置拆分：默认 `pnpm test` 仅跑 unit；新增 `pnpm test:spec` / `test:spec:commonmark` / `test:spec:gfm`，独立 `vitest.spec.config.ts`
+- CI：`.github/workflows/ci-test.yml` 增加 `pnpm test:spec` 步骤
+
+### PR-6a baseline 通过率
+
+| Suite | 通过 | 总数 | 通过率 |
+|---|---|---|---|
+| CommonMark 0.31 | 451 | 652 | 69.2% |
+| GFM 0.29-gfm | 455 | 672 | 67.7% |
+
+> 合并后通过率只能涨不能跌：`expected-failures.json` 中的 example 若开始通过，测试会以 "unexpected pass" 报错，要求 reviewer 把它从列表里移除。
+
+### PR-6b 待办（独立 PR，PR-6a 合并后做）
+
 目标：补足"非 bug regression"的测试覆盖。PR-2~5 的每条 fix 都自带回归测试，但 happy-path、合规性、广覆盖的测试目前稀疏。
 
 ### 值得迁（高信号）
@@ -187,6 +212,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
 | PR-5 | 18+ | 0 | 0% |
-| PR-6 | — | 0 | 0%（等 PR-2~4 后启动） |
+| PR-6a | — | done | spec 合规基础设施落地（CM 451/652 = 69.2%, GFM 455/672 = 67.7%，1324 spec 测试 + 12 个 renderToStaticHTML 单测） |
+| PR-6b | — | 0 | 0%（PR-6a 合并后启动；footnote 510 行 + markdown-basic round-trip + list-indentation 补齐） |
 
 最后更新：2026-05-20
