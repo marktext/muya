@@ -372,7 +372,7 @@ export const punctuation = [
     '}',
     '~',
 ];
-// export const isInElectron = (window.process as any)?.type === "renderer";
+// Electron detection (kept for reference; renderer-process check).
 export const IMAGE_EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
 export const isFirefox
     = typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox');
@@ -434,7 +434,13 @@ export const DEFAULT_TURNDOWN_CONFIG = {
     strongDelimiter: '**', // ** or __
     linkStyle: 'inlined',
     linkReferenceStyle: 'full',
-    blankReplacement(_content: unknown, node: any, _options: unknown) {
+    blankReplacement(
+        _content: unknown,
+        // Turndown passes its internal node object: a real DOM Element
+        // plus the augmented `isBlock` flag the library adds when walking.
+        node: Element & { isBlock?: boolean },
+        _options: unknown,
+    ) {
         if (node && node.classList.contains('mu-soft-line-break'))
             return LINE_BREAK;
         else if (node && node.classList.contains('mu-hard-line-break'))

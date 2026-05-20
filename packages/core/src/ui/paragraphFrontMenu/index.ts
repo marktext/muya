@@ -1,4 +1,5 @@
 import type { VNode } from 'snabbdom';
+import type Content from '../../block/base/content';
 import type Parent from '../../block/base/parent';
 import type AtxHeading from '../../block/commonMark/atxHeading';
 import type { Muya } from '../../index';
@@ -6,6 +7,7 @@ import type {
     IAtxHeadingState,
     IBulletListState,
     IOrderListState,
+    ITaskListItemState,
     ITaskListState,
 } from '../../state/types';
 import type { IQuickInsertMenuItem } from '../paragraphQuickInsertMenu/config';
@@ -277,39 +279,50 @@ export class ParagraphFrontMenu extends BaseFloat {
                     | IOrderListState
                     | ITaskListState
                     | IBulletListState;
+                    // The conversion between order/bullet/task lists
+                    // re-shapes both the parent meta and the per-item meta.
+                    // The static `IListItemState` doesn't carry `meta`, while
+                    // `ITaskListItemState` does; the casts below are the
+                    // narrow target-shape assertions for that runtime swap.
                     if (block.blockName === 'task-list') {
                         state.children.forEach((listItem) => {
                             listItem.name = 'list-item';
-                            delete (listItem as any).meta;
+                            delete (listItem as Partial<ITaskListItemState>).meta;
                         });
                     }
+                    const metaSnapshot = state.meta as Partial<{
+                        loose: boolean;
+                        delimiter: string;
+                        marker: string;
+                    }>;
                     const {
                         loose,
                         delimiter = orderListDelimiter,
                         marker = bulletListMarker,
-                    } = state.meta as any;
+                    } = metaSnapshot;
                     if (label === 'task-list') {
                         state.children.forEach((listItem) => {
                             listItem.name = 'task-list-item';
-                            (listItem as any).meta = {
+                            (listItem as ITaskListItemState).meta = {
                                 checked: false,
                             };
                         });
-                        state.meta = {
-                            marker,
-                            loose,
+                        (state as ITaskListState).meta = {
+                            marker: marker ?? bulletListMarker,
+                            loose: !!loose,
                         };
                     }
                     else if (label === 'order-list') {
-                        (state as any).meta = {
+                        (state as IOrderListState).meta = {
                             delimiter,
-                            loose,
+                            loose: !!loose,
+                            start: 1,
                         };
                     }
                     else {
                         state.meta = {
-                            marker,
-                            loose,
+                            marker: marker ?? bulletListMarker,
+                            loose: !!loose,
                         };
                     }
                     // TODO: @JOCS, remove use this.selection directly.
@@ -322,8 +335,10 @@ export class ParagraphFrontMenu extends BaseFloat {
                     if (guessCursorBlock && isSelectionInSameBlock) {
                         const begin = Math.min(anchor!.offset, focus!.offset);
                         const end = Math.max(anchor!.offset, focus!.offset);
-                        // Make guessCursorBlock active
-                        guessCursorBlock.setCursor(begin, end, true);
+                        // Make guessCursorBlock active. queryBlock returns the
+                        // closest block at the given path; for an inline path
+                        // it's a Content leaf (which has setCursor).
+                        (guessCursorBlock as Content).setCursor(begin, end, true);
                     }
                     else {
                         cursorBlock = listBlock.firstContentInDescendant();

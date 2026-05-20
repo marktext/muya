@@ -2,7 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { MarkdownToState } from '../markdownToState';
 import ExportMarkdown from '../stateToMarkdown';
 
-function generate(markdown: string, options: Partial<{ footnote: boolean }> = {}) {
+// Loose accessor type used only in this spec — every state node the
+// MarkdownToState pipeline emits has some subset of these fields, and the
+// tests navigate the tree generically without re-implementing the
+// discriminated TState union narrowing.
+interface IStateLike {
+    name: string;
+    text?: string;
+    meta?: Record<string, unknown> & { checked?: boolean; identifier?: string; level?: number; underline?: string };
+    children?: IStateLike[];
+}
+
+function generate(markdown: string, options: Partial<{ footnote: boolean }> = {}): IStateLike[] {
     return new MarkdownToState({
         footnote: false,
         math: false,
@@ -10,7 +21,7 @@ function generate(markdown: string, options: Partial<{ footnote: boolean }> = {}
         trimUnnecessaryCodeBlockEmptyLines: false,
         frontMatter: false,
         ...options,
-    }).generate(markdown);
+    }).generate(markdown) as unknown as IStateLike[];
 }
 
 // Defensive regression test for marktext commit 23435ce6 (#1733 / PR #1835).
@@ -36,31 +47,31 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
         // Outer list must contain exactly one task-list-item with a nested
         // bullet/task list as its second child (first being the text para).
         expect(states.length).toBe(1);
-        const outer = states[0] as any;
+        const outer = states[0];
         expect(outer.name).toBe('task-list');
-        expect(outer.children.length).toBe(1);
+        expect(outer.children!.length).toBe(1);
 
-        const level1 = outer.children[0];
+        const level1 = outer.children![0];
         expect(level1.name).toBe('task-list-item');
         expect(level1.meta).toEqual({ checked: false });
-        const level1Paragraph = level1.children.find((c: any) => c.name === 'paragraph');
+        const level1Paragraph = level1.children!.find(c => c.name === 'paragraph');
         expect(level1Paragraph?.text).toBe('task1');
 
-        const level1Nested = level1.children.find((c: any) => c.name === 'task-list');
+        const level1Nested = level1.children!.find(c => c.name === 'task-list');
         expect(level1Nested, 'level 1 should contain a nested bullet-list').toBeDefined();
-        expect(level1Nested.children.length).toBe(1);
+        expect(level1Nested!.children!.length).toBe(1);
 
-        const level2 = level1Nested.children[0];
+        const level2 = level1Nested!.children![0];
         expect(level2.name).toBe('task-list-item');
-        expect(level2.children.find((c: any) => c.name === 'paragraph')?.text).toBe('task1_1');
+        expect(level2.children!.find(c => c.name === 'paragraph')?.text).toBe('task1_1');
 
-        const level2Nested = level2.children.find((c: any) => c.name === 'task-list');
+        const level2Nested = level2.children!.find(c => c.name === 'task-list');
         expect(level2Nested, 'level 2 should contain a nested bullet-list — not a sibling').toBeDefined();
-        expect(level2Nested.children.length).toBe(1);
+        expect(level2Nested!.children!.length).toBe(1);
 
-        const level3 = level2Nested.children[0];
+        const level3 = level2Nested!.children![0];
         expect(level3.name).toBe('task-list-item');
-        expect(level3.children.find((c: any) => c.name === 'paragraph')?.text).toBe('task1_1_1');
+        expect(level3.children!.find(c => c.name === 'paragraph')?.text).toBe('task1_1_1');
     });
 
     // Defensive regression for marktext commit dec7502e (PR #741):
@@ -70,27 +81,27 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
     it('parses setext h1 (=== underline) as setext-heading with level 1', () => {
         const states = generate(`Hello world
 ===========
-`) as any[];
+`);
         expect(states.length).toBe(1);
         expect(states[0].name).toBe('setext-heading');
-        expect(states[0].meta.level).toBe(1);
-        expect(states[0].meta.underline).toBeTruthy();
+        expect(states[0].meta!.level).toBe(1);
+        expect(states[0].meta!.underline).toBeTruthy();
     });
 
     it('parses setext h2 (--- underline) as setext-heading with level 2', () => {
         const states = generate(`Hello world
 -----------
-`) as any[];
+`);
         expect(states.length).toBe(1);
         expect(states[0].name).toBe('setext-heading');
-        expect(states[0].meta.level).toBe(2);
+        expect(states[0].meta!.level).toBe(2);
     });
 
     it('parses `# text` as atx-heading, not setext-heading', () => {
         // Positive control: atx headings should remain atx.
-        const states = generate('# Hello\n') as any[];
+        const states = generate('# Hello\n');
         expect(states[0].name).toBe('atx-heading');
-        expect(states[0].meta.level).toBe(1);
+        expect(states[0].meta!.level).toBe(1);
     });
 
     it('starts a new list when the bullet marker changes (CommonMark 264, marktext 270d33f6)', () => {
@@ -98,12 +109,12 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
         const states = generate(`- foo
 - bar
 + baz
-`) as any[];
+`);
         expect(states.length).toBe(2);
         expect(states[0].name).toBe('bullet-list');
-        expect(states[0].children.length).toBe(2);
+        expect(states[0].children!.length).toBe(2);
         expect(states[1].name).toBe('bullet-list');
-        expect(states[1].children.length).toBe(1);
+        expect(states[1].children!.length).toBe(1);
     });
 
     it('starts a new list when the ordered delimiter changes (CommonMark 265, marktext 270d33f6)', () => {
@@ -111,12 +122,12 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
         const states = generate(`1. foo
 2. bar
 3) baz
-`) as any[];
+`);
         expect(states.length).toBe(2);
         expect(states[0].name).toBe('order-list');
-        expect(states[0].children.length).toBe(2);
+        expect(states[0].children!.length).toBe(2);
         expect(states[1].name).toBe('order-list');
-        expect(states[1].children.length).toBe(1);
+        expect(states[1].children!.length).toBe(1);
     });
 
     it('does not parse `-foo` (no space) as a list item (marktext 70d49c30)', () => {
@@ -125,7 +136,7 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
         // bullet marker must be followed by a space (or newline) to start
         // a list. The new muya uses marked v16's built-in list rule which
         // already enforces this — keep the regression test.
-        const states = generate('-foo\n') as any[];
+        const states = generate('-foo\n');
         expect(states.length).toBe(1);
         expect(states[0].name).toBe('paragraph');
         expect(states[0].text).toBe('-foo');
@@ -133,10 +144,10 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
 
     it('still parses `- foo` (with space) as a list item', () => {
         // Positive control — same shape with the required space.
-        const states = generate('- foo\n') as any[];
+        const states = generate('- foo\n');
         expect(states.length).toBe(1);
         expect(states[0].name).toBe('bullet-list');
-        expect(states[0].children[0].name).toBe('list-item');
+        expect(states[0].children![0].name).toBe('list-item');
     });
 
     it('splits a mixed task + bullet sequence into two lists (marktext 372fe02f)', () => {
@@ -155,17 +166,17 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
 `);
 
         expect(states.length).toBe(2);
-        const [first, second] = states as any[];
+        const [first, second] = states;
         expect(first.name).toBe('task-list');
-        expect(first.children.length).toBe(2);
-        expect(first.children.every((c: any) => c.name === 'task-list-item')).toBe(true);
-        expect(first.children.map((c: any) => c.meta.checked)).toEqual([true, true]);
+        expect(first.children!.length).toBe(2);
+        expect(first.children!.every(c => c.name === 'task-list-item')).toBe(true);
+        expect(first.children!.map(c => c.meta?.checked)).toEqual([true, true]);
 
         expect(second.name).toBe('bullet-list');
-        expect(second.children.length).toBe(2);
-        expect(second.children.every((c: any) => c.name === 'list-item')).toBe(true);
-        const secondTexts = second.children.map((c: any) =>
-            c.children.find((cc: any) => cc.name === 'paragraph')?.text,
+        expect(second.children!.length).toBe(2);
+        expect(second.children!.every(c => c.name === 'list-item')).toBe(true);
+        const secondTexts = second.children!.map(c =>
+            c.children!.find(cc => cc.name === 'paragraph')?.text,
         );
         expect(secondTexts).toEqual(['zar', 'rar']);
     });
@@ -181,10 +192,10 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
 [^1]: definition`,
             { footnote: true },
         );
-        const footnote = states.find(s => s.name === 'footnote') as any;
+        const footnote = states.find(s => s.name === 'footnote');
         expect(footnote, 'a footnote state should be emitted').toBeDefined();
-        expect(footnote.meta.identifier).toBe('1');
-        const firstChild = footnote.children[0];
+        expect(footnote!.meta!.identifier).toBe('1');
+        const firstChild = footnote!.children![0];
         expect(firstChild.name).toBe('paragraph');
         expect(firstChild.text).toBe('definition');
     });
@@ -195,7 +206,7 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
 [^1]: definition
 `;
         const states = generate(md, { footnote: true });
-        const out = new ExportMarkdown({ listIndentation: 1 }).generate(states);
+        const out = new ExportMarkdown({ listIndentation: 1 }).generate(states as unknown as Parameters<ExportMarkdown['generate']>[0]);
         // The serialiser emits the canonical `[^id]: ` form on its own line.
         expect(out).toContain('[^1]: definition');
     });
@@ -209,14 +220,14 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
         const states = generate(md);
 
         expect(states.length).toBe(1);
-        const outer = states[0] as any;
+        const outer = states[0];
         expect(outer.name).toBe('task-list');
 
-        const level1 = outer.children[0];
-        const level1Nested = level1.children.find((c: any) => c.name === 'task-list');
+        const level1 = outer.children![0];
+        const level1Nested = level1.children!.find(c => c.name === 'task-list');
         expect(level1Nested).toBeDefined();
-        const level2 = level1Nested.children[0];
-        const level2Nested = level2.children.find((c: any) => c.name === 'task-list');
+        const level2 = level1Nested!.children![0];
+        const level2Nested = level2.children!.find(c => c.name === 'task-list');
         expect(level2Nested, 'level 2 should contain level 3 nested, not as sibling').toBeDefined();
     });
 });

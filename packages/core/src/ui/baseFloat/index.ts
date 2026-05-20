@@ -144,7 +144,11 @@ abstract class BaseFloat {
         else eventCenter.emit('muya-float', this, false);
     }
 
-    show(reference: ReferenceElement, cb = noop) {
+    // `cb` is a generic "selection made" callback. Concrete floats invoke it
+    // with their own argument tuple (e.g. emojiSelector → `(item)`,
+    // tableChessboard → `(row, column)`). `never[]` in the contravariant
+    // arg position accepts any concrete callback shape.
+    show(reference: ReferenceElement, cb: (...args: never[]) => void = noop) {
         const { floatBox } = this;
         const { eventCenter } = this.muya;
         const { placement, offsetOptions } = this.options;
@@ -157,7 +161,10 @@ abstract class BaseFloat {
             this._cleanup = null;
         }
 
-        this.cb = cb;
+        // `cb` is declared with `never[]` args at the parameter so any
+        // concrete callback shape is accepted; the field stores it as
+        // `unknown[]` so internal call sites can forward arbitrary args.
+        this.cb = cb as (...args: unknown[]) => void;
 
         this._cleanup = autoUpdate(reference, floatBox, () => {
             computePosition(reference, floatBox, {

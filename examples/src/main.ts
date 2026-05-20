@@ -28,9 +28,10 @@ import { DEFAULT_MARKDOWN } from './data';
 import './style.css';
 
 // Fix Intl.Segmenter is not work on firefox.
-if (!(Intl as any).Segmenter) {
+const intlNs = Intl as unknown as { Segmenter?: typeof Intl.Segmenter };
+if (!intlNs.Segmenter) {
     const polyfill = await import('intl-segmenter-polyfill/dist/bundled');
-    (Intl as any).Segmenter = await polyfill.createIntlSegmenterPolyfill();
+    intlNs.Segmenter = await polyfill.createIntlSegmenterPolyfill() as typeof Intl.Segmenter;
 }
 
 async function imagePathPicker() {
@@ -96,7 +97,7 @@ muya.locale(zh);
 muya.init();
 
 // Expose for in-browser debugging during PR-8 manual testing.
-(window as any).muya = muya;
+window.muya = muya;
 
 // Language switcher
 const languageSelect: HTMLSelectElement = document.querySelector('#language-select')!;

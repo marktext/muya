@@ -1,6 +1,10 @@
 // @vitest-environment happy-dom
 
+import type { VNode } from 'snabbdom';
+import type Format from '../../../block/base/format';
+import type { ICursor } from '../../../selection/types';
 import type { ImageToken } from '../../types';
+import type Renderer from '../index';
 import { describe, expect, it, vi } from 'vitest';
 import { h } from '../../../utils/snabbdom';
 import image from '../image';
@@ -62,9 +66,19 @@ function makeImageToken(overrides: Partial<ImageToken['attrs']> = {}): ImageToke
     } as unknown as ImageToken;
 }
 
-function getWrapperSelector(vnodes: any): string {
+function getWrapperSelector(vnodes: VNode | VNode[]): string {
     const arr = Array.isArray(vnodes) ? vnodes : [vnodes];
     return arr[0].sel as string;
+}
+
+// Narrow casts shared by every test: the fake renderer and block stubs
+// don't satisfy the full Renderer / Format / ICursor surface, but
+// `image()` only touches the loadImageAsync / urlMap / muya fields and
+// the token range.
+const fakeBlock = {} as unknown as Format;
+const fakeCursor = {} as unknown as ICursor;
+function asRenderer(r: IFakeRenderer): Renderer {
+    return r as unknown as Renderer;
 }
 
 describe('image renderer — small image class (marktext cb7be189)', () => {
@@ -78,8 +92,8 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         const token = makeImageToken();
 
         const out = image.call(
-            renderer as any,
-            { h, block: {} as any, token, cursor: {} as any },
+            asRenderer(renderer),
+            { h, block: fakeBlock, token, cursor: fakeCursor },
         );
 
         expect(getWrapperSelector(out)).toContain('.mu-small-image');
@@ -95,8 +109,8 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         const token = makeImageToken();
 
         const out = image.call(
-            renderer as any,
-            { h, block: {} as any, token, cursor: {} as any },
+            asRenderer(renderer),
+            { h, block: fakeBlock, token, cursor: fakeCursor },
         );
 
         expect(getWrapperSelector(out)).toContain('.mu-small-image');
@@ -112,8 +126,8 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         const token = makeImageToken();
 
         const out = image.call(
-            renderer as any,
-            { h, block: {} as any, token, cursor: {} as any },
+            asRenderer(renderer),
+            { h, block: fakeBlock, token, cursor: fakeCursor },
         );
 
         expect(getWrapperSelector(out)).not.toContain('.mu-small-image');
@@ -127,8 +141,8 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         const token = makeImageToken();
 
         const out = image.call(
-            renderer as any,
-            { h, block: {} as any, token, cursor: {} as any },
+            asRenderer(renderer),
+            { h, block: fakeBlock, token, cursor: fakeCursor },
         );
 
         expect(getWrapperSelector(out)).not.toContain('.mu-small-image');
@@ -142,8 +156,8 @@ describe('image renderer — small image class (marktext cb7be189)', () => {
         const token = makeImageToken();
 
         const out = image.call(
-            renderer as any,
-            { h, block: {} as any, token, cursor: {} as any },
+            asRenderer(renderer),
+            { h, block: fakeBlock, token, cursor: fakeCursor },
         );
 
         expect(getWrapperSelector(out)).not.toContain('.mu-small-image');

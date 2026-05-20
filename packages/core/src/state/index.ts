@@ -138,7 +138,19 @@ class JSONState {
         this._isGoing = true;
 
         requestAnimationFrame(() => {
-            const op = this._operationCache.reduce(json1.type.compose as any);
+            // Wrap compose in a lambda — `Array.prototype.reduce` passes
+            // (acc, current, index, array) to the callback, but
+            // `json1.type.compose` only accepts (op1, op2). Without the
+            // wrapper TS rejects the signature mismatch.
+            // `compose` returns JSONOp (= null | JSONOpList); when the cache
+            // contains at least one op the result is the composed list,
+            // never null. The reduce above runs only when _operationCache is
+            // non-empty (guarded by the requestAnimationFrame in
+            // `_emitStateChange`), and a non-empty cache always composes to
+            // a non-null op.
+            const op = this._operationCache.reduce(
+                (acc, curr) => json1.type.compose(acc, curr) as JSONOpList,
+            );
             const prevDoc = this.getState();
             this.apply(op);
             // TODO: remove doc in future

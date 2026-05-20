@@ -29,12 +29,14 @@ export default function delEmStrongFac(
         = end - marker.length - token.backlash.length;
     const content: VNode[] = [
         ...token.children.reduce((acc: VNode[], to: Token) => {
-            const chunk = (this as any)[snakeToCamel(to.type)]({
+            // The original passed a `className` field here too, but receivers
+            // read `outerClass` — so the field was silently dropped under the
+            // previous `as any` cast. Preserve that behavior: don't propagate.
+            const chunk = this.dispatch(snakeToCamel(to.type), {
                 h,
                 cursor,
                 block,
                 token: to,
-                className,
             });
 
             return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];

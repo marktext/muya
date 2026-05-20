@@ -37,12 +37,15 @@ export default function htmlTag(
     const anchor
         = Array.isArray(children) && children.length && tag !== 'ruby' // important
             ? children.reduce((acc: VNode[], to: Token) => {
-                    const chunk = (this as any)[snakeToCamel(to.type)]({
+                    // The original passed a `className` field here too, but
+                    // receivers read `outerClass` — so the field was
+                    // silently dropped under the previous `as any` cast.
+                    // Preserve that runtime behavior: don't propagate it.
+                    const chunk = this.dispatch(snakeToCamel(to.type), {
                         h,
                         cursor,
                         block,
                         token: to,
-                        className,
                     });
 
                     return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];

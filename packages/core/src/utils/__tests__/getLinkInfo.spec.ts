@@ -21,8 +21,11 @@ function makeEl(tag: 'a' | 'span', dataset: Record<string, string>, attrs: Recor
         el.dataset[k] = v;
     for (const [k, v] of Object.entries(attrs))
         el.setAttribute(k, v);
+    // Set ad-hoc DOM properties (e.g. `href` on a <span>) that aren't on
+    // the static HTMLElement type. The structural cast captures that
+    // intent without spreading `any` through the helper.
     for (const [k, v] of Object.entries(props))
-        (el as any)[k] = v;
+        (el as unknown as Record<string, string>)[k] = v;
     return el;
 }
 

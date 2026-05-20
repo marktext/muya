@@ -31,7 +31,7 @@ describe('escapeLangInputInnerHtml — code-block language identifier XSS', () =
         // highlights uses character offsets relative to the lang text
         const out = escapeLangInputInnerHtml('<bad>', [
             { start: 0, end: 5, active: false },
-        ] as any);
+        ]);
 
         // Highlight span must be a real element (class survives), bad tag must not.
         expect(out).toContain('class="mu-selection"');

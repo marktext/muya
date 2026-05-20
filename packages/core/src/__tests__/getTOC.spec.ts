@@ -21,15 +21,14 @@ import { Muya } from '../muya';
 //    only, so CJK / emoji collapse to hyphens. Future Unicode-aware
 //    slugging is a separate change.
 
-const MUYA_VERSION_KEY = 'MUYA_VERSION';
 const bootedHosts: HTMLElement[] = [];
-let originalVersion: unknown;
+let originalVersion: string | undefined;
 let hadVersion = false;
 
 beforeEach(() => {
-    hadVersion = MUYA_VERSION_KEY in window;
-    originalVersion = (window as any)[MUYA_VERSION_KEY];
-    (window as any)[MUYA_VERSION_KEY] = 'test';
+    hadVersion = 'MUYA_VERSION' in window;
+    originalVersion = window.MUYA_VERSION;
+    window.MUYA_VERSION = 'test';
 });
 
 afterEach(() => {
@@ -38,15 +37,15 @@ afterEach(() => {
         host.remove();
     }
     if (hadVersion)
-        (window as any)[MUYA_VERSION_KEY] = originalVersion;
+        window.MUYA_VERSION = originalVersion as string;
     else
-        delete (window as any)[MUYA_VERSION_KEY];
+        delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(markdown: string): Muya {
     const host = document.createElement('div');
     document.body.appendChild(host);
-    const muya = new Muya(host, { markdown } as any);
+    const muya = new Muya(host, { markdown } as ConstructorParameters<typeof Muya>[1]);
     muya.init();
     bootedHosts.push(muya.domNode);
     return muya;

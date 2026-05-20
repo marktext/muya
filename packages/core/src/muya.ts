@@ -18,15 +18,24 @@ import './assets/styles/index.css';
 import './assets/styles/inlineSyntax.css';
 import './assets/styles/prismjs/light.theme.css';
 
+// UI plugins (e.g. InlineFormatToolbar, EmojiSelector) follow a common
+// shape: a class with a static `pluginName` and a constructor that takes
+// `(muya: Muya, options: object)`. `Muya.use` records the constructor + an
+// arbitrary options object; `init()` instantiates each plugin.
+export interface IMuyaPluginConstructor {
+    pluginName: string;
+    new(muya: Muya, options: Record<string, unknown>): unknown;
+}
+
 interface IPlugin {
-    plugin: any;
-    options: any;
+    plugin: IMuyaPluginConstructor;
+    options: Record<string, unknown>;
 }
 
 export class Muya {
     static plugins: IPlugin[] = [];
 
-    static use(plugin: any, options = {}) {
+    static use(plugin: IMuyaPluginConstructor, options: Record<string, unknown> = {}) {
         this.plugins.push({
             plugin,
             options,
@@ -41,7 +50,7 @@ export class Muya {
     public ui: Ui;
     public i18n: I18n;
 
-    private _uiPlugins: Record<string, any> = {};
+    private _uiPlugins: Record<string, unknown> = {};
 
     constructor(element: HTMLElement, options?: Partial<IMuyaOptions>) {
         this.options = Object.assign({}, MUYA_DEFAULT_OPTIONS, options ?? {});

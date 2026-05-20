@@ -144,7 +144,7 @@ export class ParagraphFrontButton {
 
         eventCenter.attachDOMEvent(container, 'mousedown', this.dragBarMouseDown);
         eventCenter.attachDOMEvent(container, 'mouseup', this.dragBarMouseUp);
-        eventCenter.attachDOMEvent(document, 'mousemove', mousemoveHandler);
+        eventCenter.attachDOMEvent(document, 'mousemove', mousemoveHandler as EventListener);
         eventCenter.attachDOMEvent(container, 'click', clickHandler);
     }
 

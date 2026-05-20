@@ -83,9 +83,9 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
 
         const para = (states as Array<{ name: string; text?: string }>).find(s => s.name === 'paragraph' && s.text!.startsWith('foo')) as { text: string };
         const tokens = tokenize(para.text, labels);
-        const refTok = tokens.find(t => t.type === 'reference_link') as any;
+        const refTok = tokens.find(t => t.type === 'reference_link');
         expect(refTok, 'reference_link token should be emitted once labels are known').toBeDefined();
-        expect(refTok.label).toBe('1');
+        expect((refTok as Extract<typeof tokens[number], { type: 'reference_link' }>).label).toBe('1');
     });
 
     it('case 4 — inline tokenize: Full / Collapsed / Shortcut forms all produce reference_link tokens', () => {
@@ -94,7 +94,7 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
 
         const para = (states as Array<{ name: string; text?: string }>).find(s => s.name === 'paragraph' && s.text!.startsWith('A ')) as { text: string };
         const tokens = tokenize(para.text, labels);
-        const refToks = tokens.filter(t => t.type === 'reference_link') as any[];
+        const refToks = tokens.filter(t => t.type === 'reference_link') as Extract<typeof tokens[number], { type: 'reference_link' }>[];
         expect(refToks.length).toBe(3);
         expect(refToks[0].isFullLink).toBe(true);
         expect(refToks[1].isFullLink).toBe(false);
@@ -118,7 +118,7 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
 
         const para = (states as Array<{ name: string; text?: string }>).find(s => s.name === 'paragraph' && s.text!.startsWith('foo')) as { text: string };
         const tokens = tokenize(para.text, labels);
-        const refTok = tokens.find(t => t.type === 'reference_link') as any;
+        const refTok = tokens.find(t => t.type === 'reference_link');
         expect(refTok, 'reference_link must match label irrespective of case').toBeDefined();
     });
 
@@ -139,7 +139,7 @@ describe('reference link / image — markdown ↔ state round-trip', () => {
         const tokens = tokenize(para.text, labels);
         const refTok = tokens.find(t => t.type === 'reference_link');
         expect(refTok, 'no reference_link token should fire without a matching definition').toBeUndefined();
-        const raw = tokens.map((t: any) => t.raw).join('');
+        const raw = tokens.map(t => t.raw).join('');
         expect(raw).toContain('[missing][nope]');
     });
 });

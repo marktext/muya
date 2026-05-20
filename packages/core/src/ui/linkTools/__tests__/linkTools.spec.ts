@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import type Format from '../../../block/base/format';
 import type { Muya } from '../../../muya';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import EventCenter from '../../../event';
@@ -73,7 +74,9 @@ describe('linkTools.selectItem — dispatches to block.unlink / jumpClick', () =
     it('unlink: routes to block.unlink with { range, text } from linkInfo', () => {
         const { tools } = bootLinkTools();
         const blockUnlink = vi.fn();
-        tools.linkBlock = { unlink: blockUnlink } as any;
+        // linkBlock is typed as Format | null; the fake only implements
+        // `unlink` (the only method selectItem calls).
+        tools.linkBlock = { unlink: blockUnlink } as unknown as Format;
         tools.linkInfo = {
             href: 'https://example.com',
             text: 'hi',
@@ -102,7 +105,9 @@ describe('linkTools.selectItem — dispatches to block.unlink / jumpClick', () =
     it('unlink: no-ops when linkInfo.range is missing', () => {
         const { tools } = bootLinkTools();
         const blockUnlink = vi.fn();
-        tools.linkBlock = { unlink: blockUnlink } as any;
+        // linkBlock is typed as Format | null; the fake only implements
+        // `unlink` (the only method selectItem calls).
+        tools.linkBlock = { unlink: blockUnlink } as unknown as Format;
         tools.linkInfo = { href: 'x', text: 'y', range: null };
 
         tools.selectItem(makeFakeEvent(), { type: 'unlink', icon: '' });

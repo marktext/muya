@@ -12,7 +12,13 @@ import TableCellContent from '../index';
 // real DOM). The handler only reads `event.shiftKey` and calls
 // `previousContentInContext` / `nextContentInContext` on `this`.
 
-function makeFakeCell(prev: any, next: any) {
+// Structural neighbour shape — the table-cell tab handler only calls
+// `setCursor` on whatever `prev`/`next` resolves to.
+interface IFakeNeighbour {
+    setCursor: ReturnType<typeof vi.fn>;
+}
+
+function makeFakeCell(prev: IFakeNeighbour | null, next: IFakeNeighbour | null) {
     return {
         nextContentInContext: vi.fn(() => next),
         previousContentInContext: vi.fn(() => prev),

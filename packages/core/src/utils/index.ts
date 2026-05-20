@@ -10,7 +10,10 @@ interface IUnion {
     active?: boolean;
 }
 
-type Constructor = new (...args: any[]) => object;
+// `never[]` in the contravariant arg-tuple position lets the @methodMixins
+// decorator accept any concrete class constructor (`new (muya: Muya, …)`),
+// without dragging the loosely-typed `any[]` back in.
+type Constructor = new (...args: never[]) => object;
 
 interface IDefer<T> {
     resolve: (value: T) => void;
@@ -77,37 +80,43 @@ export function union({ start: tStart, end: tEnd }: IUnion, { start: lStart, end
 
 // https://github.com/jashkenas/underscore
 // TODO: @jocs rewrite in the future.
-export function throttle(func: any, wait = 50) {
-    let context: any;
-    let args: any;
-    let result: any;
-    let timeout: any = null;
+export function throttle<TArgs extends unknown[], TReturn>(
+    func: (...args: TArgs) => TReturn,
+    wait = 50,
+): (...args: TArgs) => TReturn | undefined {
+    let context: unknown;
+    let pendingArgs: TArgs | null = null;
+    let result: TReturn | undefined;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
     let previous = 0;
     const later = () => {
         previous = Date.now();
         timeout = null;
-        result = func.apply(context, args);
-        if (!timeout)
-            context = args = null;
+        result = func.apply(context, pendingArgs ?? ([] as unknown as TArgs));
+        if (!timeout) {
+            context = null;
+            pendingArgs = null;
+        }
     };
 
-    return function (this: any) {
+    return function (this: unknown, ...callArgs: TArgs): TReturn | undefined {
         const now = Date.now();
         const remaining = wait - (now - previous);
 
         // eslint-disable-next-line ts/no-this-alias
         context = this;
-        // eslint-disable-next-line prefer-rest-params
-        args = arguments;
+        pendingArgs = callArgs;
         if (remaining <= 0 || remaining > wait) {
             if (timeout) {
                 clearTimeout(timeout);
                 timeout = null;
             }
             previous = now;
-            result = func.apply(context, args);
-            if (!timeout)
-                context = args = null;
+            result = func.apply(context, pendingArgs);
+            if (!timeout) {
+                context = null;
+                pendingArgs = null;
+            }
         }
         else if (!timeout) {
             timeout = setTimeout(later, remaining);
@@ -201,7 +210,7 @@ export function getParagraphReference(ele: HTMLElement, id: string) {
 }
 
 function visibleLength(str: string) {
-    return [...new (Intl as any).Segmenter().segment(str)].length;
+    return [...new Intl.Segmenter().segment(str)].length;
 }
 
 export type TDiff = (string | number | { d: string });
@@ -262,7 +271,15 @@ export function verticalPositionInRect(event: MouseEvent, rect: DOMRect) {
     return clientY - top > height / 2 ? 'down' : 'up';
 }
 
-export const hasPick = (c: any) => c && (c.p != null || c.r !== undefined);
+// `hasPick` is called by editor.updateContents on each element of an
+// ot-json1 op descent. The element shape is one of (number | string |
+// JSONOpComponent | JSONOpList) — only the component case (`{p?, r?, ...}`)
+// is interesting. Accept the structural subset we actually read instead of
+// dragging in the whole union (most callers pass an already-narrowed
+// object).
+export function hasPick(c: { p?: number; r?: unknown } | null | undefined): boolean {
+    return !!c && (c.p != null || c.r !== undefined);
+}
 
 export function getDefer<T>() {
     const defer: IDefer<T> = {} as IDefer<T>;
@@ -275,7 +292,12 @@ export function getDefer<T>() {
     return defer;
 }
 
-export function methodMixins(...objects: Record<string, (...args: any[]) => any>[]) {
+export function methodMixins(
+    // `never[]` in the arg-tuple position (contravariant) accepts any
+    // function shape — the inlineSyntaxRenderer mixin map has methods with
+    // wildly different signatures (`backlashInToken`, `header`, `link`…).
+    ...objects: Record<string, (...args: never[]) => unknown>[]
+) {
     return (constructor: Constructor) => {
         for (const object of objects) {
             Object.keys(object).forEach((name) => {

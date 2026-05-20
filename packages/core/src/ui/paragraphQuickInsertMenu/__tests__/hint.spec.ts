@@ -20,17 +20,16 @@ import { Muya } from '../../../muya';
 // not the CSS rule itself.
 
 const HINT_CLASS = CLASS_NAMES.MU_SHOW_QUICK_INSERT_HINT;
-const MUYA_VERSION_KEY = 'MUYA_VERSION';
 const bootedHosts: HTMLElement[] = [];
-let originalVersion: unknown;
+let originalVersion: string | undefined;
 let hadVersion = false;
 
 beforeEach(() => {
     // happy-dom does not define MUYA_VERSION; Muya reads window.MUYA_VERSION
     // at construct time. Save the current value so afterEach can restore it.
-    hadVersion = MUYA_VERSION_KEY in window;
-    originalVersion = (window as any)[MUYA_VERSION_KEY];
-    (window as any)[MUYA_VERSION_KEY] = 'test';
+    hadVersion = 'MUYA_VERSION' in window;
+    originalVersion = window.MUYA_VERSION;
+    window.MUYA_VERSION = 'test';
 });
 
 afterEach(() => {
@@ -43,9 +42,9 @@ afterEach(() => {
     // Restore the pre-test value of window.MUYA_VERSION (delete if it was
     // unset before we ran).
     if (hadVersion)
-        (window as any)[MUYA_VERSION_KEY] = originalVersion;
+        window.MUYA_VERSION = originalVersion as string;
     else
-        delete (window as any)[MUYA_VERSION_KEY];
+        delete (window as Partial<Window>).MUYA_VERSION;
 });
 
 function bootMuya(options: Partial<ConstructorParameters<typeof Muya>[1]> = {}) {
@@ -53,7 +52,7 @@ function bootMuya(options: Partial<ConstructorParameters<typeof Muya>[1]> = {}) 
     document.body.appendChild(host);
     // Constructor wires up the container; we never call init() so no blocks
     // are registered and no editor lifecycle is started.
-    const muya = new Muya(host, options as any);
+    const muya = new Muya(host, options as ConstructorParameters<typeof Muya>[1]);
     // Track the post-`getContainer` node (host is replaced in place, so the
     // new container shares the body parent).
     bootedHosts.push(muya.domNode);

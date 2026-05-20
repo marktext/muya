@@ -47,7 +47,7 @@ function parseSelector(str = '') {
             && (!str[tagName.length] || /#|\./.test(str[tagName.length]))
         ) {
             tag = tagName;
-            if (VOID_HTML_TAGS.includes(tagName as any))
+            if ((VOID_HTML_TAGS as readonly string[]).includes(tagName))
                 isVoid = true;
 
             str = str.substring(tagName.length);

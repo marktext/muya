@@ -133,7 +133,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
         // caller can `setCursor(0, 0)` on it.
         expect(result).toBeTruthy();
         expect(result).toBe(fake.inner.rows[2].cells[0].firstChild);
-        expect((fake.inner.rows[1] as any).removed).toBe(true);
+        expect((fake.inner.rows[1] as IFakeRow & { removed?: boolean }).removed).toBe(true);
     });
 
     it('falls back to the previous row\'s first cell when the last row is removed', () => {
@@ -145,7 +145,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
         );
 
         expect(result).toBe(fake.inner.rows[1].cells[0].firstChild);
-        expect((fake.inner.rows[2] as any).removed).toBe(true);
+        expect((fake.inner.rows[2] as IFakeRow & { removed?: boolean }).removed).toBe(true);
     });
 
     it('removes the whole table when the only row is removed, and returns null without an outside fallback', () => {
@@ -164,7 +164,9 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
     it('returns the next outside-of-table content when the only row is removed (Copilot PR-7b review follow-up)', () => {
         const fake = makeFakeTable(1, 3);
         const outsideContent = { setCursor: vi.fn() };
-        fake.nextContentInContext = vi.fn(() => outsideContent as any);
+        // The outsideContent only implements `setCursor`; cast to the
+        // structural return type the production code expects.
+        fake.nextContentInContext = vi.fn(() => outsideContent as unknown as null);
 
         const result = Table.prototype.removeRow.call(
             fake as unknown as Table,
@@ -179,7 +181,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
     it('falls back to previousContentInContext when there is no next content outside the table', () => {
         const fake = makeFakeTable(1, 3);
         const prevOutside = { setCursor: vi.fn() };
-        fake.previousContentInContext = vi.fn(() => prevOutside as any);
+        fake.previousContentInContext = vi.fn(() => prevOutside as unknown as null);
 
         const result = Table.prototype.removeRow.call(
             fake as unknown as Table,
@@ -199,7 +201,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
 
         expect(result).toBeUndefined();
         for (const row of fake.inner.rows)
-            expect((row as any).removed).not.toBe(true);
+            expect((row as IFakeRow & { removed?: boolean }).removed).not.toBe(true);
     });
 });
 
@@ -220,8 +222,8 @@ describe('table.removeColumn — returns surviving cell content for cursor place
         );
 
         expect(result).toBe(expectedSurvivor);
-        expect((removedCol1Row0 as any).removed).toBe(true);
-        expect((removedCol1Row1 as any).removed).toBe(true);
+        expect((removedCol1Row0 as IFakeCell & { removed?: boolean }).removed).toBe(true);
+        expect((removedCol1Row1 as IFakeCell & { removed?: boolean }).removed).toBe(true);
     });
 
     it('falls back to the previous-cell content when the last column is removed', () => {
@@ -252,7 +254,9 @@ describe('table.removeColumn — returns surviving cell content for cursor place
     it('returns the next outside-of-table content when the only column is removed (Copilot PR-7b review follow-up)', () => {
         const fake = makeFakeTable(2, 1);
         const outsideContent = { setCursor: vi.fn() };
-        fake.nextContentInContext = vi.fn(() => outsideContent as any);
+        // The outsideContent only implements `setCursor`; cast to the
+        // structural return type the production code expects.
+        fake.nextContentInContext = vi.fn(() => outsideContent as unknown as null);
 
         const result = Table.prototype.removeColumn.call(
             fake as unknown as Table,
@@ -275,7 +279,7 @@ describe('table.removeColumn — returns surviving cell content for cursor place
         // No cells removed.
         for (const row of fake.inner.rows) {
             for (const cell of row.cells)
-                expect((cell as any).removed).not.toBe(true);
+                expect((cell as IFakeCell & { removed?: boolean }).removed).not.toBe(true);
         }
     });
 });
