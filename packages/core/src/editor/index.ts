@@ -16,6 +16,7 @@ import Selection from '../selection';
 import JSONState from '../state';
 import { hasPick } from '../utils';
 import logger from '../utils/logger';
+import { attachLinkMouseHandlers } from './linkMouseEvents';
 
 const debug = logger('editor:');
 
@@ -66,6 +67,10 @@ export class Editor {
         this.scrollPage = ScrollPage.create(muya, state);
 
         this._dispatchEvents();
+        // marktext cb25b3d4 (#1415): hovering a rendered link wrapper
+        // dispatches `muya-link-tools` so the staged popover lights up.
+        // Cleanup is handled by `muya.destroy()` → `detachAllDomEvents`.
+        attachLinkMouseHandlers(muya);
         this.focus();
     }
 
