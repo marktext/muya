@@ -34,11 +34,22 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | c959d185 | xss | Mermaid XSS | PR-1b | `verified-not-applicable`（`markdownToHtml.ts` + `diagramPreview.ts` 都已 `securityLevel:'strict'`，mermaid innerHTML 走 `sanitize`） |
 | dc54c7b6 | xss | 代码块未 escape HTML | PR-1b | `verified-not-applicable`（`escapeHTML` 已用含 `&` 的 5 字符版本，codeBlockContent 已 escape）+ 4 个防御测试 |
 | c47795e4 | xss | XSS + Electron（部分电子相关跳过） | PR-1b | `skipped`（Electron-only） |
-| 0baf2e9e / 7de33f11 | xss | #1390 XSS | PR-1b | `pending`（issue 已关闭，影响面待评估；暂不实修） |
+| 0baf2e9e / 7de33f11 | xss | #1390 XSS | PR-13 | `verified-not-applicable`：marktext fix 给 inline html renderer 加 `BLOCK_TYPE6.includes(tag) \|\| !sanitize(`<${tag}>`) ? 'span' : tag` 降级，并把 `data-align` 入白名单。新仓 `inlineRenderer/renderer/htmlTag.ts:80-82` 已完整保留该降级链路 + `:110` `isValidAttribute(tag, attr, val)` 属性级过滤；`config/index.ts:401` `EXPORT_DOMPURIFY_CONFIG.ADD_ATTR: ['data-align']` 保留 data-align 白名单（PREVIEW 走 ALLOW_DATA_ATTR:false 因为预览从 state 重派生 data-align）。**新增 19 个防御测试**（`utils/__tests__/dompurifyXss.spec.ts`）：embed/object/iframe 降级触发、span/code/mark 不降级、href/onclick/onerror 属性过滤、data-align ADD_ATTR + 实际 sanitize 保留 |
 | sanitizeHyperlink 防御 | xss | 锁住 `javascript:/vbscript:/data:` 阻断 | PR-1b | `test-only`（8 个防御测试） |
 | 6293d408 | table-ctrl | 老 tableBlockCtrl 删行/列后光标修复 (#572) | PR-7b | `fixed`：`Table.removeRow/removeColumn` 现返回相邻 cell 的 firstChild，`tableRowColumMenu.selectItem` 拿到 cursorBlock 后 `setCursor(0, 0)`。**新增 8 个回归测试**覆盖中间删/末尾删/整表删/越界 4 个分支 |
 | f99addd2 | table-ctrl | selectedTableCells 清理 (#1900) | PR-7b | `verified-not-applicable`：新仓无 `selectedTableCells` 全局状态（grep 0 hit）；跨 cell 选区在 `editor/index.ts:93` 由 `isSelectionInSameBlock` 守卫早 return，不会进入 marktext 旧那条"删整 column 后引用悬空"的代码路径 |
-| 0a3fda63 + 2754e393 + 4b362e52 | architecture | post-refactor 修复合集（拆条） | 待拆 | `pending` |
+| 0a3fda63 + 2754e393 + 4b362e52 | architecture | post-refactor 修复合集（已拆条） | PR-13 | `skipped`（已拆 11 子条目登记到下方 "post-refactor 拆条" 节；三个原 hash 不单独迁移） |
+| post-refactor: EventCenter listener 在 `destroy` 不清理 | event leak | `EventCenter.unsubscribeAll()` 缺位 | PR-13 | `pending`：`muya.ts:138-147 destroy()` 只调 `detachAllDomEvents()`，`event/index.ts:13-15 listeners` 仍保留所有 pub/sub 闭包，长生命周期宿主页面销毁 Muya 后用户监听器持引 Muya/plugins/DOM 阻 GC。建议给 `EventCenter` 加 `unsubscribeAll() { this.listeners = {}; }` 并在 `destroy()` 调用 |
+| post-refactor: `EventCenter.emit` once-listener 迭代变更 | event correctness | `forEach` 内 `this.off` 跳元素 | PR-13 | `pending`：`event/index.ts:119-129` `forEach(({listener, once}) => { listener(...); if (once) this.off(event, listener); })`，`off` 在 forEach 期间 `splice` 当前索引，下一次迭代 SKIP 紧邻元素。`muya.ts:85-87` 暴露公共 `muya.once()`，real-world 触发面非空。建议改用 `.slice().forEach()` snapshot 或先收齐 once-handler 再批量 emit + off |
+| post-refactor: selection `document.querySelector` vs `this.doc` | iframe/multi-doc | marktext 改用 `this.doc.querySelector` | PR-13 | `verified-not-applicable`：marktext 改动是为 electron-vite 后的多文档场景；新仓没有 `this.doc` 字段也无 iframe/shadow-DOM 多 document 基建（`selection/index.ts:559`/`format.ts:441`/`loadImageAsync.ts:30,77`/`markdownToHtml.ts:116` 一致使用 `document.*`），结构上不假设多 document |
+| post-refactor: selection/dom.js `traverseUp` / `findOutMostParagraph` | selection | 老 contentState 辅助 | PR-13 | `verified-not-applicable`：新仓 `selection/dom.ts` 无这两个辅助（grep 0 hit），整套 contentState ctrl 已被 OT/JSON-state 替代 |
+| post-refactor: `history.undo()` 在 index 0 崩 | history | 访问 stack[-1] | PR-13 | `verified-not-applicable`：新仓 `history/index.ts:77 _change` 早期 `if (this._stack[source].length === 0) return;`，redo/undo 都走同一 `_change`，无 stack[-1] 风险 |
+| post-refactor: `MutationObserver` 未 disconnect | leak | inputCtrl observer 泄漏 | PR-13 | `verified-not-applicable`：新仓全代码 0 `MutationObserver`（grep 0 hit），无 `inputCtrl`，结构上不存在 |
+| post-refactor: `historyTimer` 未取消 | leak | 定时器在 destroy 后 fire | PR-13 | `verified-not-applicable`：新仓 `history/index.ts` 用 `_lastRecorded` 时间戳比较，无 setTimeout/Interval（grep 0 hit） |
+| post-refactor: `renderCodeBlockTimer` 模块级状态 | leak/race | module-level 计时器跨实例 | PR-13 | `verified-not-applicable`：新仓 grep 0 hit `renderCodeBlockTimer`；code-block 渲染走 Prism 同步路径，无延迟渲染计时器 |
+| post-refactor: `Muya.destroy()` 在无 plugins 时崩 | crash | 缺少 optional chain | PR-13 | `verified-not-applicable`：新仓 `muya.ts:145-146 destroy()` 已 `if (this.ui) this.ui.hideAllFloatTools();` 守卫；`_uiPlugins` 容器在 `init()` 前就初始化为 `{}` |
+| post-refactor: 应用层 IPC / preferences / autosave / editor.vue | app-layer | electron-vite/preload/main/renderer | — | `skipped`：marktext renderer/main 应用层（electron.vite.config.js / src/main/* / src/preload/* / src/renderer/*），非 muya 内核范围 |
+| post-refactor: docs (`ARCHITECTURE.md`, `BUILD.md`, `package.json` main） | docs | marktext 仓库文档 | — | `skipped`：marktext 仓库 docs / build 配置变更，不进 muya v0.x 包 |
 
 ## P1 — Parser / 渲染正确性
 
@@ -63,14 +74,14 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 9c2f6cb3 | inline | inline math 样式 | — | `skipped`（CSS-only，新仓样式体系自有 inline math 样式） |
 | 6dfa7938 | inline | inline math selection | — | `skipped`（CSS-only，新仓样式体系自有 selection 样式） |
 | d9f64bab | inline | reference link 渲染 | PR-2a | `test-only`（lexer.ts:357 `labels.has(...)` 已就位；2 个回归测试） |
-| b8e2cd82 | inline | inline html renderer | PR-3 | `pending`（textRenderer 改动主要在 muya HTML 导出；与 stateToMarkdown 关系待评估） |
+| b8e2cd82 | inline | inline html renderer | PR-13 | `verified-not-applicable`：marktext fix 给 marked `textRenderer` 加 `script(content, marker)` 让 sup/sub 出现在 HTML 导出。新仓 `utils/marked/extensions/superSubscript.ts:59-64` 直接在 marked extension `renderer` 中发射 `<sup>...</sup>` / `<sub>...</sub>`，编辑器渲染与 `renderToStaticHTML` 走同一发射器，无独立 textRenderer 待对齐。**新增 2 个 b8e2cd82 防御测试**锁住段落 / heading / list 内 sup/sub 同时出现的 HTML 输出 |
 | 962fdf35 | inline | heading emoji 偏移 | — | `skipped`（CSS-only，新仓样式体系自有 emoji 处理） |
 | 8e32838b | inline | 上/下标 | PR-2a | `test-only`（`super_sub_script` token + 渲染器已就位；3 个正负回归测试） |
 | c0853f64 | inline | auto link / extension | PR-2a | `test-only`（auto_link + auto_link_extension + 边界 guard 已就位；4 个回归测试） |
 | 1c42555a | block | 粘贴多行进 heading | PR-4a | `fixed`（提取 `mergePasteIntoHeading` 纯函数，6 个测试） |
 | dec7502e | block | setext heading | PR-2a | `test-only`（marked v16 lheading + walkTokens `headingStyle` 已就位；3 个回归测试） |
 | f00da152 | block | 嵌套块插表 crash | PR-7b | `verified-not-applicable`：marktext 老 `createFigure` 缺 anchor 校验导致 math/code/html/table 内插表崩；新仓 `canTurnIntoMenu` 同一道门把 table 也挡在外，`/table` quick-insert 只对 `paragraph.content` 触发。**新增 6 个回归测试**复用 `canTurnIntoMenu` 门同时锁住 table 不可嵌入 |
-| 9cb2cbe8 | toc | TOC 更新（如做 TOC 参考） | PR-5 | `pending` |
+| 9cb2cbe8 | toc | TOC 更新（如做 TOC 参考） | PR-13 | `skipped`（TOC 不是 muya v0.x 范围；以后做 TOC feature 时再回头看 marktext 此 fix） |
 
 ## P2 — 编辑 / 光标 / 选择 / IME
 
@@ -104,7 +115,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 393139e5 | clipboard | clipboard 过度 sanitize | PR-4b | `verified-not-applicable`：新仓 `getClipboardData` 单块/多块路径都 `text = substring(...)`/`mdGenerator.generate(...)` 直出，无 `escapeHtml`；含 2 个防御测试 |
 | 54a3b585 | clipboard | 粘贴 HTML escape | PR-4a | `verified-not-applicable`：`utils/paste.ts` 已 `sanitize(html, PREVIEW_DOMPURIFY_CONFIG, false)` |
 | 485fcfe0 | clipboard | image paste handler 不执行 | PR-4a | `verified-not-applicable`：新仓 pasteHandler 无 image paste 路径；进入 paste handler 后不会因 `!text && !html` 早退 |
-| 5b1cd85d | clipboard | 末尾 html block 粘贴错误 | PR-4a | `pending`：需 examples 手测（marktext 在 contentState 走 `getLastBlock` 递归选末块；新仓多段粘贴直接 `insertAfter` 不递归子树，结构上不会因 html-block `editable===false` 选错末块） |
+| 5b1cd85d | clipboard | 末尾 html block 粘贴错误 | PR-13 | `verified-not-applicable`：marktext 老 `pasteCtrl` 用 `getLastBlock(blocks)` 在 fragment 树中递归找末叶并写 `lastBlock.text += cacheText`；如果末块是 `editable === false` 的 html-block，递归会进入 children 取错节点或崩。新仓 `clipboard/index.ts:631-649` 多段粘贴是 `for (state of remaining) → ScrollPage.loadBlock(state.name).create(...) + insertAfter`，结尾用 `wrapperBlock.firstContentInDescendant()` 取光标块（`block/base/parent.ts:251-258`，沿 `children.head` 向下找 `Content` 叶；html-block→html-container→code 是规则结构，永远命中一个可写 leaf）。无 fragment 末块的 cacheText 追加路径，结构上不触发 marktext bug |
 | fb8fca7b | clipboard | copy/paste list | PR-4b | `verified-not-applicable`：turndown `paragraph`/`listItem` 规则已在 `utils/turndownService/index.ts`；checkbox 注入是 marktext DOM-based copy 特有，新仓走 marked 渲染不需要 |
 | 067ec485 | clipboard | HTML paste handler | PR-4a | `partial-fixed`：text-only `<table>...</table>` 现在升级到 html 槽走 HtmlToMarkdown；recursion 与 pasteImage 分支新架构不适用（无 pasteImage） |
 | ef59a743 | clipboard | 富文本复制 | PR-4b | `verified-not-applicable`：copyHandler 'normal' 已 `setData('text/html', html); setData('text/plain', text)`；`getClipBoardHtml` 经 marked 渲染 |
@@ -223,12 +234,13 @@ Spec runner 用 `renderToStaticHTML(..., { sanitize: false })` 跑——衡量�
 | PR-3b | 4 | 4 | 100%（1 fixed `358fa83d` + 3 verified-not-applicable；回归测试 13 个） |
 | PR-3c | 3 | 3 | 100%（3 verified-not-applicable；+1 compositionend 防御测试；跨 block+IME 留 examples/ 手测） |
 | PR-3d | 11 | 11 | 100%（2 fixed `5fb130d9`+`ed1b3354` + 6 verified-not-applicable + 2 test-only + 1 转 PR-4；回归测试 8 个） |
-| PR-4a (粘贴) | 5 | 4 | 80%（2 fixed + 2 verified-not-applicable；1 留 examples 手测） |
+| PR-4a (粘贴) | 5 | 5 | 100%（2 fixed + 3 verified-not-applicable；5b1cd85d 末尾 html-block 经 PR-13 代码路径验证） |
 | PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
 | PR-5 | 18+ | 5 | 28%（PR-5a 1 fixed `a028a7c2`（行号，10 个测试）+ 4 verified-not-applicable：`8474a997`/`8af9605e`/`47cb2bbe`/`7aa0d1bf`） |
 | PR-5a (P3 code block 行号) | 1 | 1 | 100%（fixed，10 个测试） |
 | PR-6a | — | done | spec 合规基础设施落地（CM 572/652 = 87.7%, GFM 580/672 = 86.3%，1324 spec 测试 + 8 normalizer 单测 + 18 个 renderToStaticHTML 单测） |
 | PR-6b | — | done | marktext 测试补齐落地（footnote 8 个新测试 + 1 个 parser fix；round-trip 15 个测试 + 11 fixture；list-indent +1 dfm 策略） |
+| PR-13 (residuals) | 5 | 5 | 100%（5 项 A 组遗留收尾：1 skipped `9cb2cbe8`(TOC) + 3 verified-not-applicable `b8e2cd82`/`5b1cd85d`/`0baf2e9e`+`7de33f11` + 1 skipped (已拆条) `0a3fda63`+`2754e393`+`4b362e52`；新增 21 个防御测试: 2 sup/sub HTML + 19 DOMPurify XSS；post-refactor 拆出 11 个子条目: 2 pending + 6 verified-not-applicable + 3 skipped 应用层/docs） |
 
-最后更新：2026-05-20（PR-5a 行号 + P3 4 条 verified-not-applicable）
+最后更新：2026-05-20（PR-13 收尾：5 条 A 组遗留 + post-refactor 11 子条目；新增 21 防御测试）
