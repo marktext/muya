@@ -190,28 +190,28 @@ describe('renderToStaticHTML', () => {
             const off = renderToStaticHTML(
                 'See [^1].\n\n[^1]: footnote body',
             );
-            // With footnote disabled, the definition must not be promoted to
-            // a footnote block. The `[^1]:` line is just a regular paragraph
-            // (or, depending on the parser, a link-reference definition — but
-            // in no case a `footnote-block`).
-            expect(off).not.toMatch(/class="footnote-block"/);
+            // With footnote disabled the definition is parsed as a regular
+            // paragraph / link-reference and the inline `[^1]` stays literal.
+            // No backref section.
+            expect(off).not.toMatch(/<section class="footnotes">/);
+            expect(off).not.toMatch(/class="footnote-ref"/);
 
+            // With footnote enabled PR-8c post-processes the marked extension
+            // output into the GFM/pandoc shape: numbered `<sup>` inline +
+            // bottom `<section class="footnotes">` with backref arrows. The
+            // raw `<div class="footnote-block">` wrapper is lifted away.
             const on = renderToStaticHTML(
                 'See [^1].\n\n[^1]: footnote body',
                 { footnote: true },
             );
-            // Strict check: the footnote extension emits a
-            // `<div class="footnote-block" data-identifier="...">` wrapper.
-            // (DOMPurify strips `data-identifier` under the default config's
-            // `ALLOW_DATA_ATTR: false`; assert what survives sanitisation.)
-            expect(on).toMatch(/class="footnote-block"/);
+            expect(on).toMatch(/<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1<\/a><\/sup>/);
+            expect(on).toMatch(/<section class="footnotes">[\s\S]*<\/section>/);
+            expect(on).toMatch(/<li id="fn-1">/);
+            expect(on).toMatch(/<a href="#fnref-1" class="footnote-backref">/);
             expect(on).toContain('footnote body');
-            // The identifier is preserved when sanitisation is skipped:
-            const onRaw = renderToStaticHTML(
-                'See [^1].\n\n[^1]: footnote body',
-                { footnote: true, sanitize: false },
-            );
-            expect(onRaw).toMatch(/data-identifier="1"/);
+            // The intermediate `<div class="footnote-block">` is hoisted into
+            // the section and must not survive in the rendered body.
+            expect(on).not.toMatch(/<div class="footnote-block"/);
         });
 
         it('honours math option', () => {

@@ -83,6 +83,16 @@ function compatibleTaskList(tokens: (Token | ListToken | ListItemToken)[] = []) 
             token.tokens = compatibleTaskList(token.tokens);
             results.push(token);
         }
+        else if (token.type === 'footnote') {
+            // The footnote extension stores its body block tokens under
+            // `tokens` (see utils/marked/extensions/footnote.ts). Without
+            // this branch a nested bullet/order/task list inside a footnote
+            // never receives a `listType`, and markdownToState produces
+            // `undefined-list` for the child state.
+            const ft = token as { tokens?: (Token | ListToken | ListItemToken)[] };
+            ft.tokens = compatibleTaskList(ft.tokens);
+            results.push(token);
+        }
         else {
             results.push(token);
         }

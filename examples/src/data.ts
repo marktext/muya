@@ -446,4 +446,14 @@ foo bar
 > foo
 > bar
 
+A short paragraph with a footnote reference[^note] and another[^pandoc].
+
+[^note]: This is the first footnote definition. It can span multiple
+    lines when continuation lines are indented by four spaces.
+
+[^pandoc]: A footnote can also contain nested blocks:
+
+    - bullet item one
+    - bullet item two
+
 ![](https://jingan2.guankou.net/haopic/jj20/389023/010323033238341796.jpg)IMAGE`;

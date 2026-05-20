@@ -711,3 +711,105 @@ pre.mu-active.mu-fenced-code::after {
 .mu-table-cell-content {
     min-width: 10em;
 }
+
+/* Footnote definition block — port of marktext's `figure[data-role='FOOTNOTE']`
+   styling (src/muya/lib/assets/styles/index.css:194-246) with class prefix
+   `ag-` → `mu-` and CSS-var names rebound to the new repo's kebab-case set.
+   Layout: tinted figure with the `[^id]:` label absolutely positioned at the
+   top-left corner of the padding area, so the body text starts below it and
+   doesn't collide. */
+
+/* The top-of-file `.mu-container figure:not(.mu-table)` rule sets `padding:
+   0.5em 0; margin: 0` at specificity 0,2,1 and would otherwise win over a
+   plain `figure.mu-footnote`. Use `.mu-container figure.mu-footnote` to
+   match the same specificity, then source order wins. */
+.mu-container figure.mu-footnote {
+    position: relative;
+
+    /* Vertical separation between consecutive footnotes; 0 horizontal so the
+       block sits flush with the surrounding paragraphs. */
+    margin: 1.4em 0;
+    padding: 1.2em 2em 0.05em 1em;
+
+    font-size: 0.8em;
+
+    background: var(--editor-color-04);
+    opacity: 0.8;
+}
+
+.mu-container figure.mu-footnote pre {
+    font-size: 0.8em;
+}
+
+.mu-container figure.mu-footnote span code,
+.mu-container figure.mu-footnote td code,
+.mu-container figure.mu-footnote th code {
+    font-size: 0.8em;
+}
+
+.mu-container figure.mu-footnote > .mu-footnote-input {
+    position: absolute;
+    top: 0.2em;
+    left: 0;
+    z-index: 1;
+
+    min-width: 80px;
+    padding: 0 1em;
+
+    color: var(--editor-color);
+    font-weight: 600;
+    font-size: 14px;
+
+    font-family: monospace;
+
+    background: transparent;
+}
+
+.mu-container figure.mu-footnote > .mu-footnote-input::before {
+    content: '[^';
+}
+
+.mu-container figure.mu-footnote > .mu-footnote-input::after {
+    content: ']:';
+}
+
+/* The lowercase "footnote" badge in the top-right corner, only when the
+   block is active (focus inside its body) — same hint marktext shows via
+   `figure[data-role='FOOTNOTE'].ag-active::before`. */
+.mu-container figure.mu-footnote.mu-active::before {
+    position: absolute;
+    top: 0.2em;
+    right: 1em;
+
+    color: var(--editor-color-30);
+
+    font-size: 12px;
+
+    content: 'footnote';
+}
+
+/* Bottom-right ↩︎ backlink — clicking it jumps to the first
+   `<sup id="noteref-{id}">` reference. The `<i>` is appended to the figure
+   by `Footnote.create` and carries its own click listener. */
+.mu-container figure.mu-footnote > i.mu-footnote-backlink {
+    position: absolute;
+    right: 0.5em;
+    bottom: 0.5em;
+    z-index: 100;
+
+    display: block;
+    width: 20px;
+    height: 20px;
+
+    color: var(--editor-color-50);
+    font-family: sans-serif;
+    font-style: normal;
+    line-height: 20px;
+    text-align: center;
+
+    cursor: pointer;
+}
+
+.mu-container figure.mu-footnote > i.mu-footnote-backlink:hover {
+    color: var(--theme-color);
+}

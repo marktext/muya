@@ -5,6 +5,7 @@ import type DiagramBlock from '../../block/extra/diagram';
 import bulletListIcon from '../../assets/icons/bullet_list/2.png';
 import vegaIcon from '../../assets/icons/chart/2.png';
 import codeIcon from '../../assets/icons/code/2.png';
+import footnoteIcon from '../../assets/icons/footnote/2.png';
 import frontMatterIcon from '../../assets/icons/front_matter/2.png';
 import header1Icon from '../../assets/icons/heading_1/2.png';
 import header2Icon from '../../assets/icons/heading_2/2.png';
@@ -82,6 +83,9 @@ export function getIcon(block: Parent) {
 
         case 'diagram':
             return DIAGRAM_ICONS[(block as DiagramBlock).meta.type];
+
+        case 'footnote':
+            return footnoteIcon;
 
         default:
             return paragraphIcon;

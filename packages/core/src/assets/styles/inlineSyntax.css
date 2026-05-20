@@ -503,3 +503,24 @@ blockquote .mu-hide.mu-math > .mu-math-render {
 
     font-weight: 600;
 }
+
+/* inline footnote identifier — `[^id]` rendered as a small superscript pill.
+   Marker spans (`[^` / `]`) inherit `.mu-hide` from the syntax renderer when
+   the cursor isn't on this token, so the user sees just the identifier text
+   inside the pill. */
+.mu-inline-footnote-identifier {
+    padding: 0 0.4em;
+
+    color: var(--editor-color-80);
+    font-size: 0.7em;
+
+    background: var(--code-block-bg-color);
+    border-radius: 3px;
+
+    cursor: pointer;
+}
+
+.mu-inline-footnote-identifier a {
+    color: var(--editor-color);
+    text-decoration: none;
+}
