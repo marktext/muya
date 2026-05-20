@@ -53,8 +53,9 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 270d33f6 | parser | list item lexer/parser（CM 264/265 不同 marker 拆表） | PR-2a | `test-only`（marked v16 + `compatibleTaskList` 已就位；2 个 CM spec 测试） |
 | 04834032 | parser | tab 缩进 list | PR-3 | `pending`（marktext fix 在 `tabCtrl.js` 编辑器 keydown 逻辑；PR-2 范围外） |
 | 240d64aa | parser | 合并不同类型 list #706 | PR-4 | `pending`（marktext fix 在 `pasteCtrl.js` 粘贴流程；PR-4 clipboard 系列处理） |
-| 02841ffd | parser | list 后续段落归属（exportMarkdown 缩进配置） | PR-2b | `pending`（stateToMarkdown 序列化细节，留待 PR-2b 配合 list 表格基线评估） |
-| 5f191681 | parser | blockquote 内 list（exportMarkdown） | PR-2b | `pending`（同上） |
+| 02841ffd | parser | list 后续段落归属（exportMarkdown 缩进配置） | PR-2b | `test-only`（stateToMarkdown 已实现 indent/listIndent 拆分；4 个 marktext 缩进 fixture + 4 个扩展 round-trip） |
+| 5f191681 | parser | blockquote 内 list（exportMarkdown） | PR-2b | `test-only`（3 个 blockquote round-trip 测试） |
+| insertLineBreak 行尾空格 | serializer | 列表项内空行带尾随空格 | PR-2b | `fixed`（`insertLineBreak` 去掉尾随空格，保留 `>` 前缀；1 个回归测试） |
 | 70d49c30 | parser | `-foo` 误识 list item | PR-2a | `test-only`（marked v16 已要求 bullet 后接空格；2 个正负回归测试） |
 | 7b7a9424 | math | math block 嵌套 | PR-3 | `pending`（marktext fix 在 `paragraphCtrl.js` 编辑器层；PR-3 范围） |
 | d937fac0 | inline | inline 语法 (#1071 重复 `**\`x\`**` 只末尾加粗) | PR-2c | `test-only`（`lowerPriority` 的 `ignoreIndex` 已就位；2 个回归测试） |
@@ -177,7 +178,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 26 | 15 | 58%（PR-2a 8 commits + PR-2b 3 commits + PR-2c：2 fixed bugs + 11 test-only + 3 skipped；3 条转 PR-3/PR-4；新增 57af8304 入册）|
+| PR-2 | 26 | 15 | 58%（PR-2a 8 commits + PR-2b 3 commits + PR-2c 1 commit：2 fixed bugs + 11 test-only + 3 skipped；3 条转 PR-3/PR-4；新增 57af8304 入册）|
 | PR-3a | 5 | 5 | 100%（4 verified-not-applicable + 1 test-only；防御测试 2 个 soft-line） |
 | PR-3b | 4 | 4 | 100%（1 fixed `358fa83d` + 3 verified-not-applicable；回归测试 13 个） |
 | PR-3c | 3 | 3 | 100%（3 verified-not-applicable；+1 compositionend 防御测试；跨 block+IME 留 examples/ 手测） |

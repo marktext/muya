@@ -211,7 +211,11 @@ export default class ExportMarkdown {
     insertLineBreak(result: unknown[], indent: string) {
         if (!result.length)
             return;
-        result.push(`${indent}\n`);
+        // Blank lines inside a list item should be empty, not carry the
+        // item's indent as trailing whitespace. For blockquote-style indents
+        // like `> ` we keep the `>` so the quote stays continuous — only
+        // strip the trailing run of plain spaces.
+        result.push(`${indent.replace(/ +$/, '')}\n`);
     }
 
     serializeFrontMatter(state: IFrontmatterState) {
