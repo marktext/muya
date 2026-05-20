@@ -1,6 +1,7 @@
 import type { Muya } from '../../../muya';
 import type { ITableState } from '../../../state/types';
 import type { Nullable } from '../../../types';
+import type Content from '../../base/content';
 import type TableCellContent from '../../content/tableCell';
 import type { TBlockPath } from '../../types';
 import type TableBodyCell from './cell';
@@ -179,15 +180,36 @@ class Table extends Parent {
         return firstCellInNewColumn!.firstChild as TableCellContent;
     }
 
-    removeRow(offset: number) {
-        const row = (this.firstChild as TableInner).find(offset);
+    removeRow(offset: number): Nullable<Content> {
+        const inner = this.firstChild as TableInner;
+        const row = inner.find(offset);
         if (row == null)
             return;
 
+        // Marktext 6293d408 (#572) backport: capture a surviving neighbour
+        // BEFORE the detach so the caller can place the caret on a cell that
+        // is still attached to the DOM. Prefer the next row, fall back to the
+        // previous; if no rows remain after this delete, capture a content
+        // block OUTSIDE the table so the caret never lands inside the
+        // about-to-be-detached table itself.
+        const survivor = (row.next as TableRow | null) ?? (row.prev as TableRow | null);
+        // Always grab the outside-of-table fallback as well, in case the
+        // whole table is going away. `nextContentInContext` / `prev` walk
+        // out of the table by design.
+        const outsideContent
+            = this.nextContentInContext() ?? this.previousContentInContext();
+
         row.remove();
+
+        if (survivor == null) {
+            this.remove();
+            return outsideContent ?? null;
+        }
+
+        return (survivor.firstChild as TableBodyCell).firstChild as TableCellContent;
     }
 
-    removeColumn(offset: number) {
+    removeColumn(offset: number): Nullable<Content> {
         const { columnCount } = this;
         if (offset < 0 || offset >= columnCount) {
             debug.warn(`column at ${offset} is not existed.`);
@@ -195,14 +217,33 @@ class Table extends Parent {
         }
 
         const table = this.firstChild as TableInner;
-        if (this.columnCount === 1)
-            return this.remove();
+        if (this.columnCount === 1) {
+            // Same outside-of-table fallback as removeRow when the whole
+            // table is removed — never leave the caret inside a detached
+            // subtree.
+            const outsideContent
+                = this.nextContentInContext() ?? this.previousContentInContext();
+            this.remove();
+            return outsideContent ?? null;
+        }
+
+        // Capture the first row's surviving neighbour cell before mutation so
+        // the caller can setCursor on a still-attached cell after the column
+        // detach. Same intent as marktext 6293d408 — but applied per column
+        // since the new architecture removes one cell per row in a loop.
+        const firstRow = table.firstChild as TableRow;
+        const targetCellInFirstRow = firstRow.find(offset) as TableBodyCell | null;
+        const neighbourCell
+            = (targetCellInFirstRow?.next as TableBodyCell | null)
+                ?? (targetCellInFirstRow?.prev as TableBodyCell | null);
 
         table.forEach((row) => {
             const cell = (row as TableRow).find(offset);
             if (cell)
                 cell.remove();
         });
+
+        return (neighbourCell?.firstChild as TableCellContent | undefined) ?? null;
     }
 
     alignColumn(offset: number, value: string) {

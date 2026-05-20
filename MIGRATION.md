@@ -36,8 +36,8 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | c47795e4 | xss | XSS + Electron（部分电子相关跳过） | PR-1b | `skipped`（Electron-only） |
 | 0baf2e9e / 7de33f11 | xss | #1390 XSS | PR-1b | `pending`（issue 已关闭，影响面待评估；暂不实修） |
 | sanitizeHyperlink 防御 | xss | 锁住 `javascript:/vbscript:/data:` 阻断 | PR-1b | `test-only`（8 个防御测试） |
-| 6293d408 | table-ctrl | 老 tableBlockCtrl 修复，新仓无同名结构 | 待评估 | `pending`（建议 PR-3 验证） |
-| f99addd2 | table-ctrl | selectedTableCells 清理，新仓无对应 | 待评估 | `pending`（建议 PR-3 验证） |
+| 6293d408 | table-ctrl | 老 tableBlockCtrl 删行/列后光标修复 (#572) | PR-7b | `fixed`：`Table.removeRow/removeColumn` 现返回相邻 cell 的 firstChild，`tableRowColumMenu.selectItem` 拿到 cursorBlock 后 `setCursor(0, 0)`。**新增 8 个回归测试**覆盖中间删/末尾删/整表删/越界 4 个分支 |
+| f99addd2 | table-ctrl | selectedTableCells 清理 (#1900) | PR-7b | `verified-not-applicable`：新仓无 `selectedTableCells` 全局状态（grep 0 hit）；跨 cell 选区在 `editor/index.ts:93` 由 `isSelectionInSameBlock` 守卫早 return，不会进入 marktext 旧那条"删整 column 后引用悬空"的代码路径 |
 | 0a3fda63 + 2754e393 + 4b362e52 | architecture | post-refactor 修复合集（拆条） | 待拆 | `pending` |
 
 ## P1 — Parser / 渲染正确性
@@ -57,7 +57,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 5f191681 | parser | blockquote 内 list（exportMarkdown） | PR-2b | `test-only`（3 个 blockquote round-trip 测试） |
 | insertLineBreak 行尾空格 | serializer | 列表项内空行带尾随空格 | PR-2b | `fixed`（`insertLineBreak` 去掉尾随空格，保留 `>` 前缀；1 个回归测试） |
 | 70d49c30 | parser | `-foo` 误识 list item | PR-2a | `test-only`（marked v16 已要求 bullet 后接空格；2 个正负回归测试） |
-| 7b7a9424 | math | math block 嵌套 | PR-3 | `pending`（marktext fix 在 `paragraphCtrl.js` 编辑器层；PR-3 范围） |
+| 7b7a9424 | math | math block 嵌套 | PR-7b | `verified-not-applicable`：marktext `insertContainerBlock` 缺 anchor 校验导致 math 嵌套；新仓所有 container 创建路径（front menu / quick-insert / `$$` enter convert）都门控在 `paragraph.content`，`canTurnIntoMenu` 对 math/code/html/diagram/table 返回 `[]`。**新增 7 个回归测试**锁住 front-menu 门 |
 | d937fac0 | inline | inline 语法 (#1071 重复 `**\`x\`**` 只末尾加粗) | PR-2c | `test-only`（`lowerPriority` 的 `ignoreIndex` 已就位；2 个回归测试） |
 | 57af8304 | inline | link/image dest 含括号 (#1169) | PR-2c | `test-only`（`correctUrl` 用 `findClosingBracket` 已就位；3 个回归测试） |
 | 9c2f6cb3 | inline | inline math 样式 | — | `skipped`（CSS-only，新仓样式体系自有 inline math 样式） |
@@ -69,7 +69,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | c0853f64 | inline | auto link / extension | PR-2a | `test-only`（auto_link + auto_link_extension + 边界 guard 已就位；4 个回归测试） |
 | 1c42555a | block | 粘贴多行进 heading | PR-4a | `fixed`（提取 `mergePasteIntoHeading` 纯函数，6 个测试） |
 | dec7502e | block | setext heading | PR-2a | `test-only`（marked v16 lheading + walkTokens `headingStyle` 已就位；3 个回归测试） |
-| f00da152 | block | 嵌套块插表 crash | PR-3 | `pending`（marktext fix 在 `tableBlockCtrl.js` 编辑器层；PR-3 范围） |
+| f00da152 | block | 嵌套块插表 crash | PR-7b | `verified-not-applicable`：marktext 老 `createFigure` 缺 anchor 校验导致 math/code/html/table 内插表崩；新仓 `canTurnIntoMenu` 同一道门把 table 也挡在外，`/table` quick-insert 只对 `paragraph.content` 触发。**新增 6 个回归测试**复用 `canTurnIntoMenu` 门同时锁住 table 不可嵌入 |
 | 9cb2cbe8 | toc | TOC 更新（如做 TOC 参考） | PR-5 | `pending` |
 
 ## P2 — 编辑 / 光标 / 选择 / IME

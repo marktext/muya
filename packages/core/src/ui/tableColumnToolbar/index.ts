@@ -152,7 +152,14 @@ export class TableColumnToolbar extends BaseFloat {
 
         switch (item.type) {
             case 'remove': {
-                block.table.removeColumn(offset);
+                // Marktext 6293d408 (#572) backport: removeColumn now returns
+                // a content block to re-anchor the caret on (inside the table
+                // if columns remain, outside the table if the whole table was
+                // removed). Without this setCursor the caret stays in the
+                // detached cell.
+                const cursorBlock = block.table.removeColumn(offset);
+                if (cursorBlock)
+                    cursorBlock.setCursor(0, 0);
 
                 return this.hide();
             }
