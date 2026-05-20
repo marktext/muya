@@ -144,7 +144,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | afe68891 | feat | SM.MS 上传删除链接 | PR-12 `skipped`（uploader 专属，新仓不集成 uploader） |
 | 435dca74 | feat | Unsplash 搜图 | PR-12 `skipped`（网络依赖 + API key + UI 重大改动，对纯 markdown 库过重） |
 | f3b53427 | feat | 跳光标到末尾再格式化 | PR-10b `fixed`（`format.ts::_addFormat` 在 paired marker (strong/em/inline_code/del/inline_math) 和 tag marker (u/sub/sup/mark) 分支按 `wasCollapsed` 分流：非空选区光标跳到闭合标记之后，单点光标保留在 marker 之间（toggle-then-type）；link/image 保持原"光标落在 `()` 之间"行为；17 个单元测试覆盖每种 marker + 偏移 + collapsed 回归） |
-| efd38644 | feat | 长 footnote 编号 | PR-8c `pending`（待 renderToStaticHTML 输出反链） |
+| efd38644 | feat | 长 footnote 编号 | PR-8c `fixed`（renderToStaticHTML 收集 + inline 编号 sup + `<section class="footnotes">` 反链；6 个测试） |
 | 318bfc6a / fc89d04a / 37b96c88 | feat | footnote 系列 | PR-8b `fixed`（footnoteTool TS 重写 + click 接线 + Create/Go to；4 个测试） |
 
 ## P4 — 明确不迁
