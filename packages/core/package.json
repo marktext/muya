@@ -47,6 +47,9 @@
         "build": "tsc && vite build",
         "test": "vitest run",
         "test:watch": "vitest",
+        "test:spec": "vitest run --config vitest.spec.config.ts",
+        "test:spec:commonmark": "vitest run --config vitest.spec.config.ts test/spec/commonmark.spec.ts",
+        "test:spec:gfm": "vitest run --config vitest.spec.config.ts test/spec/gfm.spec.ts",
         "coverage": "vitest run --coverage"
     },
     "dependencies": {
@@ -80,6 +83,7 @@
         "@types/prismjs": "^1.26.6",
         "@types/turndown": "^5.0.4",
         "@vitest/coverage-istanbul": "^4.1.6",
+        "commonmark-spec": "^0.31.2",
         "happy-dom": "^15.11.7",
         "typescript": "^6.0.3",
         "vite": "^8.0.13",

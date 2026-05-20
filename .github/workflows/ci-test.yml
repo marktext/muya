@@ -23,3 +23,6 @@ jobs:
 
             - name: 🩺 Run test
               run: pnpm run test
+
+            - name: 📐 Run CommonMark / GFM spec conformance
+              run: pnpm --filter @muyajs/core test:spec
