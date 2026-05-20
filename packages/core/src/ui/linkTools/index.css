@@ -1,3 +1,15 @@
+/* Mirrors the per-instance overrides on the other floating tools
+   (imageToolbar / inlineFormatToolbar / tableColumnToolbar) so the
+   linkTools popover gets the same baseline as them. Without
+   `overflow: visible` the baseFloat default `overflow: hidden` clips
+   any decoration (li::before divider, focus rings, box-shadow) that
+   spills outside the 100x34 box. */
+.mu-float-wrapper.mu-link-tools-container {
+    overflow: visible;
+
+    border-radius: 2px;
+}
+
 .mu-link-tools {
     position: relative;
 

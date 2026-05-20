@@ -18,9 +18,14 @@
 a.mu-inline-rule,
 span.mu-inline-rule.mu-link {
     color: rgb(20 86 240);
-
-    pointer-events: none;
 }
+
+/* Note: previously this rule also set `pointer-events: none` to suppress
+   native navigation on `<a href>` clicks. That broke our hover-based
+   linkTools popover detection because every mouse event hit-tested
+   straight through to the editor container. Removed in PR-11b; the
+   `editor/linkMouseEvents.ts` click handler calls `preventDefault()`
+   on link clicks instead (standard contenteditable rich-text pattern). */
 
 .mu-link-in-bracket {
     color: var(--editor-color-50);

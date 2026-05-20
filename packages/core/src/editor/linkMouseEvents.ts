@@ -1,5 +1,7 @@
+import type Format from '../block/base/format';
 import type { Muya } from '../muya';
-import { CLASS_NAMES } from '../config';
+import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from '../config';
+import { findContentDOM } from '../selection/dom';
 import { getLinkInfo } from '../utils/getLinkInfo';
 
 // Port of marktext `src/muya/lib/eventHandler/mouseEvent.js` (cb25b3d4
@@ -12,27 +14,41 @@ import { getLinkInfo } from '../utils/getLinkInfo';
 //   - reference link `[label][ref]` → a.mu-inline-rule.mu-reference-link
 //                                       (or span.mu-reference-link if href
 //                                        is not yet resolved — those are
-//                                        still hover targets so the user
-//                                        can see "no definition")
+//                                        intentionally *not* popover targets:
+//                                        nothing to jump to or unlink)
 //   - HTML `<a href=...>`          → a.mu-inline-rule.mu-raw-html
 //
-// For the markdown and reference-link variants we additionally require
-// the preceding sibling to be `.mu-hide` — i.e. the source-character
-// markers are hidden, which means the wrapper is rendered in *preview*
-// mode (cursor isn't editing inside the link). This mirrors marktext's
+// For the markdown and reference-link variants we additionally require the
+// preceding sibling to be `.mu-hide` — i.e. the source-character markers
+// are hidden, which means the wrapper is rendered in *preview* mode
+// (cursor isn't editing inside the link). This mirrors marktext's
 // `parentPreSibling.classList.contains('ag-hide')` guard and keeps the
 // popover from flashing while the user types the URL.
 //
+// Click suppression: PR-11b removed the `pointer-events: none` rule that
+// `inlineSyntax.css` used to set on link wrappers, because that rule
+// hid all mouse events from us — events hit-tested straight through to
+// the editor container. We compensate by `preventDefault()`-ing clicks
+// on `a.mu-inline-rule` wrappers (standard contenteditable rich-text
+// pattern: clicking a link inside the editor should place the cursor,
+// not navigate away).
+//
 // Cleanup: every listener is attached via `eventCenter.attachDOMEvent`,
 // so `muya.destroy()` → `eventCenter.detachAllDomEvents()` removes them.
-// No explicit cleanup return is needed; tests that want isolation should
-// call `eventCenter.detachAllDomEvents()` directly.
 
+// `mu-raw-html` is added to every inline HTML tag (`<u>`, `<mark>`,
+// `<sub>`, `<sup>`, `<a>` …), so we can't match it loosely — narrow
+// each entry by the actual tag the renderer emits.
 const LINK_SELECTOR = [
-    `.${CLASS_NAMES.MU_LINK}`,
-    `.${CLASS_NAMES.MU_REFERENCE_LINK}`,
-    `.${CLASS_NAMES.MU_RAW_HTML}`,
+    `span.${CLASS_NAMES.MU_LINK}`,
+    `a.${CLASS_NAMES.MU_REFERENCE_LINK}`,
+    `a.${CLASS_NAMES.MU_RAW_HTML}`,
 ].join(', ');
+
+// Click suppression covers all real anchor variants whether or not they
+// host a popover (no-text-link is `<a href target=_blank>` and would
+// open a tab without this guard).
+const ANCHOR_CLICK_SELECTOR = `a.${CLASS_NAMES.MU_INLINE_RULE}`;
 
 function findLinkWrapper(target: EventTarget | null): HTMLElement | null {
     if (!(target instanceof HTMLElement))
@@ -61,16 +77,20 @@ export function attachLinkMouseHandlers(muya: Muya): void {
         if (!wrapper || !isPopoverTarget(wrapper))
             return;
 
-        // Defensive guard: if a wrapper somehow matches the selector but
-        // doesn't carry the expected dataset (no `data-raw`), bail rather
-        // than emit a half-empty payload that the popover can't act on.
         const linkInfo = getLinkInfo(wrapper);
         if (!linkInfo)
             return;
 
+        // The unlink path needs the containing block so it can rewrite the
+        // block's source text. Resolve it via the DOM-attached block ref
+        // (the same property `selection/index.ts` uses for image clicks).
+        const contentDom = findContentDOM(wrapper);
+        const block = (contentDom?.[BLOCK_DOM_PROPERTY] ?? null) as Format | null;
+
         eventCenter.emit('muya-link-tools', {
             reference: wrapper,
             linkInfo,
+            block,
         });
     };
 
@@ -92,6 +112,15 @@ export function attachLinkMouseHandlers(muya: Muya): void {
         eventCenter.emit('muya-link-tools', { reference: null });
     };
 
+    const clickHandler = (event: Event) => {
+        if (!(event.target instanceof HTMLElement))
+            return;
+
+        if (event.target.closest(ANCHOR_CLICK_SELECTOR))
+            event.preventDefault();
+    };
+
     eventCenter.attachDOMEvent(domNode, 'mouseover', overHandler);
     eventCenter.attachDOMEvent(domNode, 'mouseout', outHandler);
+    eventCenter.attachDOMEvent(domNode, 'click', clickHandler);
 }

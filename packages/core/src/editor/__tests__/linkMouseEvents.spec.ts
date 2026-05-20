@@ -38,11 +38,7 @@ function captureEmits(eventCenter: EventCenter) {
 }
 
 function mouseover(el: HTMLElement) {
-    el.dispatchEvent(new Event('mouseover', { bubbles: true }));
-}
-
-function mouseout(el: HTMLElement) {
-    el.dispatchEvent(new Event('mouseout', { bubbles: true }));
+    el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
 }
 
 describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
@@ -128,7 +124,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
 
         mouseover(link);
         emits.length = 0;
-        mouseout(link);
+        link.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
         expect(emits).toHaveLength(1);
         expect(emits[0].reference).toBeNull();
     });
@@ -180,11 +176,11 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         expect(emits).toHaveLength(0);
     });
 
-    // Copilot review #1 on PR #226: mouseout fires when the pointer crosses
-    // between descendants of the same wrapper (e.g. text → <strong> → text).
-    // A naive impl hides the popover prematurely. Guard via `relatedTarget`:
-    // if the pointer is moving to another descendant of the same wrapper,
-    // it isn't a real exit.
+    // Copilot review #1 on PR #226: `mouseout` fires when the pointer
+    // crosses between descendants of the same link wrapper (e.g. text →
+    // <strong> → text). The handler guards via `relatedTarget` — if the
+    // pointer is moving to a node still inside the same wrapper, skip
+    // the hide emit so the popover doesn't blink.
     it('does NOT emit reference:null when the pointer moves between descendants of the same wrapper', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
@@ -216,34 +212,107 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         expect(emits).toHaveLength(0);
     });
 
-    it('emits reference:null when the pointer truly leaves the link wrapper', () => {
-        const { muya, eventCenter, domNode } = makeMuya();
-        const emits = captureEmits(eventCenter);
+    // PR-11b removed the `pointer-events: none` rule that previously
+    // suppressed native navigation. The compensating click handler must
+    // `preventDefault()` on link clicks so the user isn't navigated away
+    // when they click a link inside the editor.
+    it.each([
+        ['a.mu-no-text-link', 'a', ['mu-no-text-link', 'mu-inline-rule']],
+        ['a.mu-reference-link', 'a', ['mu-inline-rule', 'mu-reference-link']],
+        ['a.mu-raw-html', 'a', ['mu-inline-rule', 'mu-raw-html']],
+    ])('prevents default on click of %s wrappers', (_label, tagName, classes) => {
+        const { muya, domNode } = makeMuya();
         attachLinkMouseHandlers(muya);
 
-        const link = document.createElement('a');
-        link.classList.add('mu-inline-rule', 'mu-raw-html');
+        const link = document.createElement(tagName);
+        for (const c of classes)
+            link.classList.add(c);
         link.setAttribute('href', 'https://x.com');
-        link.dataset.raw = '<a href="https://x.com">x</a>';
-        link.textContent = 'x';
-        const outside = document.createElement('p');
-        outside.textContent = 'outside';
         domNode.appendChild(link);
-        domNode.appendChild(outside);
 
-        mouseover(link);
-        emits.length = 0;
-
-        const ev = new MouseEvent('mouseout', { bubbles: true, relatedTarget: outside });
+        const ev = new MouseEvent('click', { bubbles: true, cancelable: true });
         link.dispatchEvent(ev);
+        expect(ev.defaultPrevented).toBe(true);
+    });
 
-        expect(emits).toHaveLength(1);
-        expect(emits[0].reference).toBeNull();
+    it('does NOT prevent default on click of non-link elements', () => {
+        const { muya, domNode } = makeMuya();
+        attachLinkMouseHandlers(muya);
+
+        const p = document.createElement('p');
+        p.textContent = 'plain';
+        domNode.appendChild(p);
+
+        const ev = new MouseEvent('click', { bubbles: true, cancelable: true });
+        p.dispatchEvent(ev);
+        expect(ev.defaultPrevented).toBe(false);
+    });
+
+    it('does NOT prevent default on click of `span.mu-link` (span has no native navigation)', () => {
+        const { muya, domNode } = makeMuya();
+        attachLinkMouseHandlers(muya);
+
+        const span = document.createElement('span');
+        span.classList.add('mu-inline-rule', 'mu-link');
+        domNode.appendChild(span);
+
+        const ev = new MouseEvent('click', { bubbles: true, cancelable: true });
+        span.dispatchEvent(ev);
+        // Span doesn't trigger native navigation, so no preventDefault needed.
+        expect(ev.defaultPrevented).toBe(false);
     });
 
     // Copilot review #2 on PR #226: getLinkInfo can return null (e.g. the
     // wrapper has the right class but no data-raw). Don't emit a reference
     // with a null linkInfo — the subscriber may not handle it gracefully.
+    // Regression for the bug discovered during manual UX testing of PR #226:
+    // `htmlTag.ts` adds `.mu-raw-html` to *every* inline HTML tag (`<u>`,
+    // `<mark>`, `<sub>`, `<sup>`, `<a>`), not just `<a>`. The original
+    // selector `.mu-raw-html` was too loose and lit up the link popover on
+    // hover over `<u>underline</u>` / `<mark>highlight</mark>`. Narrow the
+    // selector to `a.mu-raw-html` so only actual anchor tags fire.
+    // Defensive: an unresolved reference link is rendered as
+    // `<span class="mu-reference-link">` (no href), and intentionally NOT
+    // picked up by the popover — the user can't usefully jump or unlink
+    // something that has no resolved definition.
+    it('does NOT emit on mouseover of an unresolved <span class="mu-reference-link"> (no href, no anchor tag)', () => {
+        const { muya, eventCenter, domNode } = makeMuya();
+        const emits = captureEmits(eventCenter);
+        attachLinkMouseHandlers(muya);
+
+        const marker = document.createElement('span');
+        marker.classList.add('mu-hide');
+        const span = document.createElement('span');
+        span.classList.add('mu-reference-link');
+        span.dataset.raw = '[foo][missing]';
+        span.textContent = 'foo';
+        domNode.appendChild(marker);
+        domNode.appendChild(span);
+
+        mouseover(span);
+        expect(emits).toHaveLength(0);
+    });
+
+    it.each([
+        ['underline', 'u'],
+        ['mark', 'mark'],
+        ['subscript', 'sub'],
+        ['superscript', 'sup'],
+    ])('does NOT emit on mouseover of non-anchor inline HTML <%s class="mu-raw-html">', (_label, tagName) => {
+        const { muya, eventCenter, domNode } = makeMuya();
+        const emits = captureEmits(eventCenter);
+        attachLinkMouseHandlers(muya);
+
+        const el = document.createElement(tagName);
+        el.classList.add('mu-inline-rule', 'mu-raw-html');
+        el.dataset.raw = `<${tagName}>x</${tagName}>`;
+        el.textContent = 'x';
+        domNode.appendChild(el);
+
+        mouseover(el);
+        expect(emits).toHaveLength(0);
+    });
+
     it('does NOT emit when the link wrapper has no data-raw (getLinkInfo returns null)', () => {
         const { muya, eventCenter, domNode } = makeMuya();
         const emits = captureEmits(eventCenter);
