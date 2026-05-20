@@ -29,9 +29,10 @@ export default function referenceImage(
     const { src } = imageSrc;
     let id;
     let isSuccess;
+    let resolvedSrc: string | undefined;
     let selector;
     if (src) {
-        ({ id, isSuccess } = this.loadImageAsync(
+        ({ id, isSuccess, url: resolvedSrc } = this.loadImageAsync(
             imageSrc,
             { alt },
             className,
@@ -48,7 +49,10 @@ export default function referenceImage(
     return isSuccess
         ? [
                 h(selector, tag),
-                h(`img.${CLASS_NAMES.MU_COPY_REMOVE}`, { props: { alt, src, title } }),
+                // Prefer the resolved URL from the loadImageAsync cache (marktext's
+                // `domsrc` parity); fall back to the raw src if the cache hasn't
+                // been populated for some reason.
+                h(`img.${CLASS_NAMES.MU_COPY_REMOVE}`, { props: { alt, src: resolvedSrc ?? src, title } }),
             ]
         : [h(selector, tag)];
 }

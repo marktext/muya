@@ -313,6 +313,23 @@ export class MarkdownToState {
                     break;
                 }
 
+                case 'def': {
+                    // Marked v16 hoists `[label]: url "title"` reference
+                    // definitions to block-level `def` tokens. Lower them back
+                    // to paragraph state nodes so the rest of the pipeline —
+                    // `InlineRenderer.collectReferenceDefinitions` (regex scan
+                    // over paragraph text) and round-trip serialization —
+                    // keeps working without a dedicated state node.
+                    // Aligns with marktext's "definition is paragraph text"
+                    // model. See plan section 13 (PR-16).
+                    state = {
+                        name: 'paragraph' as const,
+                        text: (token as any).raw.replace(/\n+$/, ''),
+                    };
+                    parentList[0].push(state);
+                    break;
+                }
+
                 case 'footnote': {
                     // The footnote extension (utils/marked/extensions/footnote.ts)
                     // emits a parent token whose `tokens` array holds nested

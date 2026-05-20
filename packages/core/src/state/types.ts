@@ -39,6 +39,14 @@ export interface IHtmlBlockState {
     text: string;
 }
 
+/**
+ * @deprecated Reference definitions are stored as paragraph state nodes whose
+ * `text` is the raw `[label]: url "title"` line (matches marktext's
+ * "definition is paragraph text" model). `InlineRenderer.collectReferenceDefinitions`
+ * regex-scans paragraphs to build the labels Map. This interface is unused
+ * across the codebase and exists only for legacy type compatibility; remove
+ * in v0.3.
+ */
 export interface ILinkReferenceDefinitionState {
     name: 'link-reference-definition';
     text: string;

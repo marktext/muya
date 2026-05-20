@@ -82,6 +82,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | dec7502e | block | setext heading | PR-2a | `test-only`（marked v16 lheading + walkTokens `headingStyle` 已就位；3 个回归测试） |
 | f00da152 | block | 嵌套块插表 crash | PR-7b | `verified-not-applicable`：marktext 老 `createFigure` 缺 anchor 校验导致 math/code/html/table 内插表崩；新仓 `canTurnIntoMenu` 同一道门把 table 也挡在外，`/table` quick-insert 只对 `paragraph.content` 触发。**新增 6 个回归测试**复用 `canTurnIntoMenu` 门同时锁住 table 不可嵌入 |
 | 9cb2cbe8 | toc | TOC 更新（如做 TOC 参考） | PR-15 | `fixed`：新仓加 `muya.getTOC()` 公共 API，对齐 marktext `tocCtrl.js`（同步 9cb2cbe8 `\s` 正则修复，让 NBSP/tab 前后置都能正确剥离 atx `#` 标记）。`state/getTOC.ts` 委托实现，`utils/slug.ts` 导出 `generateGithubSlug`（与 marktext url.js 一致：ASCII `\w` only）。`packages/core/src/index.ts` 导出 `ITocItem` 类型。**新增 10 个回归测试**：空文档、单 atx、多层级、setext、raw inline 保留、`\s` 正则修复、CJK/emoji 退化、重复标题 slug 稳定但 githubSlug 同、跨调用 slug 稳定、跳过非 heading 顶层块 |
+| reference link/image | parser+state | markdown 加载时 reference definition 丢失（marked v16 `def` block token 未处理）+ reference image 不走 `loadImageAsync` 解析后 src + 内联 label 查找漏大小写 | PR-16 | `fixed`：`markdownToState.ts` 新增 `case 'def'`，把 marked v16 提取的 `[label]: url "title"` block token 还原为 paragraph state（沿用 marktext "definition 是 paragraph text" 模型，**不**引入新 state 节点）；`loadImageAsync.ts` 缓存并返回 resolved `url`（marktext `domsrc` 等价），`referenceImage.ts` 用它作为 `<img src>` fallback；`lexer.ts` 两处 `labels.has(...)` 调用前 `.toLowerCase()`（CommonMark §6.5）；`ILinkReferenceDefinitionState` 标 `@deprecated`（unused，v0.3 移除）。**新增 8 个回归测试**：def→paragraph 保留、round-trip、inline tokenize、Full/Collapsed/Shortcut 三形式、title 透传、case-insensitive lookup、duplicate label 取首条、orphan ref-link |
 
 ## P2 — 编辑 / 光标 / 选择 / IME
 
@@ -245,5 +246,6 @@ Spec runner 用 `renderToStaticHTML(..., { sanitize: false })` 跑——衡量�
 | PR-6b | — | done | marktext 测试补齐落地（footnote 8 个新测试 + 1 个 parser fix；round-trip 15 个测试 + 11 fixture；list-indent +1 dfm 策略） |
 | PR-13 (residuals) | 5 | 4 | 80%（4 项 A 组遗留收尾：3 verified-not-applicable `b8e2cd82`/`5b1cd85d`/`0baf2e9e`+`7de33f11` + 1 skipped (已拆条) `0a3fda63`+`2754e393`+`4b362e52`；`9cb2cbe8` 原计入此 PR 为 skipped，已转入 PR-15 处理；新增 18 个防御测试: 2 sup/sub HTML + 16 DOMPurify XSS；post-refactor 拆出 11 个子条目: 2 pending + 6 verified-not-applicable + 3 skipped 应用层/docs） |
 | PR-15 (TOC) | 1 | 1 | 100%（1 fixed `9cb2cbe8`：新增 `muya.getTOC()` 公共 API + `generateGithubSlug` helper + `ITocItem` 类型导出；10 个回归测试） |
+| PR-16 (reference link/image) | 1 | 1 | 100%（fixed：`markdownToState` 加 `case 'def'` + `loadImageAsync` 返回 resolved `url` + `referenceImage` 用它 + `lexer.ts` label lookup 大小写规范化 + `ILinkReferenceDefinitionState` 标 `@deprecated`；8 个回归测试 + examples demo） |
 
-最后更新：2026-05-20（PR-15 收尾：新增 `muya.getTOC()` 公共 API + 10 个回归测试；`9cb2cbe8` 由 PR-13 `skipped` 转 PR-15 `fixed`）
+最后更新：2026-05-21（PR-16 落地：reference link/image markdown 加载 + round-trip 修复，8 个回归测试，全套 342 测试通过）
