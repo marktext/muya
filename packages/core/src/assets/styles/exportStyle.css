@@ -5,14 +5,7 @@
     margin: 0 auto;
     padding: 45px;
 
-    font-family:
-        -apple-system,
-        "Segoe UI",
-        Helvetica,
-        Arial,
-        sans-serif,
-        "Apple Color Emoji",
-        "Segoe UI Emoji";
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
 }
 
 @media not print {
