@@ -25,20 +25,32 @@ function fakeMuya() {
     } as unknown as Muya;
 }
 
-function selectionOver(text: string, begin: number, end: number) {
+function selectionOver(
+    text: string,
+    begin: number,
+    end: number,
+    blockName: string = 'paragraph.content',
+) {
     return {
         isSelectionInSameBlock: true,
         anchor: { offset: begin },
         focus: { offset: end },
-        anchorBlock: { text } as any,
-        focusBlock: { text } as any,
+        anchorBlock: { text, blockName } as any,
+        focusBlock: { text, blockName } as any,
     };
 }
 
-function makeClipboard(text: string, begin: number, end: number) {
+function makeClipboard(
+    text: string,
+    begin: number,
+    end: number,
+    blockName?: string,
+) {
     const clipboard = new Clipboard(fakeMuya());
     Object.defineProperty(clipboard, 'selection', {
-        get: () => ({ getSelection: () => selectionOver(text, begin, end) }),
+        get: () => ({
+            getSelection: () => selectionOver(text, begin, end, blockName),
+        }),
     });
     Object.defineProperty(clipboard, 'scrollPage', { get: () => null });
     return clipboard;
@@ -77,7 +89,12 @@ describe('clipboard.getClipboardData — single-block selection is not HTML-esca
 describe('clipboard.getClipboardData — single table-cell copy keeps the cell text (marktext 0028a4bc)', () => {
     it('copies the full cell text when the user selects everything in the cell', () => {
         const cellText = 'cell <body> & "value"';
-        const clipboard = makeClipboard(cellText, 0, cellText.length);
+        const clipboard = makeClipboard(
+            cellText,
+            0,
+            cellText.length,
+            'table.cell.content',
+        );
 
         const { text } = clipboard.getClipboardData();
 
@@ -89,7 +106,7 @@ describe('clipboard.getClipboardData — single table-cell copy keeps the cell t
         // Selecting `<body>` out of the middle of a cell — the substring
         // must not be HTML-escaped or stripped.
         const cellText = 'pre <body> post';
-        const clipboard = makeClipboard(cellText, 4, 10);
+        const clipboard = makeClipboard(cellText, 4, 10, 'table.cell.content');
 
         const { text } = clipboard.getClipboardData();
 
@@ -99,7 +116,7 @@ describe('clipboard.getClipboardData — single table-cell copy keeps the cell t
     it('returns the cell text even when it is the only content', () => {
         // The original marktext bug: descriptor had no `text` → output "".
         // Here we assert the path that fills it.
-        const clipboard = makeClipboard('only-cell', 0, 9);
+        const clipboard = makeClipboard('only-cell', 0, 9, 'table.cell.content');
 
         const { text } = clipboard.getClipboardData();
 
