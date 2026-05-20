@@ -29,7 +29,7 @@ export default defineConfig({
     plugins: [
         dts({
             entryRoot: 'src',
-            outDir: 'lib/types',
+            outDirs: 'lib/types',
         }),
         libAssetsPlugin({
             outputPath: (url) => {
