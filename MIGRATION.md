@@ -114,7 +114,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 
 | Hash | 类型 | 说明 | 状态 |
 |---|---|---|---|
-| 7377de3c | feat | footnote 完整链路 | `pending` |
+| 7377de3c | feat | footnote 完整链路 | PR-8a | `fixed`（block class + 注册 + 嵌套子树解析；6 个测试） |
 | ab97336e | feat | highlight 菜单 | `pending` |
 | 1ef0d016 | feat | linkTools unlink/jump | `pending` |
 | cb25b3d4 | feat | linkTools 支持 `<a>` 与 ref link | `pending` |
@@ -131,8 +131,8 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 81af43be | feat | quick insert hint 隐藏 | `pending` |
 | c0c8ea4b | feat | 打开外链 / 本地 md | `pending` |
 | f3b53427 | feat | 跳光标到末尾再格式化 | `pending` |
-| efd38644 | feat | 长 footnote 编号 | `pending` |
-| 318bfc6a / fc89d04a / 37b96c88 | feat | footnote 系列 | `pending` |
+| efd38644 | feat | 长 footnote 编号 | PR-8c | `pending`（待 renderToStaticHTML 输出反链） |
+| 318bfc6a / fc89d04a / 37b96c88 | feat | footnote 系列 | PR-8b | `pending`（待 footnoteTool TS 重写 + click 接线） |
 
 ## P4 — 明确不迁
 
