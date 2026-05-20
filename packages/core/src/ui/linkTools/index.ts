@@ -1,4 +1,5 @@
 import type { VNode } from 'snabbdom';
+import type Format from '../../block/base/format';
 import type { Muya } from '../../muya';
 import type { IBaseOptions } from '../types';
 import { h, patch } from '../../utils/snabbdom';
@@ -10,8 +11,10 @@ import './index.css';
 type LinkToolIcon = typeof iconsConfig[number];
 
 interface ILinkInfo {
-    href?: string;
+    href?: string | null;
     text?: string;
+    raw?: string;
+    range?: { start: number; end: number } | null;
     [key: string]: unknown;
 }
 
@@ -22,17 +25,8 @@ interface ILinkToolsOptions extends IBaseOptions {
 interface ILinkToolsEventPayload {
     reference: HTMLElement | null;
     linkInfo?: ILinkInfo | null;
+    block?: Format | null;
 }
-
-// `muya.contentState` is the marktext-era ContentState facade; the new Muya
-// only stages it (no emitter for `muya-link-tools` yet either). Cast at the
-// boundary so the call site keeps compiling without lying about the Muya
-// surface globally.
-type IMuyaWithContentState = Muya & {
-    contentState?: {
-        unlink: (linkInfo: ILinkInfo | null) => void;
-    };
-};
 
 const defaultOptions = {
     placement: 'bottom' as const,
@@ -50,6 +44,7 @@ class LinkTools extends BaseFloat {
     public override options: ILinkToolsOptions;
     public oldVNode: VNode | null = null;
     public linkInfo: ILinkInfo | null = null;
+    public linkBlock: Format | null = null;
     public icons: LinkToolIcon[] = iconsConfig;
     public hideTimer: ReturnType<typeof setTimeout> | null = null;
     public linkContainer: HTMLElement;
@@ -61,15 +56,20 @@ class LinkTools extends BaseFloat {
         this.options = opts;
         const linkContainer = (this.linkContainer = document.createElement('div'));
         this.container!.appendChild(linkContainer);
+        // Mirrors the per-instance hook ImageToolBar adds on its floatBox so
+        // the parent `.mu-float-wrapper` is identifiable in DOM and reachable
+        // by `.mu-float-wrapper.mu-link-tools-container { … }` selectors.
+        this.floatBox!.classList.add('mu-link-tools-container');
         this.listen();
     }
 
     override listen() {
         const { eventCenter } = this.muya;
         super.listen();
-        eventCenter.subscribe('muya-link-tools', ({ reference, linkInfo }: ILinkToolsEventPayload) => {
+        eventCenter.subscribe('muya-link-tools', ({ reference, linkInfo, block }: ILinkToolsEventPayload) => {
             if (reference) {
                 this.linkInfo = linkInfo ?? null;
+                this.linkBlock = block ?? null;
                 setTimeout(() => {
                     this.show(reference);
                     this.render();
@@ -149,12 +149,19 @@ class LinkTools extends BaseFloat {
     selectItem(event: Event, item: LinkToolIcon) {
         event.preventDefault();
         event.stopPropagation();
-        const { contentState } = this.muya as IMuyaWithContentState;
         switch (item.type) {
-            case 'unlink':
-                contentState?.unlink(this.linkInfo);
+            case 'unlink': {
+                const block = this.linkBlock;
+                const linkInfo = this.linkInfo;
+                if (block && linkInfo && linkInfo.range) {
+                    block.unlink({
+                        range: linkInfo.range,
+                        text: linkInfo.text ?? '',
+                    });
+                }
                 this.hide();
                 break;
+            }
 
             case 'jump':
                 this.options.jumpClick?.(this.linkInfo);

@@ -444,6 +444,23 @@ class Format extends Content {
             image.click();
     }
 
+    // Replace the link's source text (e.g. `[Anthropic](https://…)`) with the
+    // visible anchor text only (`Anthropic`), stripping the markdown / HTML
+    // around it. Port of marktext `linkCtrl.unlink` (cb25b3d4 / #1415), but
+    // simplified — marktext substituted `token.href` for plain markdown links,
+    // which was a long-standing UX quirk that turned a styled anchor into a
+    // bare URL. We keep the visible text instead, matching the contemporary
+    // norm (Notion, GDocs, Slack).
+    unlink({ range, text }: { range: { start: number; end: number } | null; text: string }) {
+        if (!range)
+            return;
+
+        const oldText = this.text;
+        this.text = oldText.substring(0, range.start) + text + oldText.substring(range.end);
+        this.setCursor(range.start + text.length, range.start + text.length, true);
+        this.muya.eventCenter.emit('muya-link-tools', { reference: null });
+    }
+
     deleteImage({ token }: IImageInfo) {
         const oldText = this.text;
         const { start, end } = token.range;
