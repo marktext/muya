@@ -2,6 +2,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { MarkdownToState } from '../../src/state/markdownToState';
 import StateToMarkdown from '../../src/state/stateToMarkdown';
@@ -16,8 +17,12 @@ import StateToMarkdown from '../../src/state/stateToMarkdown';
 // normalises to LF internally, so we keep just the LF variant here. CRLF
 // round-trip is exercised by `clipboard/` paste handling instead.
 
-const fixturesDir = path.resolve(
-    path.dirname(new URL(import.meta.url).pathname),
+// Use `fileURLToPath` rather than `new URL(...).pathname` — the latter
+// returns a URL pathname (POSIX-only, percent-encoded for unusual chars),
+// which would break fixture resolution on Windows or when the worktree
+// path contains anything that needs URL-encoding (`@`, spaces, etc.).
+const fixturesDir = path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
     'fixtures',
     'marktext-round-trip',
 );
@@ -57,17 +62,18 @@ function roundTrip(markdown: string): string {
 }
 
 // Round-trip is rarely byte-for-byte identical for non-trivial markdown:
-// the serializer canonicalises whitespace (single trailing newline, no
-// trailing whitespace on lines, normalised list-item indentation). To
-// avoid asserting against those incidental choices, both sides are
-// passed through this normaliser before comparison — anything the
-// serializer produces twice in a row is by definition stable.
+// the serializer canonicalises a trailing newline and the input may use
+// CRLF while the serializer always emits LF. To avoid asserting against
+// those incidental choices, both sides are passed through this normaliser
+// before comparison.
+//
+// We deliberately do NOT strip trailing whitespace per line: two trailing
+// spaces are a CommonMark §6.7 hard-line-break marker, so collapsing them
+// would mask a real round-trip instability. If the serializer ever emits
+// different trailing whitespace on a re-pass, the test should report it.
 function normalise(md: string): string {
     return md
         .replace(/\r\n?/g, '\n')
-        .split('\n')
-        .map(line => line.replace(/[ \t]+$/, ''))
-        .join('\n')
         .replace(/\n+$/, '');
 }
 
