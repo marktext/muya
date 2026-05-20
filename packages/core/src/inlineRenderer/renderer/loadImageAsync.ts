@@ -20,7 +20,10 @@ export default function loadImageAsync(
     let w;
     let h;
 
-    if (!this.loadImageMap.has(src)) {
+    const cached = this.loadImageMap.get(src);
+    // Retry when the previous load failed: a transient failure should not
+    // permanently poison the cache (marktext#3001 / #3010, commit bca2ed62).
+    if (!cached || !cached.isSuccess) {
         id = getUniqueId();
         loadImage(src, isUnknownType)
             .then(({ url, width, height }) => {
@@ -90,11 +93,10 @@ export default function loadImageAsync(
             });
     }
     else {
-        const imageInfo = this.loadImageMap.get(src)!;
-        id = imageInfo.id;
-        isSuccess = imageInfo.isSuccess;
-        w = imageInfo.width;
-        h = imageInfo.height;
+        id = cached.id;
+        isSuccess = cached.isSuccess;
+        w = cached.width;
+        h = cached.height;
     }
 
     return { id, isSuccess, width: w, height: h };

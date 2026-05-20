@@ -370,12 +370,15 @@ export const punctuation = [
 ];
 // export const isInElectron = (window.process as any)?.type === "renderer";
 export const IMAGE_EXT_REG = /\.(jpeg|jpg|png|gif|svg|webp)(?=\?|$)/i;
-export const isFirefox = (navigator.userAgent.includes('Firefox'));
+export const isFirefox
+    = typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox');
 export const isOsx
-    = window && window.navigator && /Mac/.test(window.navigator.userAgent);
+    = typeof window !== 'undefined'
+        && window.navigator
+        && /Mac/.test(window.navigator.userAgent);
 export const isWin
-    = window
-        && window.navigator.userAgent
+    = typeof window !== 'undefined'
+        && window.navigator
         && /win32|wow32|win64|wow64/i.test(window.navigator.userAgent);
 // http[s] (domain or IPv4 or localhost or IPv6) [port] /not-white-space
 export const URL_REG
