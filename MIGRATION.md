@@ -115,8 +115,8 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | Hash | 类型 | 说明 | 状态 |
 |---|---|---|---|
 | 7377de3c | feat | footnote 完整链路 | `pending` |
-| ab97336e | feat | highlight 菜单 | `pending` |
-| 1ef0d016 | feat | linkTools unlink/jump | `pending` |
+| ab97336e | feat | highlight 菜单 | PR-9 `test-only`（`<mark>` 已在 `inlineFormatToolbar/config.ts` 含 `type: 'mark'` + 快捷键 `⇧+Cmd+H`；3 个防御测试锁住 7 个核心 inline-format type + icon 不被回退） |
+| 1ef0d016 | feat | linkTools unlink/jump | PR-9 `test-only`（subscriber + `selectItem` dispatcher 已就位但 `muya-link-tools` 暂无 emitter；删 `@ts-nocheck` 补类型 + 2 个防御测试锁住 unlink / jump 分支） |
 | cb25b3d4 | feat | linkTools 支持 `<a>` 与 ref link | `pending` |
 | 141d25d8 | feat | 粘贴链接抓页面标题 | PR-4c | `fixed`（`res.json()`→`res.text()`，5 个测试） |
 | d26f5092 | feat | image resize + inline/block 切换 | `pending` |
@@ -127,10 +127,12 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 47cb2bbe | feat | indent code block | `verified-not-applicable`（上游核心是"4-space 自动转换"路径，新仓 `packages/core/src/block/base/format.ts:53` regex `^( {4,})` + `_convertToIndentedCodeBlock()` (`:1163-1211`) 已实现；UI 上无显式入口，但上游也没有） |
 | 7aa0d1bf | feat | code block 复制按钮 | `verified-not-applicable`（新仓 `packages/core/src/block/commonMark/codeBlock/code.ts:15-41 renderCopyButton` + `:88-101` 点击经 `editor.clipboard.copy('copyCodeContent', ...)`；`.mu-code-copy` 样式见 `blockSyntax.css`） |
 | a028a7c2 | feat | code block 行号 | PR-5a | `fixed`（`codeBlockLineNumbers` 选项默认关闭；`renderLineNumbersInnerHTML` + `.mu-line-numbers-rows` 渲染；仅 `code-block` 容器接入，frontmatter / math / diagram / html 不挂；10 个回归测试） |
-| ef9fe756 | feat | underline 格式 | `pending` |
-| 81af43be | feat | quick insert hint 隐藏 | `pending` |
-| c0c8ea4b | feat | 打开外链 / 本地 md | `pending` |
-| f3b53427 | feat | 跳光标到末尾再格式化 | PR-10b | `fixed`（`format.ts::_addFormat` 在 paired marker (strong/em/inline_code/del/inline_math) 和 tag marker (u/sub/sup/mark) 分支里把 `start.offset = end.offset = end + closingMarker` 合并为光标，跳到闭合标记之后；link/image 保持原"光标落在 `()` 之间"行为；12 个单元测试覆盖每种 marker + 偏移） |
+| ef9fe756 | feat | underline 格式 | PR-9 `test-only`（`<u>` 已在 `inlineFormatToolbar/config.ts` 含 `type: 'u'` + 快捷键 `Cmd+U`；由 `ab97336e` 同一份 7-type 防御测试覆盖） |
+| 81af43be | feat | quick insert hint 隐藏 | PR-9 `test-only`（`muya.ts::getContainer` 已读 `options.hideQuickInsertHint` 控制 `mu-show-quick-insert-hint` class；3 个防御测试锁住 默认 / false / true 三态） |
+| c0c8ea4b | feat | 打开外链 / 本地 md | PR-12 `skipped`（Electron `shell.openExternal` 路径，跨 SDK 边界，应用层做） |
+| afe68891 | feat | SM.MS 上传删除链接 | PR-12 `skipped`（uploader 专属，新仓不集成 uploader） |
+| 435dca74 | feat | Unsplash 搜图 | PR-12 `skipped`（网络依赖 + API key + UI 重大改动，对纯 markdown 库过重） |
+| f3b53427 | feat | 跳光标到末尾再格式化 | PR-10b | `fixed`（`format.ts::_addFormat` 在 paired marker (strong/em/inline_code/del/inline_math) 和 tag marker (u/sub/sup/mark) 分支按 `wasCollapsed` 分流：非空选区光标跳到闭合标记之后，单点光标保留在 marker 之间（toggle-then-type）；link/image 保持原"光标落在 `()` 之间"行为；17 个单元测试覆盖每种 marker + 偏移 + collapsed 回归） |
 | efd38644 | feat | 长 footnote 编号 | `pending` |
 | 318bfc6a / fc89d04a / 37b96c88 | feat | footnote 系列 | `pending` |
 
