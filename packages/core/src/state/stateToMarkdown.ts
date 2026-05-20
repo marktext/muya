@@ -354,7 +354,6 @@ export default class ExportMarkdown {
     serializeTable(state: ITableState, indent: string) {
         const result: string[] = [];
         const row = state.children.length;
-        const column = state.children[0].children.length;
         const tableData = [];
 
         for (const rowState of state.children) {
@@ -372,7 +371,8 @@ export default class ExportMarkdown {
         let j;
 
         for (i = 0; i < row; i++) {
-            for (j = 0; j < column; j++) {
+            const cells = Math.min(tableData[i].length, columnWidth.length);
+            for (j = 0; j < cells; j++) {
                 columnWidth[j].width = Math.max(
                     columnWidth[j].width,
                     tableData[i][j].length + 2,
@@ -385,6 +385,7 @@ export default class ExportMarkdown {
                 = `${indent
                 }|${
                     r
+                        .slice(0, columnWidth.length)
                         .map((cell, j) => {
                             const raw = ` ${cell + ' '.repeat(columnWidth[j].width)}`;
 
