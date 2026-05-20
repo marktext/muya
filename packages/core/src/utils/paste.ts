@@ -18,18 +18,16 @@ export async function getPageTitle(url: string) {
         const res = await fetch(url, { method: 'GET', mode: 'cors' });
         const contentType = res.headers.get('content-type');
 
-        if (res.status === 200 && contentType && /text\/html/.test(contentType)) {
-            const response = await res.json();
-
-            if (typeof response === 'string') {
-                const match = response.match(/<title>(.*)<\/title>/);
-
-                return match && match[1] ? match[1] : '';
-            }
-
+        if (res.status !== 200 || !contentType || !/text\/html/i.test(contentType))
             return '';
-        }
-        return '';
+
+        // The response is HTML — read it as text and pluck `<title>`.
+        // Pre-fix this called `res.json()`, which always threw and made
+        // the helper silently return '' (marktext 141d25d8 / #1344).
+        const body = await res.text();
+        const match = body.match(/<title>([\s\S]*?)<\/title>/i);
+
+        return match && match[1] ? match[1].trim() : '';
     }
     catch {
         return '';
@@ -112,6 +110,20 @@ export async function normalizePastedHTML(html: string) {
     }
 
     return tempWrapper.innerHTML;
+}
+
+// Sniffs whether `text` looks like an HTML `<table>` blob and nothing else
+// (no surrounding prose). The regex deliberately doesn't enforce "exactly
+// one root element" — sibling tables in the same payload still belong on
+// the HTML→Markdown path. Some clipboard sources (notably Apple Numbers,
+// marktext #1271) put raw HTML into `text/plain` with no `text/html`
+// flavour; the paste handler promotes such text into the html slot so it
+// goes through `HtmlToMarkdown` instead of being inserted verbatim.
+const STANDALONE_TABLE_REG = /^<table\b[\s\S]*<\/table>$/i;
+export function isStandaloneTableHtml(text: string) {
+    if (!text)
+        return false;
+    return STANDALONE_TABLE_REG.test(text.trim());
 }
 
 /**
