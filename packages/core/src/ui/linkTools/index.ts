@@ -1,11 +1,38 @@
-// eslint-disable-next-line ts/ban-ts-comment
-// @ts-nocheck
-
+import type { VNode } from 'snabbdom';
+import type { Muya } from '../../muya';
+import type { IBaseOptions } from '../types';
 import { h, patch } from '../../utils/snabbdom';
 import BaseFloat from '../baseFloat';
-import icons from './config';
+import iconsConfig from './config';
 
 import './index.css';
+
+type LinkToolIcon = typeof iconsConfig[number];
+
+interface ILinkInfo {
+    href?: string;
+    text?: string;
+    [key: string]: unknown;
+}
+
+interface ILinkToolsOptions extends IBaseOptions {
+    jumpClick?: (linkInfo: ILinkInfo | null) => void;
+}
+
+interface ILinkToolsEventPayload {
+    reference: HTMLElement | null;
+    linkInfo?: ILinkInfo | null;
+}
+
+// `muya.contentState` is the marktext-era ContentState facade; the new Muya
+// only stages it (no emitter for `muya-link-tools` yet either). Cast at the
+// boundary so the call site keeps compiling without lying about the Muya
+// surface globally.
+type IMuyaWithContentState = Muya & {
+    contentState?: {
+        unlink: (linkInfo: ILinkInfo | null) => void;
+    };
+};
 
 const defaultOptions = {
     placement: 'bottom' as const,
@@ -20,26 +47,29 @@ const defaultOptions = {
 class LinkTools extends BaseFloat {
     static pluginName = 'linkTools';
 
-    constructor(muya, options = {}) {
+    public override options: ILinkToolsOptions;
+    public oldVNode: VNode | null = null;
+    public linkInfo: ILinkInfo | null = null;
+    public icons: LinkToolIcon[] = iconsConfig;
+    public hideTimer: ReturnType<typeof setTimeout> | null = null;
+    public linkContainer: HTMLElement;
+
+    constructor(muya: Muya, options: Partial<ILinkToolsOptions> = {}) {
         const name = 'mu-link-tools';
-        const opts = Object.assign({}, defaultOptions, options);
+        const opts: ILinkToolsOptions = Object.assign({}, defaultOptions, options);
         super(muya, name, opts);
-        this.oldVNode = null;
-        this.linkInfo = null;
         this.options = opts;
-        this.icons = icons;
-        this.hideTimer = null;
         const linkContainer = (this.linkContainer = document.createElement('div'));
-        this.container.appendChild(linkContainer);
+        this.container!.appendChild(linkContainer);
         this.listen();
     }
 
-    listen() {
+    override listen() {
         const { eventCenter } = this.muya;
         super.listen();
-        eventCenter.subscribe('muya-link-tools', ({ reference, linkInfo }) => {
+        eventCenter.subscribe('muya-link-tools', ({ reference, linkInfo }: ILinkToolsEventPayload) => {
             if (reference) {
-                this.linkInfo = linkInfo;
+                this.linkInfo = linkInfo ?? null;
                 setTimeout(() => {
                     this.show(reference);
                     this.render();
@@ -64,15 +94,15 @@ class LinkTools extends BaseFloat {
             this.hide();
         };
 
-        eventCenter.attachDOMEvent(this.container, 'mouseover', mouseOverHandler);
-        eventCenter.attachDOMEvent(this.container, 'mouseleave', mouseOutHandler);
+        eventCenter.attachDOMEvent(this.container!, 'mouseover', mouseOverHandler);
+        eventCenter.attachDOMEvent(this.container!, 'mouseleave', mouseOutHandler);
     }
 
     render() {
         const { icons, oldVNode, linkContainer } = this;
         const children = icons.map((i) => {
-            let icon;
-            let iconWrapperSelector;
+            let icon: VNode | undefined;
+            let iconWrapperSelector: string | undefined;
             if (i.icon) {
                 // SVG icon Asset
                 iconWrapperSelector = 'div.icon-wrapper';
@@ -90,14 +120,14 @@ class LinkTools extends BaseFloat {
                     ),
                 );
             }
-            const iconWrapper = h(iconWrapperSelector, icon);
+            const iconWrapper = h(iconWrapperSelector ?? 'div.icon-wrapper', icon);
             const itemSelector = `li.item.${i.type}`;
 
             return h(
                 itemSelector,
                 {
                     on: {
-                        click: (event) => {
+                        click: (event: Event) => {
                             this.selectItem(event, i);
                         },
                     },
@@ -116,18 +146,18 @@ class LinkTools extends BaseFloat {
         this.oldVNode = vnode;
     }
 
-    selectItem(event, item) {
+    selectItem(event: Event, item: LinkToolIcon) {
         event.preventDefault();
         event.stopPropagation();
-        const { contentState } = this.muya;
+        const { contentState } = this.muya as IMuyaWithContentState;
         switch (item.type) {
             case 'unlink':
-                contentState.unlink(this.linkInfo);
+                contentState?.unlink(this.linkInfo);
                 this.hide();
                 break;
 
             case 'jump':
-                this.options.jumpClick(this.linkInfo);
+                this.options.jumpClick?.(this.linkInfo);
                 this.hide();
                 break;
         }
