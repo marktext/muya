@@ -10,13 +10,14 @@
 - `fixed` — 已实施修复 + 测试
 - `skipped` — 决定不做（如纯 marktext 应用层）
 
-PR 分组对应方案第三节的 5 个系列：
-- **PR-1a** 安全 + 已确认 crash（非 XSS）
-- **PR-1b** XSS 四联（独立 PR 便于安全审计）
+PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
+- **PR-1a** 安全 + 已确认 crash（非 XSS） ✅
+- **PR-1b** XSS 四联（独立 PR 便于安全审计） ✅
 - **PR-2** Parser 合规性（含 footnote 测试基线）
 - **PR-3** 编辑 / 光标 / IME
 - **PR-4** Clipboard / 富文本
 - **PR-5** P3 体验特性（按需）
+- **PR-6** 测试合规：选择性迁 marktext muya 测试 + 接 CommonMark/GFM spec（PR-2~4 落地后做）
 
 ---
 
@@ -139,6 +140,34 @@ PR 分组对应方案第三节的 5 个系列：
 - 纯 lint / 格式化 / 依赖升级
 - marktext i18n 文案
 
+## PR-6 — 测试合规迁移（PR-2~4 落地后做）
+
+目标：补足"非 bug regression"的测试覆盖。PR-2~5 的每条 fix 都自带回归测试，但 happy-path、合规性、广覆盖的测试目前稀疏。
+
+### 值得迁（高信号）
+
+- marktext `test/unit/specs/parser/marked` 系列的 lexer / tokenizer 单元测试 —— 对应新仓 `state/markdownToState.ts` + `inlineRenderer/lexer/`，纯输入→输出，架构无关
+- markdown ↔ state ↔ html 的 round-trip 测试
+- footnote / table / list / emoji / math 块和内联的 happy path 测试（区别于 bug regression）
+
+### 值得替代（不搬 marktext 的，直接接上游）
+
+- **CommonMark 0.31 合规**：把 [`spec.json`](https://github.com/commonmark/CommonMark/blob/master/test/spec.json) 接进 vitest 驱动 `markdownToHtml`。约 670 个 example，比 marktext 自带合规测试更广更权威
+- **GFM 合规**：用 [GFM spec example list](https://github.github.com/gfm/) 同样做法
+
+可接受 fail rate 阶梯：初期允许 5%（先有 baseline 看见缺口），逐步降到 1%；按 spec section 拆分单独跟踪。
+
+### 不迁
+
+- 针对 `ContentState.prototype.*` / 旧 ctrl 方法的行为测试（API 不存在）
+- 光标位置 / DOM 交互 / partialRender 的实现细节测试（OT 架构后机制完全不同）
+
+### 实施
+
+- 拆 PR-6a（marktext 选择性测试搬运）+ PR-6b（CommonMark/GFM spec 集成 + baseline 报告）
+- 单独的 vitest project 配置（`test:spec` 命令），与现有 unit test 分开，可独立看通过率
+- 在 CI 加 spec compliance 趋势报告（每次 PR 不要求 100%，但不能下降）
+
 ---
 
 ## 进度统计
@@ -153,5 +182,6 @@ PR 分组对应方案第三节的 5 个系列：
 | PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
 | PR-5 | 18+ | 0 | 0% |
+| PR-6 | — | 0 | 0%（等 PR-2~4 后启动） |
 
 最后更新：2026-05-20
