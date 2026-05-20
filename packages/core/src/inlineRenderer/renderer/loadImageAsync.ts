@@ -17,6 +17,7 @@ export default function loadImageAsync(
     const { src, isUnknownType } = imageInfo;
     let id: string;
     let isSuccess: boolean | undefined;
+    let url: string | undefined;
     let w;
     let h;
 
@@ -77,6 +78,7 @@ export default function loadImageAsync(
                 this.loadImageMap.set(src, {
                     id,
                     isSuccess: true,
+                    url,
                     width,
                     height,
                 });
@@ -103,9 +105,14 @@ export default function loadImageAsync(
     else {
         id = cached.id;
         isSuccess = cached.isSuccess;
+        url = cached.url;
         w = cached.width;
         h = cached.height;
     }
 
-    return { id, isSuccess, width: w, height: h };
+    // marktext's loadImageAsync returns `domsrc` (the resolved URL — for
+    // remote sources it's just the src, for local files it carries a cache-
+    // busting query). Reference images need this so the rendered <img> uses
+    // the resolved URL rather than the raw label-derived href.
+    return { id, isSuccess, url, width: w, height: h };
 }

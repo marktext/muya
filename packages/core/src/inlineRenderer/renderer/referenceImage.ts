@@ -29,16 +29,26 @@ export default function referenceImage(
     const { src } = imageSrc;
     let id;
     let isSuccess;
+    let resolvedSrc: string | undefined;
     let selector;
     if (src) {
-        ({ id, isSuccess } = this.loadImageAsync(
+        ({ id, isSuccess, url: resolvedSrc } = this.loadImageAsync(
             imageSrc,
             { alt },
             className,
             CLASS_NAMES.MU_COPY_REMOVE,
         ));
     }
-    selector = id ? `span#${id}.${imageClass}` : `span.${imageClass}`;
+    // Mirror `image.ts` (inline image): `loadImageMap` keys by `src`, so two
+    // reference images sharing the same `href` share the same cached `id`.
+    // Once the load has resolved (`isSuccess === true`), suffix the DOM id
+    // with the token's start offset so each occurrence gets a unique element
+    // id. While the load is in flight we keep the raw id so the
+    // `document.querySelector('#'+id)` lookup in `loadImageAsync.then()` can
+    // still find the first instance to mount the resolved <img> into.
+    selector = id
+        ? `span#${isSuccess ? `${id}_${token.range.start}` : id}.${imageClass}`
+        : `span.${imageClass}`;
     selector += `.${CLASS_NAMES.MU_OUTPUT_REMOVE}`;
     if (isSuccess)
         selector += `.${className}`;
@@ -48,7 +58,10 @@ export default function referenceImage(
     return isSuccess
         ? [
                 h(selector, tag),
-                h(`img.${CLASS_NAMES.MU_COPY_REMOVE}`, { props: { alt, src, title } }),
+                // Prefer the resolved URL from the loadImageAsync cache (marktext's
+                // `domsrc` parity); fall back to the raw src if the cache hasn't
+                // been populated for some reason.
+                h(`img.${CLASS_NAMES.MU_COPY_REMOVE}`, { props: { alt, src: resolvedSrc ?? src, title } }),
             ]
         : [h(selector, tag)];
 }

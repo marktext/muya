@@ -363,7 +363,10 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
         const rLinkTo = inlineRules.reference_link.exec(src);
         if (
             rLinkTo
-            && labels.has(rLinkTo[3] || rLinkTo[1])
+            // CommonMark §6.5: link labels match case-insensitively. The
+            // labels Map is populated by `collectReferenceDefinitions` with
+            // lowercased keys, so normalize the candidate before lookup.
+            && labels.has((rLinkTo[3] || rLinkTo[1]).toLowerCase())
             && isLengthEven(rLinkTo[2])
             && isLengthEven(rLinkTo[4])
             && lowerPriority(src, rLinkTo[0].length, validateRules)
@@ -403,7 +406,7 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
         const rImageTo = inlineRules.reference_image.exec(src);
         if (
             rImageTo
-            && labels.has(rImageTo[3] || rImageTo[1])
+            && labels.has((rImageTo[3] || rImageTo[1]).toLowerCase())
             && isLengthEven(rImageTo[2])
             && isLengthEven(rImageTo[4])
         ) {

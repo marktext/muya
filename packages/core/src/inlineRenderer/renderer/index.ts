@@ -93,6 +93,7 @@ class Renderer {
         {
             id: string;
             isSuccess: boolean;
+            url?: string;
             width?: number;
             height?: number;
         }

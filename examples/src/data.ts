@@ -456,4 +456,9 @@ A short paragraph with a footnote reference[^note] and another[^pandoc].
     - bullet item one
     - bullet item two
 
-![](https://jingan2.guankou.net/haopic/jj20/389023/010323033238341796.jpg)IMAGE`;
+![](https://jingan2.guankou.net/haopic/jj20/389023/010323033238341796.jpg)IMAGE
+
+This is a [reference link][example] and a ![ref image][img].
+
+[example]: https://example.com "Example Title"
+[img]: https://placekitten.com/200/200 "Kitten"`;
