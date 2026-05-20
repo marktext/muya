@@ -6,13 +6,17 @@ import { renderToStaticHTML } from '../renderToStaticHTML';
 // `renderToStaticHTML` is the synchronous markdown -> HTML public API used by
 // the CommonMark / GFM spec runners. It must:
 //   1. Return a string synchronously (no async; spec runner uses `it.each`).
-//   2. Sanitize via DOMPurify so XSS payloads are stripped.
-//   3. Render mermaid / vega-lite / plantuml code blocks as inert placeholders
-//      (`<pre class="mermaid">{escapedCode}</pre>` etc.) rather than running
-//      diagram renderers.
-//   4. Forward the same per-render option surface as `getHighlightHtml`
-//      (footnote / math / superSubScript / isGitlabCompatibilityEnabled /
-//      frontMatter).
+//   2. Sanitize via DOMPurify so XSS payloads are stripped (default;
+//      `sanitize: false` bypasses for the spec runners).
+//   3. Render mermaid / vega-lite / plantuml code blocks as inert
+//      `<pre><code class="language-*">…</code></pre>` (i.e. plain fenced
+//      code output — the same shape as before MarkdownToHtml's async
+//      `renderMermaid` / `renderDiagram` step rewrites them). The
+//      synchronous renderer never invokes those async rewriters.
+//   4. Forward the same per-render option surface as `getHighlightHtml` —
+//      see `option surface` describe block below for explicit coverage of
+//      each option (footnote, math, superSubScript,
+//      isGitlabCompatibilityEnabled, frontMatter).
 //
 // `MarkdownToHtml` (the existing class) already produces wrapped HTML, but its
 // `renderHtml()` path is async (awaits mermaid + diagram renderers) and wraps
@@ -102,27 +106,91 @@ describe('renderToStaticHTML', () => {
         expect(html).not.toMatch(/<article[^>]*class="markdown-body"/);
     });
 
-    it('honours footnote option (off by default)', () => {
-        const off = renderToStaticHTML(
-            'See [^1].\n\n[^1]: footnote body',
-        );
-        // With footnote disabled, `[^1]` stays as literal text and the
-        // definition is not rendered as a footnote section.
-        expect(off).not.toMatch(/class="[^"]*footnote/);
+    describe('option surface', () => {
+        it('honours superSubScript (on by default, off when superSubScript=false)', () => {
+            const on = renderToStaticHTML('H~2~O and 2^n^');
+            // superSubScript extension emits `<sub>` and `<sup>` wrappers.
+            expect(on).toMatch(/<sub>2<\/sub>/);
+            expect(on).toMatch(/<sup>n<\/sup>/);
 
-        const on = renderToStaticHTML(
-            'See [^1].\n\n[^1]: footnote body',
-            { footnote: true },
-        );
-        // Tolerant check: any footnote-related markup should be present.
-        expect(on).toMatch(/footnote|fn-/i);
-    });
+            const off = renderToStaticHTML('H~2~O and 2^n^', { superSubScript: false });
+            expect(off).not.toMatch(/<sub>/);
+            expect(off).not.toMatch(/<sup>/);
+        });
 
-    it('honours math option', () => {
-        const html = renderToStaticHTML('$$\nx^2\n$$', { math: true });
-        // Math block should be transformed away from a literal `$$` fence.
-        // KaTeX output contains class="katex" wrappers when math enabled.
-        expect(html).toMatch(/katex|<math/i);
+        it('honours isGitlabCompatibilityEnabled (promotes ```math fences to math blocks)', () => {
+            // GitLab-flavoured Markdown lets a fenced code block tagged
+            // ` ```math ` render as block math. `walkTokens` rewrites the
+            // code-block token to `multiplemath` only when both
+            // `math: true` AND `isGitlabCompatibilityEnabled: true`.
+            const src = '```math\nx^2\n```';
+
+            const gitlab = renderToStaticHTML(src, {
+                math: true,
+                isGitlabCompatibilityEnabled: true,
+            });
+            // multiplemath → KaTeX wrapper.
+            expect(gitlab).toMatch(/katex|<math/i);
+
+            const strict = renderToStaticHTML(src, {
+                math: true,
+                isGitlabCompatibilityEnabled: false,
+            });
+            // Without GitLab compatibility, the block stays a plain code
+            // fence with language `math` — no KaTeX.
+            expect(strict).not.toMatch(/katex|<math/i);
+            expect(strict).toMatch(/<pre><code[^>]*>x\^2/);
+        });
+
+        it('honours frontMatter option (renders YAML front matter when enabled)', () => {
+            const src = '---\ntitle: Hello\n---\n\n# Body';
+            const off = renderToStaticHTML(src);
+            // Default `frontMatter: false`: the `---` fence is treated as
+            // an hr / setext heading by marked.
+            expect(off).not.toMatch(/front-matter|frontmatter/i);
+
+            const on = renderToStaticHTML(src, { frontMatter: true });
+            // With frontMatter enabled, the YAML block is consumed by the
+            // front-matter renderer and removed from the body output.
+            expect(on).toMatch(/front-matter|frontmatter/i);
+            // The Markdown body that follows is still rendered.
+            expect(on).toContain('<h1>Body</h1>');
+        });
+
+        it('honours footnote option (off by default)', () => {
+            const off = renderToStaticHTML(
+                'See [^1].\n\n[^1]: footnote body',
+            );
+            // With footnote disabled, the definition must not be promoted to
+            // a footnote block. The `[^1]:` line is just a regular paragraph
+            // (or, depending on the parser, a link-reference definition — but
+            // in no case a `footnote-block`).
+            expect(off).not.toMatch(/class="footnote-block"/);
+
+            const on = renderToStaticHTML(
+                'See [^1].\n\n[^1]: footnote body',
+                { footnote: true },
+            );
+            // Strict check: the footnote extension emits a
+            // `<div class="footnote-block" data-identifier="...">` wrapper.
+            // (DOMPurify strips `data-identifier` under the default config's
+            // `ALLOW_DATA_ATTR: false`; assert what survives sanitisation.)
+            expect(on).toMatch(/class="footnote-block"/);
+            expect(on).toContain('footnote body');
+            // The identifier is preserved when sanitisation is skipped:
+            const onRaw = renderToStaticHTML(
+                'See [^1].\n\n[^1]: footnote body',
+                { footnote: true, sanitize: false },
+            );
+            expect(onRaw).toMatch(/data-identifier="1"/);
+        });
+
+        it('honours math option', () => {
+            const html = renderToStaticHTML('$$\nx^2\n$$', { math: true });
+            // Math block should be transformed away from a literal `$$` fence.
+            // KaTeX output contains class="katex" wrappers when math enabled.
+            expect(html).toMatch(/katex|<math/i);
+        });
     });
 
     it('returns a string for empty input', () => {

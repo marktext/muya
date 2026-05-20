@@ -27,10 +27,12 @@ export default defineConfig({
         },
         // Default `vitest run` only picks up co-located unit tests under
         // `src/**/__tests__/`. The CommonMark / GFM spec conformance suites
-        // live under `test/spec/` and are run via the `test:spec` scripts
-        // (which override `--dir`). Keeping spec tests out of the default
-        // `pnpm test` keeps the inner-loop fast and reports compliance
-        // pass-rate as its own surface.
+        // live under `test/spec/` and are run via the `test:spec` scripts,
+        // which use a dedicated `--config vitest.spec.config.ts` whose
+        // `test.include` glob targets `test/spec/**/*.{spec,test}.ts`.
+        // Keeping spec tests out of the default `pnpm test` keeps the
+        // inner-loop fast and reports compliance pass-rate as its own
+        // surface.
         include: ['src/**/__tests__/**/*.{spec,test}.ts'],
     },
     plugins: [

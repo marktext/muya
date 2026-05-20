@@ -45,6 +45,17 @@ describe('normalizeHtml', () => {
         expect(na).not.toBe(nb);
     });
 
+    it('preserves multi-blank-line content inside <pre><code>', () => {
+        // Code blocks can contain literal blank lines. Two examples that
+        // differ only in blank-line count must compare unequal — the
+        // normalizer used to collapse `\n{2,}` → `\n` globally, which
+        // masked real spec diffs in fenced-code-block examples.
+        const oneBlank = '<pre><code>foo\n\nbar\n</code></pre>';
+        const twoBlank = '<pre><code>foo\n\n\nbar\n</code></pre>';
+        expect(normalizeHtml(oneBlank)).not.toBe(normalizeHtml(twoBlank));
+        expect(normalizeHtml(oneBlank)).toContain('foo\n\nbar');
+    });
+
     it('sorts tag attributes alphabetically', () => {
         const a = '<a href="x" title="y">x</a>';
         const b = '<a title="y" href="x">x</a>';

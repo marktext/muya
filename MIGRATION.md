@@ -148,13 +148,14 @@ PR-6a 已落地（2026-05-20）：CommonMark 0.31 + GFM 0.29-gfm spec 合规基�
 
 ### PR-6a 交付
 
-- 新增公开同步 API：`renderToStaticHTML(markdown, options?)`，15 个单元测试（happy-path + DOMPurify XSS 处理 + math/footnote 选项 + mermaid/diagram 占位 + `sanitize: false` 关闭路径）
+- 新增公开同步 API：`renderToStaticHTML(markdown, options?)`，18 个单元测试（happy-path + DOMPurify XSS 处理 + 全部 5 选项覆盖 + mermaid/diagram 占位 + `sanitize: false` 关闭路径）
 - `commonmark-spec@^0.31.2` devDep（652 个 example）
 - 自解析 GFM spec：`packages/core/test/spec/fixtures/gfm-spec-0.29-gfm.json`（672 个 example，含 5 个 GFM extension section）
-- spec runner：`test/spec/runner.ts`（normalizeHtml 折叠 cosmetic 空白 + 防回归 expected-failures 锁）+ 7 个 normalizer 单测
+- spec runner：`test/spec/runner.ts`（normalizeHtml 折叠 cosmetic 空白 + 防回归 expected-failures 锁）+ 8 个 normalizer 单测
 - 两份 spec 测试：`commonmark.spec.ts` + `gfm.spec.ts`，每 example 一条 `it.each`，共 1324 测试，全部锁定通过
+- 修复 `getHighlightHtml` 中 `footnote` 选项未连线的 no-op bug
 - baseline 报告：`test/spec/conformance.md`（按 section 拆 pass-rate）
-- expected-failures.json：CM 75 个 + GFM 87 个待修 example_id
+- expected-failures.json：CM 80 个 + GFM 92 个待修 example_id
 - vitest 配置拆分：默认 `pnpm test` 仅跑 unit；新增 `pnpm test:spec` / `test:spec:commonmark` / `test:spec:gfm`，独立 `vitest.spec.config.ts`
 - CI：`.github/workflows/ci-test.yml` 增加 `pnpm test:spec` 步骤
 
@@ -162,8 +163,8 @@ PR-6a 已落地（2026-05-20）：CommonMark 0.31 + GFM 0.29-gfm spec 合规基�
 
 | Suite | 通过 | 总数 | 通过率 |
 |---|---|---|---|
-| CommonMark 0.31 | 577 | 652 | **88.5%** |
-| GFM 0.29-gfm | 585 | 672 | **87.1%** |
+| CommonMark 0.31 | 572 | 652 | **87.7%** |
+| GFM 0.29-gfm | 580 | 672 | **86.3%** |
 
 > 合并后通过率只能涨不能跌：`expected-failures.json` 中的 example 若开始通过，测试会以 "unexpected pass" 报错，要求 reviewer 把它从列表里移除。
 
@@ -216,7 +217,7 @@ Spec runner 用 `renderToStaticHTML(..., { sanitize: false })` 跑——衡量�
 | PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
 | PR-5 | 18+ | 0 | 0% |
-| PR-6a | — | done | spec 合规基础设施落地（CM 577/652 = 88.5%, GFM 585/672 = 87.1%，1324 spec 测试 + 7 normalizer 单测 + 15 个 renderToStaticHTML 单测） |
+| PR-6a | — | done | spec 合规基础设施落地（CM 572/652 = 87.7%, GFM 580/672 = 86.3%，1324 spec 测试 + 8 normalizer 单测 + 18 个 renderToStaticHTML 单测） |
 | PR-6b | — | 0 | 0%（PR-6a 合并后启动；footnote 510 行 + markdown-basic round-trip + list-indentation 补齐） |
 
 最后更新：2026-05-20

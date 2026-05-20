@@ -110,13 +110,11 @@ export function normalizeHtml(html: string): string {
         '$1',
     );
 
-    // Strip leading/trailing whitespace per line, collapse blank-line runs.
-    out = out
-        .split('\n')
-        .map(line => line.replace(/\s+$/, ''))
-        .join('\n')
-        .replace(/\n{2,}/g, '\n')
-        .replace(/^\n+|\n+$/g, '');
+    // Strip the leading / trailing newlines that some renderers leave on
+    // their top-level output. Crucially, do NOT collapse internal blank-line
+    // runs — code blocks can contain semantically-significant blank lines
+    // and the `>(WS)<` rule above already covers inter-tag whitespace.
+    out = out.replace(/^\n+|\n+$/g, '');
 
     return out;
 }
