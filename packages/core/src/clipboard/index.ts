@@ -14,6 +14,7 @@ import StateToMarkdown from '../state/stateToMarkdown';
 import { deepClone } from '../utils';
 import { getClipBoardHtml } from '../utils/marked';
 import { getCopyTextType, normalizePastedHTML } from '../utils/paste';
+import { mergePasteIntoHeading } from './mergePasteIntoHeading';
 
 class Clipboard {
     public copyType: string = 'normal'; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
@@ -594,11 +595,6 @@ class Clipboard {
                 /\n\n/.test(markdown)
                 && anchorBlock.blockName !== 'codeblock.content'
             ) {
-                if (start.offset !== end.offset) {
-                    anchorBlock.text
-                        = content.substring(0, start.offset) + content.substring(end.offset);
-                    anchorBlock.update();
-                }
                 // Has multiple paragraphs.
                 const states = new MarkdownToState({
                     footnote,
@@ -608,8 +604,25 @@ class Clipboard {
                     frontMatter,
                 }).generate(markdown);
 
-                for (const state of states) {
-                    const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
+                // When pasting into a heading, splice the first paragraph
+                // back into the heading text so the heading semantics survive.
+                // The helper also collapses any selection on the heading.
+                // Backport of marktext 1c42555a (#671).
+                const remaining = mergePasteIntoHeading(
+                    anchorBlock,
+                    wrapperBlock,
+                    states as any,
+                    { startOffset: start.offset, endOffset: end.offset },
+                );
+
+                if (remaining === states && start.offset !== end.offset) {
+                    anchorBlock.text
+                        = content.substring(0, start.offset) + content.substring(end.offset);
+                    anchorBlock.update();
+                }
+
+                for (const state of remaining) {
+                    const newBlock = ScrollPage.loadBlock(state.name).create(muya, state as any);
                     wrapperBlock?.parent?.insertAfter(newBlock, wrapperBlock);
                     wrapperBlock = newBlock;
                 }

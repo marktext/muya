@@ -64,7 +64,7 @@ PR 分组对应方案第三节的 5 个系列：
 | 962fdf35 | inline | heading emoji 偏移 | PR-2 | `pending` |
 | 8e32838b | inline | 上/下标 | PR-2 | `pending` |
 | c0853f64 | inline | auto link / extension | PR-2 | `pending` |
-| 1c42555a | block | 粘贴多行进 heading | PR-4 | `pending` |
+| 1c42555a | block | 粘贴多行进 heading | PR-4a | `fixed`（提取 `mergePasteIntoHeading` 纯函数，6 个测试） |
 | dec7502e | block | setext heading | PR-2 | `pending` |
 | f00da152 | block | 嵌套块插表 crash | PR-2 | `pending` |
 | 9cb2cbe8 | toc | TOC 更新（如做 TOC 参考） | PR-5 | `pending` |
