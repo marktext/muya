@@ -181,3 +181,71 @@ describe('inline lexer — GFM link/image title (marktext ad5ddbf9)', () => {
         expect(link.title).toBe('');
     });
 });
+
+// Defensive regression for marktext commit d937fac0 (issue #1071, PR #1072):
+// a sequence like `**\`word 1\`**, **\`word 2\`**` used to only bold the LAST
+// instance — every earlier `**` pair was emitted as literal text. The legacy
+// `lowerPriority` walked every position in the candidate span without
+// remembering which characters were already consumed by an earlier matching
+// rule, so an inline_code span ending mid-span fooled the strong rule into
+// thinking another rule extended past the closer. The fix tracked already-
+// consumed positions in an `ignoreIndex` array. The new muya's lowerPriority
+// (`inlineRenderer/utils.ts`) already has the same `ignoreIndex`, so this
+// lock-in protects against a future regression.
+describe('inline lexer — repeated bold + inline_code (marktext d937fac0 / #1071)', () => {
+    it('emits a strong token for EVERY `**`-wrapped code span in a sequence', () => {
+        const tokens = tokenizer('**`word 1`**, **`word 2`**, **`word 3`**');
+        const strongs = tokens.filter(t => t.type === 'strong');
+        expect(strongs.length, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBe(3);
+        // And each strong must contain a code span, not literal text.
+        for (const strong of strongs) {
+            const innerTypes = (strong as any).children.map((c: any) => c.type);
+            expect(innerTypes).toContain('inline_code');
+        }
+    });
+
+    it('does not flip the bug to em (single `*` + code) either', () => {
+        const tokens = tokenizer('*`word 1`*, *`word 2`*, *`word 3`*');
+        const ems = tokens.filter(t => t.type === 'em');
+        expect(ems.length, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBe(3);
+    });
+});
+
+// Defensive regression for marktext commit 57af8304 (issue #1169, PR #1170):
+// link / image destinations containing parens used to consume too much,
+// eating past the real closing `)`. The fix calls `findClosingBracket` to
+// pick the matching `)` and rewrites the captured groups so `\` escapes
+// land in the right slot. The new muya's `correctUrl` (utils.ts) ports the
+// same algorithm.
+describe('inline lexer — link / image dest with parens (marktext 57af8304 / #1169)', () => {
+    it('parses image dest containing balanced parens correctly', () => {
+        const tokens = tokenizer('![alt](path/to/(file).png)');
+        const image = tokens.find(t => t.type === 'image') as any;
+        expect(image, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(image.src).toBe('path/to/(file).png');
+    });
+
+    it('parses link dest containing balanced parens correctly', () => {
+        const tokens = tokenizer('[text](path/to/(file).html)');
+        const link = tokens.find(t => t.type === 'link') as any;
+        expect(link, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(link.href).toBe('path/to/(file).html');
+    });
+
+    it('stops at the FIRST matching `)` when more `)` appear later on the line', () => {
+        // This is the real shape of the marktext regression: greedy `(.*)` in
+        // the image regexp would gobble all the way to the LAST `)`, swallowing
+        // both `first.png` and the `(parens)` text. `correctUrl` /
+        // `findClosingBracket` walks the destination to the matching `)` so
+        // the image stops at `first.png` and the rest stays as following text.
+        const tokens = tokenizer('see ![alt](first.png) and also (parens) here');
+        const image = tokens.find(t => t.type === 'image') as any;
+        expect(image, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(image.src).toBe('first.png');
+        // The trailing text — including the unrelated `(parens)` group — must
+        // remain outside the image token.
+        const joined = tokens.map(t => (t as any).raw ?? '').join('');
+        expect(joined).toContain('and also (parens) here');
+        expect(image.raw).not.toContain('parens');
+    });
+});

@@ -58,9 +58,10 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | insertLineBreak 行尾空格 | serializer | 列表项内空行带尾随空格 | PR-2b | `fixed`（`insertLineBreak` 去掉尾随空格，保留 `>` 前缀；1 个回归测试） |
 | 70d49c30 | parser | `-foo` 误识 list item | PR-2a | `test-only`（marked v16 已要求 bullet 后接空格；2 个正负回归测试） |
 | 7b7a9424 | math | math block 嵌套 | PR-3 | `pending`（marktext fix 在 `paragraphCtrl.js` 编辑器层；PR-3 范围） |
-| d937fac0 | inline | inline 语法 | PR-2 | `pending` |
-| 9c2f6cb3 | inline | inline math 样式 | PR-2 | `pending` |
-| 6dfa7938 | inline | inline math selection | PR-2 | `pending` |
+| d937fac0 | inline | inline 语法 (#1071 重复 `**\`x\`**` 只末尾加粗) | PR-2c | `test-only`（`lowerPriority` 的 `ignoreIndex` 已就位；2 个回归测试） |
+| 57af8304 | inline | link/image dest 含括号 (#1169) | PR-2c | `test-only`（`correctUrl` 用 `findClosingBracket` 已就位；3 个回归测试） |
+| 9c2f6cb3 | inline | inline math 样式 | — | `skipped`（CSS-only，新仓样式体系自有 inline math 样式） |
+| 6dfa7938 | inline | inline math selection | — | `skipped`（CSS-only，新仓样式体系自有 selection 样式） |
 | d9f64bab | inline | reference link 渲染 | PR-2a | `test-only`（lexer.ts:357 `labels.has(...)` 已就位；2 个回归测试） |
 | b8e2cd82 | inline | inline html renderer | PR-3 | `pending`（textRenderer 改动主要在 muya HTML 导出；与 stateToMarkdown 关系待评估） |
 | 962fdf35 | inline | heading emoji 偏移 | — | `skipped`（CSS-only，新仓样式体系自有 emoji 处理） |
@@ -177,7 +178,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 25 | 13 | 52%（PR-2a 8 commits + PR-2b 3 commits；2 fixed bugs + 11 test-only；3 条转 PR-3/PR-4；1 skipped）|
+| PR-2 | 26 | 15 | 58%（PR-2a 8 commits = 2 fixed bugs + 9 test-only；PR-2b 3 commits = 1 fixed bug + 2 test-only；PR-2c 1 commit = 2 test-only + 3 skipped；3 条转 PR-3/PR-4；新增 57af8304 入册）|
 | PR-3a | 5 | 5 | 100%（4 verified-not-applicable + 1 test-only；防御测试 2 个 soft-line） |
 | PR-3b | 4 | 4 | 100%（1 fixed `358fa83d` + 3 verified-not-applicable；回归测试 13 个） |
 | PR-3c | 3 | 3 | 100%（3 verified-not-applicable；+1 compositionend 防御测试；跨 block+IME 留 examples/ 手测） |
