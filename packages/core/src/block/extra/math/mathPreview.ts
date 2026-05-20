@@ -69,7 +69,7 @@ class MathPreview extends Parent {
                 });
                 this.domNode!.innerHTML = html;
             }
-            catch (err) {
+            catch {
                 this.domNode!.innerHTML = `<div class="mu-math-error">&lt; ${i18n.t(
                     'Invalid Mathematical Formula',
                 )} &gt;</div>`;

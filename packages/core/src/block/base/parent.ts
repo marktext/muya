@@ -49,7 +49,9 @@ class Parent extends TreeNode {
     }
 
     get isContainerBlock() {
-        return /block-quote|order-list|bullet-list|task-list|list-item|task-list-item/.test(
+        // `task-list-item` is intentionally omitted: it shares the
+        // `task-list` prefix and would be matched by the alternative above.
+        return /block-quote|order-list|bullet-list|task-list|list-item/.test(
             this.blockName,
         );
     }

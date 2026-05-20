@@ -1,10 +1,11 @@
 import { escapeCharacters } from '../config/escapeCharacter';
 
 export const beginRules = {
-    hr: /^(\*{3,}$|^-{3,}$|^_{3,}$)/,
+    hr: /^(\*{3,}|-{3,}|_{3,})$/,
     code_fence: /^(`{3,})([^`]*)$/,
     header: /(^ {0,3}#{1,6}(\s+|$))/,
     reference_definition:
+    // eslint-disable-next-line regexp/no-super-linear-backtracking, regexp/no-misleading-capturing-group
     /^( {0,3}\[)([^\]]+?)(\\*)(\]: *)(<?)([^\s>]+)(>?)(?:( +)(["'(]?)([^\n"'()]+)\9)?( *)$/,
 
     // extra syntax (not belongs to GFM)
@@ -20,12 +21,22 @@ export type BeginRules = typeof beginRules;
 export const commonMarkRules = {
     strong: /^(\*\*|__)(?=\S)([\s\S]*?[^\s\\])(\\*)\1(?!(\*|_))/, // can nest
     em: /^(\*|_)(?=\S)([\s\S]*?[^\s*\\])(\\*)\1(?!\1)/, // can nest
+    // Hand-tuned CommonMark/GFM patterns. Disabling the ReDoS-class regexp/*
+    // rules here on each line they fire: rewriting these patterns to please
+    // the linter would risk parser regressions, and the input is the user's
+    // own document, not untrusted network data.
+    // eslint-disable-next-line regexp/no-misleading-capturing-group
     inline_code: /^(`{1,3})([^`]+|.{2,})\1/,
+    // eslint-disable-next-line regexp/no-super-linear-backtracking, regexp/optimal-quantifier-concatenation, regexp/no-misleading-capturing-group
     image: /^(!\[)(.*?)(\\*)\]\((.*)(\\*)\)/,
+    // eslint-disable-next-line regexp/no-super-linear-backtracking, regexp/optimal-quantifier-concatenation, regexp/no-misleading-capturing-group
     link: /^(\[)((?:\[[^\]]*\]|[^[\]]|\](?=[^[]*\]))*?)(\\*)\]\((.*)(\\*)\)/, // can nest
+    // eslint-disable-next-line regexp/no-super-linear-backtracking
     reference_link: /^\[([^\]]+?)(\\*)\](?:\[([^\]]*?)(\\*)\])?/,
+    // eslint-disable-next-line regexp/no-super-linear-backtracking
     reference_image: /^!\[([^\]]+?)(\\*)\](?:\[([^\]]*?)(\\*)\])?/,
     html_tag:
+    // eslint-disable-next-line regexp/no-super-linear-backtracking, regexp/optimal-quantifier-concatenation
     /^(<!--[\s\S]*?-->|(<([a-z][a-z\d-]*)[^\n<>]*>)(?:([\s\S]*?)(<\/\3 *>))?)/i, // raw html
     html_escape: new RegExp(`^(${escapeCharacters.join('|')})`, 'i'),
     soft_line_break: /^(\n)(?!\n)/,
@@ -39,6 +50,7 @@ export type CommonMarkRules = typeof commonMarkRules;
 
 export const gfmRules = {
     emoji: /^(:)([a-z_\d+-]+)\1/,
+    // eslint-disable-next-line regexp/no-super-linear-backtracking
     del: /^(~{2})(?=\S)([\s\S]*?\S)(\\*)\1/, // can nest
     auto_link:
     /^<(?:([a-z][a-z\d+.\-]{1,31}:[^ <>]*)|([\w.!#$%&'*+/=?^`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*))>/i,

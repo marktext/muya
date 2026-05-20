@@ -18,7 +18,7 @@ import { ScrollPage } from '../../scrollPage';
 function checkAutoIndent(text: string, offset: number) {
     const pairStr = text.substring(offset - 1, offset + 1);
 
-    return /^(\{\}|\[\]|\(\)|><)$/.test(pairStr);
+    return /^(?:\{\}|\[\]|\(\)|><)$/.test(pairStr);
 }
 
 function getIndentSpace(text: string) {

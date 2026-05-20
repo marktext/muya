@@ -129,7 +129,7 @@ class DiagramPreview extends Parent {
                     vegaTheme,
                 });
             }
-            catch (err) {
+            catch {
                 this.domNode!.innerHTML = `<div class="mu-diagram-error">&lt; ${i18n.t(
                     'Invalid Diagram Code',
                 )} &gt;</div>`;

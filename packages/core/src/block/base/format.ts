@@ -45,14 +45,14 @@ function isEmojiToken(token: Token): token is CodeEmojiMathToken {
 
 const INLINE_UPDATE_FRAGMENTS = [
     '(?:^|\n) {0,3}([*+-] {1,4})', // Bullet list
-    '^(\\[[x ]{1}\\] {1,4})', // Task list **match from beginning**
+    '^(\\[[x ]\\] {1,4})', // Task list **match from beginning**
     '(?:^|\n) {0,3}(\\d{1,9}(?:\\.|\\)) {1,4})', // Order list
-    '(?:^|\n) {0,3}(#{1,6})(?=\\s{1,}|$)', // ATX headings
-    '^(?:[\\s\\S]+?)\\n {0,3}(\\={3,}|\\-{3,})(?= {1,}|$)', // Setext headings **match from beginning**
+    '(?:^|\n) {0,3}(#{1,6})(?=\\s+|$)', // ATX headings
+    '^[\\s\\S]+?\\n {0,3}(={3,}|-{3,})(?= +|$)', // Setext headings **match from beginning**
     '(?:^|\n) {0,3}(>).+', // Block quote
     '^( {4,})', // Indent code **match from beginning**
     // '^(\\[\\^[^\\^\\[\\]\\s]+?(?<!\\\\)\\]: )', // Footnote **match from beginning**
-    '(?:^|\n) {0,3}((?:\\* *\\* *\\*|- *- *-|_ *_ *_)[ \\*\\-\\_]*)(?=\n|$)', // Thematic break
+    '(?:^|\n) {0,3}((?:\\* *\\* *\\*|- *- *-|_ *_ *_)[ *_-]*)(?=\n|$)', // Thematic break
 ];
 
 const INLINE_UPDATE_REG = new RegExp(INLINE_UPDATE_FRAGMENTS.join('|'), 'i');

@@ -59,7 +59,7 @@ export default function inlineMath(this: Renderer, {
             mathVnode = htmlToVNode(html);
             loadMathMap.set(key, mathVnode);
         }
-        catch (err) {
+        catch {
             mathVnode = `<${i18n.t('Invalid Mathematical Formula')}>`;
             previewSelector += `.${CLASS_NAMES.MU_MATH_ERROR}`;
         }

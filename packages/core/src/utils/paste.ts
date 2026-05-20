@@ -31,7 +31,7 @@ export async function getPageTitle(url: string) {
         }
         return '';
     }
-    catch (err) {
+    catch {
         return '';
     }
 }
@@ -125,11 +125,14 @@ export async function normalizePastedHTML(html: string) {
 export function getCopyTextType(html: string, text: string, pasteType: string) {
     const getTextType = (text: string) => {
         const match
-            = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-z\d-]+)>$/i.exec(
+        // eslint-disable-next-line regexp/no-super-linear-backtracking
+            = /^<([a-z\d-]+)(?=\s|>).*?>[\s\S]+?<\/[a-z\d-]+>$/i.exec(
                 text.trim(),
             );
         if (match && match[1]) {
-            const tag = match[1];
+            // The regex is case-insensitive, so `<P>` yields `tag = 'P'`;
+            // PARAGRAPH_TYPES is all lowercase. Normalize before checking.
+            const tag = match[1].toLowerCase();
 
             return PARAGRAPH_TYPES.includes(tag) ? 'code' : 'text';
         }
