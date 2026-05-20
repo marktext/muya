@@ -315,7 +315,16 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
         // link
         const linkTo = inlineRules.link.exec(src);
         correctUrl(linkTo);
-        if (linkTo && isLengthEven(linkTo[3]) && isLengthEven(linkTo[5])) {
+        if (
+            linkTo
+            && isLengthEven(linkTo[3])
+            && isLengthEven(linkTo[5])
+            // CommonMark §6.6: code spans, HTML tags, etc. group more tightly
+            // than links. If a higher-priority inline rule matches a span
+            // that extends past the tentative link's range, defer to it.
+            // Covers CM 0.29 examples 520 (HTML tag) and 521 (code span).
+            && lowerPriority(src, linkTo[0].length, validateRules)
+        ) {
             const { src: href, title } = parseSrcAndTitle(linkTo[4]);
             pushPending();
             tokens.push({
@@ -357,6 +366,7 @@ function tokenizerFac(src: string, beginRules: BeginRules | null, inlineRules: I
             && labels.has(rLinkTo[3] || rLinkTo[1])
             && isLengthEven(rLinkTo[2])
             && isLengthEven(rLinkTo[4])
+            && lowerPriority(src, rLinkTo[0].length, validateRules)
         ) {
             pushPending();
             tokens.push({

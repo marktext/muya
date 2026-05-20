@@ -148,6 +148,17 @@ export function parseSrcAndTitle(text = '') {
 }
 
 function canOpenEmphasis(src: string, marker: string, pending: string) {
+    // CommonMark §6.4 emphasis runs are atomic: once the FULL `_` or `*`
+    // run has been rejected as an opener (because the surrounding chars
+    // make it both left- and right-flanking), the lexer must not try to
+    // re-open from the second char of the same run. Without this guard,
+    // `пристаням__стремятся__` opens em starting at the second `_` because
+    // `pending` then ends with `_` (a punctuation char) and the regular
+    // flanking rule is satisfied — that's CommonMark example 387.
+    const markerChar = marker.charAt(0);
+    if (pending.length > 0 && pending.charAt(pending.length - 1) === markerChar)
+        return false;
+
     const precededChar = pending.charAt(pending.length - 1) || '\n';
     const followedChar = src[marker.length];
     // not followed by Unicode whitespace,

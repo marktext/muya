@@ -80,6 +80,7 @@
         "@types/prismjs": "^1.26.6",
         "@types/turndown": "^5.0.4",
         "@vitest/coverage-istanbul": "^4.1.6",
+        "happy-dom": "^20.9.0",
         "typescript": "^6.0.3",
         "vite": "^8.0.13",
         "vitest": "^4.1.6"

@@ -168,6 +168,9 @@ importers:
       '@vitest/coverage-istanbul':
         specifier: ^4.1.6
         version: 4.1.6(vitest@4.1.6)
+      happy-dom:
+        specifier: ^20.9.0
+        version: 20.9.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -176,7 +179,7 @@ importers:
         version: 8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.6
-        version: 4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0))
+        version: 4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0))
 
 packages:
 
@@ -1582,6 +1585,12 @@ packages:
   '@types/vfile@3.0.2':
     resolution: {integrity: sha512-b3nLFGaGkJ9rzOcuXRfHkZMdjsawuDD0ENL9fzTophtBg8FJHSGbH7daXkEpcwy3v7Xol3pAvsmlYyFhR4pqJw==}
 
+  '@types/whatwg-mimetype@3.0.2':
+    resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
+
   '@typescript-eslint/eslint-plugin@8.59.4':
     resolution: {integrity: sha512-PegsU+XfyJJNjd4+u/k6f9yTyp0lEXXiPopUNobZcIAUJFGICFLN+sP0Rb3JehVmiij1Ph0dFGYqODoRo/2+6A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -2718,6 +2727,10 @@ packages:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
 
+  entities@7.0.1:
+    resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
+    engines: {node: '>=0.12'}
+
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
     engines: {node: '>=6'}
@@ -3314,6 +3327,10 @@ packages:
     resolution: {integrity: sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==}
     engines: {node: '>=0.4.7'}
     hasBin: true
+
+  happy-dom@20.9.0:
+    resolution: {integrity: sha512-GZZ9mKe8r646NUAf/zemnGbjYh4Bt8/MqASJY+pSm5ZDtc3YQox+4gsLI7yi1hba6o+eCsGxpHn5+iEVn31/FQ==}
+    engines: {node: '>=20.0.0'}
 
   has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
@@ -5885,6 +5902,10 @@ packages:
   webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
+  whatwg-mimetype@3.0.0:
+    resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
+    engines: {node: '>=12'}
+
   which@1.3.1:
     resolution: {integrity: sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==}
     hasBin: true
@@ -5935,6 +5956,18 @@ packages:
   write@1.0.3:
     resolution: {integrity: sha512-/lg70HAjtkUgWPVZhZcm+T4hkL8Zbtp1nFNOn3lRrxnlv50SRBv7cR7RqR+GMsd3hUXy9hWBo4CHTbFTcOYwig==}
     engines: {node: '>=4'}
+
+  ws@8.20.1:
+    resolution: {integrity: sha512-It4dO0K5v//JtTXuPkfEOaI3uUN87iYPnqo/ZzqCoG3g8uhA66QUMs/SrM0YK7/NAu+r4LMh/9dq2A7k+rHs+w==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
 
   wsl-utils@0.1.0:
     resolution: {integrity: sha512-h3Fbisa2nKGPxCpm89Hk33lBLsnaGBvctQopaBSOW/uIs6FTe1ATyAnKFJrzVs9vpGdsTe73WF3V4lIsk4Gacw==}
@@ -7439,6 +7472,12 @@ snapshots:
       '@types/unist': 3.0.3
       '@types/vfile-message': 2.0.0
 
+  '@types/whatwg-mimetype@3.0.2': {}
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 24.10.1
+
   '@typescript-eslint/eslint-plugin@8.59.4(@typescript-eslint/parser@8.59.4(eslint@10.4.0(jiti@2.6.1))(typescript@6.0.3))(eslint@10.4.0(jiti@2.6.1))(typescript@6.0.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
@@ -7589,7 +7628,7 @@ snapshots:
       magicast: 0.5.3
       obug: 2.1.1
       tinyrainbow: 3.1.0
-      vitest: 4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0))
+      vitest: 4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -7601,7 +7640,7 @@ snapshots:
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 8.59.4(@typescript-eslint/parser@8.59.4(eslint@10.4.0(jiti@2.6.1))(typescript@6.0.3))(eslint@10.4.0(jiti@2.6.1))(typescript@6.0.3)
       typescript: 6.0.3
-      vitest: 4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0))
+      vitest: 4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -8694,6 +8733,8 @@ snapshots:
 
   entities@4.5.0: {}
 
+  entities@7.0.1: {}
+
   env-paths@2.2.1: {}
 
   environment@1.1.0: {}
@@ -9405,6 +9446,18 @@ snapshots:
       wordwrap: 1.0.0
     optionalDependencies:
       uglify-js: 3.19.3
+
+  happy-dom@20.9.0:
+    dependencies:
+      '@types/node': 24.10.1
+      '@types/whatwg-mimetype': 3.0.2
+      '@types/ws': 8.18.1
+      entities: 7.0.1
+      whatwg-mimetype: 3.0.0
+      ws: 8.20.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   has-flag@3.0.0: {}
 
@@ -12346,7 +12399,7 @@ snapshots:
       jiti: 2.6.1
       yaml: 2.9.0
 
-  vitest@4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0)):
+  vitest@4.1.6(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0)):
     dependencies:
       '@vitest/expect': 4.1.6
       '@vitest/mocker': 4.1.6(vite@8.0.13(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.9.0))
@@ -12371,6 +12424,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.10.1
       '@vitest/coverage-istanbul': 4.1.6(vitest@4.1.6)
+      happy-dom: 20.9.0
     transitivePeerDependencies:
       - msw
 
@@ -12404,6 +12458,8 @@ snapshots:
       defaults: 1.0.4
 
   webpack-virtual-modules@0.6.2: {}
+
+  whatwg-mimetype@3.0.0: {}
 
   which@1.3.1:
     dependencies:
@@ -12455,6 +12511,8 @@ snapshots:
   write@1.0.3:
     dependencies:
       mkdirp: 0.5.6
+
+  ws@8.20.1: {}
 
   wsl-utils@0.1.0:
     dependencies:
