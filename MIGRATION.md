@@ -52,10 +52,10 @@ PR 分组对应方案第三节的 5 个系列：
 | 270d33f6 | parser | list item lexer/parser（CM 264/265 不同 marker 拆表） | PR-2a | `test-only`（marked v16 + `compatibleTaskList` 已就位；2 个 CM spec 测试） |
 | 04834032 | parser | tab 缩进 list | PR-3 | `pending`（marktext fix 在 `tabCtrl.js` 编辑器 keydown 逻辑；PR-2 范围外） |
 | 240d64aa | parser | 合并不同类型 list #706 | PR-4 | `pending`（marktext fix 在 `pasteCtrl.js` 粘贴流程；PR-4 clipboard 系列处理） |
-| 02841ffd | parser | list 后续段落归属 | PR-2 | `pending` |
-| 5f191681 | parser | blockquote 内 list | PR-2 | `pending` |
+| 02841ffd | parser | list 后续段落归属（exportMarkdown 缩进配置） | PR-2b | `pending`（stateToMarkdown 序列化细节，留待 PR-2b 配合 list 表格基线评估） |
+| 5f191681 | parser | blockquote 内 list（exportMarkdown） | PR-2b | `pending`（同上） |
 | 70d49c30 | parser | `-foo` 误识 list item | PR-2a | `test-only`（marked v16 已要求 bullet 后接空格；2 个正负回归测试） |
-| 7b7a9424 | math | math block 嵌套 | PR-2 | `pending` |
+| 7b7a9424 | math | math block 嵌套 | PR-3 | `pending`（marktext fix 在 `paragraphCtrl.js` 编辑器层；PR-3 范围） |
 | d937fac0 | inline | inline 语法 | PR-2 | `pending` |
 | 9c2f6cb3 | inline | inline math 样式 | PR-2 | `pending` |
 | 6dfa7938 | inline | inline math selection | PR-2 | `pending` |
@@ -65,8 +65,8 @@ PR 分组对应方案第三节的 5 个系列：
 | 8e32838b | inline | 上/下标 | PR-2a | `test-only`（`super_sub_script` token + 渲染器已就位；3 个正负回归测试） |
 | c0853f64 | inline | auto link / extension | PR-2a | `test-only`（auto_link + auto_link_extension + 边界 guard 已就位；4 个回归测试） |
 | 1c42555a | block | 粘贴多行进 heading | PR-4 | `pending` |
-| dec7502e | block | setext heading | PR-2 | `pending` |
-| f00da152 | block | 嵌套块插表 crash | PR-2 | `pending` |
+| dec7502e | block | setext heading | PR-2a | `test-only`（marked v16 lheading + walkTokens `headingStyle` 已就位；3 个回归测试） |
+| f00da152 | block | 嵌套块插表 crash | PR-3 | `pending`（marktext fix 在 `tableBlockCtrl.js` 编辑器层；PR-3 范围） |
 | 9cb2cbe8 | toc | TOC 更新（如做 TOC 参考） | PR-5 | `pending` |
 
 ## P2 — 编辑 / 光标 / 选择 / IME
@@ -147,7 +147,7 @@ PR 分组对应方案第三节的 5 个系列：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 21 | 10 | 48%（2 fixed + 8 test-only；4 条转 PR-3/PR-4；1 skipped）|
+| PR-2 | 25 | 11 | 44%（PR-2a: 2 fixed + 9 test-only；3 条转 PR-3/PR-4；1 skipped；2 留待 PR-2b 序列化基线）|
 | PR-3 | 19 | 0 | 0% |
 | PR-4 | 13 | 0 | 0% |
 | PR-5 | 19+ | 0 | 0% |

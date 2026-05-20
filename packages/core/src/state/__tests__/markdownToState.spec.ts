@@ -61,6 +61,36 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
         expect(level3.children.find((c: any) => c.name === 'paragraph')?.text).toBe('task1_1_1');
     });
 
+    // Defensive regression for marktext commit dec7502e (PR #741):
+    // setext headings (`text\n===` / `text\n---`) must round-trip with a
+    // distinct `setext-heading` state name (atx-heading and setext-heading
+    // are separate block types in the new muya).
+    it('parses setext h1 (=== underline) as setext-heading with level 1', () => {
+        const states = generate(`Hello world
+===========
+`) as any[];
+        expect(states.length).toBe(1);
+        expect(states[0].name).toBe('setext-heading');
+        expect(states[0].meta.level).toBe(1);
+        expect(states[0].meta.underline).toBeTruthy();
+    });
+
+    it('parses setext h2 (--- underline) as setext-heading with level 2', () => {
+        const states = generate(`Hello world
+-----------
+`) as any[];
+        expect(states.length).toBe(1);
+        expect(states[0].name).toBe('setext-heading');
+        expect(states[0].meta.level).toBe(2);
+    });
+
+    it('parses `# text` as atx-heading, not setext-heading', () => {
+        // Positive control: atx headings should remain atx.
+        const states = generate('# Hello\n') as any[];
+        expect(states[0].name).toBe('atx-heading');
+        expect(states[0].meta.level).toBe(1);
+    });
+
     it('starts a new list when the bullet marker changes (CommonMark 264, marktext 270d33f6)', () => {
         // Different bullet markers must produce separate lists.
         const states = generate(`- foo
