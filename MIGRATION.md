@@ -47,14 +47,14 @@ PR 分组对应方案第三节的 5 个系列：
 | 23435ce6 | parser | 任务列表缩进 | PR-2a | `test-only`（marked v16 内置 list tokenizer 不共用旧 fork 的缩进 bug；2 个防御测试锁定嵌套） |
 | 57cd04c5 | parser | CommonMark example 475 + 353/387/520/521 等 | PR-2a | `fixed`（canOpenEmphasis 阻断 mid-run `_`；link/reference_link 加 lowerPriority；5 个 CM spec 用例） |
 | ad5ddbf9 | parser | GFM example 558（link/image title 支持） | PR-2a | `test-only`（`parseSrcAndTitle` 已就位；4 个回归测试锁定 link/image title） |
-| 372fe02f | parser | list 解析 #870 | PR-2 | `pending` |
-| 8891287b | parser | paragraph → list 转换 | PR-2 | `pending` |
-| 270d33f6 | parser | list item lexer/parser | PR-2 | `pending` |
-| 04834032 | parser | tab 缩进 list | PR-2 | `pending` |
-| 240d64aa | parser | 合并不同类型 list #706 | PR-2 | `pending` |
+| 372fe02f | parser | list 解析 #870（task + bullet 混排拆分） | PR-2a | `test-only`（`compatibleTaskList` 已就位；1 个回归测试） |
+| 8891287b | parser | paragraph → list 转换 | PR-3 | `pending`（marktext fix 在 `updateCtrl.js` 编辑器键盘逻辑层；PR-2 范围外） |
+| 270d33f6 | parser | list item lexer/parser（CM 264/265 不同 marker 拆表） | PR-2a | `test-only`（marked v16 + `compatibleTaskList` 已就位；2 个 CM spec 测试） |
+| 04834032 | parser | tab 缩进 list | PR-3 | `pending`（marktext fix 在 `tabCtrl.js` 编辑器 keydown 逻辑；PR-2 范围外） |
+| 240d64aa | parser | 合并不同类型 list #706 | PR-4 | `pending`（marktext fix 在 `pasteCtrl.js` 粘贴流程；PR-4 clipboard 系列处理） |
 | 02841ffd | parser | list 后续段落归属 | PR-2 | `pending` |
 | 5f191681 | parser | blockquote 内 list | PR-2 | `pending` |
-| 70d49c30 | parser | `-foo` 误识 list item | PR-2 | `pending` |
+| 70d49c30 | parser | `-foo` 误识 list item | PR-2a | `test-only`（marked v16 已要求 bullet 后接空格；2 个正负回归测试） |
 | 7b7a9424 | math | math block 嵌套 | PR-2 | `pending` |
 | d937fac0 | inline | inline 语法 | PR-2 | `pending` |
 | 9c2f6cb3 | inline | inline math 样式 | PR-2 | `pending` |
@@ -147,7 +147,7 @@ PR 分组对应方案第三节的 5 个系列：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 25 | 4 | 16%（2 fixed + 2 test-only）|
+| PR-2 | 22 | 7 | 32%（2 fixed + 5 test-only；3 条转 PR-3/PR-4）|
 | PR-3 | 19 | 0 | 0% |
 | PR-4 | 13 | 0 | 0% |
 | PR-5 | 19+ | 0 | 0% |

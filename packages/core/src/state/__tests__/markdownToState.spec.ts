@@ -61,6 +61,83 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
         expect(level3.children.find((c: any) => c.name === 'paragraph')?.text).toBe('task1_1_1');
     });
 
+    it('starts a new list when the bullet marker changes (CommonMark 264, marktext 270d33f6)', () => {
+        // Different bullet markers must produce separate lists.
+        const states = generate(`- foo
+- bar
++ baz
+`) as any[];
+        expect(states.length).toBe(2);
+        expect(states[0].name).toBe('bullet-list');
+        expect(states[0].children.length).toBe(2);
+        expect(states[1].name).toBe('bullet-list');
+        expect(states[1].children.length).toBe(1);
+    });
+
+    it('starts a new list when the ordered delimiter changes (CommonMark 265, marktext 270d33f6)', () => {
+        // `.` vs `)` are different ordered-list delimiters: separate lists.
+        const states = generate(`1. foo
+2. bar
+3) baz
+`) as any[];
+        expect(states.length).toBe(2);
+        expect(states[0].name).toBe('order-list');
+        expect(states[0].children.length).toBe(2);
+        expect(states[1].name).toBe('order-list');
+        expect(states[1].children.length).toBe(1);
+    });
+
+    it('does not parse `-foo` (no space) as a list item (marktext 70d49c30)', () => {
+        // marktext #832 issuecomment-477719256: `-foo` with no space between
+        // the dash and the word was wrongly captured as a list item. A
+        // bullet marker must be followed by a space (or newline) to start
+        // a list. The new muya uses marked v16's built-in list rule which
+        // already enforces this — keep the regression test.
+        const states = generate('-foo\n') as any[];
+        expect(states.length).toBe(1);
+        expect(states[0].name).toBe('paragraph');
+        expect(states[0].text).toBe('-foo');
+    });
+
+    it('still parses `- foo` (with space) as a list item', () => {
+        // Positive control — same shape with the required space.
+        const states = generate('- foo\n') as any[];
+        expect(states.length).toBe(1);
+        expect(states[0].name).toBe('bullet-list');
+        expect(states[0].children[0].name).toBe('list-item');
+    });
+
+    it('splits a mixed task + bullet sequence into two lists (marktext 372fe02f)', () => {
+        // marktext #870: writing
+        //   - [x] foo
+        //   - [x] bar
+        //   - zar
+        //   - rar
+        // used to collapse into one bullet list. It should be a task list
+        // followed by a bullet list — the new muya's compatibleTaskList
+        // post-processor does this; lock the behaviour in.
+        const states = generate(`- [x] foo
+- [x] bar
+- zar
+- rar
+`);
+
+        expect(states.length).toBe(2);
+        const [first, second] = states as any[];
+        expect(first.name).toBe('task-list');
+        expect(first.children.length).toBe(2);
+        expect(first.children.every((c: any) => c.name === 'task-list-item')).toBe(true);
+        expect(first.children.map((c: any) => c.meta.checked)).toEqual([true, true]);
+
+        expect(second.name).toBe('bullet-list');
+        expect(second.children.length).toBe(2);
+        expect(second.children.every((c: any) => c.name === 'list-item')).toBe(true);
+        const secondTexts = second.children.map((c: any) =>
+            c.children.find((cc: any) => cc.name === 'paragraph')?.text,
+        );
+        expect(secondTexts).toEqual(['zar', 'rar']);
+    });
+
     it('keeps tight (no blank lines) nested task lists nested', () => {
         const md = `- [ ] task1
   - [ ] task1_1
