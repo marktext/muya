@@ -49,10 +49,10 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 57cd04c5 | parser | CommonMark example 475 + 353/387/520/521 等 | PR-2a | `fixed`（canOpenEmphasis 阻断 mid-run `_`；link/reference_link 加 lowerPriority；5 个 CM spec 用例） |
 | ad5ddbf9 | parser | GFM example 558（link/image title 支持） | PR-2a | `test-only`（`parseSrcAndTitle` 已就位；4 个回归测试锁定 link/image title） |
 | 372fe02f | parser | list 解析 #870（task + bullet 混排拆分） | PR-2a | `test-only`（`compatibleTaskList` 已就位；1 个回归测试） |
-| 8891287b | parser | paragraph → list 转换 | PR-3 | `pending`（marktext fix 在 `updateCtrl.js` 编辑器键盘逻辑层；PR-2 范围外） |
+| 8891287b | parser | paragraph → list 转换 | PR-7a | `verified-not-applicable`：marktext fix 是 `updateCtrl.updateParagraphToList` 的 line-splitting 旧逻辑（无 marker 时 listItemLines 为空 → text 丢失）。新仓 `replaceBlockByLabel({label:'bullet-list', text})` 直接 `state.children[0].children[0].text = text` 整段保留，无 LIST_ITEM_REG 分行。**新增 6 个回归测试**锁住 contract |
 | 270d33f6 | parser | list item lexer/parser（CM 264/265 不同 marker 拆表） | PR-2a | `test-only`（marked v16 + `compatibleTaskList` 已就位；2 个 CM spec 测试） |
-| 04834032 | parser | tab 缩进 list | PR-3 | `pending`（marktext fix 在 `tabCtrl.js` 编辑器 keydown 逻辑；PR-2 范围外） |
-| 240d64aa | parser | 合并不同类型 list #706 | PR-4 | `pending`（marktext fix 在 `pasteCtrl.js` 粘贴流程；PR-4 clipboard 系列处理） |
+| 04834032 | parser | tab 缩进 list | PR-7a | `verified-not-applicable`：commit title 误导，实际修的是 markup code-block 内 Tab → Emmet HTML 展开（`parseSelector(undefined)` 崩 + `lastWord` 未限定到光标前 + postText 丢失）。新仓 `codeBlockContent.tabHandler` 已含 `lastWordBeforeCursor` + `postText` + `parseSelector(str='')` 三重修复。**新增 5 个回归测试**（含 mid-text、empty、non-markup 分支） |
+| 240d64aa | parser | 合并不同类型 list #706 | PR-7a | `verified-not-applicable`：marktext bug 在 `pasteCtrl` 合并 list-items 进现存 list 时未对齐 looseness。新仓 `pasteHandler` (`clipboard/index.ts:631-635`) 走 `for (state of remaining) ScrollPage.loadBlock(state.name).create(...) + insertAfter`，**每个粘贴状态独立成块**，不会与既存 list 合并，结构上不存在 looseness 错配 |
 | 02841ffd | parser | list 后续段落归属（exportMarkdown 缩进配置） | PR-2b | `test-only`（stateToMarkdown 已实现 indent/listIndent 拆分；4 个 marktext 缩进 fixture + 4 个扩展 round-trip） |
 | 5f191681 | parser | blockquote 内 list（exportMarkdown） | PR-2b | `test-only`（3 个 blockquote round-trip 测试） |
 | insertLineBreak 行尾空格 | serializer | 列表项内空行带尾随空格 | PR-2b | `fixed`（`insertLineBreak` 去掉尾随空格，保留 `>` 前缀；1 个回归测试） |
@@ -87,7 +87,7 @@ PR 分组对应方案第三节的 5 个系列 + 后续 PR-6 测试合规：
 | 0dc4b415 | table | cell backspace | PR-3d | `test-only`（`<br/>X` 末尾 backspace 旧路径在 contentState 内被特化；新仓走 `Format.backspaceHandler` token-based + 浏览器原生删除；建议 examples/ 手测 `<br/>` 后字符删除） |
 | 5fb130d9 | table | shift+tab 表格导航 | PR-3d | `fixed`（`tableCell.tabHandler` 新增 `event.shiftKey` 分支 + `previousContentInContext()`；3 个回归测试） |
 | 9e32c4a0 | table | cursor → next cell index 0 | PR-3d | `verified-not-applicable`（`tableCell.tabHandler` 已 `setCursor(0, 0, true)`，不会选中整 cell 文本） |
-| 0028a4bc | table | cell copy 异常 | PR-4 | `pending`（涉及 clipboard / 表格 cell copy，归 PR-4） |
+| 0028a4bc | table | cell copy 异常 | PR-7a | `verified-not-applicable`：marktext fix 是 `paragraphCtrl.selectTableCells` 单 cell descriptor 缺 `text` 字段。新仓无 selected-cells descriptor —— `getClipboardData` 同块分支直读 `anchorBlock.text.substring(begin, end)`（`clipboard/index.ts:133`）。**新增 3 个回归测试**锁住 table.cell.content 单块 copy 路径 |
 | 3fa8a9ae | autopair | inline code 内禁用 | PR-3b | `verified-not-applicable`（`content.ts:autoPair` 已有 `isInInlineCode` 参数 + `format.ts` 调用前用 `_checkCursorInTokenType` 计算；defensive 测试 2 个） |
 | 4278362f | autopair | inline math 内禁用 | PR-3b | `verified-not-applicable`（同上，`isInInlineMath` 参数已就位；defensive 测试 1 个） |
 | bbea7eca | autopair | 优化自动补全 | PR-3b | `verified-not-applicable`（`!/[a-z0-9]/i.test(preInputChar)` 已在 markdown-syntax 分支；defensive 测试 3 个） |
