@@ -1,3 +1,5 @@
+// @vitest-environment happy-dom
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import loadImageAsync from '../loadImageAsync';
 
@@ -89,5 +91,72 @@ describe('loadImageAsync — failed cache should retry', () => {
         );
 
         expect(loadImage).toHaveBeenCalledTimes(1);
+    });
+});
+
+// Regression for Copilot review on PR-11a (#224): the `mu-small-image`
+// class added in `image.ts` was only applied on re-renders where the
+// `loadImageMap` cache held the dimensions. On the *first* render of a
+// fresh image (cache miss), `loadImageAsync` resolves asynchronously and
+// mutates the DOM directly to add `mu-image-success` — but it never
+// added `mu-small-image`, so a newly loaded small image only got the
+// class on some unrelated subsequent re-render. The fix is to apply the
+// class in `loadImageAsync`'s success handler too, where width/height
+// are known.
+describe('loadImageAsync — small image class on first load', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        document.body.innerHTML = '';
+    });
+
+    async function runLoad(loadResult: { url: string; width: number; height: number }) {
+        const { loadImage } = await import('../../../utils/image');
+        (loadImage as any).mockResolvedValueOnce(loadResult);
+
+        const r = {
+            loadImageMap: new Map(),
+            urlMap: new Map(),
+        };
+
+        const { id } = loadImageAsync.call(
+            r as any,
+            { isUnknownType: false, src: 'https://example.com/fresh.png' },
+            {},
+        );
+
+        // Stage the same DOM shape the renderer would have emitted:
+        //   <span id={id} class="mu-inline-image mu-image-loading">
+        //     <span class="mu-image-container"></span>
+        //   </span>
+        const wrapper = document.createElement('span');
+        wrapper.id = id!;
+        wrapper.classList.add('mu-inline-image', 'mu-image-loading');
+        const container = document.createElement('span');
+        container.classList.add('mu-image-container');
+        wrapper.appendChild(container);
+        document.body.appendChild(wrapper);
+
+        // Flush the loadImage promise + the .then handler.
+        await new Promise<void>(resolve => setTimeout(resolve, 0));
+
+        return wrapper;
+    }
+
+    it('adds `mu-small-image` when loaded width is below 100px', async () => {
+        const wrapper = await runLoad({ url: 'data:image/png;base64,x', width: 60, height: 200 });
+        expect(wrapper.classList.contains('mu-image-success')).toBe(true);
+        expect(wrapper.classList.contains('mu-small-image')).toBe(true);
+    });
+
+    it('adds `mu-small-image` when loaded height is below 100px', async () => {
+        const wrapper = await runLoad({ url: 'data:image/png;base64,x', width: 300, height: 80 });
+        expect(wrapper.classList.contains('mu-image-success')).toBe(true);
+        expect(wrapper.classList.contains('mu-small-image')).toBe(true);
+    });
+
+    it('does NOT add `mu-small-image` when both dimensions are >= 100', async () => {
+        const wrapper = await runLoad({ url: 'data:image/png;base64,x', width: 400, height: 300 });
+        expect(wrapper.classList.contains('mu-image-success')).toBe(true);
+        expect(wrapper.classList.contains('mu-small-image')).toBe(false);
     });
 });

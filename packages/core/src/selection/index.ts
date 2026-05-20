@@ -15,6 +15,7 @@ import {
     getNodeAndOffset,
     getOffsetOfParagraph,
 } from './dom';
+import { shouldShowImageResizeBar } from './imageDisplay';
 
 class Selection {
     /**
@@ -554,17 +555,25 @@ class Selection {
             });
 
             // Handle show image transformer.
-            const imageSelector = `#${imageInfo.imageId}`;
+            // marktext d26f5092 (#1335): the resize bar should only appear for
+            // block-aligned images. Inline images flow with surrounding text
+            // and dragging their edges has no meaningful resize semantics.
+            if (shouldShowImageResizeBar(imageInfo.token)) {
+                const imageSelector = `#${imageInfo.imageId}`;
 
-            const imageContainer = document.querySelector(
-                `${imageSelector} .${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
-            );
+                const imageContainer = document.querySelector(
+                    `${imageSelector} .${CLASS_NAMES.MU_IMAGE_CONTAINER}`,
+                );
 
-            eventCenter.emit('muya-transformer', {
-                block: contentBlock,
-                reference: imageContainer,
-                imageInfo,
-            });
+                eventCenter.emit('muya-transformer', {
+                    block: contentBlock,
+                    reference: imageContainer,
+                    imageInfo,
+                });
+            }
+            else {
+                eventCenter.emit('muya-transformer', { reference: null });
+            }
 
             this.selectedImage = Object.assign({}, imageInfo, {
                 block: contentBlock,
