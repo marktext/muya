@@ -16,11 +16,10 @@
 
 .mu-list-picker .item {
     display: flex;
-    height: 28px;
-    padding: 0 10px;
-    display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 28px;
+    padding: 0 10px;
 
     list-style: none;
 }
@@ -48,6 +47,7 @@
 
 .mu-list-picker .item .language {
     flex: 1;
+
     color: var(--editor-color);
     font-size: 14px;
     line-height: 28px;
