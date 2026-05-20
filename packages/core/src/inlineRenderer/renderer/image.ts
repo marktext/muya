@@ -70,7 +70,7 @@ export default function image(
     /**
      * The image is used to wrap the img element.
      * @param args
-     * @returns
+     * @returns The wrapping span VNode containing the image element.
      */
     const renderImageContainer = (...args: VNode[]) => {
         const data = {};

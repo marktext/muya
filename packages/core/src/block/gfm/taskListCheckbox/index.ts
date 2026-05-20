@@ -16,9 +16,9 @@ const debug = logger('tasklistCheckbox:');
 // In the Chrome browser, the input element is still preserved because in Chrome,
 // span has a cursor staggered problem.
 class TaskListCheckbox extends TreeNode {
-    private checked: boolean;
+    private _checked: boolean;
 
-    private eventIds: string[] = [];
+    private _eventIds: string[] = [];
 
     static override blockName = 'task-list-checkbox';
 
@@ -42,7 +42,7 @@ class TaskListCheckbox extends TreeNode {
     constructor(muya: Muya, { checked }: ITaskListItemMeta) {
         super(muya);
         this.tagName = isFirefox ? 'span' : 'input';
-        this.checked = checked;
+        this._checked = checked;
         this.attributes = isFirefox
             ? { contenteditable: 'false' }
             : { type: 'checkbox', contenteditable: 'false' };
@@ -69,13 +69,13 @@ class TaskListCheckbox extends TreeNode {
             event.stopPropagation();
 
             if (isFirefox) {
-                this.checked = !this.checked;
+                this._checked = !this._checked;
 
-                this.update(this.checked, 'user');
+                this.update(this._checked, 'user');
             }
             else {
                 const { checked } = event.target as HTMLInputElement;
-                this.checked = checked;
+                this._checked = checked;
                 this.update(checked, 'user');
             }
         };
@@ -84,7 +84,7 @@ class TaskListCheckbox extends TreeNode {
             eventCenter.attachDOMEvent(domNode!, 'click', clickHandler),
         ];
 
-        this.eventIds.push(...eventIds);
+        this._eventIds.push(...eventIds);
     }
 
     update = (checked: boolean, source = 'api') => {
@@ -109,7 +109,7 @@ class TaskListCheckbox extends TreeNode {
     };
 
     detachDOMEvents() {
-        for (const id of this.eventIds)
+        for (const id of this._eventIds)
             this.muya.eventCenter.detachDOMEvent(id);
     }
 

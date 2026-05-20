@@ -15,13 +15,13 @@ function position(source, ele) {
 }
 
 class Tooltip {
-    private muya: Muya;
-    private cache: WeakMap<HTMLElement, HTMLElement>;
+    private _muya: Muya;
+    private _cache: WeakMap<HTMLElement, HTMLElement>;
 
     constructor(muya) {
-        this.muya = muya;
-        this.cache = new WeakMap();
-        const { domNode, eventCenter } = this.muya;
+        this._muya = muya;
+        this._cache = new WeakMap();
+        const { domNode, eventCenter } = this._muya;
 
         eventCenter.attachDOMEvent(
             domNode,
@@ -33,8 +33,8 @@ class Tooltip {
     mouseOver(event) {
         const { target } = event;
         const toolTipTarget = target.closest('[data-tooltip]');
-        const { eventCenter } = this.muya;
-        if (toolTipTarget && !this.cache.has(toolTipTarget)) {
+        const { eventCenter } = this._muya;
+        if (toolTipTarget && !this._cache.has(toolTipTarget)) {
             const tooltip = toolTipTarget.getAttribute('data-tooltip');
             const tooltipEle = document.createElement('div');
             tooltipEle.textContent = tooltip;
@@ -42,7 +42,7 @@ class Tooltip {
             document.body.appendChild(tooltipEle);
             position(toolTipTarget, tooltipEle);
 
-            this.cache.set(toolTipTarget, tooltipEle);
+            this._cache.set(toolTipTarget, tooltipEle);
 
             setTimeout(() => {
                 tooltipEle.classList.add('active');
@@ -65,10 +65,10 @@ class Tooltip {
 
     mouseLeave(event) {
         const { target } = event;
-        if (this.cache.has(target)) {
-            const tooltipEle = this.cache.get(target);
+        if (this._cache.has(target)) {
+            const tooltipEle = this._cache.get(target);
             tooltipEle.remove();
-            this.cache.delete(target);
+            this._cache.delete(target);
         }
     }
 }

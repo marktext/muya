@@ -23,16 +23,16 @@ const defaultOptions = {
 
 export class PreviewToolBar extends BaseFloat {
     static pluginName = 'previewTools';
-    private oldVNode: VNode | null = null;
-    private block: HTMLBlock | MathBlock | null = null;
-    private iconContainer: HTMLDivElement = document.createElement('div');
+    private _oldVNode: VNode | null = null;
+    private _block: HTMLBlock | MathBlock | null = null;
+    private _iconContainer: HTMLDivElement = document.createElement('div');
 
     constructor(muya: Muya, options = {}) {
         const name = 'mu-preview-tools';
         const opts = Object.assign({}, defaultOptions, options);
         super(muya, name, opts);
         this.options = opts;
-        this.container?.appendChild(this.iconContainer);
+        this.container?.appendChild(this._iconContainer);
         this.floatBox?.classList.add('mu-preview-tools-container');
         this.listen();
     }
@@ -57,7 +57,7 @@ export class PreviewToolBar extends BaseFloat {
                 if (block.blockName === 'html-block' && this.muya.options.disableHtml)
                     return this.hide();
 
-                this.block = block;
+                this._block = block;
                 this.show(container);
                 this.render();
             }
@@ -70,7 +70,7 @@ export class PreviewToolBar extends BaseFloat {
     }
 
     render() {
-        const { iconContainer, oldVNode } = this;
+        const { _iconContainer: iconContainer, _oldVNode: oldVNode } = this;
         const children = ICONS.map((i) => {
             const iconWrapperSelector = 'div.icon-wrapper';
             const icon = h(
@@ -113,12 +113,12 @@ export class PreviewToolBar extends BaseFloat {
         else
             patch(iconContainer, vnode);
 
-        this.oldVNode = vnode;
+        this._oldVNode = vnode;
     }
 
     selectItem(event: Event, i: typeof ICONS[number]) {
         event.preventDefault();
-        const { block } = this;
+        const { _block: block } = this;
         let cursorBlock = null;
         switch (i.type) {
             case 'edit': {

@@ -62,10 +62,10 @@ function turnSoftBreakToSpan(html: string) {
 }
 
 export default class HtmlToMarkdown {
-    private options: ITurnoverOptions;
+    private _options: ITurnoverOptions;
 
     constructor(options = {}) {
-        this.options = Object.assign(
+        this._options = Object.assign(
             {},
             DEFAULT_TURNDOWN_CONFIG as ITurnoverOptions,
             options,
@@ -74,8 +74,7 @@ export default class HtmlToMarkdown {
 
     generate(html: string): string {
         // turn html to markdown
-        const { options } = this;
-        const turndownService = new TurndownService(options);
+        const turndownService = new TurndownService(this._options);
         usePluginsAddRules(turndownService);
 
         // fix #752, but I don't know why the &nbsp; vanished.

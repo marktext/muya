@@ -42,10 +42,10 @@ export interface IExportMarkdownOptions {
 }
 
 export default class ExportMarkdown {
-    private listType: any[];
-    private isLooseParentList: boolean;
-    private listIndentation: string;
-    private listIndentationCount: number;
+    private _listType: any[];
+    private _isLooseParentList: boolean;
+    private _listIndentation: string;
+    private _listIndentationCount: number;
 
     constructor(
         {
@@ -54,21 +54,21 @@ export default class ExportMarkdown {
             listIndentation: 1,
         },
     ) {
-        this.listType = []; // 'ul' or 'ol'
+        this._listType = []; // 'ul' or 'ol'
         // helper to translate the first tight item in a nested list
-        this.isLooseParentList = true;
+        this._isLooseParentList = true;
 
         // set and validate settings
-        this.listIndentation = 'number';
+        this._listIndentation = 'number';
         if (listIndentation === 'dfm') {
-            this.listIndentation = 'dfm';
-            this.listIndentationCount = 4;
+            this._listIndentation = 'dfm';
+            this._listIndentationCount = 4;
         }
         else if (typeof listIndentation === 'number') {
-            this.listIndentationCount = Math.min(Math.max(listIndentation, 1), 4);
+            this._listIndentationCount = Math.min(Math.max(listIndentation, 1), 4);
         }
         else {
-            this.listIndentationCount = 1;
+            this._listIndentationCount = 1;
         }
     }
 
@@ -151,8 +151,8 @@ export default class ExportMarkdown {
                 case 'bullet-list':
 
                 case 'task-list': {
-                    let insertNewLine = this.isLooseParentList;
-                    this.isLooseParentList = true;
+                    let insertNewLine = this._isLooseParentList;
+                    this._isLooseParentList = true;
                     const { meta } = state;
 
                     // Start a new list without separation due changing the bullet or ordered list delimiter starts a new list.
@@ -168,24 +168,24 @@ export default class ExportMarkdown {
                     if (insertNewLine)
                         this.insertLineBreak(result, indent);
 
-                    this.listType.push(deepClone(meta));
+                    this._listType.push(deepClone(meta));
                     result.push(this.serializeList(state, indent, listIndent));
-                    this.listType.pop();
+                    this._listType.pop();
                     break;
                 }
 
                 case 'list-item':
 
                 case 'task-list-item': {
-                    const { loose } = this.listType[this.listType.length - 1];
+                    const { loose } = this._listType[this._listType.length - 1];
 
                     // helper variable to correct the first tight item in a nested list
-                    this.isLooseParentList = loose;
+                    this._isLooseParentList = loose;
                     if (loose)
                         this.insertLineBreak(result, indent);
 
                     result.push(this.serializeListItem(state, indent + listIndent));
-                    this.isLooseParentList = true;
+                    this._isLooseParentList = true;
                     break;
                 }
 
@@ -443,7 +443,7 @@ export default class ExportMarkdown {
         indent: string,
     ) {
         const result = [];
-        const listInfo = this.listType[this.listType.length - 1];
+        const listInfo = this._listType[this._listType.length - 1];
         const { marker, delimiter, start } = listInfo;
         const isUnorderedList = !!marker;
         const { children, name } = state;
@@ -456,7 +456,7 @@ export default class ExportMarkdown {
             // NOTE: GitHub and Bitbucket limit the list count to 99 but this is nowhere defined.
             //  We limit the number to 99 for Daring Fireball Markdown to prevent indentation issues.
             let n = start;
-            if ((this.listIndentation === 'dfm' && n > 99) || n > 999999999)
+            if ((this._listIndentation === 'dfm' && n > 99) || n > 999999999)
                 n = 1;
 
             listInfo.start++;
@@ -469,11 +469,11 @@ export default class ExportMarkdown {
 
         // New list indentation. We already added one space to the indentation
         let listIndent = '';
-        const { listIndentation } = this;
+        const { _listIndentation: listIndentation } = this;
         if (listIndentation === 'dfm')
             listIndent = ' '.repeat(4 - itemMarker.length);
         else if (listIndentation === 'number')
-            listIndent = ' '.repeat(this.listIndentationCount - 1);
+            listIndent = ' '.repeat(this._listIndentationCount - 1);
 
         // TODO: Indent subsequent paragraphs by one tab. - not important
         //  Problem: "convertStatesToMarkdown" use "indent" in spaces to indent elements. How should

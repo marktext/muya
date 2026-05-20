@@ -7,12 +7,12 @@ import loadRenderer from '../utils/diagram';
 import { getHighlightHtml } from '../utils/marked';
 
 export class MarkdownToHtml {
-    private exportContainer: HTMLDivElement | null = null;
+    private _exportContainer: HTMLDivElement | null = null;
 
     constructor(public markdown: string, public muya?: Muya) {}
 
     async renderMermaid() {
-        const codes = this.exportContainer!.querySelectorAll(
+        const codes = this._exportContainer!.querySelectorAll(
             'code.language-mermaid',
         );
         for (const code of codes) {
@@ -34,7 +34,7 @@ export class MarkdownToHtml {
             theme: 'default',
         });
         await mermaid.run({
-            nodes: [...this.exportContainer!.querySelectorAll('div.mermaid')],
+            nodes: [...this._exportContainer!.querySelectorAll('div.mermaid')],
         });
         if (this.muya) {
             mermaid.initialize({
@@ -47,7 +47,7 @@ export class MarkdownToHtml {
     async renderDiagram() {
         const selector
             = 'code.language-vega-lite, code.language-plantuml';
-        const codes = this.exportContainer!.querySelectorAll(selector);
+        const codes = this._exportContainer!.querySelectorAll(selector);
 
         for (const code of codes) {
             const rawCode = unescapeHTML(code.innerHTML);
@@ -99,7 +99,7 @@ export class MarkdownToHtml {
 
         html = sanitize(html, EXPORT_DOMPURIFY_CONFIG, false) as string;
 
-        const exportContainer = (this.exportContainer
+        const exportContainer = (this._exportContainer
             = document.createElement('div'));
         exportContainer.classList.add('mu-render-container');
         exportContainer.innerHTML = html;
@@ -123,7 +123,7 @@ export class MarkdownToHtml {
             return `${def}${str}`;
         });
 
-        this.exportContainer = null;
+        this._exportContainer = null;
 
         return `<article class="markdown-body">${result}</article>`;
     }

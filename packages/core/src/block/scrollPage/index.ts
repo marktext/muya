@@ -75,7 +75,7 @@ export class ScrollPage extends Parent {
         const { eventCenter } = this.muya;
         const { domNode } = this;
 
-        eventCenter.attachDOMEvent(domNode!, 'click', this.clickHandler.bind(this));
+        eventCenter.attachDOMEvent(domNode!, 'click', this._clickHandler.bind(this));
     }
 
     updateState(state: TState[]) {
@@ -113,15 +113,15 @@ export class ScrollPage extends Parent {
 
     handleBlurFromContent(block: Content) {
         this._blurFocus.blur = block;
-        requestAnimationFrame(this.updateActiveStatus);
+        requestAnimationFrame(this._updateActiveStatus);
     }
 
     handleFocusFromContent(block: Content) {
         this._blurFocus.focus = block;
-        requestAnimationFrame(this.updateActiveStatus);
+        requestAnimationFrame(this._updateActiveStatus);
     }
 
-    private updateActiveStatus = () => {
+    private _updateActiveStatus = () => {
         const { blur, focus } = this._blurFocus;
 
         if (blur == null && focus == null)
@@ -165,7 +165,7 @@ export class ScrollPage extends Parent {
     };
 
     // Create a new paragraph if click the blank area in editor.
-    private clickHandler(event: Event) {
+    private _clickHandler(event: Event) {
         if (!isMouseEvent(event))
             return;
 

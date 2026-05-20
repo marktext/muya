@@ -142,7 +142,7 @@ class Selection {
         block: Format;
     } | null = null;
 
-    private selectInfo: {
+    private _selectInfo: {
         isSelect: boolean;
         selection: ICursor | null;
     } = {
@@ -151,7 +151,7 @@ class Selection {
     };
 
     constructor(public muya: Muya) {
-        this.listenSelectActions();
+        this._listenSelectActions();
     }
 
     selectAll() {
@@ -206,7 +206,7 @@ class Selection {
 
     /**
      * Return the current selection of doc or null if has no selection.
-     * @returns
+     * @returns The resolved selection mapped to anchor/focus blocks, or null when no selection exists.
      */
     getSelection(): ISelection | null {
         const selection = document.getSelection();
@@ -289,7 +289,7 @@ class Selection {
         this.focusBlock = focusBlock ?? block ?? null;
         this.focusPath = focusPath ?? path ?? [];
         // Update cursor.
-        this.setCursor();
+        this._setCursor();
 
         const {
             isCollapsed,
@@ -314,21 +314,21 @@ class Selection {
         });
     }
 
-    private listenSelectActions() {
+    private _listenSelectActions() {
         const { eventCenter, domNode } = this.muya;
 
         const handleMousedown = () => {
-            this.selectInfo = {
+            this._selectInfo = {
                 isSelect: true,
                 selection: null,
             };
         };
 
         const handleMouseupOrLeave = () => {
-            if (this.selectInfo.selection)
-                this.setSelection(this.selectInfo.selection);
+            if (this._selectInfo.selection)
+                this.setSelection(this._selectInfo.selection);
 
-            this.selectInfo = {
+            this._selectInfo = {
                 isSelect: false,
                 selection: null,
             };
@@ -339,7 +339,7 @@ class Selection {
                 return;
 
             const { type, shiftKey } = event;
-            if (type === 'mousemove' && !this.selectInfo.isSelect)
+            if (type === 'mousemove' && !this._selectInfo.isSelect)
                 return;
 
             if (type === 'click' && !shiftKey)
@@ -463,7 +463,7 @@ class Selection {
             }
 
             if (type === 'mousemove')
-                this.selectInfo.selection = newSelection;
+                this._selectInfo.selection = newSelection;
             else
                 this.setSelection(newSelection);
         };
@@ -479,7 +479,7 @@ class Selection {
             );
             this.selectedImage = null;
             if (imageWrapper)
-                return this.handleClickInlineImage(event, imageWrapper as HTMLElement);
+                return this._handleClickInlineImage(event, imageWrapper as HTMLElement);
         };
 
         const handleKeydown = (event: Event) => {
@@ -507,7 +507,7 @@ class Selection {
     }
 
     // Handle click inline image.
-    private handleClickInlineImage(event: Event, imageWrapper: HTMLElement) {
+    private _handleClickInlineImage(event: Event, imageWrapper: HTMLElement) {
         event.preventDefault();
         event.stopPropagation();
         const { eventCenter } = this.muya;
@@ -593,7 +593,7 @@ class Selection {
         }
     }
 
-    private selectRange(range: Range) {
+    private _selectRange(range: Range) {
         const selection = this.doc.getSelection();
 
         if (selection) {
@@ -602,7 +602,7 @@ class Selection {
         }
     }
 
-    private select(
+    private _select(
         startNode: Node,
         startOffset: number,
         endNode?: Node,
@@ -615,18 +615,18 @@ class Selection {
         else
             range.collapse(true);
 
-        this.selectRange(range);
+        this._selectRange(range);
 
         return range;
     }
 
-    private setFocus(focusNode: Node, focusOffset: number) {
+    private _setFocus(focusNode: Node, focusOffset: number) {
         const selection = this.doc.getSelection();
         if (selection)
             selection.extend(focusNode, focusOffset);
     }
 
-    private setCursor() {
+    private _setCursor() {
         const {
             anchor,
             focus,
@@ -663,9 +663,9 @@ class Selection {
         );
 
         // First set the anchor node and anchor offset, make it collapsed
-        this.select(anchorNode, anchorOffset);
+        this._select(anchorNode, anchorOffset);
         // Secondly, set the focus node and focus offset.
-        this.setFocus(focusNode, focusOffset);
+        this._setFocus(focusNode, focusOffset);
     }
 }
 

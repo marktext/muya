@@ -23,8 +23,8 @@ const defaultOptions = {
 
 export class CodeBlockLanguageSelector extends BaseScrollFloat {
     static pluginName = 'codePicker';
-    private oldVNode: VNode | null = null;
-    private block: ParagraphContent | LangInputContent | null = null;
+    private _oldVNode: VNode | null = null;
+    private _block: ParagraphContent | LangInputContent | null = null;
 
     constructor(muya: Muya, options = {}) {
         const name = 'mu-list-picker';
@@ -54,7 +54,7 @@ export class CodeBlockLanguageSelector extends BaseScrollFloat {
 
             const modes = search(lang);
             if (modes.length) {
-                this.block = block;
+                this._block = block;
                 this.show(domNode);
                 this.renderArray = modes;
                 this.activeItem = modes[0];
@@ -67,7 +67,7 @@ export class CodeBlockLanguageSelector extends BaseScrollFloat {
     }
 
     render() {
-        const { renderArray, oldVNode, scrollElement, activeItem } = this;
+        const { renderArray, _oldVNode: oldVNode, scrollElement, activeItem } = this;
         let children = (
             renderArray as {
                 name: string;
@@ -124,7 +124,7 @@ export class CodeBlockLanguageSelector extends BaseScrollFloat {
         else
             patch(scrollElement!, vnode);
 
-        this.oldVNode = vnode;
+        this._oldVNode = vnode;
     }
 
     getItemElement(item: { name: string }): HTMLElement {
@@ -135,7 +135,7 @@ export class CodeBlockLanguageSelector extends BaseScrollFloat {
     }
 
     override selectItem(item: { name: string }) {
-        const { block, muya } = this;
+        const { _block: block, muya } = this;
         const { name } = item;
 
         if (!block)

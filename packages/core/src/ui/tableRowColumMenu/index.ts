@@ -25,10 +25,10 @@ interface ITableInfo {
 
 export class TableRowColumMenu extends BaseFloat {
     static pluginName = 'tableBarTools';
-    private oldVNode: VNode | null = null;
-    private tableInfo: ITableInfo | null = null;
-    private block: TableBodyCell | null = null;
-    private tableBarContainer: HTMLDivElement = document.createElement('div');
+    private _oldVNode: VNode | null = null;
+    private _tableInfo: ITableInfo | null = null;
+    private _block: TableBodyCell | null = null;
+    private _tableBarContainer: HTMLDivElement = document.createElement('div');
 
     constructor(muya: Muya, options = {}) {
         const name = 'mu-table-bar-tools';
@@ -36,7 +36,7 @@ export class TableRowColumMenu extends BaseFloat {
         super(muya, name, opts);
 
         this.floatBox!.classList.add('mu-table-bar-tools');
-        this.container!.appendChild(this.tableBarContainer);
+        this.container!.appendChild(this._tableBarContainer);
         this.listen();
     }
 
@@ -47,8 +47,8 @@ export class TableRowColumMenu extends BaseFloat {
             'muya-table-bar',
             ({ reference, tableInfo, block }) => {
                 if (reference) {
-                    this.tableInfo = tableInfo;
-                    this.block = block;
+                    this._tableInfo = tableInfo;
+                    this._block = block;
                     this.show(reference);
                     this.render();
                 }
@@ -60,7 +60,7 @@ export class TableRowColumMenu extends BaseFloat {
     }
 
     render() {
-        const { tableInfo, oldVNode, tableBarContainer } = this;
+        const { _tableInfo: tableInfo, _oldVNode: oldVNode, _tableBarContainer: tableBarContainer } = this;
         const { i18n } = this.muya;
         const renderArray: MenuItem[] = toolList[tableInfo!.barType];
         const children = renderArray.map((item) => {
@@ -91,16 +91,16 @@ export class TableRowColumMenu extends BaseFloat {
         else
             patch(tableBarContainer, vnode);
 
-        this.oldVNode = vnode;
+        this._oldVNode = vnode;
     }
 
     selectItem(event: Event, item: MenuItem) {
         event.preventDefault();
         event.stopPropagation();
 
-        const { table, row } = this.block!;
+        const { table, row } = this._block!;
         const rowCount = (table.firstChild as TableInner).offset(row);
-        const columnCount = row.offset(this.block!);
+        const columnCount = row.offset(this._block!);
         const { location, action, target } = item;
 
         if (action === 'insert') {
