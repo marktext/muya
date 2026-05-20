@@ -5,6 +5,7 @@ import type {
     IBulletListState,
     ICodeBlockState,
     IDiagramState,
+    IFootnoteBlockState,
     IFrontmatterState,
     IHtmlBlockState,
     IListItemState,
@@ -144,6 +145,11 @@ export default class ExportMarkdown {
                 case 'table':
                     this.insertLineBreak(result, indent);
                     result.push(this.serializeTable(state, indent));
+                    break;
+
+                case 'footnote':
+                    this.insertLineBreak(result, indent);
+                    result.push(this.serializeFootnote(state, indent));
                     break;
 
                 case 'order-list':
@@ -353,6 +359,24 @@ export default class ExportMarkdown {
         const newIndent = `${indent}> `;
 
         return this.convertStatesToMarkdown(children, newIndent);
+    }
+
+    serializeFootnote(state: IFootnoteBlockState, indent: string) {
+        // Footnote definitions render as
+        //   [^id]: first paragraph
+        //
+        //       continuation block indented by 4 spaces
+        // i.e. the `[^id]: ` prefix sits on the first child's first line and
+        // subsequent content (including blank lines between paragraphs) is
+        // indented by four spaces past the surrounding `indent`.
+        const { meta, children } = state;
+        const innerIndent = `${indent}    `;
+        const inner = this.convertStatesToMarkdown(children, innerIndent);
+        const prefix = `${indent}[^${meta.identifier}]: `;
+        // Strip the inner indent off the first non-empty line so the prefix
+        // sits flush, leaving subsequent lines at the four-space indent.
+        const stripped = inner.replace(innerIndent, '');
+        return `${prefix}${stripped}`;
     }
 
     serializeTable(state: ITableState, indent: string) {

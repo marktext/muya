@@ -146,6 +146,16 @@ export interface IDiagramState {
     text: string;
 }
 
+export interface IFootnoteBlockMeta {
+    identifier: string;
+}
+
+export interface IFootnoteBlockState {
+    name: 'footnote';
+    meta: IFootnoteBlockMeta;
+    children: TState[];
+}
+
 export type TLeafState
     = | IParagraphState
         | IAtxHeadingState
@@ -167,7 +177,8 @@ export type TContainerState
         | ITaskListState
         | ITaskListItemState
         | IListItemState
-        | ITableRowState;
+        | ITableRowState
+        | IFootnoteBlockState;
 
 export type TState = TLeafState | TContainerState;
 

@@ -488,7 +488,12 @@ class Selection {
 
             const { key } = event;
             const { selectedImage } = this;
-            if (selectedImage && /Backspace|Enter/.test(key)) {
+            // marktext ed1b3354 (#2816): `Delete` was missing from the
+            // image-selected key set, so it fell through to native
+            // contenteditable handling and removed the text *after* the
+            // image. Match key exactly to avoid substring-collisions
+            // like `BackspaceX`.
+            if (selectedImage && /^(?:Backspace|Delete|Enter)$/.test(key)) {
                 event.preventDefault();
                 const { block, ...imageInfo } = selectedImage;
                 block.deleteImage(imageInfo);

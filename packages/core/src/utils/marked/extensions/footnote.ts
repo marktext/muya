@@ -1,5 +1,4 @@
-import type { MarkedExtension, Tokens } from 'marked';
-import { Lexer } from 'marked';
+import type { Lexer, MarkedExtension, Tokens } from 'marked';
 
 // Block-level rule for footnote definitions. Mirrors marktext's
 // src/muya/lib/parser/marked/blockRules.js after commit 1ecc3601, but
@@ -51,8 +50,14 @@ export default function footnoteExtension(): MarkedExtension {
                         .replace(/\n {4}(?=\S)/g, '\n')
                         .replace(/\n+$/, '');
 
+                    // Use the bound lexer so nested content is parsed with the
+                    // same Marked instance + extensions (math, etc.). A bare
+                    // `new Lexer()` would fall back to the global defaults and
+                    // re-introduce the "sticky extension" leak the per-call
+                    // Marked instance is meant to prevent.
+                    const lexer = (this as unknown as { lexer: Lexer }).lexer;
                     const tokens = cleaned
-                        ? (new Lexer().blockTokens(cleaned) as Tokens.Generic[])
+                        ? (lexer.blockTokens(cleaned, []) as Tokens.Generic[])
                         : [];
 
                     return {
