@@ -68,6 +68,80 @@ describe('inline lexer — CommonMark 0.29 spec examples (marktext 57cd04c5)', (
     });
 });
 
+// Defensive regression for marktext commit d9f64bab (issue #921, PR #947):
+// reference_link `[text][label]` requires the label to be defined in the
+// `labels` map. Without the definition, the input must stay as text — the
+// new muya's lexer enforces this via `labels.has(...)` (lexer.ts:357).
+describe('inline lexer — reference link (marktext d9f64bab)', () => {
+    it('does not emit reference_link when label is undefined', () => {
+        const types = topTypes('[text][undefined-label]');
+        expect(types, `tokens: ${JSON.stringify(types)}`).not.toContain('reference_link');
+    });
+
+    it('emits reference_link when label is defined', () => {
+        const labels = new Map([['ref', 'http://example.com']]);
+        const tokens = tokenizer('[text][ref]', { labels });
+        const types = tokens.map(t => t.type);
+        expect(types, `tokens: ${JSON.stringify(types)}`).toContain('reference_link');
+    });
+});
+
+// Defensive regression for marktext commit 8e32838b (PR #1531) — sup/sub
+// inline syntax `^foo^` (superscript) and `~bar~` (subscript). Already
+// present in the new muya's inline lexer rules + renderer.
+describe('inline lexer — superscript/subscript (marktext 8e32838b)', () => {
+    it('parses ^foo^ as a super_sub_script token with `^` marker', () => {
+        const tokens = tokenizer('text^sup^');
+        const sup = tokens.find(t => t.type === 'super_sub_script') as any;
+        expect(sup, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(sup.marker).toBe('^');
+        expect(sup.content).toBe('sup');
+    });
+
+    it('parses ~bar~ as a super_sub_script token with `~` marker', () => {
+        const tokens = tokenizer('text~sub~');
+        const sub = tokens.find(t => t.type === 'super_sub_script') as any;
+        expect(sub, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
+        expect(sub.marker).toBe('~');
+        expect(sub.content).toBe('sub');
+    });
+
+    it('does not parse ^...^ when surrounded by whitespace', () => {
+        // Per the spec, the marker must abut non-whitespace on both sides.
+        const types = topTypes('text ^ foo ^ bar');
+        expect(types, `tokens: ${JSON.stringify(types)}`).not.toContain('super_sub_script');
+    });
+});
+
+// Defensive regression for marktext commit c0853f64 (PR #1421):
+// auto_link (`<https://x.com>`) and the GFM auto_link_extension
+// (`https://x.com` and `www.x.com` without angle brackets) are both wired
+// up in the new muya inline lexer, with the same boundary guard the
+// marktext fix introduced (`top && (pos === 0 || /[* _~(]{1}/...))`).
+describe('inline lexer — auto link (marktext c0853f64)', () => {
+    it('parses angle-bracket autolink as auto_link', () => {
+        const types = topTypes('<https://example.com>');
+        expect(types, `tokens: ${JSON.stringify(types)}`).toContain('auto_link');
+    });
+
+    it('parses bare URL as auto_link_extension (GFM)', () => {
+        const types = topTypes('https://example.com/path');
+        expect(types, `tokens: ${JSON.stringify(types)}`).toContain('auto_link_extension');
+    });
+
+    it('parses bare www URL as auto_link_extension', () => {
+        const types = topTypes('www.example.com');
+        expect(types, `tokens: ${JSON.stringify(types)}`).toContain('auto_link_extension');
+    });
+
+    it('does not start an extension autolink inside a word', () => {
+        // The boundary guard requires the char before to be one of [* _~(]
+        // or the start of input. `xhttps://...` should not autolink.
+        const types = topTypes('xhttps://example.com');
+        expect(types, `tokens: ${JSON.stringify(types)}`).not.toContain('auto_link_extension');
+    });
+});
+
 // Defensive regression for marktext commit ad5ddbf9 (GFM example 558, PR #917):
 // the legacy muya parser used to drop the `"title"` portion of a link or image
 // destination. The new muya's `parseSrcAndTitle` in inlineRenderer/utils.ts

@@ -59,11 +59,11 @@ PR 分组对应方案第三节的 5 个系列：
 | d937fac0 | inline | inline 语法 | PR-2 | `pending` |
 | 9c2f6cb3 | inline | inline math 样式 | PR-2 | `pending` |
 | 6dfa7938 | inline | inline math selection | PR-2 | `pending` |
-| d9f64bab | inline | reference link 渲染 | PR-2 | `pending` |
-| b8e2cd82 | inline | inline html renderer | PR-2 | `pending` |
-| 962fdf35 | inline | heading emoji 偏移 | PR-2 | `pending` |
-| 8e32838b | inline | 上/下标 | PR-2 | `pending` |
-| c0853f64 | inline | auto link / extension | PR-2 | `pending` |
+| d9f64bab | inline | reference link 渲染 | PR-2a | `test-only`（lexer.ts:357 `labels.has(...)` 已就位；2 个回归测试） |
+| b8e2cd82 | inline | inline html renderer | PR-3 | `pending`（textRenderer 改动主要在 muya HTML 导出；与 stateToMarkdown 关系待评估） |
+| 962fdf35 | inline | heading emoji 偏移 | — | `skipped`（CSS-only，新仓样式体系自有 emoji 处理） |
+| 8e32838b | inline | 上/下标 | PR-2a | `test-only`（`super_sub_script` token + 渲染器已就位；3 个正负回归测试） |
+| c0853f64 | inline | auto link / extension | PR-2a | `test-only`（auto_link + auto_link_extension + 边界 guard 已就位；4 个回归测试） |
 | 1c42555a | block | 粘贴多行进 heading | PR-4 | `pending` |
 | dec7502e | block | setext heading | PR-2 | `pending` |
 | f00da152 | block | 嵌套块插表 crash | PR-2 | `pending` |
@@ -147,7 +147,7 @@ PR 分组对应方案第三节的 5 个系列：
 |---|---|---|---|
 | PR-1a | 6 | 4 | 67%（2 fixed + 2 verified-not-applicable，2 转 PR-3） |
 | PR-1b | 7 | 6 | 86%（1 fixed + 4 verified-not-applicable + 1 skipped；防御测试 15 个） |
-| PR-2 | 22 | 7 | 32%（2 fixed + 5 test-only；3 条转 PR-3/PR-4）|
+| PR-2 | 21 | 10 | 48%（2 fixed + 8 test-only；4 条转 PR-3/PR-4；1 skipped）|
 | PR-3 | 19 | 0 | 0% |
 | PR-4 | 13 | 0 | 0% |
 | PR-5 | 19+ | 0 | 0% |
