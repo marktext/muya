@@ -1,5 +1,38 @@
 # Changelog
 
+# [0.2.0] (2026-05-21)
+
+The marktext-muya backport batch. 22 PRs (#208–#230) brought the upstream marktext muya tree onto `@muyajs/core` end-to-end, with full test coverage on every change.
+
+### Features
+
+* footnote complete — block class + UI tool + click wiring + HTML backref ([#221](https://github.com/marktext/muya/pull/221))
+* reference link/image — markdown loading + round-trip + image domsrc ([#229](https://github.com/marktext/muya/pull/229))
+* `LinkTools` dispatch for `<a>`, reference link, markdown link ([#226](https://github.com/marktext/muya/pull/226))
+* `muya.getTOC()` public API ([#228](https://github.com/marktext/muya/pull/228))
+* `focus` / `blur` events + format cursor jump-to-end after applying bold/italic/etc. ([#225](https://github.com/marktext/muya/pull/225))
+* code block line numbers (`codeBlockLineNumbers` editor option) ([#219](https://github.com/marktext/muya/pull/219))
+* image small-image class + inline resize-bar suppression ([#224](https://github.com/marktext/muya/pull/224))
+* CommonMark 0.31 + GFM 0.29-gfm spec conformance infrastructure ([#218](https://github.com/marktext/muya/pull/218))
+* backport marktext muya parser test suites ([#220](https://github.com/marktext/muya/pull/220))
+
+### Bug Fixes
+
+* P0 crashes — `normalizeTable` row count, `loadImageAsync` failed cache ([#208](https://github.com/marktext/muya/pull/208))
+* XSS protections — `langInputContent`, hyperlinks, Mermaid, code block ([#209](https://github.com/marktext/muya/pull/209))
+* parser CommonMark/GFM correctness + regression baseline ([#212](https://github.com/marktext/muya/pull/212))
+* `stateToMarkdown` serialization baseline ([#213](https://github.com/marktext/muya/pull/213))
+* defensive inline regressions for bold+code, parens-in-dest ([#214](https://github.com/marktext/muya/pull/214))
+* backport marktext muya editor/cursor/IME/autopair/table fixes ([#211](https://github.com/marktext/muya/pull/211))
+* clipboard / paste / copy correctness ([#210](https://github.com/marktext/muya/pull/210), [#215](https://github.com/marktext/muya/pull/215), [#216](https://github.com/marktext/muya/pull/216), [#217](https://github.com/marktext/muya/pull/217))
+* `EventCenter` listener leak + once-listener iteration mutation ([#230](https://github.com/marktext/muya/pull/230))
+
+### Internal
+
+* test coverage 1 → 386 tests (43 files)
+* conformance baseline locked at CommonMark 87.7% / GFM 86.3%; regression-gated by `expected-failures.json`
+* residuals cleanup — XSS assessment + post-refactor split + skipped tags ([#223](https://github.com/marktext/muya/pull/223), [#227](https://github.com/marktext/muya/pull/227))
+
 # [0.1.0](https://github.com/marktext/muya/compare/v0.0.39...v0.1.0) (2026-05-20)
 
 
