@@ -23,7 +23,7 @@ Run from repo root (Turbo fans out to packages):
 - `pnpm check-circular` — `madge --circular packages/core/src/index.ts`. CI enforces this; do not introduce circular deps.
 - `pnpm release <version>` — `release-it` cuts a release end-to-end: bumps versions in root + workspace `package.json`s, prepends a section to `CHANGELOG.md` (angular conventional-changelog preset), commits, tags, pushes, and runs `pnpm publish` on `packages/core` via `@release-it-plugins/workspaces` (`publish: true`). npm 2FA is interactive — a browser auth window opens during the publish step.
 
-Engines: Node ≥18 for the lib, **Node ≥20 for releases** (`@release-it/conventional-changelog@11` requires it). pnpm ≥8.5 (pinned to `pnpm@10.22.0`). Build target is `chrome70`.
+Engines: Node ≥18 for the lib, **Node ≥20.19, ≥22.13, or ≥24 for releases** (`@release-it/conventional-changelog@11` declares `node: ^20.19.0 || ^22.13.0 || >=24.0.0`, so older 20.x / early 22.x will fail). pnpm ≥8.5 (pinned to `pnpm@10.22.0`). Build target is `chrome70`.
 
 ## Architecture
 
