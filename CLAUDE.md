@@ -21,9 +21,9 @@ Run from repo root (Turbo fans out to packages):
 - `pnpm lint:types` — `tsc --noEmit` per package via Turbo.
 - `pnpm lint:css` — Stylelint over all CSS.
 - `pnpm check-circular` — `madge --circular packages/core/src/index.ts`. CI enforces this; do not introduce circular deps.
-- `pnpm release` — `release-it` (conventional changelog + workspaces plugin). Publishing is `pnpm -r publish` after `pnpm build`.
+- `pnpm release <version>` — `release-it` cuts a release end-to-end: bumps versions in root + workspace `package.json`s, prepends a section to `CHANGELOG.md` (angular conventional-changelog preset), commits, tags, pushes, and runs `pnpm publish` on `packages/core` via `@release-it-plugins/workspaces` (`publish: true`). npm 2FA is interactive — a browser auth window opens during the publish step.
 
-Engines: Node ≥18, pnpm ≥8.5 (pinned to `pnpm@10.22.0`). Build target is `chrome70`.
+Engines: Node ≥18 for the lib, **Node ≥20 for releases** (`@release-it/conventional-changelog@11` requires it). pnpm ≥8.5 (pinned to `pnpm@10.22.0`). Build target is `chrome70`.
 
 ## Architecture
 
@@ -76,3 +76,13 @@ Each subfolder is a floating tool/menu (inline format toolbar, image tools, para
     - Style: 4-space indent, semicolons required, React rules disabled, Markdown linting disabled.
 - **Madge** circular-dep check (`pnpm check-circular`) runs in CI — adding a circular import will fail the build.
 - Test files (`*.test.ts`, `*.spec.ts`) and `vite.config.ts` are excluded from the strict TS lint rules above.
+
+## Release pipeline
+
+A few non-obvious wiring details around `pnpm release`:
+
+- **`.release-it.json`** keeps the top-level `npm: false` (root package is `private: true`) and offloads publishing to `@release-it-plugins/workspaces` with `publish: true`. The workspaces glob is `packages/*`; sibling stubs without a `package.json` (`packages/facade`, `packages/findReplace`) are silently skipped.
+- **Conventional-changelog preset** is configured as `{ "name": "angular" }` (object form required by `@release-it/conventional-changelog@11`); the string shorthand fails. `conventional-changelog-angular` is pinned as a root devDependency so the ESM preset loader can resolve it under pnpm’s isolated layout — don’t drop it.
+- **GitHub release** is created out-of-band with `gh release create` (`github.release` is `false` in the config), so the release does not require `GITHUB_TOKEN`. Extract the new section from `CHANGELOG.md` with `awk` and pass `--notes-file`.
+- **Recovering from a half-failed run**: if `pnpm release` succeeds through `git push` but the npm upload errors (EPIPE, OTP timeout, network), the version bump and tag are already on origin. Retry just the upload with `pnpm --filter @muyajs/core publish --tag latest --access public --no-git-checks`. Do NOT re-run `pnpm release` — it would try to bump the version again.
+- **`vite-plugin-dts@5`** (transitive via `unplugin-dts`) uses `outDirs` (plural), not `outDir`. `packages/core/vite.config.ts` relies on this to emit declarations into `lib/types/`, which is the path `packages/core/package.json`'s `publishConfig.exports[*].types` points to. If you ever see `lib/index.d.ts` appearing directly under `lib/`, the option name has regressed.

@@ -80,15 +80,38 @@ pnpm run dev
 pnpm build
 ```
 
-## publish
+## Publishing
+
+Releases of `@muyajs/core` are driven by [release-it](https://github.com/release-it/release-it) with `@release-it-plugins/workspaces` and `@release-it/conventional-changelog` (angular preset). From a clean `master` on Node ≥20 (the changelog plugin requires it), with `npm whoami` showing an account that has write access to the `@muyajs` scope:
 
 ```sh
-# update version numbers.
-pnpm run release
-# build to generate `lib` folder.
-pnpm run build
-# publish to npm.
-pnpm -r publish
+# 1. Quality gates (also runs in CI)
+pnpm lint
+pnpm lint:types
+pnpm test
+pnpm check-circular
+
+# 2. Clean rebuild (lib/ is gitignored; never publish a stale build)
+rm -rf packages/core/lib
+pnpm build
+
+# 3. Cut the release (bumps versions, writes CHANGELOG, commits/tags/pushes, publishes to npm)
+pnpm release <version>     # e.g. 0.1.0
+```
+
+`pnpm release` will prompt for an npm 2FA one-time password by opening a browser auth flow during the `pnpm publish` step. If publishing breaks mid-flight (network/OTP/timeout) after the git tag is already pushed, retry just the upload — the version is already bumped:
+
+```sh
+pnpm --filter @muyajs/core publish --tag latest --access public --no-git-checks
+```
+
+GitHub releases are created separately with the `gh` CLI (release-it’s GitHub integration is disabled in `.release-it.json` to avoid needing a `GITHUB_TOKEN` env var):
+
+```sh
+VERSION=0.1.0
+awk -v v="$VERSION" '$0 ~ "^# \\["v"\\]"{flag=1; next} /^## \[/{flag=0} flag' \
+    CHANGELOG.md > /tmp/release-notes.md
+gh release create "v$VERSION" --title "v$VERSION" --notes-file /tmp/release-notes.md
 ```
 
 ## FAQ
