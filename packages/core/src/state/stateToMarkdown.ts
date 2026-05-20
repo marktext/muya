@@ -43,7 +43,16 @@ export interface IExportMarkdownOptions {
 }
 
 export default class ExportMarkdown {
-    private _listType: any[];
+    // Stack of currently-open list metas while serializing a tree (push on
+    // descent into bullet/order/task list, pop on ascent). The serializer
+    // reads `loose` / `marker` / `delimiter` / `start` from the top entry
+    // to render the correct bullet, indentation, and tightness.
+    private _listType: (
+        | IBulletListState['meta']
+        | IOrderListState['meta']
+        | ITaskListState['meta']
+    )[];
+
     private _isLooseParentList: boolean;
     private _listIndentation: string;
     private _listIndentationCount: number;
@@ -473,7 +482,11 @@ export default class ExportMarkdown {
     ) {
         const result = [];
         const listInfo = this._listType[this._listType.length - 1];
-        const { marker, delimiter, start } = listInfo;
+        // `listInfo` is one of three list-meta shapes (bullet / order / task).
+        // bullet & task carry `marker`; order carries `delimiter` + `start`.
+        // We discriminate on presence of `marker` to pick the right fields.
+        const marker = 'marker' in listInfo ? listInfo.marker : undefined;
+        const delimiter = 'delimiter' in listInfo ? listInfo.delimiter : undefined;
         const isUnorderedList = !!marker;
         const { children, name } = state;
         let itemMarker;
@@ -481,16 +494,19 @@ export default class ExportMarkdown {
         if (isUnorderedList) {
             itemMarker = marker ? `${marker} ` : '- ';
         }
-        else {
+        else if ('start' in listInfo) {
             // NOTE: GitHub and Bitbucket limit the list count to 99 but this is nowhere defined.
             //  We limit the number to 99 for Daring Fireball Markdown to prevent indentation issues.
-            let n = start;
+            let n = listInfo.start;
             if ((this._listIndentation === 'dfm' && n > 99) || n > 999999999)
                 n = 1;
 
             listInfo.start++;
 
             itemMarker = `${n}${delimiter || '.'} `;
+        }
+        else {
+            itemMarker = '- ';
         }
 
         // Subsequent paragraph indentation

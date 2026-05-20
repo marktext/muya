@@ -1,4 +1,4 @@
-import type { Doc, JSONOpList, Path } from 'ot-json1';
+import type { Doc, JSONOp, JSONOpList, Path } from 'ot-json1';
 import type { Muya } from '../muya';
 import type { TDiff } from '../utils';
 import type { TState } from './types';
@@ -38,7 +38,12 @@ class JSONState {
         this.setContent(stateOrMarkdown);
     }
 
-    apply(op: JSONOpList) {
+    apply(op: JSONOp) {
+        // ot-json1's noop is the literal `null`. `json1.type.apply` accepts it
+        // and returns the doc unchanged — short-circuit instead so the rest of
+        // the call site can treat `op` as definitely applied.
+        if (op === null)
+            return;
         this._state = json1.type.apply(
             this._state as unknown as Doc,
             op,
@@ -106,7 +111,7 @@ class JSONState {
         this._emitStateChange();
     }
 
-    dispatch(op: JSONOpList, source = 'user' /* user, api */) {
+    dispatch(op: JSONOp, source = 'user' /* user, api */) {
         const prevDoc = this.getState();
         this.apply(op);
         // TODO: remove doc in future
@@ -138,7 +143,19 @@ class JSONState {
         this._isGoing = true;
 
         requestAnimationFrame(() => {
-            const op = this._operationCache.reduce(json1.type.compose as any);
+            // Wrap compose in a lambda — `Array.prototype.reduce` passes
+            // (acc, current, index, array) to the callback, but
+            // `json1.type.compose` only accepts (op1, op2). Without the
+            // wrapper TS rejects the signature mismatch.
+            // `compose` returns JSONOp (= null | JSONOpList); when the cache
+            // contains at least one op the result is the composed list,
+            // never null. The reduce above runs only when _operationCache is
+            // non-empty (guarded by the requestAnimationFrame in
+            // `_emitStateChange`), and a non-empty cache always composes to
+            // a non-null op.
+            const op = this._operationCache.reduce(
+                (acc, curr) => json1.type.compose(acc, curr) as JSONOpList,
+            );
             const prevDoc = this.getState();
             this.apply(op);
             // TODO: remove doc in future

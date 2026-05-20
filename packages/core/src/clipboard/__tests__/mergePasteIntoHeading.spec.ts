@@ -1,5 +1,19 @@
+import type Content from '../../block/base/content';
+import type Parent from '../../block/base/parent';
+import type { TState } from '../../state/types';
 import { describe, expect, it } from 'vitest';
 import { mergePasteIntoHeading } from '../mergePasteIntoHeading';
+
+// Narrow casts shared by every test below. The helper under test only
+// touches `text` / `update()` on the anchor and `blockName` on the wrapper,
+// so the fake objects intentionally don't satisfy the full Content / Parent
+// surface — `as unknown as Content` (etc.) makes the assertion explicit.
+function asContent(block: FakeContent): Content {
+    return block as unknown as Content;
+}
+function asParentWithBlockName(blockName: string): Parent {
+    return { blockName } as unknown as Parent;
+}
 
 // Regression for marktext commit 1c42555a (#671):
 // "allow pasting multi-line text into a heading".
@@ -40,9 +54,9 @@ describe('mergePasteIntoHeading', () => {
         ];
 
         const remaining = mergePasteIntoHeading(
-            heading as any,
-            { blockName: 'atx-heading' } as any,
-            states as any,
+            asContent(heading),
+            asParentWithBlockName('atx-heading'),
+            states as TState[],
             { startOffset: 5, endOffset: 5 },
         );
 
@@ -59,9 +73,9 @@ describe('mergePasteIntoHeading', () => {
         ];
 
         const remaining = mergePasteIntoHeading(
-            heading as any,
-            { blockName: 'setext-heading' } as any,
-            states as any,
+            asContent(heading),
+            asParentWithBlockName('setext-heading'),
+            states as TState[],
             { startOffset: 5, endOffset: 5 },
         );
 
@@ -77,9 +91,9 @@ describe('mergePasteIntoHeading', () => {
         ];
 
         const remaining = mergePasteIntoHeading(
-            heading as any,
-            { blockName: 'atx-heading' } as any,
-            states as any,
+            asContent(heading),
+            asParentWithBlockName('atx-heading'),
+            states as TState[],
             { startOffset: 6, endOffset: 9 },
         );
 
@@ -95,9 +109,9 @@ describe('mergePasteIntoHeading', () => {
         ];
 
         const remaining = mergePasteIntoHeading(
-            para as any,
-            { blockName: 'paragraph' } as any,
-            states as any,
+            asContent(para),
+            asParentWithBlockName('paragraph'),
+            states as TState[],
             { startOffset: 3, endOffset: 3 },
         );
 
@@ -114,9 +128,9 @@ describe('mergePasteIntoHeading', () => {
         ];
 
         const remaining = mergePasteIntoHeading(
-            heading as any,
-            { blockName: 'atx-heading' } as any,
-            states as any,
+            asContent(heading),
+            asParentWithBlockName('atx-heading'),
+            states as TState[],
             { startOffset: 5, endOffset: 5 },
         );
 
@@ -129,8 +143,8 @@ describe('mergePasteIntoHeading', () => {
         const heading = content('Title');
 
         const remaining = mergePasteIntoHeading(
-            heading as any,
-            { blockName: 'atx-heading' } as any,
+            asContent(heading),
+            asParentWithBlockName('atx-heading'),
             [],
             { startOffset: 5, endOffset: 5 },
         );

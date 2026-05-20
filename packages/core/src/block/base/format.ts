@@ -5,13 +5,12 @@ import type {
     Token,
 } from '../../inlineRenderer/types';
 import type { ICursor } from '../../selection/types';
-import type { IBulletListState, IOrderListState } from '../../state/types';
+import type { IBulletListState, IListItemState, IOrderListState } from '../../state/types';
 import type { Nullable } from '../../types';
 import type { IImageInfo } from '../../utils/image';
 import type AtxHeading from '../commonMark/atxHeading';
 import type BulletList from '../commonMark/bulletList';
 import type SetextHeading from '../commonMark/setextHeading';
-import type Parent from './parent';
 import Content from '../../block/base/content';
 import { ScrollPage } from '../../block/scrollPage';
 import {
@@ -902,8 +901,14 @@ class Format extends Content {
                                 text: matches[2],
                             };
                         }
+                        else if (node.isParent()) {
+                            return node.getState();
+                        }
                         else {
-                            return (node as any).getState();
+                            // Content leaves under a list item don't carry a
+                            // full state, but in practice every nested item
+                            // is a Parent at runtime (paragraph / inner-list).
+                            return { name: 'paragraph', text: '' };
                         }
                     }),
                 },
@@ -941,8 +946,9 @@ class Format extends Content {
                 };
                 const offset = list.offset(listItem);
                 list.forEachAt(offset + 1, undefined, (node) => {
-                    bulletListState.children.push((node as any).getState());
-                    (node as Parent).remove();
+                    if (node.isParent())
+                        bulletListState.children.push(node.getState() as IListItemState);
+                    node.remove();
                 });
 
                 const bulletList = ScrollPage.loadBlock(bulletListState.name).create(

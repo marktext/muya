@@ -28,12 +28,13 @@ export default function referenceLink(
     const backlashStart = start + MARKER.length + anchor.length;
     const content = [
         ...children.reduce((acc: VNode[], to: Token) => {
-            const chunk: VNode[] = (this as any)[snakeToCamel(to.type)]({
+            // Original passed `className` here too but receivers read
+            // `outerClass` — see PR note in delEmStrongFactory.ts.
+            const chunk: VNode[] = this.dispatch(snakeToCamel(to.type), {
                 h,
                 cursor,
                 block,
                 token: to,
-                className,
             });
 
             return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];

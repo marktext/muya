@@ -1,3 +1,4 @@
+import type Content from '../../block/base/content';
 import type { Muya } from '../../muya';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -31,12 +32,14 @@ function selectionOver(
     end: number,
     blockName: string = 'paragraph.content',
 ) {
+    // The fake block only exposes the two fields getClipboardData reads.
+    const block = { text, blockName } as unknown as Content;
     return {
         isSelectionInSameBlock: true,
         anchor: { offset: begin },
         focus: { offset: end },
-        anchorBlock: { text, blockName } as any,
-        focusBlock: { text, blockName } as any,
+        anchorBlock: block,
+        focusBlock: block,
     };
 }
 

@@ -1,7 +1,18 @@
 // @vitest-environment happy-dom
 
+import type { ImageToken, LinkToken, StrongEmToken, SuperSubScriptToken, Token } from '../types';
 import { describe, expect, it } from 'vitest';
 import { tokenizer } from '../lexer';
+
+// Narrowing helpers — extract a specific token kind out of the inline Token
+// union by literal `type` field. Mirrors the runtime `find(t => t.type === X)`
+// shape so tests can drop their `as any` casts.
+function findByType<TType extends Token['type']>(
+    tokens: Token[],
+    type: TType,
+): Extract<Token, { type: TType }> | undefined {
+    return tokens.find(t => t.type === type) as Extract<Token, { type: TType }> | undefined;
+}
 
 // Defensive regression tests for the CommonMark 0.29 spec examples that the
 // legacy marktext inline lexer used to fail before commit 57cd04c5 (Apr 2019,
@@ -94,7 +105,7 @@ describe('inline lexer — reference link (marktext d9f64bab)', () => {
 describe('inline lexer — superscript/subscript (marktext 8e32838b)', () => {
     it('parses ^foo^ as a super_sub_script token with `^` marker', () => {
         const tokens = tokenizer('text^sup^');
-        const sup = tokens.find(t => t.type === 'super_sub_script') as any;
+        const sup = findByType(tokens, 'super_sub_script') as SuperSubScriptToken;
         expect(sup, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
         expect(sup.marker).toBe('^');
         expect(sup.content).toBe('sup');
@@ -102,7 +113,7 @@ describe('inline lexer — superscript/subscript (marktext 8e32838b)', () => {
 
     it('parses ~bar~ as a super_sub_script token with `~` marker', () => {
         const tokens = tokenizer('text~sub~');
-        const sub = tokens.find(t => t.type === 'super_sub_script') as any;
+        const sub = findByType(tokens, 'super_sub_script') as SuperSubScriptToken;
         expect(sub, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
         expect(sub.marker).toBe('~');
         expect(sub.content).toBe('sub');
@@ -151,7 +162,7 @@ describe('inline lexer — auto link (marktext c0853f64)', () => {
 describe('inline lexer — GFM link/image title (marktext ad5ddbf9)', () => {
     it('extracts title from a link with double-quoted title', () => {
         const tokens = tokenizer('[text](http://example.com "Example title")');
-        const link = tokens.find(t => t.type === 'link') as any;
+        const link = findByType(tokens, 'link') as LinkToken;
         expect(link).toBeDefined();
         expect(link.href).toBe('http://example.com');
         expect(link.title).toBe('Example title');
@@ -159,7 +170,7 @@ describe('inline lexer — GFM link/image title (marktext ad5ddbf9)', () => {
 
     it('extracts title from a link with single-quoted title', () => {
         const tokens = tokenizer(`[text](http://example.com 'Example title')`);
-        const link = tokens.find(t => t.type === 'link') as any;
+        const link = findByType(tokens, 'link') as LinkToken;
         expect(link).toBeDefined();
         expect(link.href).toBe('http://example.com');
         expect(link.title).toBe('Example title');
@@ -167,7 +178,7 @@ describe('inline lexer — GFM link/image title (marktext ad5ddbf9)', () => {
 
     it('extracts title from an image', () => {
         const tokens = tokenizer('![alt](http://example.com/x.png "Pic title")');
-        const image = tokens.find(t => t.type === 'image') as any;
+        const image = findByType(tokens, 'image') as ImageToken;
         expect(image).toBeDefined();
         expect(image.src).toBe('http://example.com/x.png');
         expect(image.title).toBe('Pic title');
@@ -175,7 +186,7 @@ describe('inline lexer — GFM link/image title (marktext ad5ddbf9)', () => {
 
     it('leaves title empty when the destination has no title', () => {
         const tokens = tokenizer('[text](http://example.com)');
-        const link = tokens.find(t => t.type === 'link') as any;
+        const link = findByType(tokens, 'link') as LinkToken;
         expect(link).toBeDefined();
         expect(link.href).toBe('http://example.com');
         expect(link.title).toBe('');
@@ -199,7 +210,7 @@ describe('inline lexer — repeated bold + inline_code (marktext d937fac0 / #107
         expect(strongs.length, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBe(3);
         // And each strong must contain a code span, not literal text.
         for (const strong of strongs) {
-            const innerTypes = (strong as any).children.map((c: any) => c.type);
+            const innerTypes = (strong as StrongEmToken).children.map(c => c.type);
             expect(innerTypes).toContain('inline_code');
         }
     });
@@ -220,14 +231,14 @@ describe('inline lexer — repeated bold + inline_code (marktext d937fac0 / #107
 describe('inline lexer — link / image dest with parens (marktext 57af8304 / #1169)', () => {
     it('parses image dest containing balanced parens correctly', () => {
         const tokens = tokenizer('![alt](path/to/(file).png)');
-        const image = tokens.find(t => t.type === 'image') as any;
+        const image = findByType(tokens, 'image') as ImageToken;
         expect(image, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
         expect(image.src).toBe('path/to/(file).png');
     });
 
     it('parses link dest containing balanced parens correctly', () => {
         const tokens = tokenizer('[text](path/to/(file).html)');
-        const link = tokens.find(t => t.type === 'link') as any;
+        const link = findByType(tokens, 'link') as LinkToken;
         expect(link, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
         expect(link.href).toBe('path/to/(file).html');
     });
@@ -239,12 +250,14 @@ describe('inline lexer — link / image dest with parens (marktext 57af8304 / #1
         // `findClosingBracket` walks the destination to the matching `)` so
         // the image stops at `first.png` and the rest stays as following text.
         const tokens = tokenizer('see ![alt](first.png) and also (parens) here');
-        const image = tokens.find(t => t.type === 'image') as any;
+        const image = findByType(tokens, 'image') as ImageToken;
         expect(image, `tokens: ${JSON.stringify(tokens.map(t => t.type))}`).toBeDefined();
         expect(image.src).toBe('first.png');
         // The trailing text — including the unrelated `(parens)` group — must
-        // remain outside the image token.
-        const joined = tokens.map(t => (t as any).raw ?? '').join('');
+        // remain outside the image token. Every Token in our union carries a
+        // `raw` field; `?? ''` defends against the rare extension token type
+        // that may omit it.
+        const joined = tokens.map(t => t.raw ?? '').join('');
         expect(joined).toContain('and also (parens) here');
         expect(image.raw).not.toContain('parens');
     });

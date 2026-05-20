@@ -12,15 +12,26 @@ import Format from '../format';
 // `this.muya.eventCenter.emit`, so a structurally-typed fake `this` is
 // enough — no Muya bootstrap needed (same pattern as `formatCursor.spec`).
 
+interface IFakeFormatThis {
+    text: string;
+    setCursor: ReturnType<typeof vi.fn>;
+    muya: { eventCenter: { emit: ReturnType<typeof vi.fn> } };
+}
+
+// `Format.prototype.unlink` is a real instance method (declared on the class)
+// but isn't picked up by the public Format type when accessed via prototype.
+// Cast to a record of methods to call it with a structural fake.
+interface FormatProtoUnlink { unlink: (this: IFakeFormatThis, info: { range: { start: number; end: number } | null; text: string }) => void }
+
 function applyUnlink(text: string, range: { start: number; end: number }, anchorText: string) {
     const emit = vi.fn();
     const setCursor = vi.fn();
-    const fakeThis = {
+    const fakeThis: IFakeFormatThis = {
         text,
         setCursor,
         muya: { eventCenter: { emit } },
-    } as any;
-    (Format.prototype as any).unlink.call(fakeThis, { range, text: anchorText });
+    };
+    (Format.prototype as unknown as FormatProtoUnlink).unlink.call(fakeThis, { range, text: anchorText });
     return { text: fakeThis.text as string, emit, setCursor };
 }
 
@@ -70,12 +81,12 @@ describe('format.unlink — replaces link source with visible anchor', () => {
         const src = 'untouched';
         const emit = vi.fn();
         const setCursor = vi.fn();
-        const fakeThis = {
+        const fakeThis: IFakeFormatThis = {
             text: src,
             setCursor,
             muya: { eventCenter: { emit } },
-        } as any;
-        (Format.prototype as any).unlink.call(fakeThis, { range: null, text: 'whatever' });
+        };
+        (Format.prototype as unknown as FormatProtoUnlink).unlink.call(fakeThis, { range: null, text: 'whatever' });
         expect(fakeThis.text).toBe(src);
         expect(setCursor).not.toHaveBeenCalled();
         expect(emit).not.toHaveBeenCalled();

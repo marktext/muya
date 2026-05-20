@@ -1,7 +1,27 @@
 // @vitest-environment happy-dom
+import type Parent from '../../../block/base/parent';
+import type { IConstructor } from '../../../block/types';
+import type { Muya } from '../../../index';
 import { describe, expect, it, vi } from 'vitest';
 import { ScrollPage } from '../../../block/scrollPage';
 import { replaceBlockByLabel } from '../config';
+
+// Loose mock-block shape the tests build via `makeFakeBlock` /
+// `makeFakeOriginBlock`. These don't satisfy the full Parent surface — the
+// production helper only touches the methods listed here, so we keep the
+// surface narrow and cast at the boundary instead of dragging `any` in.
+interface IFakeBlockState {
+    name: string;
+    meta?: Record<string, unknown>;
+    children: IFakeBlockState[];
+    text?: string;
+}
+interface IFakeBlock {
+    state?: IFakeBlockState;
+    parent?: { insertAfter: ReturnType<typeof vi.fn> };
+    replaceWith: ReturnType<typeof vi.fn>;
+    firstContentInDescendant?: () => { text: string; setCursor: ReturnType<typeof vi.fn> };
+}
 
 // Regression for marktext 8891287b "fix paragraph turn into list bug (#1025)".
 //
@@ -27,7 +47,7 @@ import { replaceBlockByLabel } from '../config';
 
 interface ICapturedCreate {
     label: string;
-    state: any;
+    state: IFakeBlockState;
 }
 
 function setupCreateSpy(): {
@@ -37,14 +57,16 @@ function setupCreateSpy(): {
     const captured: ICapturedCreate[] = [];
     const realLoadBlock = ScrollPage.loadBlock.bind(ScrollPage);
     const spy = vi.spyOn(ScrollPage, 'loadBlock').mockImplementation((label: string) => {
-        return {
-            create: (_muya: any, state: any) => {
+        const ctor = {
+            blockName: label,
+            create: (_muya: Muya, state: IFakeBlockState) => {
                 captured.push({ label, state });
                 // Return a fake block with the surface `replaceBlockByLabel`
                 // touches afterwards (`replaceWith` / `firstContentInDescendant`).
                 return makeFakeBlock(state);
             },
-        } as any;
+        };
+        return ctor as unknown as IConstructor<Parent>;
     });
 
     return {
@@ -57,8 +79,8 @@ function setupCreateSpy(): {
     };
 }
 
-function makeFakeBlock(state: any): any {
-    const fake: any = {
+function makeFakeBlock(state: IFakeBlockState): IFakeBlock {
+    return {
         state,
         parent: { insertAfter: vi.fn() },
         replaceWith: vi.fn(),
@@ -67,16 +89,15 @@ function makeFakeBlock(state: any): any {
             setCursor: vi.fn(),
         }),
     };
-    return fake;
 }
 
-function makeFakeOriginBlock(): any {
+function makeFakeOriginBlock(): Parent {
     return {
         replaceWith: vi.fn(),
-    };
+    } as unknown as Parent;
 }
 
-function makeFakeMuya(): any {
+function makeFakeMuya(): Muya {
     return {
         options: {
             preferLooseListItem: false,
@@ -84,7 +105,7 @@ function makeFakeMuya(): any {
             orderListDelimiter: '.',
             frontmatterType: '---',
         },
-    };
+    } as unknown as Muya;
 }
 
 describe('replaceBlockByLabel — paragraph→list keeps text verbatim (marktext 8891287b)', () => {

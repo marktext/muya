@@ -1,7 +1,14 @@
 // @vitest-environment happy-dom
 
+import type Renderer from '../index';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import loadImageAsync from '../loadImageAsync';
+
+// Narrow cast for the fake renderer used in every test below — it only
+// implements the two Map fields loadImageAsync touches.
+function asRenderer(r: FakeRenderer | { loadImageMap: Map<string, unknown>; urlMap: Map<string, string> }): Renderer {
+    return r as unknown as Renderer;
+}
 
 vi.mock('../../../utils/image', () => ({
     loadImage: vi.fn(() => new Promise(() => {})), // never resolves; we only test the sync decision
@@ -45,7 +52,7 @@ describe('loadImageAsync — failed cache should retry', () => {
         });
 
         const out = loadImageAsync.call(
-            r as unknown as Parameters<typeof loadImageAsync>[0] extends never ? never : any,
+            asRenderer(r),
             { isUnknownType: false, src: 'https://example.com/a.png' },
             {},
         );
@@ -68,7 +75,7 @@ describe('loadImageAsync — failed cache should retry', () => {
         });
 
         const out = loadImageAsync.call(
-            r as any,
+            asRenderer(r),
             { isUnknownType: false, src: 'https://example.com/b.png' },
             {},
         );
@@ -85,7 +92,7 @@ describe('loadImageAsync — failed cache should retry', () => {
         const r = makeRenderer();
 
         loadImageAsync.call(
-            r as any,
+            asRenderer(r),
             { isUnknownType: false, src: 'https://example.com/c.png' },
             {},
         );
@@ -111,7 +118,7 @@ describe('loadImageAsync — small image class on first load', () => {
 
     async function runLoad(loadResult: { url: string; width: number; height: number }) {
         const { loadImage } = await import('../../../utils/image');
-        (loadImage as any).mockResolvedValueOnce(loadResult);
+        vi.mocked(loadImage).mockResolvedValueOnce(loadResult as unknown as Awaited<ReturnType<typeof loadImage>>);
 
         const r = {
             loadImageMap: new Map(),
@@ -119,7 +126,7 @@ describe('loadImageAsync — small image class on first load', () => {
         };
 
         const { id } = loadImageAsync.call(
-            r as any,
+            asRenderer(r),
             { isUnknownType: false, src: 'https://example.com/fresh.png' },
             {},
         );

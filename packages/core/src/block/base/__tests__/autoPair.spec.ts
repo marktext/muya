@@ -51,12 +51,16 @@ function invokeAutoPair(
     cursorOffset: number,
     flags: { isInInlineMath?: boolean; isInInlineCode?: boolean; type?: string } = {},
 ) {
+    // `Content.prototype.autoPair` is a real instance method but the
+    // structural fakeThis doesn't satisfy the full Content surface. The
+    // cursor params are `{ offset }`-shaped; the production type accepts
+    // `INodeOffset | null` so the structural object lines up if cast to it.
     return Content.prototype.autoPair.call(
-        fakeThis as any,
+        fakeThis as unknown as Content,
         event,
         newText,
-        { offset: cursorOffset } as any,
-        { offset: cursorOffset } as any,
+        { offset: cursorOffset },
+        { offset: cursorOffset },
         flags.isInInlineMath ?? false,
         flags.isInInlineCode ?? false,
         flags.type ?? 'format',

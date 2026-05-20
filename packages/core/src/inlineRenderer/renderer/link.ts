@@ -120,12 +120,14 @@ export default function link(
                     },
                     [
                         ...token.children.reduce((acc: VNode[], to: Token) => {
-                            const chunk = (this as any)[snakeToCamel(to.type)]({
+                            // The original passed a `className` field too, but
+                            // receivers read `outerClass` — so it was silently
+                            // dropped under the previous `as any` cast.
+                            const chunk = this.dispatch(snakeToCamel(to.type), {
                                 h,
                                 cursor,
                                 block,
                                 token: to,
-                                className,
                             });
                             return Array.isArray(chunk)
                                 ? [...acc, ...chunk]
@@ -165,12 +167,13 @@ export default function link(
         return [
             ...firstBracket,
             ...token.children.reduce((acc: VNode[], to: Token) => {
-                const chunk = (this as any)[snakeToCamel(to.type)]({
+                // Original passed `className` here too but receivers read
+                // `outerClass` — see PR note above.
+                const chunk = this.dispatch(snakeToCamel(to.type), {
                     h,
                     cursor,
                     block,
                     token: to,
-                    className,
                 });
 
                 return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk];

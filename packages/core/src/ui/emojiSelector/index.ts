@@ -59,7 +59,7 @@ export class EmojiSelector extends BaseScrollFloat {
             const text = emojiText.trim();
             if (text) {
                 this.renderObj = this._emoji.search(text);
-                const cb: any = (item: EmojiType) => {
+                const cb: (item: EmojiType) => void = (item) => {
                     if (block && block.setEmoji)
                         block.setEmoji(item.aliases[0]);
                 };

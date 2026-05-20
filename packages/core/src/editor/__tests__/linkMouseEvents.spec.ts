@@ -31,9 +31,15 @@ afterEach(() => {
     document.body.innerHTML = '';
 });
 
-function captureEmits(eventCenter: EventCenter) {
-    const emits: any[] = [];
-    eventCenter.subscribe('muya-link-tools', (payload: any) => emits.push(payload));
+interface ILinkToolsPayload {
+    reference: HTMLElement;
+    linkInfo?: { href?: string; raw?: string };
+    type: 'preview' | 'edit';
+}
+
+function captureEmits(eventCenter: EventCenter): ILinkToolsPayload[] {
+    const emits: ILinkToolsPayload[] = [];
+    eventCenter.subscribe('muya-link-tools', (payload: ILinkToolsPayload) => emits.push(payload));
     return emits;
 }
 
@@ -56,7 +62,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         link.dataset.raw = '[hi](https://x.com)';
         link.dataset.start = '0';
         link.dataset.end = '19';
-        (link as any).href = 'https://x.com';
+        (link as HTMLElement & { href: string }).href = 'https://x.com';
         link.textContent = 'hi';
         domNode.appendChild(marker);
         domNode.appendChild(link);
@@ -189,7 +195,7 @@ describe('linkMouseEvents — dispatches muya-link-tools on hover', () => {
         const link = document.createElement('span');
         link.classList.add('mu-inline-rule', 'mu-link');
         link.dataset.raw = '[hi](https://x.com)';
-        (link as any).href = 'https://x.com';
+        (link as HTMLElement & { href: string }).href = 'https://x.com';
         // Inner spans like emphasis/strong that text children get wrapped in.
         const innerA = document.createElement('em');
         innerA.textContent = 'hi-em';

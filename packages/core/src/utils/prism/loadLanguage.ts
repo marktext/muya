@@ -54,7 +54,13 @@ export function transformAliasToOrigin(langs: string[]) {
     return result;
 }
 
-function initLoadLanguage(Prism: any) {
+// Minimal Prism surface this module needs — full Prism typings live in
+// prismjs's external @types package, but we only read `languages` here.
+interface IPrismLike {
+    languages: Record<string, unknown>;
+}
+
+function initLoadLanguage(Prism: IPrismLike) {
     return async function loadLanguages(langs?: string[] | string) {
     // If no argument is passed, load all components
         if (!langs)

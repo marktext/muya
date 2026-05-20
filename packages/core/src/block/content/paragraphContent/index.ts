@@ -3,7 +3,12 @@ import type { ImageToken, LinkToken, Token } from '../../../inlineRenderer/types
 import type { ICursor } from '../../../selection/types';
 import type {
     IBlockQuoteState,
+    IBulletListState,
+    IListItemState,
+    IOrderListState,
     ITaskListItemState,
+    ITaskListState,
+    TState,
 } from '../../../state/types';
 import type { Nullable } from '../../../types';
 import type Content from '../../base/content';
@@ -18,6 +23,12 @@ import { isKeyboardEvent, isLengthEven } from '../../../utils';
 import logger from '../../../utils/logger';
 import Format from '../../base/format';
 import { ScrollPage } from '../../scrollPage';
+
+// `_unindentListItem` / `_indentListItem` walk parents typed as the loose
+// `Parent` super-class; at runtime the relevant nodes are always one of
+// these three list kinds, which carry a `meta` field with the bullet/order
+// shape. Narrow once instead of casting per access.
+type TListBlock = BulletList | OrderList | TaskList;
 
 enum UnindentType {
     INDENT,
@@ -189,18 +200,24 @@ class ParagraphContent extends Format {
             && isLengthEven(tableMatch[2])
         ) {
             const tableHeader = parseTableHeader(this.text);
-            const tableBlock = ScrollPage.loadBlock('table').createWithHeader(
-                this.muya,
-                tableHeader,
-            );
+            // Table extends the base `create` shape with a static
+            // `createWithHeader(muya, header)` factory; the registry-level
+            // IConstructor doesn't surface it.
+            const tableCtor = ScrollPage.loadBlock('table') as unknown as {
+                createWithHeader: (muya: Muya, header: string[]) => Parent;
+            };
+            const tableBlock = tableCtor.createWithHeader(this.muya, tableHeader);
 
             this.parent!.replaceWith(tableBlock);
 
-            // Set cursor at the first cell of second row.
-            tableBlock.firstChild
-                .find(1)
-                .firstContentInDescendant()
-                .setCursor(0, 0, true);
+            // Set cursor at the first cell of second row. The runtime chain
+            // is: table → table-body (Parent.firstChild) → row (find(1)) →
+            // first cell content (firstContentInDescendant). Asserted as
+            // Parent at each container hop since createWithHeader guarantees
+            // a populated structure.
+            const tableBody = tableBlock.firstChild as Parent;
+            const secondRow = tableBody.find(1) as Parent;
+            secondRow.firstContentInDescendant()?.setCursor(0, 0, true);
         }
         else if (tagName && VOID_HTML_TAGS.every(tag => tag !== tagName)) {
             const state = {
@@ -254,7 +271,12 @@ class ParagraphContent extends Format {
                 };
                 const offset = blockQuote!.offset(parent!);
                 blockQuote!.forEachAt(offset + 1, undefined, (node) => {
-                    newBlockState.children.push((node as any).getState());
+                    // forEachAt's callback gets `TreeNode` but the runtime
+                    // children of a blockquote are always Parent-derived
+                    // blocks (paragraph, list, …). isParent() narrows so
+                    // `getState()` (defined on Parent, not TreeNode) resolves.
+                    if (node.isParent())
+                        newBlockState.children.push(node.getState());
                     node.remove();
                 });
                 const newBlockQuote = ScrollPage.loadBlock(newBlockState.name).create(
@@ -308,14 +330,15 @@ class ParagraphContent extends Format {
 
                     default: {
                         const newParagraph = parent!.clone() as Paragraph;
-                        const newListState = {
+                        const newListState: IBulletListState | IOrderListState | ITaskListState = {
                             name: list.blockName,
                             meta: { ...list.meta },
-                            children: [] as any,
-                        };
+                            children: [],
+                        } as IBulletListState | IOrderListState | ITaskListState;
                         const offset = list.offset(listItem);
                         list.forEachAt(offset + 1, undefined, (node) => {
-                            newListState.children.push((node as any).getState());
+                            if (node.isParent())
+                                (newListState.children as TState[]).push(node.getState());
                             node.remove();
                         });
                         const newList = ScrollPage.loadBlock(newListState.name).create(
@@ -331,20 +354,21 @@ class ParagraphContent extends Format {
                 }
             }
             else {
-                const newListItemState = {
+                const newListItemState: IListItemState | ITaskListItemState = {
                     name: listItem.blockName,
-                    children: [] as any,
-                };
+                    children: [],
+                } as IListItemState | ITaskListItemState;
 
                 if (listItem.blockName === 'task-list-item') {
-                    (newListItemState as unknown as ITaskListItemState).meta = {
+                    (newListItemState as ITaskListItemState).meta = {
                         checked: false,
                     };
                 }
 
                 const offset = listItem.offset(parent!);
                 listItem.forEachAt(offset, undefined, (node) => {
-                    newListItemState.children.push((node as any).getState());
+                    if (node.isParent())
+                        newListItemState.children.push(node.getState());
                     node.remove();
                 });
 
@@ -588,13 +612,18 @@ class ParagraphContent extends Format {
             const newListItem = listItem.clone() as Parent;
             listParent.parent!.insertAfter(newListItem, listParent);
 
+            // At runtime, when unindentListItem runs, the surrounding `list`
+            // is always one of the three list block kinds — narrow once
+            // so `meta` resolves without `as any`.
+            const listAsList = list as TListBlock;
+
             if (
                 (listItem.next || list.next)
                 && newListItem.lastChild!.blockName !== list.blockName
             ) {
                 const state = {
                     name: list.blockName,
-                    meta: { ...(list as any).meta },
+                    meta: { ...listAsList.meta },
                     children: [],
                 };
                 const childList = ScrollPage.loadBlock(state.name).create(
@@ -608,10 +637,12 @@ class ParagraphContent extends Format {
                 const offset = list.offset(listItem);
 
                 list.forEachAt(offset + 1, undefined, (node) => {
-                    (newListItem.lastChild as Parent).append(
-                        (node as any).clone(),
-                        'user',
-                    );
+                    if (node.isParent()) {
+                        (newListItem.lastChild as Parent).append(
+                            node.clone() as Parent,
+                            'user',
+                        );
+                    }
                     node.remove();
                 });
             }
@@ -619,10 +650,12 @@ class ParagraphContent extends Format {
             if (list.next) {
                 const offset = listParent.offset(list);
                 listParent.forEachAt(offset + 1, undefined, (node) => {
-                    (newListItem.lastChild as Parent).append(
-                        (node as any).clone(),
-                        'user',
-                    );
+                    if (node.isParent()) {
+                        (newListItem.lastChild as Parent).append(
+                            node.clone() as Parent,
+                            'user',
+                        );
+                    }
                     node.remove();
                 });
             }
@@ -664,7 +697,7 @@ class ParagraphContent extends Format {
         if (!newList || !/ol|ul/.test(newList.tagName)) {
             const state = {
                 name: list.blockName,
-                meta: { ...(list as any).meta },
+                meta: { ...(list as TListBlock).meta },
                 children: [listItem.getState()],
             };
             newList = ScrollPage.loadBlock(state.name).create(muya, state);
@@ -676,10 +709,13 @@ class ParagraphContent extends Format {
 
         listItem.remove();
 
-        const cursorBlock = ((newList as Parent).lastChild as any)
-            .find(offset)
-            .firstContentInDescendant();
-        cursorBlock.setCursor(start.offset, end.offset, true);
+        // newList.lastChild is the just-appended list-item (a Parent) at
+        // runtime; find/firstContentInDescendant live on Parent. find()
+        // returns the matched TreeNode (which is itself a Parent at runtime
+        // for nested-list cases).
+        const matched = ((newList as Parent).lastChild as Parent).find(offset) as Parent | undefined;
+        const cursorBlock = matched?.firstContentInDescendant();
+        cursorBlock?.setCursor(start.offset, end.offset, true);
     }
 
     override insertTab() {

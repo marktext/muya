@@ -11,7 +11,9 @@ import { buildRegexValue } from '../search';
 // expansion when users rely on regex replace.
 function makeMatch(matchText: string, subMatches: string[]): IMatch {
     return {
-        block: null as any,
+        // `buildRegexValue` only reads .match / .subMatches; the `block`
+        // field is required by the IMatch type but never consulted here.
+        block: null as unknown as IMatch['block'],
         start: 0,
         end: matchText.length,
         match: matchText,

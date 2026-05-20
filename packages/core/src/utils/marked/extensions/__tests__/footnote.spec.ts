@@ -20,7 +20,18 @@ interface ISimplifiedToken {
     children?: ISimplifiedToken[];
 }
 
-function simplify(token: any): ISimplifiedToken {
+// Structural view of a lexer-emitted token used by the recursive simplify
+// helper. The lexer hands us a discriminated union we don't fully type
+// here (it's deep), so we accept any record with the optional fields the
+// helper actually reads.
+interface ILexerToken {
+    type: string;
+    identifier?: string;
+    text?: string;
+    tokens?: ILexerToken[];
+}
+
+function simplify(token: ILexerToken): ISimplifiedToken {
     const out: ISimplifiedToken = { type: token.type };
     if (token.identifier !== undefined) {
         out.identifier = token.identifier;
@@ -192,7 +203,7 @@ At vero eos [^foo1]: et accusam.`);
 [^1]: see $a + b$ for the formula`,
             { footnote: true, math: true, frontMatter: false },
         );
-        const footnote = tokens.find(t => t.type === 'footnote') as any;
+        const footnote = tokens.find(t => t.type === 'footnote') as Extract<typeof tokens[number], { type: 'footnote' }> | undefined;
         expect(footnote).toBeDefined();
         // The inline math `$a + b$` lives inside the footnote's paragraph
         // children, but block lexing produces a paragraph token whose
@@ -200,7 +211,7 @@ At vero eos [^foo1]: et accusam.`);
         // parse phase. Asserting the lexer state at the block level is
         // enough — the key invariant is that the footnote re-uses the
         // same lexer, so the extensions match.
-        expect(footnote.tokens.length).toBeGreaterThan(0);
+        expect(footnote!.tokens.length).toBeGreaterThan(0);
     });
 
     it('footnote support is gated by the `footnote` option (default off)', () => {

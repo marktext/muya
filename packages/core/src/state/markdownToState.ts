@@ -1,4 +1,15 @@
-import type { TState } from './types';
+import type { TBlockToken } from '../utils/marked/types';
+import type {
+    IAtxHeadingState,
+    IBulletListState,
+    IListItemState,
+    IOrderListState,
+    ISetextHeadingState,
+    ITableState,
+    ITaskListItemState,
+    ITaskListState,
+    TState,
+} from './types';
 import logger from '../utils/logger';
 import { lexBlock } from '../utils/marked';
 
@@ -42,7 +53,10 @@ export class MarkdownToState {
             frontMatter = true,
         } = this._options;
 
-        const tokens = lexBlock(markdown, {
+        // markdownToState injects synthetic `block-end` markers (see the
+        // blockquote/list/list_item/footnote cases below) to pop the parent
+        // stack, so the working stream is wider than what `lexBlock` returns.
+        const tokens: TBlockToken[] = lexBlock(markdown, {
             footnote,
             math,
             frontMatter,
@@ -50,9 +64,9 @@ export class MarkdownToState {
         });
 
         const states: TState[] = [];
-        let token;
+        let token: TBlockToken | undefined;
         let state: TState;
-        let value;
+        let value: string;
         const parentList: TState[][] = [states];
 
         // eslint-disable-next-line no-cond-assign
@@ -102,23 +116,27 @@ export class MarkdownToState {
                 }
 
                 case 'heading': {
-                    const { headingStyle, depth, text, marker } = token as any;
-                    const name
-                        = headingStyle === 'atx' ? 'atx-heading' : 'setext-heading';
-                    const meta: any = {
-                        level: depth,
-                    };
-                    if (name === 'setext-heading')
-                        meta.underline = marker;
+                    const { headingStyle, depth, text, marker } = token;
+                    value = headingStyle === 'atx'
+                        ? `${'#'.repeat(+depth)} ${text}`
+                        : text;
 
-                    value
-                        = name === 'atx-heading' ? `${'#'.repeat(+depth)} ${text}` : text;
-
-                    state = {
-                        name,
-                        meta,
-                        text: value,
-                    };
+                    if (headingStyle === 'atx') {
+                        const atxState: IAtxHeadingState = {
+                            name: 'atx-heading',
+                            meta: { level: depth },
+                            text: value,
+                        };
+                        state = atxState;
+                    }
+                    else {
+                        const setextState: ISetextHeadingState = {
+                            name: 'setext-heading',
+                            meta: { level: depth, underline: marker },
+                            text: value,
+                        };
+                        state = setextState;
+                    }
 
                     parentList[0].push(state);
                     break;
@@ -127,8 +145,10 @@ export class MarkdownToState {
                 case 'code': {
                     const { codeBlockStyle, text, lang: infoString = '' } = token;
 
-                    // GH#697, markedjs#1387
-                    const lang = (infoString || '').match(/\S*/)[0];
+                    // GH#697, markedjs#1387 — strip everything past the first
+                    // whitespace; `\S*` matches the empty string so this is
+                    // always non-null even for `infoString === ''`.
+                    const lang = (infoString || '').match(/\S*/)?.[0] ?? '';
 
                     value = text;
                     // Fix: #1265.
@@ -139,21 +159,30 @@ export class MarkdownToState {
                         value = value.replace(/\n+$/, '').replace(/^\n+/, '');
                     }
 
-                    if (/mermaid|vega-lite|plantuml/.test(lang)) {
+                    const diagramMatch = /^(mermaid|vega-lite|plantuml)$/.exec(lang);
+                    if (diagramMatch) {
+                        const diagramType = diagramMatch[1] as 'mermaid' | 'vega-lite' | 'plantuml';
                         state = {
                             name: 'diagram' as const,
                             text: value,
                             meta: {
-                                type: lang,
-                                lang: lang === 'vega-lite' ? 'json' : 'yaml',
+                                type: diagramType,
+                                lang: diagramType === 'vega-lite' ? 'json' : 'yaml',
                             },
                         };
                     }
                     else {
+                        // walkTokens (utils/marked/walkTokens.ts) writes
+                        // codeBlockStyle = 'fenced' for fenced blocks and
+                        // leaves 'indented' for indented blocks. marked's
+                        // type widens the field to `'indented' | undefined`,
+                        // but `'fenced'` reaches us at runtime via the
+                        // walkTokens assignment — hence the cast.
+                        const isFenced = (codeBlockStyle as 'indented' | 'fenced' | undefined) === 'fenced';
                         state = {
                             name: 'code-block' as const,
                             meta: {
-                                type: codeBlockStyle === 'fenced' ? 'fenced' : 'indented',
+                                type: isFenced ? 'fenced' : 'indented',
                                 lang,
                             },
                             text: value,
@@ -165,32 +194,32 @@ export class MarkdownToState {
 
                 case 'table': {
                     const { header, align, rows } = token;
-
-                    state = {
+                    const tableState: ITableState = {
                         name: 'table',
                         children: [],
                     };
 
-                    state.children.push({
+                    tableState.children.push({
                         name: 'table.row',
-                        children: header.map((h: { text: string }, i: string | number) => ({ // TODO: @jocs fix type
-                            name: 'table.cell',
+                        children: header.map((h, i) => ({
+                            name: 'table.cell' as const,
                             meta: { align: align[i] || 'none' },
                             text: restoreTableEscapeCharacters(h.text),
                         })),
                     });
 
-                    state.children.push(
-                        ...rows.map((row: any[]) => ({ // TODO: @jocs fix type
-                            name: 'table.row',
+                    tableState.children.push(
+                        ...rows.map(row => ({
+                            name: 'table.row' as const,
                             children: row.map((c, i) => ({
-                                name: 'table.cell',
+                                name: 'table.cell' as const,
                                 meta: { align: align[i] || 'none' },
                                 text: restoreTableEscapeCharacters(c.text),
                             })),
                         })),
                     );
 
+                    state = tableState;
                     parentList[0].push(state);
                     break;
                 }
@@ -230,9 +259,9 @@ export class MarkdownToState {
 
                 case 'text': {
                     value = token.text;
-                    while (tokens[0].type === 'text') {
-                        token = tokens.shift() as any;
-                        value += `\n${token.text}`;
+                    while (tokens[0]?.type === 'text') {
+                        const next = tokens.shift() as Extract<TBlockToken, { type: 'text' }>;
+                        value += `\n${next.text}`;
                     }
                     state = {
                         name: 'paragraph',
@@ -259,53 +288,79 @@ export class MarkdownToState {
                     };
                     parentList[0].push(state);
                     parentList.unshift(state.children);
-                    tokens.unshift({ type: 'block-end', tokenType: 'blockquote' } as any);
-                    tokens.unshift(...token.tokens as any);
+                    tokens.unshift({ type: 'block-end', tokenType: 'blockquote' });
+                    tokens.unshift(...(token.tokens as TBlockToken[]));
                     break;
                 }
 
                 case 'list': {
-                    const { listType, loose, start } = token as any;
+                    const { listType, loose, start } = token;
                     const bulletMarkerOrDelimiter
                         = token.items[0].bulletMarkerOrDelimiter;
-                    const meta: any = {
-                        loose,
-                    };
+
+                    let listState: IOrderListState | IBulletListState | ITaskListState;
                     if (listType === 'order') {
-                        meta.start = /^\d+$/.test(start) ? start : 1;
-                        meta.delimiter = bulletMarkerOrDelimiter || '.';
+                        listState = {
+                            name: 'order-list',
+                            meta: {
+                                loose,
+                                start: /^\d+$/.test(String(start)) ? Number(start) : 1,
+                                delimiter: bulletMarkerOrDelimiter || '.',
+                            },
+                            children: [],
+                        };
+                    }
+                    else if (listType === 'task') {
+                        listState = {
+                            name: 'task-list',
+                            meta: {
+                                loose,
+                                marker: bulletMarkerOrDelimiter || '-',
+                            },
+                            children: [],
+                        };
                     }
                     else {
-                        meta.marker = bulletMarkerOrDelimiter || '-';
+                        listState = {
+                            name: 'bullet-list',
+                            meta: {
+                                loose,
+                                marker: bulletMarkerOrDelimiter || '-',
+                            },
+                            children: [],
+                        };
                     }
-                    state = {
-                        name: `${listType}-list` as any,
-                        meta,
-                        children: [],
-                    };
 
+                    state = listState;
                     parentList[0].push(state);
-                    parentList.unshift(state.children);
-                    tokens.unshift({ type: 'block-end', tokenType: 'list' } as any);
-                    tokens.unshift(...token.items);
+                    parentList.unshift(state.children as TState[]);
+                    tokens.unshift({ type: 'block-end', tokenType: 'list' });
+                    tokens.unshift(...(token.items as TBlockToken[]));
                     break;
                 }
 
                 case 'list_item': {
-                    const { checked, listItemType } = token as any;
+                    const { listItemType, checked } = token;
+                    let itemState: IListItemState | ITaskListItemState;
+                    if (listItemType === 'task') {
+                        itemState = {
+                            name: 'task-list-item',
+                            meta: { checked: Boolean(checked) },
+                            children: [],
+                        };
+                    }
+                    else {
+                        itemState = {
+                            name: 'list-item',
+                            children: [],
+                        };
+                    }
 
-                    state = {
-                        name: (listItemType === 'task' ? 'task-list-item' : 'list-item') as any,
-                        children: [],
-                    };
-
-                    if (listItemType === 'task')
-                        (state as any).meta = { checked };
-
+                    state = itemState;
                     parentList[0].push(state);
                     parentList.unshift(state.children);
-                    tokens.unshift({ type: 'block-end', tokenType: 'list-item' } as any);
-                    tokens.unshift(...token.tokens as any);
+                    tokens.unshift({ type: 'block-end', tokenType: 'list-item' });
+                    tokens.unshift(...(token.tokens as TBlockToken[]));
                     break;
                 }
 
@@ -324,7 +379,7 @@ export class MarkdownToState {
                     // model. See plan section 13 (PR-16).
                     state = {
                         name: 'paragraph' as const,
-                        text: (token as any).raw.replace(/\n+$/, ''),
+                        text: token.raw.replace(/\n+$/, ''),
                     };
                     parentList[0].push(state);
                     break;
@@ -335,7 +390,7 @@ export class MarkdownToState {
                     // emits a parent token whose `tokens` array holds nested
                     // block tokens. Mirror that into a `footnote` container
                     // state and recurse via tokens.unshift / block-end.
-                    const { identifier } = token as any;
+                    const { identifier } = token;
                     state = {
                         name: 'footnote' as const,
                         meta: { identifier },
@@ -343,8 +398,8 @@ export class MarkdownToState {
                     };
                     parentList[0].push(state);
                     parentList.unshift(state.children);
-                    tokens.unshift({ type: 'block-end', tokenType: 'footnote' } as any);
-                    tokens.unshift(...(token as any).tokens);
+                    tokens.unshift({ type: 'block-end', tokenType: 'footnote' });
+                    tokens.unshift(...(token.tokens as TBlockToken[]));
                     break;
                 }
 

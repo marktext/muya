@@ -2,7 +2,8 @@ import type { Muya } from '../../muya';
 import type { TState } from '../../state/types';
 import type { Nullable } from '../../types';
 import type Content from '../base/content';
-import type { TBlockPath } from '../types';
+import type TreeNode from '../base/treeNode';
+import type { IConstructor, TBlockPath } from '../types';
 import { BLOCK_DOM_PROPERTY } from '../../config';
 import { isMouseEvent } from '../../utils';
 import logger from '../../utils/logger';
@@ -20,20 +21,31 @@ export class ScrollPage extends Parent {
 
     static override blockName = 'scrollpage';
 
-    static registeredBlocks = new Map();
+    // Registry of block constructors keyed by their static blockName.
+    // Stored as Parent constructors — the overwhelming majority of
+    // call sites do `loadBlock(...).create(...).append(child)`, which only
+    // makes sense for Parent. Content leaves register themselves through
+    // their containing Parent's create flow and don't go through
+    // `loadBlock(...).create()` externally.
+    static registeredBlocks = new Map<string, IConstructor<Parent>>();
 
-    static register(Block: any) {
+    static register(Block: IConstructor<TreeNode>) {
         const { blockName } = Block;
-        this.registeredBlocks.set(blockName, Block);
+        this.registeredBlocks.set(blockName, Block as IConstructor<Parent>);
     }
 
-    static loadBlock(blockName: string) {
+    // Returns the registered constructor. Asserts non-undefined for
+    // callers (the registry is populated by `registerBlocks()` once at
+    // `editor.init()` time, and `loadBlock` runs strictly after init.).
+    // Mismatched names hit the warn branch and the caller crashes at
+    // `.create()` — matches the original loose contract.
+    static loadBlock(blockName: string): IConstructor<Parent> {
         const block = this.registeredBlocks.get(blockName);
 
         if (!block)
             debug.warn(`block:${blockName} is not existed.`);
 
-        return block;
+        return block as IConstructor<Parent>;
     }
 
     static create(muya: Muya, state: TState[]) {
@@ -98,8 +110,8 @@ export class ScrollPage extends Parent {
             return this;
 
         const p = path.shift() as number;
-        const block = this.find(p) as Parent;
-        return block && path.length ? (block as any).queryBlock(path) : block;
+        const block = this.find(p) as Parent & { queryBlock: (p: TBlockPath) => Parent | Content | undefined };
+        return block && path.length ? block.queryBlock(path) : block;
     }
 
     updateRefLinkAndImage(label: string) {

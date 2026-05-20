@@ -4,7 +4,7 @@ import type Format from '../../block/base/format';
 import type { Muya } from '../../index';
 import type { ICursor } from '../../selection/types';
 import type InlineRenderer from '../index';
-import type { Token } from '../types';
+import type { ISyntaxRenderOptions, Token } from '../types';
 import { CLASS_NAMES } from '../../config';
 import { conflict, methodMixins, snakeToCamel } from '../../utils';
 import { h, toHTML } from '../../utils/snabbdom';
@@ -76,6 +76,11 @@ const inlineSyntaxRenderer = {
 
 type InlineSyntaxRender = typeof inlineSyntaxRenderer;
 
+// Generic shape every per-token renderer matches; used by the dynamic
+// dispatcher below (`Renderer.dispatch`) so it can call into the mixin map
+// without an `as any` escape hatch.
+export type TInlineRenderFn = (opts: ISyntaxRenderOptions) => VNode[];
+
 // Declaration-merged with the class below to expose mixin method signatures;
 // must share the class name, so the `I` prefix convention does not apply here.
 // eslint-disable-next-line ts/naming-convention
@@ -135,11 +140,25 @@ class Renderer {
         return active ? CLASS_NAMES.MU_HIGHLIGHT : CLASS_NAMES.MU_SELECTION;
     }
 
+    // Dynamic dispatch helper: each per-token renderer in `inlineSyntaxRenderer`
+    // shares the `(opts: ISyntaxRenderOptions) => VNode[]` signature. Method
+    // names follow `snakeToCamel(token.type)` (e.g. `reference_link` →
+    // `referenceLink`). The runtime guarantee is that
+    // `inlineSyntaxRenderer[name]` exists for every token type the lexer can
+    // emit — declaration-merging `Renderer extends InlineSyntaxRender` already
+    // promises that for known token kinds; this typed indexer just removes
+    // the need for an `(this as any)[name]` escape hatch when the name comes
+    // from a runtime string.
+    dispatch(name: string, opts: ISyntaxRenderOptions): VNode[] {
+        const map = this as unknown as Record<string, TInlineRenderFn>;
+        return map[name](opts);
+    }
+
     output(tokens: Token[], block: Format, cursor: ICursor) {
         const children: VNode[] = tokens.reduce(
             (acc, token) => [
                 ...acc,
-                ...(this as any)[snakeToCamel(token.type)]({
+                ...this.dispatch(snakeToCamel(token.type), {
                     h,
                     cursor,
                     block,

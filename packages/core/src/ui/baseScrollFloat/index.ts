@@ -67,8 +67,10 @@ abstract class BaseScrollFloat extends BaseFloat {
         this.reference = null;
     }
 
-    override show(reference: Element | ReferenceElement, cb: (...args: unknown[]) => void = noop) {
-        this.cb = cb;
+    override show(reference: Element | ReferenceElement, cb: (...args: never[]) => void = noop) {
+        // See BaseFloat.show: callbacks accept any shape; store as unknown[]
+        // so internal forwarding stays workable.
+        this.cb = cb as (...args: unknown[]) => void;
 
         if (reference instanceof HTMLElement) {
             if (this.reference && this.reference === reference && this.status)

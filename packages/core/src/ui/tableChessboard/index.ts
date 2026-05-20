@@ -1,3 +1,4 @@
+import type { ReferenceElement } from '@floating-ui/dom';
 import type { VNode } from 'snabbdom';
 import type { Muya } from '../../index';
 import { EVENT_KEYS } from '../../config';
@@ -166,7 +167,7 @@ class TablePicker extends BaseFloat {
         }
     }
 
-    showPicker(current: ICheckerCount, reference: any, cb: (...args: any[]) => void) {
+    showPicker(current: ICheckerCount, reference: ReferenceElement, cb: (row: number, column: number) => void) {
     // current { row, column } zero base
         this._current = this._select = current;
         super.show(reference, cb);

@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import type Parent from '../../../block/base/parent';
 import { describe, expect, it } from 'vitest';
 import { canTurnIntoMenu } from '../config';
 
@@ -31,13 +32,15 @@ import { canTurnIntoMenu } from '../config';
 // full Muya bootstrap, but the front-menu gate is enough to demonstrate
 // that the user has no UI path to nest a math-block inside a math-block.
 
-function fakeBlock(blockName: string, paragraphText: string = ''): any {
+// `canTurnIntoMenu` only reads `blockName` and `firstContentInDescendant()`
+// on the passed-in block; the structural fake covers that surface.
+function fakeBlock(blockName: string, paragraphText: string = ''): Parent {
     return {
         blockName,
         firstContentInDescendant() {
             return { text: paragraphText };
         },
-    };
+    } as unknown as Parent;
 }
 
 describe('canTurnIntoMenu — no nesting math/code/html/diagram inside themselves (marktext 7b7a9424)', () => {

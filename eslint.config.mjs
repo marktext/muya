@@ -6,6 +6,12 @@ function typescriptPreset() {
     return {
         files: ['**/*.ts', '**/*.tsx'],
         rules: {
+            // Ban `any` (annotations, casts, generics). Genuine escape
+            // hatches (the block-constructor registry's `state: any`, the
+            // event Listener's `(...args: any[])`) are explicit
+            // `eslint-disable-next-line ts/no-explicit-any` comments at
+            // the source so they remain visible and reviewable.
+            'ts/no-explicit-any': 'error',
             'ts/naming-convention': [
                 'warn',
                 // Interfaces' names should start with a capital 'I'.

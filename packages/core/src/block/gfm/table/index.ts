@@ -110,7 +110,9 @@ class Table extends Parent {
     }
 
     queryBlock(path: TBlockPath) {
-        return (this.firstChild as any).queryBlock(path);
+        // Table's only child at runtime is `TableInner` (the body wrapper),
+        // which extends the queryBlock mixin and is always present.
+        return (this.firstChild as Parent & { queryBlock: (p: TBlockPath) => Parent | Content | undefined }).queryBlock(path);
     }
 
     override empty() {

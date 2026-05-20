@@ -667,12 +667,17 @@ class Selection {
             ? focusBlock.domNode
             : scrollPage?.queryBlock(focusPath);
 
+        // getNodeAndOffset expects a DOM Node. The fallback branch can hand
+        // back a Parent/Content block (from scrollPage.queryBlock), which
+        // historically reached this code path under an `as any` cast. Keep
+        // the existing runtime behavior via a single narrow cast — fixing
+        // the underlying contract is out of scope for this PR.
         const { node: anchorNode, offset: anchorOffset } = getNodeAndOffset(
-            anchorParagraph,
+            anchorParagraph as unknown as Node,
             anchor.offset,
         );
         const { node: focusNode, offset: focusOffset } = getNodeAndOffset(
-            focusParagraph,
+            focusParagraph as unknown as Node,
             focus.offset,
         );
 

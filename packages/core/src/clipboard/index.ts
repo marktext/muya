@@ -1,7 +1,14 @@
 import type Content from '../block/base/content';
 import type Parent from '../block/base/parent';
 import type { Muya } from '../muya';
-import type { IBlockQuoteState, IParagraphState } from '../state/types';
+import type {
+    IBlockQuoteState,
+    IBulletListState,
+    IOrderListState,
+    IParagraphState,
+    ITaskListState,
+    TState,
+} from '../state/types';
 import type { Nullable } from '../types';
 import { fromEvent, merge } from 'rxjs';
 import CodeBlockContent from '../block/content/codeBlockContent';
@@ -195,14 +202,20 @@ class Clipboard {
                     = outBlock!.blockName === 'task-list' ? 'task-list-item' : 'list-item';
                 const listItem = block.farthestBlock(listItemBlockName);
                 const offset = (outBlock as Parent).offset(listItem!);
-                const { name, meta, children } = (outBlock as any).getState();
+                // outBlock is a list parent at runtime; getState() returns a
+                // bullet/order/task-list state whose `children` is an
+                // IListItemState/ITaskListItemState array. The intermediate
+                // `name`/`meta`/`children` extraction is loosely typed so we
+                // can spread it back into a copyState entry without
+                // re-deriving the discriminated union here.
+                const listState = (outBlock as Parent).getState() as IBulletListState | IOrderListState | ITaskListState;
                 copyState.push({
-                    name,
-                    meta,
-                    children: children.filter((_: unknown, index: number) =>
+                    name: listState.name,
+                    meta: listState.meta,
+                    children: listState.children.filter((_, index) =>
                         position === 'start' ? index >= offset : index <= offset,
                     ),
-                });
+                } as TState);
             }
             else {
                 if (position === 'start' && startOffset < startBlock.text.length) {
@@ -242,15 +255,14 @@ class Clipboard {
                 );
                 const minOffset = Math.min(anchorOffset, focusOffset);
                 const maxOffset = Math.max(anchorOffset, focusOffset);
-                const { name, meta, children } = (anchorOutMostBlock as any).getState();
+                const listState = (anchorOutMostBlock as Parent).getState() as IBulletListState | IOrderListState | ITaskListState;
                 copyState.push({
-                    name,
-                    meta,
-                    children: children.filter(
-                        (_: unknown, index: number) =>
-                            index >= minOffset && index <= maxOffset,
+                    name: listState.name,
+                    meta: listState.meta,
+                    children: listState.children.filter((_, index) =>
+                        index >= minOffset && index <= maxOffset,
                     ),
-                });
+                } as TState);
             }
         }
         else {
@@ -413,7 +425,7 @@ class Clipboard {
                             this.muya,
                             state,
                         );
-                        (item as any).replaceWith(newListItem);
+                        (item as Parent).replaceWith(newListItem);
                         cursorBlock = newListItem.firstContentInDescendant();
                         cursorOffset = 0;
                     }
@@ -498,7 +510,7 @@ class Clipboard {
                             this.muya,
                             state,
                         );
-                        (item as any).replaceWith(newListItem);
+                        (item as Parent).replaceWith(newListItem);
                         cursorBlock = newListItem.firstContentInDescendant();
                         cursorOffset = 0;
                     }
@@ -637,7 +649,7 @@ class Clipboard {
                 // Remove empty paragraph when paste.
                 if (
                     originWrapperBlock?.blockName === 'paragraph'
-                    && (originWrapperBlock.getState() as any).text === ''
+                    && (originWrapperBlock.getState() as IParagraphState).text === ''
                 ) {
                     originWrapperBlock.remove();
                 }
@@ -668,7 +680,12 @@ class Clipboard {
                         anchorBlock.outContainer.blockName,
                     )
                 ) {
-                    (anchorBlock.outContainer.attachments.head as any).update(
+                    // The attachments list of html-block / math-block /
+                    // diagram blocks always opens with the render preview
+                    // node, which exposes an `update(text)` method. The
+                    // LinkedList itself is typed loosely (TreeNode), hence
+                    // the narrow structural cast here.
+                    (anchorBlock.outContainer.attachments.head as unknown as { update: (text: string) => void }).update(
                         anchorBlock.text,
                     );
                 }
