@@ -39,10 +39,14 @@ export function getTOC(muya: Muya): ITocItem[] {
 
     const items: ITocItem[] = [];
 
-    scrollPage.children.forEach((node) => {
+    // Walk the linked list directly instead of `forEach`, which materialises
+    // every top-level block into an array via `[...iterator()]` (see
+    // `LinkedList.forEach`). For large documents the intermediate array is
+    // pure waste.
+    for (const node of scrollPage.children.iterator()) {
         const { blockName } = node;
         if (blockName !== 'atx-heading' && blockName !== 'setext-heading')
-            return;
+            continue;
 
         const block = node as IHeadingBlock;
         const head = block.children.head as Content | null;
@@ -61,7 +65,7 @@ export function getTOC(muya: Muya): ITocItem[] {
             slug: stableSlug(block),
             githubSlug: generateGithubSlug(content),
         });
-    });
+    }
 
     return items;
 }
