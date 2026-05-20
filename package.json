@@ -51,7 +51,7 @@
         "husky": "9.1.7",
         "lint-staged": "^17.0.5",
         "madge": "^8.0.0",
-        "release-it": "^20.0.1",
+        "release-it": "^19.2.4",
         "stylelint": "^17.11.1",
         "stylelint-config-rational-order": "^0.1.2",
         "stylelint-config-standard": "^40.0.0",
