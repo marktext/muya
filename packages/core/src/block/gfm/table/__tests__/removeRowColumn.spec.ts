@@ -108,10 +108,13 @@ function makeFakeTable(rowCount: number, cellCount: number) {
         firstChild: inner,
         columnCount: cellCount,
         remove: vi.fn(),
-        // Match the production read-only getter `rowCount`.
-        get rowCountFromGetter() {
-            return inner.length();
-        },
+        // The whole-table-removed branch (marktext 6293d408 cover-the-edge
+        // case) calls `nextContentInContext()` / `previousContentInContext()`
+        // on `this` before `this.remove()`. Stub both to return null in the
+        // base fixture; specific tests override to assert the outside-
+        // content fallback.
+        nextContentInContext: vi.fn(() => null),
+        previousContentInContext: vi.fn(() => null),
         inner,
     };
 }
@@ -145,7 +148,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
         expect((fake.inner.rows[2] as any).removed).toBe(true);
     });
 
-    it('removes the whole table when the only row is removed', () => {
+    it('removes the whole table when the only row is removed, and returns null without an outside fallback', () => {
         const fake = makeFakeTable(1, 3);
 
         const result = Table.prototype.removeRow.call(
@@ -153,9 +156,37 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
             0,
         );
 
-        // No surviving rows → no cell content to focus → null.
+        // No surviving rows AND no outside-of-table content → null.
         expect(result).toBeNull();
         expect(fake.remove).toHaveBeenCalledTimes(1);
+    });
+
+    it('returns the next outside-of-table content when the only row is removed (Copilot PR-7b review follow-up)', () => {
+        const fake = makeFakeTable(1, 3);
+        const outsideContent = { setCursor: vi.fn() };
+        fake.nextContentInContext = vi.fn(() => outsideContent as any);
+
+        const result = Table.prototype.removeRow.call(
+            fake as unknown as Table,
+            0,
+        );
+
+        expect(result).toBe(outsideContent);
+        expect(fake.remove).toHaveBeenCalledTimes(1);
+        expect(fake.nextContentInContext).toHaveBeenCalled();
+    });
+
+    it('falls back to previousContentInContext when there is no next content outside the table', () => {
+        const fake = makeFakeTable(1, 3);
+        const prevOutside = { setCursor: vi.fn() };
+        fake.previousContentInContext = vi.fn(() => prevOutside as any);
+
+        const result = Table.prototype.removeRow.call(
+            fake as unknown as Table,
+            0,
+        );
+
+        expect(result).toBe(prevOutside);
     });
 
     it('returns undefined and does nothing when the offset is out of range', () => {
@@ -208,8 +239,27 @@ describe('table.removeColumn — returns surviving cell content for cursor place
     it('removes the whole table when the only column is removed', () => {
         const fake = makeFakeTable(2, 1);
 
-        Table.prototype.removeColumn.call(fake as unknown as Table, 0);
+        const result = Table.prototype.removeColumn.call(
+            fake as unknown as Table,
+            0,
+        );
 
+        expect(fake.remove).toHaveBeenCalledTimes(1);
+        // No outside content stubbed → null.
+        expect(result).toBeNull();
+    });
+
+    it('returns the next outside-of-table content when the only column is removed (Copilot PR-7b review follow-up)', () => {
+        const fake = makeFakeTable(2, 1);
+        const outsideContent = { setCursor: vi.fn() };
+        fake.nextContentInContext = vi.fn(() => outsideContent as any);
+
+        const result = Table.prototype.removeColumn.call(
+            fake as unknown as Table,
+            0,
+        );
+
+        expect(result).toBe(outsideContent);
         expect(fake.remove).toHaveBeenCalledTimes(1);
     });
 
