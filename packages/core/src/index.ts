@@ -1,6 +1,7 @@
 export { en, ja, zh } from './locales';
 
 export { Muya } from './muya';
+export type { ITocItem } from './state/getTOC';
 export { MarkdownToHtml } from './state/markdownToHtml';
 export { renderToStaticHTML } from './state/renderToStaticHTML';
 export type { IRenderToStaticHTMLOptions } from './state/renderToStaticHTML';
