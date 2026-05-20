@@ -79,7 +79,9 @@ describe('inline lexer — reference link (marktext d9f64bab)', () => {
     });
 
     it('emits reference_link when label is defined', () => {
-        const labels = new Map([['ref', 'http://example.com']]);
+        const labels = new Map<string, { href: string; title: string }>([
+            ['ref', { href: 'http://example.com', title: '' }],
+        ]);
         const tokens = tokenizer('[text][ref]', { labels });
         const types = tokens.map(t => t.type);
         expect(types, `tokens: ${JSON.stringify(types)}`).toContain('reference_link');
