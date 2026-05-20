@@ -61,3 +61,48 @@ describe('clipboard.getClipboardData — single-block selection is not HTML-esca
         expect(text).toBe('');
     });
 });
+
+// Regression for marktext commit 0028a4bc (#2375 — "Fix issue with not being
+// able to copy table cell"). marktext's old `paragraphCtrl.selectTableCells`
+// built a virtual {key, top, right, bottom, left, ...} cell descriptor for
+// single-cell copy, but forgot the `text` field; the descriptor went to the
+// clipboard with an empty body, so copying a cell produced "".
+//
+// New muya's `getClipboardData` doesn't have a separate "selected table
+// cell" data structure: when the user copies inside a single
+// `table.cell.content` block, the `isSelectionInSameBlock` branch simply
+// reads `anchorBlock.text.substring(begin, end)`. So the text always survives
+// — provided the call site still feeds the cell's text into that substring.
+// This defensive test pins that contract.
+describe('clipboard.getClipboardData — single table-cell copy keeps the cell text (marktext 0028a4bc)', () => {
+    it('copies the full cell text when the user selects everything in the cell', () => {
+        const cellText = 'cell <body> & "value"';
+        const clipboard = makeClipboard(cellText, 0, cellText.length);
+
+        const { text } = clipboard.getClipboardData();
+
+        expect(text).toBe(cellText);
+        expect(text).not.toBe('');
+    });
+
+    it('copies a partial selection inside the cell verbatim', () => {
+        // Selecting `<body>` out of the middle of a cell — the substring
+        // must not be HTML-escaped or stripped.
+        const cellText = 'pre <body> post';
+        const clipboard = makeClipboard(cellText, 4, 10);
+
+        const { text } = clipboard.getClipboardData();
+
+        expect(text).toBe('<body>');
+    });
+
+    it('returns the cell text even when it is the only content', () => {
+        // The original marktext bug: descriptor had no `text` → output "".
+        // Here we assert the path that fills it.
+        const clipboard = makeClipboard('only-cell', 0, 9);
+
+        const { text } = clipboard.getClipboardData();
+
+        expect(text).toBe('only-cell');
+    });
+});
