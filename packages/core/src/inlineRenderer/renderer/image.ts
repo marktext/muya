@@ -123,8 +123,16 @@ export default function image(
         }
         else if (isSuccess === true) {
             wrapperSelector += `.${CLASS_NAMES.MU_IMAGE_SUCCESS}`;
-            // marktext cb7be189 (#1318): mark small images so themes can adjust
-            // the toolbar/handle positions; otherwise the floating UI dwarfs the image.
+            // marktext cb7be189 (#1318): tag images whose natural size is below
+            // 100px in either dimension. NOTE: no CSS in this package currently
+            // consumes `.mu-small-image` — it is kept as a theming hook so
+            // downstream stylesheets can shrink/hide the in-wrapper hover icons
+            // (`.mu-image-icon-success/fail/close`, each 20×20) that visually
+            // clobber a small image. The marktext original wired this class to
+            // an in-wrapper `.ag-image-buttons` group that this repo doesn't
+            // have (our toolbar is a floating-ui overlay), so the rule lives
+            // here as data only; downstream consumers / future PRs own the
+            // visual treatment.
             if (
                 typeof naturalWidth === 'number'
                 && typeof naturalHeight === 'number'

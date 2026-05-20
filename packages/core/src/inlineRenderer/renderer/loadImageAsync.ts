@@ -55,10 +55,12 @@ export default function loadImageAsync(
                         imageContainer!.appendChild(img);
                         imageText.classList.remove('mu-image-loading');
                         imageText.classList.add('mu-image-success');
-                        // marktext cb7be189 (#1318): apply the small-image class on first
-                        // load too — otherwise the next re-render via `image.ts` is the
-                        // earliest it would appear, and the toolbar/handles can show up
-                        // dwarfing the actual image in the meantime.
+                        // marktext cb7be189 (#1318): mirror the small-image tagging from
+                        // `image.ts` on the first async load — otherwise the class would
+                        // only appear on the next re-render after the cache is populated.
+                        // See `image.ts` for why the class is kept as a theming hook with
+                        // no in-package CSS consumer; downstream stylesheets own the
+                        // visual treatment.
                         if (width < 100 || height < 100)
                             imageText.classList.add(CLASS_NAMES.MU_SMALL_IMAGE);
                     }
