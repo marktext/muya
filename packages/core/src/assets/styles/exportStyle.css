@@ -20,7 +20,7 @@
         padding: 45px;
     }
 
-    @media (width <= 767px) {
+    @media (max-width: 767px) {
         .markdown-body {
             padding: 15px;
         }

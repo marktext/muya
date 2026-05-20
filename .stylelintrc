@@ -44,6 +44,7 @@
         ]
       }
     ],
-    "no-empty-source": null
+    "no-empty-source": null,
+    "media-feature-range-notation": "prefix"
   }
 }
