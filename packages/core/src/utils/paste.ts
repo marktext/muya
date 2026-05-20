@@ -18,18 +18,16 @@ export async function getPageTitle(url: string) {
         const res = await fetch(url, { method: 'GET', mode: 'cors' });
         const contentType = res.headers.get('content-type');
 
-        if (res.status === 200 && contentType && /text\/html/.test(contentType)) {
-            const response = await res.json();
-
-            if (typeof response === 'string') {
-                const match = response.match(/<title>(.*)<\/title>/);
-
-                return match && match[1] ? match[1] : '';
-            }
-
+        if (res.status !== 200 || !contentType || !/text\/html/.test(contentType))
             return '';
-        }
-        return '';
+
+        // The response is HTML — read it as text and pluck `<title>`.
+        // Pre-fix this called `res.json()`, which always threw and made
+        // the helper silently return '' (marktext 141d25d8 / #1344).
+        const body = await res.text();
+        const match = body.match(/<title>([\s\S]*?)<\/title>/i);
+
+        return match && match[1] ? match[1].trim() : '';
     }
     catch {
         return '';

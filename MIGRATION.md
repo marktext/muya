@@ -115,7 +115,7 @@ PR 分组对应方案第三节的 5 个系列：
 | ab97336e | feat | highlight 菜单 | `pending` |
 | 1ef0d016 | feat | linkTools unlink/jump | `pending` |
 | cb25b3d4 | feat | linkTools 支持 `<a>` 与 ref link | `pending` |
-| 141d25d8 | feat | 粘贴链接抓页面标题 | `pending` |
+| 141d25d8 | feat | 粘贴链接抓页面标题 | PR-4c | `fixed`（`res.json()`→`res.text()`，5 个测试） |
 | d26f5092 | feat | image resize + inline/block 切换 | `pending` |
 | cb7be189 | feat | inline image / small image | `pending` |
 | 9eff8248 | feat | focus / blur 事件 | `pending` |
