@@ -166,10 +166,10 @@ export class Editor {
 
     updateContents(operations: JSONOp, selection: Nullable<ISelection>, source: string) {
         const { muya } = this;
-        // `dispatch` takes JSONOpList. ot-json1's no-op (null) is bailed
-        // out below before the walker runs; null is still forwarded to
-        // dispatch so listeners see the (no-op) json-change event.
-        this.jsonState.dispatch(operations as JSONOpList, source);
+        // ot-json1 no-op (`null`) is forwarded to dispatch — JSONState
+        // short-circuits internally so listeners still see a json-change
+        // event for the no-op.
+        this.jsonState.dispatch(operations, source);
 
         // Codes bellow are copy from `ot-json1.apply` and modified.
         if (operations === null)

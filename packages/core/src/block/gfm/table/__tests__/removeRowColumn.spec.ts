@@ -102,6 +102,12 @@ function makeTableInner(rowCount: number, cellCount: number): IFakeTableInner {
     };
 }
 
+// Stubbed return type for the contextual neighbour lookups; matches the
+// production `Table.nextContentInContext` signature (`Nullable<Content>`)
+// so per-test overrides can return a structurally-typed fake without an
+// `as unknown as null` lie.
+type TNeighbourReturn = ReturnType<Table['nextContentInContext']>;
+
 function makeFakeTable(rowCount: number, cellCount: number) {
     const inner = makeTableInner(rowCount, cellCount);
     return {
@@ -113,8 +119,8 @@ function makeFakeTable(rowCount: number, cellCount: number) {
         // on `this` before `this.remove()`. Stub both to return null in the
         // base fixture; specific tests override to assert the outside-
         // content fallback.
-        nextContentInContext: vi.fn(() => null),
-        previousContentInContext: vi.fn(() => null),
+        nextContentInContext: vi.fn((): TNeighbourReturn => null),
+        previousContentInContext: vi.fn((): TNeighbourReturn => null),
         inner,
     };
 }
@@ -164,9 +170,11 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
     it('returns the next outside-of-table content when the only row is removed (Copilot PR-7b review follow-up)', () => {
         const fake = makeFakeTable(1, 3);
         const outsideContent = { setCursor: vi.fn() };
-        // The outsideContent only implements `setCursor`; cast to the
-        // structural return type the production code expects.
-        fake.nextContentInContext = vi.fn(() => outsideContent as unknown as null);
+        // The outsideContent only implements `setCursor` — enough for the
+        // production code, which only calls setCursor on the returned
+        // value. Cast to the real production return type rather than `null`
+        // so the stub stays honest about what it's pretending to be.
+        fake.nextContentInContext = vi.fn(() => outsideContent as unknown as TNeighbourReturn);
 
         const result = Table.prototype.removeRow.call(
             fake as unknown as Table,
@@ -181,7 +189,7 @@ describe('table.removeRow — returns surviving cell content for cursor placemen
     it('falls back to previousContentInContext when there is no next content outside the table', () => {
         const fake = makeFakeTable(1, 3);
         const prevOutside = { setCursor: vi.fn() };
-        fake.previousContentInContext = vi.fn(() => prevOutside as unknown as null);
+        fake.previousContentInContext = vi.fn(() => prevOutside as unknown as TNeighbourReturn);
 
         const result = Table.prototype.removeRow.call(
             fake as unknown as Table,
@@ -254,9 +262,11 @@ describe('table.removeColumn — returns surviving cell content for cursor place
     it('returns the next outside-of-table content when the only column is removed (Copilot PR-7b review follow-up)', () => {
         const fake = makeFakeTable(2, 1);
         const outsideContent = { setCursor: vi.fn() };
-        // The outsideContent only implements `setCursor`; cast to the
-        // structural return type the production code expects.
-        fake.nextContentInContext = vi.fn(() => outsideContent as unknown as null);
+        // The outsideContent only implements `setCursor` — enough for the
+        // production code, which only calls setCursor on the returned
+        // value. Cast to the real production return type rather than `null`
+        // so the stub stays honest about what it's pretending to be.
+        fake.nextContentInContext = vi.fn(() => outsideContent as unknown as TNeighbourReturn);
 
         const result = Table.prototype.removeColumn.call(
             fake as unknown as Table,

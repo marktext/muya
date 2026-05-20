@@ -110,8 +110,14 @@ export class ParagraphFrontButton {
         const { _container: container } = this;
         const { eventCenter } = this.muya;
 
-        const mousemoveHandler = throttle((event: MouseEvent) => {
+        // attachDOMEvent's listener is typed as `EventListener` ((evt:
+        // Event) => void). Take Event and narrow with the `isMouseEvent`
+        // guard — same pattern as `mouseMove` below — rather than casting
+        // the wrapper to EventListener (which would hide a real mismatch).
+        const mousemoveHandler = throttle((event: Event) => {
             if (this._disableListen)
+                return;
+            if (!isMouseEvent(event))
                 return;
 
             const { x, y } = event;
@@ -144,7 +150,7 @@ export class ParagraphFrontButton {
 
         eventCenter.attachDOMEvent(container, 'mousedown', this.dragBarMouseDown);
         eventCenter.attachDOMEvent(container, 'mouseup', this.dragBarMouseUp);
-        eventCenter.attachDOMEvent(document, 'mousemove', mousemoveHandler as EventListener);
+        eventCenter.attachDOMEvent(document, 'mousemove', mousemoveHandler);
         eventCenter.attachDOMEvent(container, 'click', clickHandler);
     }
 
