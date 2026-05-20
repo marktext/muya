@@ -18,7 +18,7 @@ export async function getPageTitle(url: string) {
         const res = await fetch(url, { method: 'GET', mode: 'cors' });
         const contentType = res.headers.get('content-type');
 
-        if (res.status !== 200 || !contentType || !/text\/html/.test(contentType))
+        if (res.status !== 200 || !contentType || !/text\/html/i.test(contentType))
             return '';
 
         // The response is HTML — read it as text and pluck `<title>`.
@@ -112,11 +112,13 @@ export async function normalizePastedHTML(html: string) {
     return tempWrapper.innerHTML;
 }
 
-// Sniffs whether `text` is a single top-level `<table>...</table>` blob.
-// Some clipboard sources (notably Apple Numbers, marktext #1271) put raw
-// HTML into `text/plain` with no `text/html` flavour; the paste handler
-// promotes such text into the html slot so the table goes through the
-// HTML→Markdown converter instead of being inserted verbatim.
+// Sniffs whether `text` looks like an HTML `<table>` blob and nothing else
+// (no surrounding prose). The regex deliberately doesn't enforce "exactly
+// one root element" — sibling tables in the same payload still belong on
+// the HTML→Markdown path. Some clipboard sources (notably Apple Numbers,
+// marktext #1271) put raw HTML into `text/plain` with no `text/html`
+// flavour; the paste handler promotes such text into the html slot so it
+// goes through `HtmlToMarkdown` instead of being inserted verbatim.
 const STANDALONE_TABLE_REG = /^<table\b[\s\S]*<\/table>$/i;
 export function isStandaloneTableHtml(text: string) {
     if (!text)

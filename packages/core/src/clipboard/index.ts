@@ -618,7 +618,7 @@ class Clipboard {
                 const remaining = mergePasteIntoHeading(
                     anchorBlock,
                     wrapperBlock,
-                    states as any,
+                    states,
                     { startOffset: start.offset, endOffset: end.offset },
                 );
 
@@ -629,7 +629,7 @@ class Clipboard {
                 }
 
                 for (const state of remaining) {
-                    const newBlock = ScrollPage.loadBlock(state.name).create(muya, state as any);
+                    const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
                     wrapperBlock?.parent?.insertAfter(newBlock, wrapperBlock);
                     wrapperBlock = newBlock;
                 }
