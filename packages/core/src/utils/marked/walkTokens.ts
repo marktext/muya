@@ -22,9 +22,13 @@ function walkTokens(options: ILexOption) {
         }
 
         if (token.type === 'code') {
-            if (token.codeBlockStyle)
+            // Only strip the language tag for indented code blocks — those are
+            // never fenced and can't carry a language. For fenced blocks we
+            // tag them once; subsequent visits are no-ops, so this stays
+            // idempotent even if walkTokens accidentally runs multiple times.
+            if (token.codeBlockStyle === 'indented')
                 token.lang = '';
-            else if (typeof token.lang === 'string')
+            else if (!token.codeBlockStyle && typeof token.lang === 'string')
                 token.codeBlockStyle = 'fenced';
         }
 
