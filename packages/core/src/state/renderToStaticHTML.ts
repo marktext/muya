@@ -8,6 +8,16 @@ export interface IRenderToStaticHTMLOptions {
     isGitlabCompatibilityEnabled?: boolean;
     superSubScript?: boolean;
     frontMatter?: boolean;
+    /**
+     * Skip DOMPurify sanitization. **Unsafe with untrusted input** — drops
+     * the XSS guarantees of the default export path. Only intended for
+     * CommonMark / GFM spec compliance runners, which need to compare
+     * against the parser's raw output (the spec includes "raw HTML
+     * allowance" examples that DOMPurify would otherwise rewrite).
+     *
+     * @default true
+     */
+    sanitize?: boolean;
 }
 
 /**
@@ -43,6 +53,9 @@ export function renderToStaticHTML(
         superSubScript: options.superSubScript ?? true,
         frontMatter: options.frontMatter ?? false,
     });
+
+    if (options.sanitize === false)
+        return html;
 
     return sanitize(html, EXPORT_DOMPURIFY_CONFIG, false) as string;
 }

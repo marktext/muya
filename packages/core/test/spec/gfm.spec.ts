@@ -27,6 +27,8 @@ describe('GFM 0.29-gfm spec conformance', () => {
                 superSubScript: false,
                 isGitlabCompatibilityEnabled: false,
                 frontMatter: false,
+                // Bypass DOMPurify — see commonmark.spec.ts for rationale.
+                sanitize: false,
             });
             const result = compareHtml(actual, example.html);
             const isExpectedFailure = expectedFailures.has(example.number);

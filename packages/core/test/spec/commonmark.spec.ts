@@ -28,6 +28,11 @@ describe('CommonMark 0.31 spec conformance', () => {
                 superSubScript: false,
                 isGitlabCompatibilityEnabled: false,
                 frontMatter: false,
+                // Bypass DOMPurify: spec tests verify the *parser's* output
+                // (§6.9 "Raw HTML" explicitly tests that unknown tags like
+                // `<bab>` are preserved). DOMPurify is exercised separately
+                // by the renderToStaticHTML unit tests.
+                sanitize: false,
             });
             const result = compareHtml(actual, example.html);
             const isExpectedFailure = expectedFailures.has(example.number);

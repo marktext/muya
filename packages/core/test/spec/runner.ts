@@ -34,16 +34,23 @@ export interface IRunResult {
 /**
  * Canonicalise an HTML fragment so trivially-different but semantically-equal
  * outputs compare equal:
- *   - Whitespace: collapsing inside text nodes would corrupt `pre` content,
- *     so we only trim trailing whitespace per line, collapse blank-line
- *     runs to one newline, and strip leading / trailing newlines.
  *   - Sort tag attributes alphabetically so `<a href="x" title="y">` and
  *     `<a title="y" href="x">` match.
  *   - Normalise self-closing form: `<br />` / `<br/>` / `<br>` → `<br />`.
+ *   - Collapse inter-tag whitespace: `>(whitespace)<` between adjacent HTML
+ *     tags collapses to `><`. This is the bulk of the loose-list / blockquote
+ *     output style divergence between cmark and marked v16.
+ *   - Strip whitespace following void self-closing tags (`<br />`, `<hr />`)
+ *     so cmark's `<br>\nfoo` and marked's `<br>foo` compare equal — they
+ *     render identically.
+ *   - Final pass: trim per-line trailing whitespace, collapse blank-line
+ *     runs, strip leading / trailing newlines.
  *
- * NOTE: Intentionally conservative. False-negatives (real bugs masked by
- * aggressive normalisation) are worse than false-positives (cosmetic diffs
- * surfaced as failures). We can tighten over time.
+ * Critically, content *inside* tags is preserved. `>foo\n<` (where `foo` is
+ * content) is NOT collapsed because the pattern requires the matched run to
+ * be whitespace-only between the two tag boundaries. So `<pre><code>foo\n
+ * </code></pre>` keeps its trailing newline, which is what fenced-code-block
+ * spec examples depend on.
  */
 export function normalizeHtml(html: string): string {
     let out = html;
@@ -59,15 +66,16 @@ export function normalizeHtml(html: string): string {
     }
 
     // Sort attributes inside tags alphabetically. Skip closing tags and
-    // self-closed void tags we already handled, but the sort below is safe
-    // to re-apply.
+    // self-closed void tags we already handled.
     //
-    // The separator between tag name and attrs uses `[ \t\n\r]+` (concrete
-    // whitespace chars) and the attrs portion is anchored to start with
-    // a non-whitespace `\S`. This rules out the polynomial backtracking
-    // case where `\s+` and `\s` inside `[^>]*?` could exchange characters.
+    // The attrs portion is anchored to start with a valid attr-name char
+    // (`[a-z_:]` after the `i` flag). That excludes the `/` of `<br />`,
+    // which would otherwise be captured as attrs and dropped by the
+    // attr-name tokenizer, undoing the void-tag normalisation above. The
+    // `[ \t\n\r]+` separator (instead of `\s+`) plus this anchor also
+    // prevents polynomial backtracking against the trailing `[^>]*?`.
     out = out.replace(
-        /<([a-z][\w-]*)[ \t\n\r]+(\S[^>]*?)(\/?)>/gi,
+        /<([a-z][\w-]*)[ \t\n\r]+([a-z_:][^>]*?)(\/?)>/gi,
         (_m, name: string, attrs: string, selfClose: string) => {
             // Parse attrs of the form: name | name="value" | name='value'
             const parsed: Array<[string, string]> = [];
@@ -88,7 +96,21 @@ export function normalizeHtml(html: string): string {
         },
     );
 
-    // Strip leading/trailing whitespace, collapse runs of blank lines.
+    // Collapse whitespace between adjacent tag boundaries. Crucially:
+    // `>foo\n<` does NOT match because `foo` isn't whitespace — content is
+    // preserved. Only whitespace-only `>WS<` collapses.
+    out = out.replace(/>[ \t\n\r]+</g, '><');
+
+    // Strip whitespace immediately following a void self-closing tag. This
+    // covers cmark's `<br>\nfoo` vs marked's `<br>foo`: after the void-tag
+    // normalisation above both inputs reach `<br />`, then we strip the
+    // following whitespace run.
+    out = out.replace(
+        /(<(?:br|hr|wbr|img|input)\s+\/>)[ \t\n\r]+/gi,
+        '$1',
+    );
+
+    // Strip leading/trailing whitespace per line, collapse blank-line runs.
     out = out
         .split('\n')
         .map(line => line.replace(/\s+$/, ''))

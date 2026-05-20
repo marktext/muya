@@ -148,13 +148,13 @@ PR-6a 已落地（2026-05-20）：CommonMark 0.31 + GFM 0.29-gfm spec 合规基�
 
 ### PR-6a 交付
 
-- 新增公开同步 API：`renderToStaticHTML(markdown, options?)`，12 个单元测试（happy-path + DOMPurify XSS 处理 + math/footnote 选项 + mermaid/diagram 占位）
+- 新增公开同步 API：`renderToStaticHTML(markdown, options?)`，15 个单元测试（happy-path + DOMPurify XSS 处理 + math/footnote 选项 + mermaid/diagram 占位 + `sanitize: false` 关闭路径）
 - `commonmark-spec@^0.31.2` devDep（652 个 example）
 - 自解析 GFM spec：`packages/core/test/spec/fixtures/gfm-spec-0.29-gfm.json`（672 个 example，含 5 个 GFM extension section）
-- spec runner：`test/spec/runner.ts`（normalizeHtml + 防回归 expected-failures 锁）
+- spec runner：`test/spec/runner.ts`（normalizeHtml 折叠 cosmetic 空白 + 防回归 expected-failures 锁）+ 7 个 normalizer 单测
 - 两份 spec 测试：`commonmark.spec.ts` + `gfm.spec.ts`，每 example 一条 `it.each`，共 1324 测试，全部锁定通过
 - baseline 报告：`test/spec/conformance.md`（按 section 拆 pass-rate）
-- expected-failures.json：CM 201 个 + GFM 217 个待修 example_id
+- expected-failures.json：CM 75 个 + GFM 87 个待修 example_id
 - vitest 配置拆分：默认 `pnpm test` 仅跑 unit；新增 `pnpm test:spec` / `test:spec:commonmark` / `test:spec:gfm`，独立 `vitest.spec.config.ts`
 - CI：`.github/workflows/ci-test.yml` 增加 `pnpm test:spec` 步骤
 
@@ -162,10 +162,14 @@ PR-6a 已落地（2026-05-20）：CommonMark 0.31 + GFM 0.29-gfm spec 合规基�
 
 | Suite | 通过 | 总数 | 通过率 |
 |---|---|---|---|
-| CommonMark 0.31 | 451 | 652 | 69.2% |
-| GFM 0.29-gfm | 455 | 672 | 67.7% |
+| CommonMark 0.31 | 577 | 652 | **88.5%** |
+| GFM 0.29-gfm | 585 | 672 | **87.1%** |
 
 > 合并后通过率只能涨不能跌：`expected-failures.json` 中的 example 若开始通过，测试会以 "unexpected pass" 报错，要求 reviewer 把它从列表里移除。
+
+Spec runner 用 `renderToStaticHTML(..., { sanitize: false })` 跑——衡量的是 parser 的合规度，不是 DOMPurify sanitizer 行为（sanitizer 该激进就激进，spec 的 Raw HTML allowance example 会被它合法地剥离）。DOMPurify sanitize 行为由 `renderToStaticHTML` 默认 `sanitize: true` 单元测试覆盖。
+
+`normalizeHtml` 规范化：兼属性名排序、self-closing void 标签统一、相邻 tag 间空白折叠（`>(WS)<` → `><`）、void 标签后空白剥离。`<pre>`/`<code>` 内容（如行末 `\n`）保留——因为 collapse 只匹配纯空白 token 间隔，content 字符不动。
 
 ### PR-6b 待办（独立 PR，PR-6a 合并后做）
 
@@ -212,7 +216,7 @@ PR-6a 已落地（2026-05-20）：CommonMark 0.31 + GFM 0.29-gfm spec 合规基�
 | PR-4b (复制) | 7 | 7 | 100%（1 fixed + 6 verified-not-applicable；防御测试 8 个） |
 | PR-4c (P3 抓标题) | 1 | 1 | 100%（fixed，5 个测试） |
 | PR-5 | 18+ | 0 | 0% |
-| PR-6a | — | done | spec 合规基础设施落地（CM 451/652 = 69.2%, GFM 455/672 = 67.7%，1324 spec 测试 + 12 个 renderToStaticHTML 单测） |
+| PR-6a | — | done | spec 合规基础设施落地（CM 577/652 = 88.5%, GFM 585/672 = 87.1%，1324 spec 测试 + 7 normalizer 单测 + 15 个 renderToStaticHTML 单测） |
 | PR-6b | — | 0 | 0%（PR-6a 合并后启动；footnote 510 行 + markdown-basic round-trip + list-indentation 补齐） |
 
 最后更新：2026-05-20

@@ -128,4 +128,40 @@ describe('renderToStaticHTML', () => {
     it('returns a string for empty input', () => {
         expect(renderToStaticHTML('')).toBe('');
     });
+
+    describe('sanitize option', () => {
+        // Default (`sanitize: true`) is exercised by every other test above.
+        // The `sanitize: false` mode exists so CommonMark / GFM spec runners
+        // can compare against the parser's raw output without DOMPurify
+        // rewriting examples that intentionally test "raw HTML allowance"
+        // (e.g. CommonMark §6.9 `<a><bab><c2c>` — spec expects the unknown
+        // `<bab>` preserved verbatim; DOMPurify would strip it).
+        //
+        // `sanitize: false` MUST NEVER be exposed to user-supplied markdown
+        // in production: it drops the XSS guarantees of `MarkdownToHtml`.
+
+        it('preserves arbitrary raw HTML tags when sanitize=false', () => {
+            const html = renderToStaticHTML('<a><bab><c2c>', { sanitize: false });
+            expect(html).toContain('<bab>');
+            expect(html).toContain('<c2c>');
+        });
+
+        it('does NOT strip <script> when sanitize=false', () => {
+            const html = renderToStaticHTML(
+                '<script>alert(1)</script>',
+                { sanitize: false },
+            );
+            // marked emits raw HTML blocks as-is — the danger is exactly the
+            // point of this mode, hence the docstring warning.
+            expect(html).toMatch(/<script>/);
+        });
+
+        it('still strips <script> when sanitize=true (default)', () => {
+            const html = renderToStaticHTML(
+                '<script>alert(1)</script>',
+                { sanitize: true },
+            );
+            expect(html).not.toMatch(/<script/i);
+        });
+    });
 });
