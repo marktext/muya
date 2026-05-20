@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { MarkdownToState } from '../markdownToState';
+import ExportMarkdown from '../stateToMarkdown';
 
-function generate(markdown: string) {
+function generate(markdown: string, options: Partial<{ footnote: boolean }> = {}) {
     return new MarkdownToState({
         footnote: false,
         math: false,
         isGitlabCompatibilityEnabled: false,
         trimUnnecessaryCodeBlockEmptyLines: false,
         frontMatter: false,
+        ...options,
     }).generate(markdown);
 }
 
@@ -166,6 +168,36 @@ describe('markdownToState — task list nesting (marktext 23435ce6)', () => {
             c.children.find((cc: any) => cc.name === 'paragraph')?.text,
         );
         expect(secondTexts).toEqual(['zar', 'rar']);
+    });
+
+    // The footnote extension (utils/marked/extensions/footnote.ts) emits a
+    // block-level `footnote` token when `footnote: true` is set. Make sure
+    // MarkdownToState lifts that into a `footnote` state instead of
+    // silently dropping it with an "Unknown type" warning.
+    it('converts block-level footnote tokens into footnote states', () => {
+        const states = generate(
+            `text[^1]
+
+[^1]: definition`,
+            { footnote: true },
+        );
+        const footnote = states.find(s => s.name === 'footnote') as any;
+        expect(footnote, 'a footnote state should be emitted').toBeDefined();
+        expect(footnote.meta.identifier).toBe('1');
+        const firstChild = footnote.children[0];
+        expect(firstChild.name).toBe('paragraph');
+        expect(firstChild.text).toBe('definition');
+    });
+
+    it('round-trips a single-paragraph footnote through state', () => {
+        const md = `text[^1]
+
+[^1]: definition
+`;
+        const states = generate(md, { footnote: true });
+        const out = new ExportMarkdown({ listIndentation: 1 }).generate(states);
+        // The serialiser emits the canonical `[^id]: ` form on its own line.
+        expect(out).toContain('[^1]: definition');
     });
 
     it('keeps tight (no blank lines) nested task lists nested', () => {

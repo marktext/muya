@@ -13,7 +13,8 @@ import { MarkdownToState } from '../state/markdownToState';
 import StateToMarkdown from '../state/stateToMarkdown';
 import { deepClone } from '../utils';
 import { getClipBoardHtml } from '../utils/marked';
-import { getCopyTextType, normalizePastedHTML } from '../utils/paste';
+import { getCopyTextType, isStandaloneTableHtml, normalizePastedHTML } from '../utils/paste';
+import { mergePasteIntoHeading } from './mergePasteIntoHeading';
 
 class Clipboard {
     public copyType: string = 'normal'; // `normal` or `copyAsMarkdown` or `copyAsHtml` or `copyCodeContent`
@@ -284,26 +285,37 @@ class Clipboard {
         if (!event.clipboardData)
             return;
 
+        // Mirror native copy behaviour: leave the system clipboard untouched
+        // when the selection has nothing to contribute, so a previous copy
+        // from another app isn't silently clobbered (marktext #3130).
         switch (copyType) {
             case 'normal': {
+                if (text.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', html);
                 event.clipboardData.setData('text/plain', text);
                 break;
             }
 
             case 'copyAsHtml': {
+                if (html.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', '');
                 event.clipboardData.setData('text/plain', html);
                 break;
             }
 
             case 'copyAsMarkdown': {
+                if (text.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', '');
                 event.clipboardData.setData('text/plain', text);
                 break;
             }
 
             case 'copyCodeContent': {
+                if (text.length === 0)
+                    return;
                 event.clipboardData.setData('text/html', '');
                 event.clipboardData.setData('text/plain', text);
                 break;
@@ -564,6 +576,13 @@ class Clipboard {
         if (URL_REG.test(text) && !/\s/.test(text) && !html)
             html = `<a href="${text}">${text}</a>`;
 
+        // Apple Numbers and a handful of other sources only put a raw
+        // `<table>...</table>` blob in text/plain. Promote it to the HTML
+        // slot so it goes through the HTML→Markdown converter rather than
+        // being inserted verbatim (marktext 067ec485 / #1271).
+        if (!html && isStandaloneTableHtml(text))
+            html = text;
+
         // Remove crap from HTML such as meta data and styles.
         html = await normalizePastedHTML(html);
         const copyType = getCopyTextType(html, text, this.pasteType);
@@ -583,11 +602,6 @@ class Clipboard {
                 /\n\n/.test(markdown)
                 && anchorBlock.blockName !== 'codeblock.content'
             ) {
-                if (start.offset !== end.offset) {
-                    anchorBlock.text
-                        = content.substring(0, start.offset) + content.substring(end.offset);
-                    anchorBlock.update();
-                }
                 // Has multiple paragraphs.
                 const states = new MarkdownToState({
                     footnote,
@@ -597,7 +611,24 @@ class Clipboard {
                     frontMatter,
                 }).generate(markdown);
 
-                for (const state of states) {
+                // When pasting into a heading, splice the first paragraph
+                // back into the heading text so the heading semantics survive.
+                // The helper also collapses any selection on the heading.
+                // Backport of marktext 1c42555a (#671).
+                const remaining = mergePasteIntoHeading(
+                    anchorBlock,
+                    wrapperBlock,
+                    states,
+                    { startOffset: start.offset, endOffset: end.offset },
+                );
+
+                if (remaining === states && start.offset !== end.offset) {
+                    anchorBlock.text
+                        = content.substring(0, start.offset) + content.substring(end.offset);
+                    anchorBlock.update();
+                }
+
+                for (const state of remaining) {
                     const newBlock = ScrollPage.loadBlock(state.name).create(muya, state);
                     wrapperBlock?.parent?.insertAfter(newBlock, wrapperBlock);
                     wrapperBlock = newBlock;
