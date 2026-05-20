@@ -1,12 +1,7 @@
 import type Content from '../block/base/content';
 import type Parent from '../block/base/parent';
+import type { TState } from '../state/types';
 import type { Nullable } from '../types';
-
-interface IPasteState {
-    name: string;
-    text?: string;
-    [key: string]: unknown;
-}
 
 interface IPasteCursor {
     startOffset: number;
@@ -26,9 +21,9 @@ interface IPasteCursor {
 export function mergePasteIntoHeading(
     anchorBlock: Content,
     wrapperBlock: Nullable<Pick<Parent, 'blockName'>>,
-    states: IPasteState[],
+    states: TState[],
     cursor: IPasteCursor,
-): IPasteState[] {
+): TState[] {
     if (states.length === 0)
         return states;
 
@@ -42,13 +37,12 @@ export function mergePasteIntoHeading(
     if (first.name !== 'paragraph')
         return states;
 
-    const inserted = typeof first.text === 'string' ? first.text : '';
     const original = anchorBlock.text;
     anchorBlock.text
         = original.substring(0, cursor.startOffset)
-            + inserted
+            + first.text
             + original.substring(cursor.endOffset);
-    (anchorBlock as unknown as { update: () => void }).update();
+    anchorBlock.update();
 
     return states.slice(1);
 }
