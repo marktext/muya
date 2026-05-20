@@ -43,10 +43,16 @@ export default function footnoteExtension(): MarkedExtension {
                     const [raw, identifier, rest] = match;
                     // Strip leading whitespace after the `:` marker (so both
                     // `[^id]: text` and `[^id]:\n    text` start clean) and
-                    // de-indent the 4-space continuation indent.
+                    // de-indent the 4-space continuation indent on every
+                    // line. The first line needs an explicit `^ {4}` strip
+                    // because the per-line de-indent rule below is anchored
+                    // to a preceding `\n`; without that strip an indented-
+                    // continuation body (`[^id]:\n    text`) lexes as an
+                    // indented code block instead of a paragraph.
                     const cleaned = rest
                         .replace(/^[ \t]*/, '')
                         .replace(/^\n+/, '')
+                        .replace(/^ {4}/, '')
                         .replace(/\n {4}(?=\S)/g, '\n')
                         .replace(/\n+$/, '');
 

@@ -216,3 +216,152 @@ At vero eos [^foo1]: et accusam.`);
         expect(types).not.toContain('footnote');
     });
 });
+
+// The cases below cover the multi-line footnote-body forms from marktext's
+// markdown-footnotes.spec.js. They exercise the BLOCK_RULE's lazy `:[\s\S]*?`
+// capture plus the "strip leading whitespace / strip leading newlines /
+// de-indent 4-space continuation" cleanup the tokenizer performs.
+describe('marked footnote extension — multi-line bodies', () => {
+    it('body text on the next line via 4-space indent', () => {
+        const tokens = parse(`Lorem [^foo1] ipsum.
+
+[^foo1]:
+    At vero eos et accusam.`);
+        expect(tokens).toEqual([
+            { type: 'paragraph', text: 'Lorem [^foo1] ipsum.' },
+            {
+                type: 'footnote',
+                identifier: 'foo1',
+                children: [{ type: 'paragraph', text: 'At vero eos et accusam.' }],
+            },
+        ]);
+    });
+
+    it('body text on the next paragraph via 4-space indent', () => {
+        const tokens = parse(`Lorem [^foo1] ipsum.
+
+[^foo1]:
+
+    At vero eos et accusam.`);
+        expect(tokens).toEqual([
+            { type: 'paragraph', text: 'Lorem [^foo1] ipsum.' },
+            {
+                type: 'footnote',
+                identifier: 'foo1',
+                children: [{ type: 'paragraph', text: 'At vero eos et accusam.' }],
+            },
+        ]);
+    });
+
+    it('inline body plus continuation paragraph', () => {
+        const tokens = parse(`Lorem [^foo1] ipsum.
+
+[^foo1]: Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
+
+    At vero eos et accusam et justo duo dolores et ea rebum!`);
+        const footnote = tokens.find(t => t.type === 'footnote');
+        expect(footnote?.identifier).toBe('foo1');
+        // Two paragraph children: the inline lead, then the indented
+        // continuation paragraph.
+        const paragraphs = footnote?.children?.filter(t => t.type === 'paragraph') ?? [];
+        expect(paragraphs).toHaveLength(2);
+        expect(paragraphs[0].text).toContain('Lorem ipsum dolor sit amet');
+        expect(paragraphs[1].text).toContain('At vero eos et accusam');
+    });
+
+    it('multi-paragraph body (two paragraphs both 4-space indented)', () => {
+        const tokens = parse(`text[^foo1]
+
+[^foo1]:
+
+    First paragraph of the footnote.
+
+    Second paragraph of the footnote.`);
+        const footnote = tokens.find(t => t.type === 'footnote');
+        expect(footnote?.identifier).toBe('foo1');
+        const paragraphs = footnote?.children?.filter(t => t.type === 'paragraph') ?? [];
+        expect(paragraphs).toHaveLength(2);
+        expect(paragraphs[0].text).toBe('First paragraph of the footnote.');
+        expect(paragraphs[1].text).toBe('Second paragraph of the footnote.');
+    });
+
+    it('list inside a footnote body', () => {
+        const tokens = parse(`text[^foo1]
+
+[^foo1]:
+
+    Lead paragraph.
+
+    - list element 1
+    - list element 2
+    - list element 3`);
+        const footnote = tokens.find(t => t.type === 'footnote');
+        expect(footnote?.identifier).toBe('foo1');
+        const childTypes = footnote?.children?.map(t => t.type) ?? [];
+        expect(childTypes).toContain('paragraph');
+        expect(childTypes).toContain('list');
+    });
+
+    it('fenced code block inside a footnote body', () => {
+        const tokens = parse(`text[^foo1]
+
+[^foo1]:
+
+    Lead paragraph.
+
+    \`\`\`
+    code block content
+    \`\`\`
+
+    Trailing paragraph.`);
+        const footnote = tokens.find(t => t.type === 'footnote');
+        expect(footnote?.identifier).toBe('foo1');
+        const childTypes = footnote?.children?.map(t => t.type) ?? [];
+        // Lead, code, trailing — three children of distinct types.
+        expect(childTypes).toContain('code');
+        expect(childTypes.filter(t => t === 'paragraph')).toHaveLength(2);
+    });
+});
+
+describe('marked footnote extension — termination', () => {
+    it('terminates at a non-indented paragraph (BLOCK_RULE lookahead)', () => {
+        // The footnote body must NOT swallow the trailing non-indented
+        // paragraph. The BLOCK_RULE's `(?=\n *\n {0,3}[^ ]|$)` lookahead
+        // is what enforces this.
+        const tokens = parse(`text[^foo1]
+
+[^foo1]: Inline body of the footnote.
+
+    Continuation that belongs to the footnote.
+
+Trailing paragraph that does NOT belong to the footnote.`);
+        const types = tokens.map(t => t.type);
+        // Exactly one footnote in the stream.
+        expect(types.filter(t => t === 'footnote')).toHaveLength(1);
+        // A separate trailing paragraph outside the footnote.
+        const trailing = tokens.find(
+            t => t.type === 'paragraph'
+                && typeof t.text === 'string'
+                && t.text.startsWith('Trailing paragraph'),
+        );
+        expect(trailing).toBeDefined();
+    });
+
+    it('treats less-than-4-space indented follow-on as outside the footnote', () => {
+        // 2-space indent is below the 4-space continuation threshold — the
+        // follow-on stays as its own (indented but un-belonging) paragraph.
+        const tokens = parse(`text[^foo1]
+
+[^foo1]: Inline body of the footnote.
+
+    Continuation that belongs to the footnote.
+
+  Sed diam nonumy — only 2-space indent, NOT continuation.`);
+        const footnote = tokens.find(t => t.type === 'footnote');
+        expect(footnote).toBeDefined();
+        // The 2-space-indented line is NOT consumed into the footnote
+        // children (the BLOCK_RULE terminates first).
+        const footnoteText = JSON.stringify(footnote);
+        expect(footnoteText).not.toContain('Sed diam nonumy');
+    });
+});
