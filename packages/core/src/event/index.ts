@@ -120,12 +120,23 @@ class EventCenter {
         const eventListener = this.listeners[event];
 
         if (eventListener && Array.isArray(eventListener)) {
-            eventListener.forEach(({ listener, once }) => {
+            // Snapshot before iterating: a once-listener removes itself via
+            // off() during emit, which mutates the same array and causes
+            // forEach to skip the adjacent element. Iterate a copy instead.
+            eventListener.slice().forEach(({ listener, once }) => {
                 listener(...data);
                 if (once)
                     this.off(event, listener);
             });
         }
+    }
+
+    /**
+     * Remove all pub/sub subscriptions. Called from muya.destroy() to
+     * release listener closures so the host page can GC the Muya instance.
+     */
+    unsubscribeAll() {
+        this.listeners = {};
     }
 
     // Determine whether the event has been bind
