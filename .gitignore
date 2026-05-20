@@ -27,3 +27,6 @@ coverage
 # turbo
 .turbo
 .vercel
+
+# Claude Code local workspace
+.claude/
