@@ -1,8 +1,14 @@
 // @vitest-environment happy-dom
 
+import type { Config } from '../dompurify';
 import { describe, expect, it } from 'vitest';
 import { EXPORT_DOMPURIFY_CONFIG } from '../../config';
 import sanitize, { isValidAttribute } from '../dompurify';
+
+// Lock the DOMPurify config to the typed contract so a regression in shape
+// (e.g. ADD_ATTR being dropped or renamed) breaks at compile time, not just
+// at runtime.
+const EXPORT_CONFIG: Config = EXPORT_DOMPURIFY_CONFIG;
 
 // Regression for marktext 0baf2e9e / 7de33f11 — "Fix #1390 prevent XSS attack".
 //
@@ -27,17 +33,18 @@ import sanitize, { isValidAttribute } from '../dompurify';
 
 describe('marktext 0baf2e9e/7de33f11 — inline html tag XSS defenses', () => {
     describe('sanitize() downgrades dangerous tags to empty (drives the htmlTag span fallback)', () => {
+        // These tables intentionally use BARE opening tags (no attrs / no close
+        // tag) — that's the exact call shape `htmlTag.ts` uses:
+        //   `!sanitize('<' + tag + '>')`. Adding attribute-bearing variants
+        // here would assert against DOMPurify behaviour the renderer never
+        // exercises and could create false failures.
         it.each([
             ['<embed>'],
-            ['<embed src="javascript:alert(1)">'],
             ['<object>'],
-            ['<object data="javascript:alert(1)"></object>'],
             ['<iframe>'],
-            ['<iframe src="javascript:alert(1)"></iframe>'],
         ])('strips %s', (tag) => {
-            // The htmlTag renderer treats `!sanitize(`<${tag}>`)` as the
-            // trigger to downgrade to `<span>` — i.e. it expects an
-            // empty string for tags DOMPurify removes wholesale.
+            // The htmlTag renderer treats an empty result from
+            // `sanitize('<' + tag + '>')` as the trigger to downgrade to `<span>`.
             expect(sanitize(tag)).toBe('');
         });
 
@@ -78,12 +85,12 @@ describe('marktext 0baf2e9e/7de33f11 — inline html tag XSS defenses', () => {
             // same commit pair; the new repo carries that intent via
             // ADD_ATTR on EXPORT_DOMPURIFY_CONFIG so saved/exported markdown
             // image alignment metadata survives sanitization.
-            expect((EXPORT_DOMPURIFY_CONFIG as any).ADD_ATTR).toContain('data-align');
+            expect(EXPORT_CONFIG.ADD_ATTR).toContain('data-align');
         });
 
         it('export sanitisation preserves data-align on <img>', () => {
             const html = '<img src="x.png" data-align="center" alt="x" />';
-            const cleaned = sanitize(html, EXPORT_DOMPURIFY_CONFIG as any) as unknown as string;
+            const cleaned = sanitize(html, EXPORT_CONFIG) as unknown as string;
             expect(cleaned).toContain('data-align="center"');
         });
     });
