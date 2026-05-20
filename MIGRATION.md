@@ -103,7 +103,7 @@ PR 分组对应方案第三节的 5 个系列：
 | 485fcfe0 | clipboard | image paste handler 不执行 | PR-4 | `pending` |
 | 5b1cd85d | clipboard | 末尾 html block 粘贴错误 | PR-4 | `pending` |
 | fb8fca7b | clipboard | copy/paste list | PR-4 | `pending` |
-| 067ec485 | clipboard | HTML paste handler | PR-4 | `pending` |
+| 067ec485 | clipboard | HTML paste handler | PR-4a | `partial-fixed`：text-only `<table>...</table>` 现在升级到 html 槽走 HtmlToMarkdown；recursion 与 pasteImage 分支新架构不适用（无 pasteImage） |
 | ef59a743 | clipboard | 富文本复制 | PR-4 | `pending` |
 | c841facd | clipboard | 空内容不写剪贴板 | PR-4b | `fixed`（含 6 个回归测试） |
 

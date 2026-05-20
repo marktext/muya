@@ -112,6 +112,18 @@ export async function normalizePastedHTML(html: string) {
     return tempWrapper.innerHTML;
 }
 
+// Sniffs whether `text` is a single top-level `<table>...</table>` blob.
+// Some clipboard sources (notably Apple Numbers, marktext #1271) put raw
+// HTML into `text/plain` with no `text/html` flavour; the paste handler
+// promotes such text into the html slot so the table goes through the
+// HTML→Markdown converter instead of being inserted verbatim.
+const STANDALONE_TABLE_REG = /^<table\b[\s\S]*<\/table>$/i;
+export function isStandaloneTableHtml(text: string) {
+    if (!text)
+        return false;
+    return STANDALONE_TABLE_REG.test(text.trim());
+}
+
 /**
  *
  * @param {string} html

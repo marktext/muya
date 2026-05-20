@@ -13,7 +13,7 @@ import { MarkdownToState } from '../state/markdownToState';
 import StateToMarkdown from '../state/stateToMarkdown';
 import { deepClone } from '../utils';
 import { getClipBoardHtml } from '../utils/marked';
-import { getCopyTextType, normalizePastedHTML } from '../utils/paste';
+import { getCopyTextType, isStandaloneTableHtml, normalizePastedHTML } from '../utils/paste';
 import { mergePasteIntoHeading } from './mergePasteIntoHeading';
 
 class Clipboard {
@@ -575,6 +575,13 @@ class Clipboard {
         // Support pasted URLs from Firefox.
         if (URL_REG.test(text) && !/\s/.test(text) && !html)
             html = `<a href="${text}">${text}</a>`;
+
+        // Apple Numbers and a handful of other sources only put a raw
+        // `<table>...</table>` blob in text/plain. Promote it to the HTML
+        // slot so it goes through the HTML→Markdown converter rather than
+        // being inserted verbatim (marktext 067ec485 / #1271).
+        if (!html && isStandaloneTableHtml(text))
+            html = text;
 
         // Remove crap from HTML such as meta data and styles.
         html = await normalizePastedHTML(html);
