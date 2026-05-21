@@ -88,11 +88,15 @@ test.describe('ImageResizeBar', () => {
         const match = md.match(/<img\s[^>]*width="(\d+)"/i);
         expect(match).not.toBeNull();
         const recordedWidth = Number.parseInt(match![1]);
-        // Width should be at least roughly the original; with the +80 px
-        // drag it normally lands well above start, but engines render
-        // the natural width differently — assert ≥ startWidth (the bar
-        // clamps to a 50 px floor, so it can't shrink below that).
-        expect(recordedWidth).toBeGreaterThanOrEqual(Math.min(50, startWidth));
-        expect(recordedWidth).toBeGreaterThan(50);
+        // Two independent guarantees, both must hold:
+        //   (1) the bar clamps to a 50-px floor, so the recorded width
+        //       can never drop below that regardless of the drag.
+        //   (2) we dragged ~80 px outward from the right handle, so the
+        //       recorded width should *exceed* the pre-drag natural
+        //       width (startWidth) — this is the real "drag worked"
+        //       assertion. A regression that pins width to start would
+        //       fail here but pass (1).
+        expect(recordedWidth).toBeGreaterThanOrEqual(50);
+        expect(recordedWidth).toBeGreaterThan(startWidth);
     });
 });
