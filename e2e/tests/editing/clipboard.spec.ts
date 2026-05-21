@@ -28,10 +28,6 @@ import { editor } from '../helpers/selectors';
  */
 
 test.describe('clipboard paste', () => {
-    // Per-context permission grant: required for navigator.clipboard.write
-    // to succeed without a user-gesture prompt.
-    test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
-
     test('clipboard module is wired (sanity-check via internal handle)', async ({ page }) => {
         await page.evaluate(() => window.muya!.setContent(''));
         const wired = await page.evaluate(() => !!window.muya!.editor.clipboard);
@@ -39,8 +35,9 @@ test.describe('clipboard paste', () => {
         await expect(page.locator(editor.container)).toBeVisible();
     });
 
-    test('pasting <b>foo</b> converts to **foo**', async ({ browserName, page }) => {
+    test('pasting <b>foo</b> converts to **foo**', async ({ browserName, context, page }) => {
         test.skip(browserName !== 'chromium', 'ClipboardItem text/html unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
+        await grantClipboardPermissions(context);
         await pasteClipboard(page, '<b>foo</b>', 'foo');
         await expect.poll(async () => getMarkdown(page), {
             timeout: 5_000,
@@ -48,8 +45,9 @@ test.describe('clipboard paste', () => {
         }).toMatch(/\*\*foo\*\*/);
     });
 
-    test('pasting <a href> converts to markdown link', async ({ browserName, page }) => {
+    test('pasting <a href> converts to markdown link', async ({ browserName, context, page }) => {
         test.skip(browserName !== 'chromium', 'ClipboardItem text/html unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
+        await grantClipboardPermissions(context);
         await pasteClipboard(page, '<a href="https://example.test/">click here</a>', 'click here');
         await expect.poll(async () => getMarkdown(page), {
             timeout: 5_000,
@@ -57,8 +55,9 @@ test.describe('clipboard paste', () => {
         }).toMatch(/\[click here\]\(https:\/\/example\.test\/?\)/);
     });
 
-    test('pasting a basic <table> converts to a GFM table', async ({ browserName, page }) => {
+    test('pasting a basic <table> converts to a GFM table', async ({ browserName, context, page }) => {
         test.skip(browserName !== 'chromium', 'ClipboardItem text/html unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
+        await grantClipboardPermissions(context);
         const html = '<table><thead><tr><th>h1</th><th>h2</th></tr></thead>'
             + '<tbody><tr><td>r1c1</td><td>r1c2</td></tr></tbody></table>';
         await pasteClipboard(page, html, 'h1\th2\nr1c1\tr1c2');
@@ -72,8 +71,9 @@ test.describe('clipboard paste', () => {
         expect(md).toMatch(/\|\s*r1c1\s*\|\s*r1c2\s*\|/);
     });
 
-    test('pasting plain text without HTML falls back to text insertion', async ({ browserName, page }) => {
+    test('pasting plain text without HTML falls back to text insertion', async ({ browserName, context, page }) => {
         test.skip(browserName !== 'chromium', 'ClipboardItem unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
+        await grantClipboardPermissions(context);
         await pastePlainClipboard(page, 'just plain text');
         await expect.poll(async () => getMarkdown(page), {
             timeout: 5_000,
@@ -84,6 +84,22 @@ test.describe('clipboard paste', () => {
         expect(md).not.toMatch(/[*_`|[\]]/);
     });
 });
+
+/**
+ * Grant clipboard read/write to the current BrowserContext.
+ *
+ * Why per-test instead of `test.use({ permissions: [...] })` at describe
+ * level: WebKit doesn't recognise the `'clipboard-write'` permission name
+ * and `browserContext.newPage` throws with `Unknown permission:
+ * clipboard-write` before any `test.skip(browserName !== 'chromium')`
+ * inside the test body runs. By calling `grantPermissions` *after* the
+ * skip check, the call is reached only on chromium where it works.
+ */
+async function grantClipboardPermissions(
+    context: Parameters<Parameters<typeof test>[1]>[0]['context'],
+): Promise<void> {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+}
 
 /**
  * Write HTML+text to the real OS clipboard, focus the editor, fire a
