@@ -5,16 +5,6 @@ import parser from '@typescript-eslint/parser';
 function typescriptPreset() {
     return {
         files: ['**/*.ts', '**/*.tsx'],
-        ignores: [
-            // Test files routinely build partial structural mocks for the
-            // block-tree classes; the double-cast `fake as unknown as Block`
-            // pattern is a deliberate test-only escape hatch and not worth
-            // policing here.
-            '**/*.spec.ts',
-            '**/*.spec.tsx',
-            '**/*.test.ts',
-            '**/*.test.tsx',
-        ],
         rules: {
             // Ban `any` (annotations, casts, generics). Genuine escape
             // hatches (the block-constructor registry's `state: any`, the
@@ -58,6 +48,24 @@ function typescriptPreset() {
         },
         languageOptions: {
             parser,
+        },
+    };
+}
+
+// Test files routinely build partial structural mocks for the block-tree
+// classes (`fake as unknown as Table`); policing the double-cast pattern
+// there adds noise without safety. Disable only `no-restricted-syntax` —
+// `ts/no-explicit-any` and `ts/naming-convention` stay on for tests.
+function testFileDoubleCastOverride() {
+    return {
+        files: [
+            '**/*.spec.ts',
+            '**/*.spec.tsx',
+            '**/*.test.ts',
+            '**/*.test.tsx',
+        ],
+        rules: {
+            'no-restricted-syntax': 'off',
         },
     };
 }
@@ -107,4 +115,5 @@ export default antfu(
         },
     },
     typescriptPreset(),
+    testFileDoubleCastOverride(),
 );

@@ -6,7 +6,7 @@ import loadImageAsync from '../loadImageAsync';
 
 // Narrow cast for the fake renderer used in every test below — it only
 // implements the two Map fields loadImageAsync touches.
-function asRenderer(r: FakeRenderer | { loadImageMap: Map<string, unknown>; urlMap: Map<string, string> }): Renderer {
+function asRenderer(r: IFakeRenderer | { loadImageMap: Map<string, unknown>; urlMap: Map<string, string> }): Renderer {
     return r as unknown as Renderer;
 }
 
@@ -19,12 +19,12 @@ vi.mock('../../../utils/dom', () => ({
     operateClassName: vi.fn(),
 }));
 
-interface FakeRenderer {
+interface IFakeRenderer {
     loadImageMap: Map<string, { id: string; isSuccess: boolean; width?: number; height?: number }>;
     urlMap: Map<string, string>;
 }
 
-function makeRenderer(): FakeRenderer {
+function makeRenderer(): IFakeRenderer {
     return {
         loadImageMap: new Map(),
         urlMap: new Map(),

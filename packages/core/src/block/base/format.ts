@@ -479,13 +479,16 @@ class Format extends Content {
         if (!isMouseEvent(event))
             return;
 
-        // Handler click inline math and inline ruby html.
+        // Handler click inline math and inline ruby html. Use `Element`, not
+        // `HTMLElement` — inline-math KaTeX output is SVG, and a click that
+        // lands on an `<svg>` path still has to walk up to the wrapping
+        // `.mu-math-render` HTMLElement.
         const { target } = event;
-        if (!isHTMLElement(target))
+        if (!(target instanceof Element))
             return;
         const inlineRuleRenderEle
-            = target.closest(`.${CLASS_NAMES.MU_MATH_RENDER}`)
-                || target.closest(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
+            = target.closest<HTMLElement>(`.${CLASS_NAMES.MU_MATH_RENDER}`)
+                || target.closest<HTMLElement>(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
 
         if (inlineRuleRenderEle)
             return this._handleClickInlineRuleRender(event, inlineRuleRenderEle);
