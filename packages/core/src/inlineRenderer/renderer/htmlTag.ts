@@ -55,6 +55,14 @@ export default function htmlTag(
     switch (tag) {
     // Handle html img.
         case 'img': {
+            // `<img>` html_tag tokens and markdown image tokens overlap on the
+            // fields `image()` actually reads (`raw`, `range`, `attrs.src/alt/
+            // title/width/height/'data-align'`), but their static shapes
+            // diverge — HTMLTagToken.attrs is `Record<string, string | null>`,
+            // ImageToken.attrs is the strict `{ src; title; alt }`. Routing
+            // html `<img>` through `image()` is a deliberate runtime contract;
+            // express the structural pun in one place.
+            // eslint-disable-next-line no-restricted-syntax
             return this.image({ h, cursor, block, token: token as unknown as ImageToken, outerClass });
         }
 

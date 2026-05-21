@@ -10,13 +10,14 @@ import { fromEvent, merge } from 'rxjs';
 import { registerBlocks } from '../block';
 import { ScrollPage } from '../block/scrollPage';
 import Clipboard from '../clipboard';
-import { BLOCK_DOM_PROPERTY, isFirefox } from '../config';
+import { isFirefox } from '../config';
 import History from '../history';
 import InlineRenderer from '../inlineRenderer';
 import { Search } from '../search';
 import Selection from '../selection';
 import JSONState from '../state';
-import { hasPick } from '../utils';
+import { hasPick, isHTMLElement } from '../utils';
+import { getBlock } from '../utils/dom';
 import logger from '../utils/logger';
 import { attachLinkMouseHandlers } from './linkMouseEvents';
 
@@ -86,14 +87,11 @@ export class Editor {
             if (
                 event.type === 'click'
                 && isFirefox
-                && (event.target as HTMLElement).textContent === ''
-                && (event.target as HTMLElement).classList.contains('mu-language-input')
+                && isHTMLElement(event.target)
+                && event.target.textContent === ''
+                && event.target.classList.contains('mu-language-input')
             ) {
-                ((event.target as Element)[BLOCK_DOM_PROPERTY] as Content)?.setCursor(
-                    0,
-                    0,
-                    true,
-                );
+                (getBlock(event.target) as Content | undefined)?.setCursor(0, 0, true);
                 return;
             }
 
@@ -250,7 +248,7 @@ export class Editor {
             return subDoc;
         }
 
-        const snapshot = pick(this.scrollPage as unknown as BlockNode, operations);
+        const snapshot = pick(this.scrollPage as BlockNode, operations);
 
         function drop(root: BlockNode, descent: JSONOpList): BlockNode {
             let subDoc = root;
@@ -300,7 +298,7 @@ export class Editor {
                         const ref = cur?.find?.(key);
                         if (typeof key === 'number') {
                             const insertedState = comp.i as { name: string };
-                            const newBlock = ScrollPage.loadBlock(insertedState.name).create(muya, insertedState) as unknown as BlockNode;
+                            const newBlock = ScrollPage.loadBlock(insertedState.name).create(muya, insertedState) as BlockNode;
                             if (cur && ref && newBlock)
                                 cur.insertBefore?.(newBlock, ref, 'api');
 

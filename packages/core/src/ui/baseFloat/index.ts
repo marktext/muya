@@ -4,7 +4,7 @@ import type { IBaseOptions } from '../types';
 import { autoUpdate, computePosition, flip, offset } from '@floating-ui/dom';
 import { EVENT_KEYS } from '../../config';
 
-import { isKeyboardEvent, noop } from '../../utils';
+import { isHTMLElement, isKeyboardEvent, noop } from '../../utils';
 
 import './index.css';
 
@@ -90,8 +90,10 @@ abstract class BaseFloat {
         // TODO: @JOCS, But now there is a problem, the container for scroll is indeterminate,
         // and currently the default scroll container is the parent element of the editor(muya.domNode)
         const scrollHandler = (event: Event) => {
+            if (!isHTMLElement(event.target))
+                return;
             if (typeof this.lastScrollTop !== 'number') {
-                this.lastScrollTop = (event.target as Element)?.scrollTop;
+                this.lastScrollTop = event.target.scrollTop;
 
                 return;
             }
@@ -99,8 +101,7 @@ abstract class BaseFloat {
             // only when scroll distance great than 50px, then hide the float box.
             if (
                 this.status
-                && event.target
-                && Math.abs((event.target as Element).scrollTop - this.lastScrollTop) > 50
+                && Math.abs(event.target.scrollTop - this.lastScrollTop) > 50
             ) {
                 this.hide();
             }

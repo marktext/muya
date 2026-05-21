@@ -4,17 +4,17 @@ import type Parent from '../../block/base/parent';
 import type AtxHeading from '../../block/commonMark/atxHeading';
 import type { Muya } from '../../index';
 import type {
-    IAtxHeadingState,
     IBulletListState,
     IOrderListState,
-    ITaskListItemState,
     ITaskListState,
+    TState,
 } from '../../state/types';
 import type { IQuickInsertMenuItem } from '../paragraphQuickInsertMenu/config';
 import { ScrollPage } from '../../block/scrollPage';
 import emptyStates from '../../config/emptyStates';
+import { isAnyListState, isAtxHeadingState } from '../../state/types';
 
-import { deepClone } from '../../utils';
+import { deepClone, isHTMLElement } from '../../utils';
 import { h, patch } from '../../utils/snabbdom';
 import BaseFloat from '../baseFloat';
 import { replaceBlockByLabel } from '../paragraphQuickInsertMenu/config';
@@ -58,9 +58,12 @@ export class ParagraphFrontMenu extends BaseFloat {
         const name = 'mu-front-menu';
         const opts = Object.assign({}, defaultOptions, options);
         super(muya, name, opts);
-        Object.assign((this.container!.parentNode as HTMLElement).style, {
-            overflow: 'visible',
-        });
+        const parent = this.container!.parentNode;
+        if (isHTMLElement(parent)) {
+            Object.assign(parent.style, {
+                overflow: 'visible',
+            });
+        }
         this.container!.appendChild(this._frontMenuContainer);
         this.listen();
     }
@@ -245,15 +248,16 @@ export class ParagraphFrontMenu extends BaseFloat {
                     if (block.blockName === 'paragraph' && block.blockName === label)
                         break;
 
+                    const headingLevel = isAtxHeadingState(oldState) ? oldState.meta.level : null;
                     if (
                         block.blockName === 'atx-heading'
-                        && label.split(' ')[1]
-                        === String((oldState as IAtxHeadingState).meta.level)
+                        && headingLevel !== null
+                        && label.split(' ')[1] === String(headingLevel)
                     ) {
                         break;
                     }
 
-                    const rawText = (oldState as IAtxHeadingState).text;
+                    const rawText = 'text' in oldState ? oldState.text : '';
                     const text
                         = block.blockName === 'paragraph'
                             ? rawText
@@ -272,58 +276,60 @@ export class ParagraphFrontMenu extends BaseFloat {
                 case 'bullet-list':
                     // fall through
                 case 'task-list': {
-                    if (block.blockName === label)
+                    if (!isAnyListState(oldState) || block.blockName === label)
                         break;
 
-                    state = deepClone(oldState) as
-                    | IOrderListState
-                    | ITaskListState
-                    | IBulletListState;
-                    // The conversion between order/bullet/task lists
-                    // re-shapes both the parent meta and the per-item meta.
-                    // The static `IListItemState` doesn't carry `meta`, while
-                    // `ITaskListItemState` does; the casts below are the
-                    // narrow target-shape assertions for that runtime swap.
-                    if (block.blockName === 'task-list') {
-                        state.children.forEach((listItem) => {
-                            listItem.name = 'list-item';
-                            delete (listItem as Partial<ITaskListItemState>).meta;
-                        });
-                    }
-                    const metaSnapshot = state.meta as Partial<{
-                        loose: boolean;
-                        delimiter: string;
-                        marker: string;
-                    }>;
-                    const {
-                        loose,
-                        delimiter = orderListDelimiter,
-                        marker = bulletListMarker,
-                    } = metaSnapshot;
+                    // The conversion between order/bullet/task lists re-shapes both
+                    // the parent `meta` and each item's `meta` (only task-list-items
+                    // carry meta). Rebuild a fresh state of the target shape rather
+                    // than mutating the old one in place — the in-place form requires
+                    // discriminant-changing casts that TS can't track.
+                    const sourceMeta = oldState.meta;
+                    const loose = sourceMeta.loose;
+                    const delimiter = 'delimiter' in sourceMeta
+                        ? sourceMeta.delimiter
+                        : orderListDelimiter;
+                    const marker = 'marker' in sourceMeta
+                        ? sourceMeta.marker
+                        : bulletListMarker;
+
+                    const childContents: TState[][] = oldState.children.map(
+                        li => deepClone(li.children),
+                    );
+
                     if (label === 'task-list') {
-                        state.children.forEach((listItem) => {
-                            listItem.name = 'task-list-item';
-                            (listItem as ITaskListItemState).meta = {
-                                checked: false,
-                            };
-                        });
-                        (state as ITaskListState).meta = {
-                            marker: marker ?? bulletListMarker,
-                            loose: !!loose,
+                        const newState: ITaskListState = {
+                            name: 'task-list',
+                            meta: { marker: marker ?? bulletListMarker, loose: !!loose },
+                            children: childContents.map(children => ({
+                                name: 'task-list-item',
+                                meta: { checked: false },
+                                children,
+                            })),
                         };
+                        state = newState;
                     }
                     else if (label === 'order-list') {
-                        (state as IOrderListState).meta = {
-                            delimiter,
-                            loose: !!loose,
-                            start: 1,
+                        const newState: IOrderListState = {
+                            name: 'order-list',
+                            meta: { delimiter, loose: !!loose, start: 1 },
+                            children: childContents.map(children => ({
+                                name: 'list-item',
+                                children,
+                            })),
                         };
+                        state = newState;
                     }
                     else {
-                        state.meta = {
-                            marker: marker ?? bulletListMarker,
-                            loose: !!loose,
+                        const newState: IBulletListState = {
+                            name: 'bullet-list',
+                            meta: { marker: marker ?? bulletListMarker, loose: !!loose },
+                            children: childContents.map(children => ({
+                                name: 'list-item',
+                                children,
+                            })),
                         };
+                        state = newState;
                     }
                     // TODO: @JOCS, remove use this.selection directly.
                     const { anchorPath, anchor, focus, isSelectionInSameBlock }

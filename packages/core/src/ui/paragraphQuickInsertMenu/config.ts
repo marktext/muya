@@ -1,6 +1,5 @@
 import type Parent from '../../block/base/parent';
 import type { Muya } from '../../index';
-import type { IAtxHeadingState, IBlockQuoteState, IFrontmatterState, IParagraphState } from '../../state/types';
 import bulletListIcon from '../../assets/icons/bullet_list/2.png';
 import vegaIcon from '../../assets/icons/chart/2.png';
 import codeIcon from '../../assets/icons/code/2.png';
@@ -19,14 +18,15 @@ import newTableIcon from '../../assets/icons/new_table/2.png';
 import orderListIcon from '../../assets/icons/order_list/2.png';
 import paragraphIcon from '../../assets/icons/paragraph/2.png';
 import plantumlIcon from '../../assets/icons/plantuml/2.png';
-
 import quoteIcon from '../../assets/icons/quote_block/2.png';
+
 import todoListIcon from '../../assets/icons/todolist/2.png';
 import { ScrollPage } from '../../block/scrollPage';
-
 import { isOsx } from '../../config';
+
 import emptyStates from '../../config/emptyStates';
-import { deepClone } from '../../utils';
+import { isParagraphState } from '../../state/types';
+import { deepClone, isKeyboardEvent } from '../../utils';
 import logger from '../../utils/logger';
 
 const debug = logger('quickInsert:');
@@ -331,13 +331,15 @@ export const MENU_CONFIG: IQuickInsertMenuItem[] = [
 ];
 
 export function getLabelFromEvent(event: Event) {
+    if (!isKeyboardEvent(event))
+        return null;
     const ALL_MENU_CONFIG = MENU_CONFIG.reduce(
         (acc, section) => [...acc, ...section.children],
         [] as IQuickInsertMenuItem['children'],
     );
 
     const result = ALL_MENU_CONFIG.find((menu) => {
-        const { code, metaKey, shiftKey, altKey } = event as KeyboardEvent;
+        const { code, metaKey, shiftKey, altKey } = event;
         const { shortKeyMap = {} as IQuickInsertMenuItem['children'][number]['shortKeyMap'] } = menu;
 
         return (
@@ -381,22 +383,29 @@ export function replaceBlockByLabel({ block, muya, label, text = '' }: {
             // fall through
         case 'code-block':
             // fall through
-        case 'block-quote':
-            state = deepClone(emptyStates[label]);
-            if (label === 'paragraph')
-                (state as IParagraphState).text = text;
-            else if (label === 'block-quote')
-                ((state as IBlockQuoteState).children[0] as IParagraphState).text = text;
-
+        case 'block-quote': {
+            const cloned = deepClone(emptyStates[label]);
+            if (cloned.name === 'paragraph') {
+                cloned.text = text;
+            }
+            else if (cloned.name === 'block-quote') {
+                const inner = cloned.children[0];
+                if (isParagraphState(inner))
+                    inner.text = text;
+            }
+            state = cloned;
             newBlock = ScrollPage.loadBlock(label).create(muya, state);
             break;
+        }
 
-        case 'frontmatter':
-            state = deepClone(emptyStates.frontmatter) as IFrontmatterState;
-            state.meta.style = frontmatterType;
-            state.meta.lang = /\+-/.test(frontmatterType) ? 'yaml' : 'json';
+        case 'frontmatter': {
+            const fmState = deepClone(emptyStates.frontmatter);
+            fmState.meta.style = frontmatterType;
+            fmState.meta.lang = /\+-/.test(frontmatterType) ? 'yaml' : 'json';
+            state = fmState;
             newBlock = ScrollPage.loadBlock(label).create(muya, state);
             break;
+        }
 
         case 'atx-heading 1':
             // fall through
@@ -408,49 +417,61 @@ export function replaceBlockByLabel({ block, muya, label, text = '' }: {
             // fall through
         case 'atx-heading 5':
             // fall through
-        case 'atx-heading 6':
-            state = deepClone(emptyStates['atx-heading']) as IAtxHeadingState;
-            // eslint-disable-next-line no-case-declarations
+        case 'atx-heading 6': {
+            const headingState = deepClone(emptyStates['atx-heading']);
+
             const [blockName, level] = label.split(' ');
-            state.meta.level = +level;
-            state.text = `${'#'.repeat(+level)} ${text}`;
+            headingState.meta.level = +level;
+            headingState.text = `${'#'.repeat(+level)} ${text}`;
+            state = headingState;
             newBlock = ScrollPage.loadBlock(blockName).create(muya, state);
             break;
+        }
 
-        case 'order-list':
-            state = deepClone(emptyStates[label]);
-            state.meta.loose = preferLooseListItem;
-            state.meta.delimiter = orderListDelimiter;
-            if (text)
-                state.children[0].children[0].text = text;
+        case 'order-list': {
+            const orderState = deepClone(emptyStates[label]);
+            orderState.meta.loose = preferLooseListItem;
+            orderState.meta.delimiter = orderListDelimiter;
+            const firstChild = orderState.children[0].children[0];
+            if (text && isParagraphState(firstChild))
+                firstChild.text = text;
 
+            state = orderState;
             newBlock = ScrollPage.loadBlock(label).create(muya, state);
             break;
+        }
 
         case 'bullet-list':
             // fall through
-        case 'task-list':
-            state = deepClone(emptyStates[label]);
-            state.meta.loose = preferLooseListItem;
-            state.meta.marker = bulletListMarker;
-            if (text)
-                state.children[0].children[0].text = text;
+        case 'task-list': {
+            const listState = deepClone(emptyStates[label]);
+            listState.meta.loose = preferLooseListItem;
+            listState.meta.marker = bulletListMarker;
+            const firstChild = listState.children[0].children[0];
+            if (text && isParagraphState(firstChild))
+                firstChild.text = text;
 
+            state = listState;
             newBlock = ScrollPage.loadBlock(label).create(muya, state);
             break;
+        }
 
         case 'diagram vega-lite':
             // fall through
         case 'diagram mermaid':
             // fall through
-        case 'diagram plantuml':
-            state = deepClone(emptyStates.diagram);
-            // eslint-disable-next-line no-case-declarations
+        case 'diagram plantuml': {
+            const diagramState = deepClone(emptyStates.diagram);
+
             const [name, type] = label.split(' ');
-            state.meta.type = type;
-            state.meta.lang = type === 'vega-lite' ? 'json' : 'ymal';
+            if (type === 'mermaid' || type === 'plantuml' || type === 'vega-lite') {
+                diagramState.meta.type = type;
+                diagramState.meta.lang = type === 'vega-lite' ? 'json' : 'yaml';
+            }
+            state = diagramState;
             newBlock = ScrollPage.loadBlock(name).create(muya, state);
             break;
+        }
 
         default:
             debug.log('Unknown label in quick insert');

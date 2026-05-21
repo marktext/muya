@@ -2,7 +2,7 @@ import type Format from '../../block/base/format';
 import type { Muya } from '../../index';
 import type { ImageToken } from '../../inlineRenderer/types';
 
-import { isMouseEvent } from '../../utils';
+import { isHTMLElement, isMouseEvent } from '../../utils';
 import './index.css';
 
 const VERTICAL_BAR = ['left', 'right'];
@@ -40,8 +40,10 @@ export class ImageResizeBar {
         const { eventCenter, domNode } = this.muya;
 
         const scrollHandler = (event: Event) => {
+            if (!isHTMLElement(event.target))
+                return;
             if (typeof this._lastScrollTop !== 'number') {
-                this._lastScrollTop = (event.target as HTMLElement).scrollTop;
+                this._lastScrollTop = event.target.scrollTop;
 
                 return;
             }
@@ -50,7 +52,7 @@ export class ImageResizeBar {
             if (
                 !this._resizing
                 && this._status
-                && Math.abs((event.target as HTMLElement).scrollTop - this._lastScrollTop) > 50
+                && Math.abs(event.target.scrollTop - this._lastScrollTop) > 50
             ) {
                 this.hide();
             }
@@ -119,10 +121,10 @@ export class ImageResizeBar {
     }
 
     mouseDown = (event: Event) => {
-        const target = event.target as HTMLElement;
-        if (!target.closest('.bar'))
+        if (!isHTMLElement(event.target) || !event.target.closest('.bar'))
             return;
 
+        const target = event.target;
         const { eventCenter } = this.muya;
         this._movingAnchor = target.getAttribute('data-position');
         const mouseMoveId = eventCenter.attachDOMEvent(

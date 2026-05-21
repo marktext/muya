@@ -6,22 +6,23 @@ import type {
     IBulletListState,
     IListItemState,
     IOrderListState,
+    IParagraphState,
     ITaskListItemState,
     ITaskListState,
-    TState,
 } from '../../../state/types';
 import type { Nullable } from '../../../types';
 import type Content from '../../base/content';
 import type Parent from '../../base/parent';
 import type BulletList from '../../commonMark/bulletList';
-import type OrderList from '../../commonMark/orderList';
 import type Paragraph from '../../commonMark/paragraph';
-import type TaskList from '../../gfm/taskList';
 import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
 import { tokenizer } from '../../../inlineRenderer/lexer';
+import { isListItemState, isTaskListItemState } from '../../../state/types';
 import { isKeyboardEvent, isLengthEven } from '../../../utils';
 import logger from '../../../utils/logger';
 import Format from '../../base/format';
+import OrderList from '../../commonMark/orderList';
+import TaskList from '../../gfm/taskList';
 import { ScrollPage } from '../../scrollPage';
 
 // `_unindentListItem` / `_indentListItem` walk parents typed as the loose
@@ -144,7 +145,7 @@ class ParagraphContent extends Format {
         eventCenter.emit('content-change', { block: this });
     }
 
-    private _enterConvert(event: Event) {
+    private _enterConvert(event: KeyboardEvent) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -202,11 +203,12 @@ class ParagraphContent extends Format {
             const tableHeader = parseTableHeader(this.text);
             // Table extends the base `create` shape with a static
             // `createWithHeader(muya, header)` factory; the registry-level
-            // IConstructor doesn't surface it.
-            const tableCtor = ScrollPage.loadBlock('table') as unknown as {
-                createWithHeader: (muya: Muya, header: string[]) => Parent;
+            // IConstructor doesn't surface it. Cast to a structural view that
+            // names only the static slot we read.
+            const tableCtor = ScrollPage.loadBlock('table') as {
+                createWithHeader?: (muya: Muya, header: string[]) => Parent;
             };
-            const tableBlock = tableCtor.createWithHeader(this.muya, tableHeader);
+            const tableBlock = tableCtor.createWithHeader!(this.muya, tableHeader);
 
             this.parent!.replaceWith(tableBlock);
 
@@ -233,14 +235,14 @@ class ParagraphContent extends Format {
             htmlBlock.firstContentInDescendant().setCursor(offset, offset);
         }
         else {
-            return super.enterHandler(event as KeyboardEvent);
+            return super.enterHandler(event);
         }
     }
 
-    private _enterInBlockQuote(event: Event) {
+    private _enterInBlockQuote(event: KeyboardEvent) {
         const { text, parent } = this;
         if (text.length !== 0)
-            return super.enterHandler(event as KeyboardEvent);
+            return super.enterHandler(event);
 
         event.preventDefault();
         event.stopPropagation();
@@ -293,7 +295,7 @@ class ParagraphContent extends Format {
         (newNode.children.head as ParagraphContent).setCursor(0, 0, true);
     }
 
-    private _enterInListItem(event: Event) {
+    private _enterInListItem(event: KeyboardEvent) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -330,15 +332,24 @@ class ParagraphContent extends Format {
 
                     default: {
                         const newParagraph = parent!.clone() as Paragraph;
-                        const newListState: IBulletListState | IOrderListState | ITaskListState = {
-                            name: list.blockName,
-                            meta: { ...list.meta },
-                            children: [],
-                        } as IBulletListState | IOrderListState | ITaskListState;
+                        const newListState: IBulletListState | IOrderListState | ITaskListState
+                            = list instanceof TaskList
+                                ? { name: 'task-list', meta: { ...list.meta }, children: [] }
+                                : list instanceof OrderList
+                                    ? { name: 'order-list', meta: { ...list.meta }, children: [] }
+                                    : { name: 'bullet-list', meta: { ...list.meta }, children: [] };
                         const offset = list.offset(listItem);
                         list.forEachAt(offset + 1, undefined, (node) => {
-                            if (node.isParent())
-                                (newListState.children as TState[]).push(node.getState());
+                            if (node.isParent()) {
+                                const childState = node.getState();
+                                if (newListState.name === 'task-list') {
+                                    if (isTaskListItemState(childState))
+                                        newListState.children.push(childState);
+                                }
+                                else if (isListItemState(childState)) {
+                                    newListState.children.push(childState);
+                                }
+                            }
                             node.remove();
                         });
                         const newList = ScrollPage.loadBlock(newListState.name).create(
@@ -354,16 +365,10 @@ class ParagraphContent extends Format {
                 }
             }
             else {
-                const newListItemState: IListItemState | ITaskListItemState = {
-                    name: listItem.blockName,
-                    children: [],
-                } as IListItemState | ITaskListItemState;
-
-                if (listItem.blockName === 'task-list-item') {
-                    (newListItemState as ITaskListItemState).meta = {
-                        checked: false,
-                    };
-                }
+                const newListItemState: IListItemState | ITaskListItemState
+                    = listItem.blockName === 'task-list-item'
+                        ? { name: 'task-list-item', meta: { checked: false }, children: [] }
+                        : { name: 'list-item', children: [] };
 
                 const offset = listItem.offset(parent!);
                 listItem.forEachAt(offset, undefined, (node) => {
@@ -384,21 +389,14 @@ class ParagraphContent extends Format {
         else {
             if (parent!.isOnlyChild()) {
                 this.text = text.substring(0, start.offset);
-                const newNodeState = {
-                    name: listItem.blockName,
-                    children: [
-                        {
-                            name: 'paragraph',
-                            text: text.substring(end.offset),
-                        },
-                    ],
+                const paragraphChild: IParagraphState = {
+                    name: 'paragraph',
+                    text: text.substring(end.offset),
                 };
-
-                if (listItem.blockName === 'task-list-item') {
-                    (newNodeState as ITaskListItemState).meta = {
-                        checked: false,
-                    };
-                }
+                const newNodeState: IListItemState | ITaskListItemState
+                    = listItem.blockName === 'task-list-item'
+                        ? { name: 'task-list-item', meta: { checked: false }, children: [paragraphChild] }
+                        : { name: 'list-item', children: [paragraphChild] };
 
                 const newListItem = ScrollPage.loadBlock(newNodeState.name).create(
                     muya,
@@ -411,7 +409,7 @@ class ParagraphContent extends Format {
                 newListItem.firstContentInDescendant().setCursor(0, 0, true);
             }
             else {
-                super.enterHandler(event as KeyboardEvent);
+                super.enterHandler(event);
             }
         }
     }

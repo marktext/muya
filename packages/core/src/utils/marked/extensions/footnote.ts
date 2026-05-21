@@ -1,5 +1,17 @@
 import type { Lexer, MarkedExtension, Tokens } from 'marked';
 
+// marked's `tokenizer`/`renderer` hooks are bound to a context object that
+// exposes the active `lexer` (for nested block tokenisation) and `parser`
+// (for rendering nested tokens). Marked's public `RendererThis` /
+// `TokenizerThis` types don't surface those fields, so we declare narrow
+// structural views and narrow `this` once per hook.
+interface IFootnoteTokenizerThis {
+    lexer: Lexer;
+}
+interface IFootnoteRendererThis {
+    parser?: { parse: (toks: Tokens.Generic[]) => string };
+}
+
 // Block-level rule for footnote definitions. Mirrors marktext's
 // src/muya/lib/parser/marked/blockRules.js after commit 1ecc3601, but
 // applied at the start of the marked tokenizer's remaining source rather
@@ -61,7 +73,11 @@ export default function footnoteExtension(): MarkedExtension {
                     // `new Lexer()` would fall back to the global defaults and
                     // re-introduce the "sticky extension" leak the per-call
                     // Marked instance is meant to prevent.
-                    const lexer = (this as unknown as { lexer: Lexer }).lexer;
+                    // Marked's `TokenizerThis` is `void` in the public types;
+                    // the runtime context exposes `lexer` for nested block
+                    // parsing. Project this context once per hook.
+                    // eslint-disable-next-line no-restricted-syntax
+                    const { lexer } = this as unknown as IFootnoteTokenizerThis;
                     const tokens = cleaned
                         ? (lexer.blockTokens(cleaned, []) as Tokens.Generic[])
                         : [];
@@ -74,9 +90,11 @@ export default function footnoteExtension(): MarkedExtension {
                     };
                 },
                 renderer(token) {
-                    const t = token as unknown as IFootnoteToken;
+                    if (token.type !== 'footnote')
+                        return false;
+                    const t = token as IFootnoteToken;
                     // The parser is bound to `this` at render time.
-                    const parser = (this as unknown as { parser?: { parse: (toks: Tokens.Generic[]) => string } }).parser;
+                    const { parser } = this as IFootnoteRendererThis;
                     const inner = parser ? parser.parse(t.tokens) : '';
                     return `<div class="footnote-block" data-identifier="${escapeAttr(t.identifier)}">${inner}</div>\n`;
                 },

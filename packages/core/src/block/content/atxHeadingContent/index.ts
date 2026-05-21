@@ -1,6 +1,7 @@
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
 import type AtxHeading from '../../commonMark/atxHeading';
+import { isKeyboardEvent } from '../../../utils';
 import Format from '../../base/format';
 import { ScrollPage } from '../../scrollPage';
 
@@ -46,8 +47,8 @@ class AtxHeadingContent extends Format {
             this.parent!.parent!.insertBefore(newParagraphBlock, this.parent);
             this.setCursor(start.offset, end.offset, true);
         }
-        else {
-            super.enterHandler(event as KeyboardEvent);
+        else if (isKeyboardEvent(event)) {
+            super.enterHandler(event);
         }
     }
 

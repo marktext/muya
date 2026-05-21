@@ -5,12 +5,13 @@ import type {
     Token,
 } from '../../inlineRenderer/types';
 import type { ICursor } from '../../selection/types';
-import type { IBulletListState, IListItemState, IOrderListState } from '../../state/types';
+import type { IBulletListState, IListItemState, IOrderListState, IParagraphState } from '../../state/types';
 import type { Nullable } from '../../types';
 import type { IImageInfo } from '../../utils/image';
 import type AtxHeading from '../commonMark/atxHeading';
 import type BulletList from '../commonMark/bulletList';
 import type SetextHeading from '../commonMark/setextHeading';
+import type TreeNode from './treeNode';
 import Content from '../../block/base/content';
 import { ScrollPage } from '../../block/scrollPage';
 import {
@@ -24,7 +25,8 @@ import {
 import { generator, tokenizer } from '../../inlineRenderer/lexer';
 import Selection, { getCursorReference } from '../../selection';
 import { getTextContent } from '../../selection/dom';
-import { conflict, isMouseEvent } from '../../utils';
+import { isListItemState } from '../../state/types';
+import { conflict, isHTMLElement, isMouseEvent } from '../../utils';
 import { correctImageSrc, getImageInfo } from '../../utils/image';
 import logger from '../../utils/logger';
 
@@ -477,11 +479,16 @@ class Format extends Content {
         if (!isMouseEvent(event))
             return;
 
-        // Handler click inline math and inline ruby html.
+        // Handler click inline math and inline ruby html. Use `Element`, not
+        // `HTMLElement` — inline-math KaTeX output is SVG, and a click that
+        // lands on an `<svg>` path still has to walk up to the wrapping
+        // `.mu-math-render` HTMLElement.
         const { target } = event;
+        if (!(target instanceof Element))
+            return;
         const inlineRuleRenderEle
-            = (target as HTMLElement).closest(`.${CLASS_NAMES.MU_MATH_RENDER}`)
-                || (target as HTMLElement).closest(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
+            = target.closest<HTMLElement>(`.${CLASS_NAMES.MU_MATH_RENDER}`)
+                || target.closest<HTMLElement>(`.${CLASS_NAMES.MU_RUBY_RENDER}`);
 
         if (inlineRuleRenderEle)
             return this._handleClickInlineRuleRender(event, inlineRuleRenderEle);
@@ -489,11 +496,11 @@ class Format extends Content {
         // Open the footnote tool when the user clicks an inline `[^id]`
         // reference. Doesn't early-return: cursor placement below still runs
         // so the user can also edit the identifier text directly.
-        const footnoteEl = (target as HTMLElement).closest(
+        const footnoteEl = target.closest<HTMLElement>(
             `.${CLASS_NAMES.MU_INLINE_FOOTNOTE_IDENTIFIER}`,
         );
         if (footnoteEl)
-            this._emitFootnoteToolEvent(footnoteEl as HTMLElement);
+            this._emitFootnoteToolEvent(footnoteEl);
 
         requestAnimationFrame(() => {
             // TODO: @JOCS, remove use this.selection directly.
@@ -589,10 +596,16 @@ class Format extends Content {
     }
 
     override inputHandler(event: Event): void {
-    // Do not use `isInputEvent` util, because compositionEnd event also invoke this method.
+        // Do not use `isInputEvent` util, because compositionEnd event also
+        // invoke this method — `event.inputType` may legitimately be `undefined`
+        // (CompositionEvent doesn't expose it). Use `'inputType' in event` to
+        // read it from whichever event shape the runtime hands us.
+        const inputType = 'inputType' in event && typeof event.inputType === 'string'
+            ? event.inputType
+            : '';
         if (
             this.isComposed
-            || /historyUndo|historyRedo/.test((event as InputEvent).inputType)
+            || /historyUndo|historyRedo/.test(inputType)
         ) {
             return;
         }
@@ -648,8 +661,8 @@ class Format extends Content {
         this.selection.setSelection(cursor);
         // check edit emoji
         if (
-            (event as InputEvent).inputType !== 'insertFromPaste'
-            && (event as InputEvent).inputType !== 'deleteByCut'
+            inputType !== 'insertFromPaste'
+            && inputType !== 'deleteByCut'
         ) {
             const emojiToken = this._checkCursorInTokenType(
                 this.text,
@@ -810,10 +823,10 @@ class Format extends Content {
         const matches = text.match(
             /^([\s\S]*?) {0,3}([*+-]|\d{1,9}(?:\.|\))) {1,4}([\s\S]*)$/,
         );
-        const blockName = /\d/.test(matches![2]) ? 'order-list' : 'bullet-list';
+        const isOrdered = /\d/.test(matches![2]);
 
         if (matches![1]) {
-            const paragraphState = {
+            const paragraphState: IParagraphState = {
                 name: 'paragraph',
                 text: matches![1].trim(),
             };
@@ -824,33 +837,36 @@ class Format extends Content {
             parent!.parent!.insertBefore(paragraph, parent);
         }
 
-        const listState = {
-            name: blockName,
-            meta: {
-                loose: preferLooseListItem,
+        const children: IListItemState[] = [
+            {
+                name: 'list-item',
+                children: [
+                    {
+                        name: 'paragraph',
+                        text: matches![3],
+                    },
+                ],
             },
-            children: [
-                {
-                    name: 'list-item',
-                    children: [
-                        {
-                            name: 'paragraph',
-                            text: matches![3],
-                        },
-                    ],
-                },
-            ],
-        };
+        ];
 
-        if (blockName === 'order-list') {
-            (listState as IOrderListState).meta.delimiter = matches![2].slice(-1);
-            (listState as IOrderListState).meta.start = Number(
-                matches![2].slice(0, -1),
-            );
-        }
-        else {
-            (listState as IBulletListState).meta.marker = matches![2];
-        }
+        const listState: IOrderListState | IBulletListState = isOrdered
+            ? {
+                    name: 'order-list',
+                    meta: {
+                        loose: preferLooseListItem,
+                        delimiter: matches![2].slice(-1),
+                        start: Number(matches![2].slice(0, -1)),
+                    },
+                    children,
+                }
+            : {
+                    name: 'bullet-list',
+                    meta: {
+                        loose: preferLooseListItem,
+                        marker: matches![2],
+                    },
+                    children,
+                };
 
         const list = ScrollPage.loadBlock(listState.name).create(muya, listState);
         parent!.replaceWith(list);
@@ -946,8 +962,11 @@ class Format extends Content {
                 };
                 const offset = list.offset(listItem);
                 list.forEachAt(offset + 1, undefined, (node) => {
-                    if (node.isParent())
-                        bulletListState.children.push(node.getState() as IListItemState);
+                    if (node.isParent()) {
+                        const childState = node.getState();
+                        if (isListItemState(childState))
+                            bulletListState.children.push(childState);
+                    }
                     node.remove();
                 });
 
@@ -1520,10 +1539,8 @@ class Format extends Content {
                 requestAnimationFrame(() => {
                     const startNode = Selection.getSelectionStart();
 
-                    if (startNode) {
-                        const imageWrapper = (
-                            startNode as HTMLElement
-                        ).closest('.mu-inline-image') as HTMLElement;
+                    if (isHTMLElement(startNode)) {
+                        const imageWrapper = startNode.closest<HTMLElement>('.mu-inline-image');
 
                         if (
                             imageWrapper
@@ -1664,7 +1681,10 @@ class Format extends Content {
         scrollPage.breadthFirstTraverse((node) => {
             if (node.blockName !== 'footnote')
                 return;
-            const id = (node as unknown as { meta?: { identifier?: string } }).meta?.identifier;
+            // Footnote blocks carry `meta: { identifier }`, but the breadth-
+            // first traversal hands us the base TreeNode shape. Read via a
+            // structural view rather than the `as unknown as` double-cast.
+            const id = (node as TreeNode & { meta?: { identifier?: string } }).meta?.identifier;
             if (typeof id === 'string' && !footnotes.has(id))
                 footnotes.set(id, node);
         });

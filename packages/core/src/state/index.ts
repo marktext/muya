@@ -11,6 +11,19 @@ import StateToMarkdown from './stateToMarkdown';
 
 const debug = logger('jsonState:');
 
+// ot-json1 declares its document type as the opaque `Doc`. Muya treats the
+// document as `TState[]`; bridging the two requires `unknown` casts that
+// happen at every callsite. Concentrate them here so production code never
+// writes `as unknown as Doc` itself.
+export function asDoc(state: TState[] | TState): Doc {
+    // eslint-disable-next-line no-restricted-syntax
+    return state as unknown as Doc;
+}
+
+export function asState(doc: unknown): TState[] {
+    return doc as TState[];
+}
+
 class JSONState {
     static invert(op: JSONOpList) {
         return json1.type.invert(op);
@@ -44,10 +57,7 @@ class JSONState {
         // the call site can treat `op` as definitely applied.
         if (op === null)
             return;
-        this._state = json1.type.apply(
-            this._state as unknown as Doc,
-            op,
-        ) as unknown as TState[];
+        this._state = asState(json1.type.apply(asDoc(this._state), op));
     }
 
     setContent(content: TState[] | string) {
@@ -80,7 +90,7 @@ class JSONState {
     }
 
     insertOperation(path: Path, state: TState) {
-        const operation = json1.insertOp(path, state as unknown as Doc)!;
+        const operation = json1.insertOp(path, asDoc(state))!;
 
         this._operationCache.push(operation);
 

@@ -24,8 +24,9 @@ function readHref(el: HTMLElement): string | null {
         return attr;
 
     // snabbdom `props.href` on the markdown `<span class="mu-link">` wrapper
-    // sets `elm.href` as a custom DOM property (no attribute).
-    const prop = (el as unknown as { href?: unknown }).href;
+    // sets `elm.href` as a custom DOM property (no attribute). HTMLElement
+    // has no such field in lib.dom; declare only the slice we read.
+    const prop = (el as HTMLElement & { href?: unknown }).href;
     if (typeof prop === 'string' && prop)
         return prop;
 

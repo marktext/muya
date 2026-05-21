@@ -240,7 +240,10 @@ class TableCellContent extends Format {
         // marktext 5fb130d9 (issue #2330, PR #2331): Shift+Tab back-navigates
         // inside the table (header row's first cell stays put when there is
         // no previous content).
-        const isShiftTab = (event as KeyboardEvent).shiftKey === true;
+        // Read shiftKey directly — pointer Tab is not a thing, so callers
+        // always pass a KeyboardEvent in practice. The structural check just
+        // keeps unit tests that pass a partial event object passing.
+        const isShiftTab = 'shiftKey' in event && event.shiftKey === true;
         const cursorBlock = isShiftTab
             ? this.previousContentInContext()
             : this.nextContentInContext();

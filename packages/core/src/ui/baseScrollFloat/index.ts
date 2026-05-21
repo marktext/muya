@@ -95,7 +95,8 @@ abstract class BaseScrollFloat extends BaseFloat {
         this.activeItem = this.renderArray[index];
         this.render();
         const activeEle = this.getItemElement(this.activeItem);
-        this.activeEleScrollIntoView(activeEle);
+        if (activeEle)
+            this.activeEleScrollIntoView(activeEle);
     }
 
     selectItem(item: unknown) {
@@ -107,7 +108,7 @@ abstract class BaseScrollFloat extends BaseFloat {
 
     abstract render(): void;
 
-    abstract getItemElement(item: unknown): HTMLElement;
+    abstract getItemElement(item: unknown): HTMLElement | null;
 }
 
 export default BaseScrollFloat;

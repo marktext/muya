@@ -5,7 +5,7 @@ import type Content from '../base/content';
 import type TreeNode from '../base/treeNode';
 import type { IConstructor, TBlockPath } from '../types';
 import { BLOCK_DOM_PROPERTY } from '../../config';
-import { isMouseEvent } from '../../utils';
+import { isHTMLElement, isMouseEvent } from '../../utils';
 import logger from '../../utils/logger';
 import Parent from '../base/parent';
 
@@ -69,6 +69,9 @@ export class ScrollPage extends Parent {
     constructor(muya: Muya) {
         super(muya);
         // muya is not extends Parent, but it is the parent of scrollPage.
+        // ScrollPage is the tree root; widening the base `TreeNode.parent`
+        // declaration would ripple to every node, so spell out the boundary.
+        // eslint-disable-next-line no-restricted-syntax
         this.parent = muya as unknown as Parent;
         this.tagName = 'div';
         this.classList = ['mu-container'];
@@ -178,12 +181,12 @@ export class ScrollPage extends Parent {
 
     // Create a new paragraph if click the blank area in editor.
     private _clickHandler(event: Event) {
-        if (!isMouseEvent(event))
+        if (!isMouseEvent(event) || !isHTMLElement(event.target))
             return;
 
-        const target = event.target as HTMLElement;
+        const target = event.target;
 
-        if (target && target[BLOCK_DOM_PROPERTY] === this) {
+        if (target[BLOCK_DOM_PROPERTY] === this) {
             const lastChild = this.lastChild as Parent;
             const lastContentBlock = lastChild.lastContentInDescendant()!;
             const { clientY } = event;

@@ -12,6 +12,20 @@ function typescriptPreset() {
             // `eslint-disable-next-line ts/no-explicit-any` comments at
             // the source so they remain visible and reviewable.
             'ts/no-explicit-any': 'error',
+            // Ban the `value as unknown as X` double-cast escape hatch outside
+            // a small set of audited boundary helpers (json1 ↔ TState, the
+            // dynamic inline-renderer dispatch table, marked hook this-binding,
+            // structural punning where two token unions overlap at runtime).
+            // New `as unknown as X` must come with a `// eslint-disable-next-line`
+            // and a comment explaining why the boundary can't be expressed in
+            // the TS type system.
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'TSAsExpression > TSAsExpression[typeAnnotation.type=\'TSUnknownKeyword\']',
+                    message: '`value as unknown as X` double-casts the type system. Use a type guard, narrow via `instanceof` / discriminator, or wrap the unsafe boundary in a named helper. If genuinely unavoidable, disable this rule with an explanatory comment.',
+                },
+            ],
             'ts/naming-convention': [
                 'warn',
                 // Interfaces' names should start with a capital 'I'.
@@ -34,6 +48,24 @@ function typescriptPreset() {
         },
         languageOptions: {
             parser,
+        },
+    };
+}
+
+// Test files routinely build partial structural mocks for the block-tree
+// classes (`fake as unknown as Table`); policing the double-cast pattern
+// there adds noise without safety. Disable only `no-restricted-syntax` —
+// `ts/no-explicit-any` and `ts/naming-convention` stay on for tests.
+function testFileDoubleCastOverride() {
+    return {
+        files: [
+            '**/*.spec.ts',
+            '**/*.spec.tsx',
+            '**/*.test.ts',
+            '**/*.test.tsx',
+        ],
+        rules: {
+            'no-restricted-syntax': 'off',
         },
     };
 }
@@ -83,4 +115,5 @@ export default antfu(
         },
     },
     typescriptPreset(),
+    testFileDoubleCastOverride(),
 );

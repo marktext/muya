@@ -3,7 +3,7 @@ import type { ITaskListItemMeta } from '../../../state/types';
 import type TaskList from '../taskList';
 import type TaskListItem from '../taskListItem';
 import { isFirefox } from '../../../config';
-import { isMouseEvent } from '../../../utils';
+import { isHTMLInputElement, isMouseEvent } from '../../../utils';
 import { operateClassName } from '../../../utils/dom';
 import logger from '../../../utils/logger';
 import TreeNode from '../../base/treeNode';
@@ -73,8 +73,8 @@ class TaskListCheckbox extends TreeNode {
 
                 this.update(this._checked, 'user');
             }
-            else {
-                const { checked } = event.target as HTMLInputElement;
+            else if (isHTMLInputElement(event.target)) {
+                const { checked } = event.target;
                 this._checked = checked;
                 this.update(checked, 'user');
             }
@@ -96,8 +96,8 @@ class TaskListCheckbox extends TreeNode {
         const taskListItem = this.parent as TaskListItem;
         const taskList = taskListItem!.parent as TaskList;
 
-        if ((this.domNode as HTMLInputElement).checked !== checked && !isFirefox)
-            (this.domNode as HTMLInputElement).checked = checked;
+        if (isHTMLInputElement(this.domNode) && this.domNode.checked !== checked && !isFirefox)
+            this.domNode.checked = checked;
 
         // No need to trigger the OT operation If the source is `api`.
         if (source === 'api')
