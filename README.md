@@ -14,7 +14,7 @@
 - **Diagrams & rich content**: [KaTeX](https://katex.org/) math, [Mermaid](https://mermaid.js.org/), [Vega/Vega-Lite](https://vega.github.io/), [PlantUML](https://plantuml.com/), and [Prism](https://prismjs.com/) syntax highlighting in code blocks.
 - **Markdown ↔ HTML** round-trip via [`marked`](https://github.com/markedjs/marked) (read path) and [`turndown`](https://github.com/mixmark-io/turndown) + `joplin-turndown-plugin-gfm` (write path). `MarkdownToHtml` is exposed as a standalone utility; output passes through [DOMPurify](https://github.com/cure53/DOMPurify) (`sanitizeHyperlink` + `isValidAttribute`) for XSS-safe rendering.
 - **Search and replace** with regex support, plus undo/redo history.
-- **i18n** out of the box: English, Chinese, and Japanese locales ship with the package.
+- **i18n** out of the box: 9 locales ship with the package — English, Simplified and Traditional Chinese, Japanese, Korean, Spanish, French, German, Portuguese.
 - **JSON state model** built on [`ot-json1`](https://github.com/ottypes/json1) / [`ot-text-unicode`](https://github.com/ottypes/text-unicode) — wire it up to your own transport for collaborative editing.
 - **TypeScript first** — types ship in the package, no extra `@types/*` install needed.
 
@@ -48,7 +48,7 @@ import {
     TableColumnToolbar,
     TableDragBar,
     TableRowColumMenu,
-    zh,
+    zhCN,
 } from '@muyajs/core';
 
 import '@muyajs/core/lib/style.css';
@@ -88,7 +88,7 @@ const muya = new Muya(container, {
 });
 
 // 3. Optional: switch the UI language before init.
-muya.locale(zh);
+muya.locale(zhCN);
 
 // 4. Boot. Nothing renders until init() runs.
 muya.init();
@@ -103,7 +103,7 @@ The `Muya` instance returned from `new Muya(el, options)` exposes:
 | Method | Purpose |
 | --- | --- |
 | `init()` | Mount the editor and instantiate registered UI plugins. |
-| `locale(localeObject)` | Switch the UI locale. Use the bundled `en`, `zh`, `ja` exports or supply your own. |
+| `locale(localeObject)` | Switch the UI locale. Use one of the bundled exports (`en`, `zhCN`, `zhTW`, `ja`, `ko`, `es`, `fr`, `de`, `pt`) or supply your own. |
 | `getMarkdown()` | Serialize the current document to Markdown. |
 | `getState()` | Return the underlying JSON state (the source of truth). |
 | `setContent(content, autoFocus?)` | Replace the document with Markdown (`string`) or `TState[]`. |

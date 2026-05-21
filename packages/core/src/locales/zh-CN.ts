@@ -1,5 +1,5 @@
-export const zh = {
-    name: 'zh',
+export const zhCN = {
+    name: 'zh-CN',
     resource: {
     // tableTools
         'Insert Row Above': '上面插入行',

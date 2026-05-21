@@ -29,8 +29,8 @@ test.describe('public api', () => {
     test('locale switch flips muya.i18n.lang', async ({ page }) => {
         const before = await page.evaluate(() => window.muya!.i18n.lang);
         expect(before).toBe('en');
-        await page.locator('#language-select').selectOption('zh');
+        await page.locator('#language-select').selectOption('zh-CN');
         const after = await page.evaluate(() => window.muya!.i18n.lang);
-        expect(after).toBe('zh');
+        expect(after).toBe('zh-CN');
     });
 });

@@ -2,14 +2,18 @@
 import type { IMuyaOptions, TState } from '@muyajs/core';
 import {
     CodeBlockLanguageSelector,
+    de,
     EmojiSelector,
     en,
+    es,
     FootnoteTool,
+    fr,
     ImageEditTool,
     ImageResizeBar,
     ImageToolBar,
     InlineFormatToolbar,
     ja,
+    ko,
     LinkTools,
     MarkdownToHtml,
     Muya,
@@ -17,10 +21,12 @@ import {
     ParagraphFrontMenu,
     ParagraphQuickInsertMenu,
     PreviewToolBar,
+    pt,
     TableColumnToolbar,
     TableDragBar,
     TableRowColumMenu,
-    zh,
+    zhCN,
+    zhTW,
 } from '@muyajs/core';
 
 import { DEFAULT_MARKDOWN } from './data';
@@ -29,6 +35,7 @@ import './style.css';
 
 // ---------- Firefox Intl.Segmenter polyfill ----------
 
+// eslint-disable-next-line no-restricted-syntax -- structural widening over the const Intl namespace; alternative is augmenting global Intl which leaks polyfill semantics into every consumer
 const intlNs = Intl as unknown as { Segmenter?: typeof Intl.Segmenter };
 if (!intlNs.Segmenter) {
     const polyfill = await import('intl-segmenter-polyfill/dist/bundled');
@@ -73,10 +80,21 @@ Muya.use(PreviewToolBar);
 
 // ---------- Mutable runtime state ----------
 
-const LOCALES = { zh, en, ja } as const;
+// Keys MUST match the `value` attributes in #language-select (examples/index.html).
+const LOCALES = {
+    'en': en,
+    'zh-CN': zhCN,
+    'zh-TW': zhTW,
+    'ja': ja,
+    'ko': ko,
+    'es': es,
+    'fr': fr,
+    'de': de,
+    'pt': pt,
+} as const;
 type TLocaleKey = keyof typeof LOCALES;
 
-let currentLocale: TLocaleKey = 'zh';
+let currentLocale: TLocaleKey = 'en';
 
 // `satisfies` lets the literal stay structurally typed (Record<string,
 // unknown>-like for the form-driven mutation below) while still failing
