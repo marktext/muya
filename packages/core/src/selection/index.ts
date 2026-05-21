@@ -226,8 +226,13 @@ class Selection {
         if (!anchorDomNode || !focusDomNode)
             return null;
 
-        const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as Content;
-        const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as Content;
+        const anchorBlock = anchorDomNode[BLOCK_DOM_PROPERTY] as Content | undefined;
+        const focusBlock = focusDomNode[BLOCK_DOM_PROPERTY] as Content | undefined;
+        // An `mu-content` span cloned by the browser's native edit
+        // behavior is not linked back to a block. Bail out instead of
+        // crashing — the caller treats null the same as "no selection".
+        if (!anchorBlock || !focusBlock)
+            return null;
         const anchorPath = anchorBlock.path;
         const focusPath = focusBlock.path;
 
