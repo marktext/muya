@@ -28,10 +28,19 @@ export const editor = {
     mathRender: '.mu-math-render',
     katex: '.katex',
     diagramBlock: '.mu-diagram-block',
+    diagramContainer: '.mu-diagram-container',
     diagramPreview: '.mu-diagram-preview',
     image: '.mu-inline-image',
     inlineFootnoteIdentifier: '.mu-inline-footnote-identifier',
     link: 'span.mu-link, a.mu-reference-link, a.mu-raw-html',
+    // Frontmatter block (renders as a `<pre.mu-frontmatter>` wrapping a code block).
+    frontmatter: '.mu-frontmatter',
+    // Inline reference link / reference image — see PR-16 regression area.
+    referenceLink: 'a.mu-reference-link',
+    referenceImage: '.mu-image-marked-text',
+    // Inline html tags wrap their children with `.mu-raw-html`. The tag itself
+    // is the actual `<u>`, `<mark>`, `<sup>`, `<sub>` or `<ruby>` element.
+    rawHtml: '.mu-raw-html',
 } as const;
 
 // Float root class names confirmed against the `const name = 'mu-...'` lines

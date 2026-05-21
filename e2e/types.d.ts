@@ -17,6 +17,11 @@ declare global {
             PICKED_IMAGE_URL: string;
             UPLOADED_IMAGE_URL: string;
         };
+
+        // XSS canary used by tests/security/sanitize.spec.ts. If a malicious
+        // payload survives sanitization and executes, it would set this flag —
+        // the spec asserts it remains `undefined`.
+        __pwned?: boolean;
     }
 
     // `Intl.Segmenter` (Stage 4, ES2022) isn't in the ES2020 lib host/ targets.
