@@ -1,5 +1,5 @@
 /* eslint-disable antfu/no-top-level-await */
-import type { TState } from '@muyajs/core';
+import type { IMuyaOptions, TState } from '@muyajs/core';
 import {
     CodeBlockLanguageSelector,
     EmojiSelector,
@@ -71,11 +71,18 @@ A paragraph with **bold**, *italic*, \`code\`, and a [link](https://example.com)
 - item two
 `;
 
+// `satisfies` guards against silently-renamed option keys — if `IMuyaOptions`
+// ever drops `footnote` or `codeBlockLineNumbers`, host fails to compile
+// before specs go red. Same pattern as examples/src/main.ts:INITIAL_OPTIONS.
+const HOST_OPTIONS = {
+    footnote: true,
+    codeBlockLineNumbers: true,
+} satisfies Partial<IMuyaOptions>;
+
 const container = document.querySelector<HTMLElement>('#editor')!;
 const muya = new Muya(container, {
     markdown: INITIAL_MARKDOWN,
-    footnote: true,
-    codeBlockLineNumbers: true,
+    ...HOST_OPTIONS,
 });
 muya.locale(en);
 muya.init();
