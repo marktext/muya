@@ -24,6 +24,10 @@ export const editor = {
     tableCell: '.mu-table-cell',
     htmlBlock: '.mu-html-block',
     htmlPreview: '.mu-html-preview',
+    // When `disableHtml: true`, the html-block wrapper carries an extra
+    // class so syntax-highlight CSS knows not to render the preview. Source
+    // of truth: packages/core/src/block/commonMark/html/index.ts.
+    htmlDisabled: '.mu-disable-html-render',
     mathBlock: '.mu-math-block',
     mathRender: '.mu-math-render',
     katex: '.katex',

@@ -11,6 +11,7 @@ import {
     InlineFormatToolbar,
     ja,
     LinkTools,
+    MarkdownToHtml,
     Muya,
     ParagraphFrontButton,
     ParagraphFrontMenu,
@@ -24,6 +25,7 @@ import {
 import './style.css';
 
 // Intl.Segmenter polyfill — required on Firefox; harmless on Chromium.
+// eslint-disable-next-line no-restricted-syntax -- forced cast: `Intl` is augmented globally in types.d.ts to declare `Segmenter`, but TS still types `globalThis.Intl` as `{}` for the runtime side. We narrow via a private alias rather than poking the global namespace from the polyfill site.
 const intlNs = Intl as unknown as { Segmenter?: typeof Intl.Segmenter };
 if (!intlNs.Segmenter) {
     const polyfill = await import('intl-segmenter-polyfill/dist/bundled');
@@ -79,16 +81,43 @@ const HOST_OPTIONS = {
     codeBlockLineNumbers: true,
 } satisfies Partial<IMuyaOptions>;
 
-const container = document.querySelector<HTMLElement>('#editor')!;
-const muya = new Muya(container, {
-    markdown: INITIAL_MARKDOWN,
-    ...HOST_OPTIONS,
-});
-muya.locale(en);
-muya.init();
+// `editor-container` parents the live `#editor` div. Phase 4 rebuilds
+// destroy → re-create the editor under this parent (the destroy() call
+// removes the previous #editor from the DOM, so we need a new node to
+// host the next Muya).
+const editorParent = document.querySelector<HTMLElement>('.editor-container')!;
+
+function makeEditorNode(): HTMLElement {
+    const node = document.createElement('div');
+    node.id = 'editor';
+    editorParent.appendChild(node);
+    return node;
+}
+
+function bootMuya(container: HTMLElement, options: Partial<IMuyaOptions>): Muya {
+    const next = new Muya(container, { markdown: INITIAL_MARKDOWN, ...options });
+    next.locale(en);
+    next.init();
+    return next;
+}
+
+const initialContainer = document.querySelector<HTMLElement>('#editor')!;
+let muya = bootMuya(initialContainer, HOST_OPTIONS);
 
 window.muya = muya;
-window.__e2e = { linkJumps, INITIAL_MARKDOWN, PICKED_IMAGE_URL, UPLOADED_IMAGE_URL };
+window.MarkdownToHtml = MarkdownToHtml;
+window.__e2e = {
+    linkJumps,
+    INITIAL_MARKDOWN,
+    PICKED_IMAGE_URL,
+    UPLOADED_IMAGE_URL,
+    rebuildMuya: (options: Partial<IMuyaOptions> = {}) => {
+        muya.destroy();
+        const fresh = makeEditorNode();
+        muya = bootMuya(fresh, { ...HOST_OPTIONS, ...options });
+        window.muya = muya;
+    },
+};
 
 // Toolbar wiring (mirrors the buttons declared in index.html).
 const $ = <T extends HTMLElement>(id: string): T => document.querySelector<T>(id)!;
