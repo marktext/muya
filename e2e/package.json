@@ -8,10 +8,13 @@
     "license": "MIT",
     "scripts": {
         "e2e": "playwright test",
+        "e2e:chromium": "playwright test --project=chromium",
+        "e2e:firefox": "playwright test --project=firefox",
+        "e2e:webkit": "playwright test --project=webkit",
         "e2e:ui": "playwright test --ui",
         "e2e:headed": "playwright test --headed",
         "e2e:report": "playwright show-report",
-        "e2e:install": "playwright install --with-deps chromium"
+        "e2e:install": "playwright install --with-deps chromium firefox webkit"
     },
     "dependencies": {
         "@muyajs/core": "workspace:*",
