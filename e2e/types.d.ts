@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import type { Muya } from '@muyajs/core';
+import type { IMuyaOptions, MarkdownToHtml, Muya } from '@muyajs/core';
 
 declare global {
     // eslint-disable-next-line ts/naming-convention -- augmenting the global Window must keep its name
@@ -9,6 +9,10 @@ declare global {
         // callbacks can drive the editor through the public API.
         muya?: Muya;
 
+        // Public class exposed by host/main.ts for Phase 4 export specs that
+        // exercise the static markdown → HTML pipeline.
+        MarkdownToHtml?: typeof MarkdownToHtml;
+
         // Test-only globals exposed by host/main.ts. Aggregated under a single
         // namespace so the real Window surface stays clean.
         __e2e?: {
@@ -16,6 +20,14 @@ declare global {
             INITIAL_MARKDOWN: string;
             PICKED_IMAGE_URL: string;
             UPLOADED_IMAGE_URL: string;
+            /**
+             * Tear down the current Muya instance and create a fresh one with
+             * the given options merged over the host defaults. Mirrors the
+             * `rebuildEditor` pattern in `examples/src/main.ts`. Required by
+             * Phase 4 option-matrix specs that need a different
+             * `IMuyaOptions` than the host's default boot.
+             */
+            rebuildMuya: (options?: Partial<IMuyaOptions>) => void;
         };
 
         // XSS canary used by tests/security/sanitize.spec.ts. If a malicious
