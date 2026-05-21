@@ -37,7 +37,11 @@
         "lint:css": "stylelint \"**/*.css\"",
         "postinstall": "husky install",
         "release": "release-it",
-        "check-circular": "madge --circular packages/core/src/index.ts"
+        "check-circular": "madge --circular packages/core/src/index.ts",
+        "e2e": "pnpm --filter muya-e2e e2e",
+        "e2e:ui": "pnpm --filter muya-e2e e2e:ui",
+        "e2e:headed": "pnpm --filter muya-e2e e2e:headed",
+        "e2e:install": "pnpm --filter muya-e2e e2e:install"
     },
     "devDependencies": {
         "@antfu/eslint-config": "^9.0.0",
