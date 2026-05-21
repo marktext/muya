@@ -20,21 +20,32 @@ import { editor } from '../helpers/selectors';
  */
 
 /**
- * Rebuild Muya with the given options, then click into a fresh
- * paragraph and wait for the editor to register the click — only after
- * `activeContentBlock` is non-null is it safe to fire keyboard input.
- * Without this sync barrier the test is flaky on parallel CI runs
- * because the click can race with the editor's mount.
+ * Rebuild Muya with the given options and place the cursor in a fresh
+ * empty paragraph, ready for keyboard input.
+ *
+ * The naive approach (`paragraph.click()` + wait for
+ * `activeContentBlock != null`) fails on headless Chromium-for-Testing:
+ * clicking an *empty* `.mu-paragraph` lands the browser selection
+ * anchor on the paragraph element itself rather than on a text node,
+ * so muya's `selection.getSelection()` returns null/no-anchor and the
+ * editor dispatch explicitly sets `activeContentBlock = null` and
+ * returns (editor/index.ts ~line 99). The wait then times out.
+ *
+ * Robust alternative: drive the cursor through muya's own API
+ * (`muya.focus()` → `firstLeafBlock.setCursor(0, 0, …)`), which
+ * positions a real selection inside the leaf content. Then call
+ * `.focus()` on the contenteditable container so DOM focus is on
+ * the editor and subsequent `page.keyboard.type(...)` events route
+ * through muya's input handler.
  */
 async function rebuildAndFocus(page: Page, opts: Partial<IMuyaOptions>): Promise<void> {
     await page.evaluate((o) => {
         window.__e2e!.rebuildMuya(o);
         window.muya!.setContent('');
+        window.muya!.focus();
+        window.muya!.domNode.focus();
     }, opts);
-    const paragraph = page.locator(editor.paragraph).first();
-    await expect(paragraph).toBeVisible();
-    await paragraph.click();
-    await page.waitForFunction(() => window.muya!.editor.activeContentBlock != null);
+    await expect(page.locator(editor.paragraph).first()).toBeVisible();
 }
 
 async function getFirstBlockText(page: Page): Promise<string> {
@@ -118,16 +129,23 @@ test.describe('options / auto-pair matrix', () => {
         await page.keyboard.type('(');
         await expect.poll(() => getFirstBlockText(page)).toBe('(');
 
-        // Reset paragraph and re-focus for the next char.
-        await page.evaluate(() => window.muya!.setContent(''));
-        await page.locator(editor.paragraph).first().click();
-        await page.waitForFunction(() => window.muya!.editor.activeContentBlock != null);
+        // Reset paragraph and re-focus for the next char. Same caveat as
+        // rebuildAndFocus: drive focus via muya's API + domNode.focus()
+        // because clicking an empty paragraph doesn't establish a
+        // text-node selection in headless Chromium.
+        await page.evaluate(() => {
+            window.muya!.setContent('');
+            window.muya!.focus();
+            window.muya!.domNode.focus();
+        });
         await page.keyboard.type('*');
         await expect.poll(() => getFirstBlockText(page)).toBe('*');
 
-        await page.evaluate(() => window.muya!.setContent(''));
-        await page.locator(editor.paragraph).first().click();
-        await page.waitForFunction(() => window.muya!.editor.activeContentBlock != null);
+        await page.evaluate(() => {
+            window.muya!.setContent('');
+            window.muya!.focus();
+            window.muya!.domNode.focus();
+        });
         await page.keyboard.type('"');
         await expect.poll(() => getFirstBlockText(page)).toBe('"');
     });
