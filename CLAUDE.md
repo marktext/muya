@@ -9,6 +9,7 @@ pnpm + Turborepo monorepo. Workspaces are defined in `pnpm-workspace.yaml`:
 - `packages/core` — `@muyajs/core`, the only package with source today. Everything below describes it.
 - `packages/facade`, `packages/findReplace` — README-only stubs (no source yet).
 - `examples` — `muya-examples`, a Vite vanilla-TS demo that consumes `@muyajs/core` via `workspace:*`. This is the dev surface (`pnpm dev` runs `vite` here through `turbo dev:demo`).
+- `e2e` — `muya-e2e`, Playwright real-browser E2E suite. Self-contained host page under `e2e/host/` (intentionally decoupled from `examples/` so refactors don't cascade). See `e2e/README.md` for run/debug commands and `e2e/BACKLOG.md` for the 4-phase roadmap.
 
 ## Commands
 
@@ -22,6 +23,7 @@ Run from repo root (Turbo fans out to packages):
 - `pnpm lint:types` — `tsc --noEmit` per package via Turbo.
 - `pnpm lint:css` — Stylelint over all CSS.
 - `pnpm check-circular` — `madge --circular packages/core/src/index.ts`. CI enforces this; do not introduce circular deps.
+- `pnpm e2e` — run Playwright E2E suite against `e2e/host/` (port 5174, Chromium). Locally falls back to system Chrome (no Playwright download needed); CI uses bundled Chromium installed by `pnpm e2e:install`. `pnpm e2e:ui` opens Playwright UI mode for debugging. CI workflow: `.github/workflows/ci-e2e.yml` (PR + master push, ~3-4 min).
 - `pnpm release <version>` — `release-it` cuts a release end-to-end: bumps versions in root + workspace `package.json`s, prepends a section to `CHANGELOG.md` (angular conventional-changelog preset), commits, tags, pushes, and runs `pnpm publish` on `packages/core` via `@release-it-plugins/workspaces` (`publish: true`). npm 2FA is interactive — a browser auth window opens during the publish step.
 
 Engines: Node ≥18 for the lib, **Node ≥20.19, ≥22.13, or ≥24 for releases** (`@release-it/conventional-changelog@11` declares `node: ^20.19.0 || ^22.13.0 || >=24.0.0`, so older 20.x / early 22.x will fail). pnpm ≥8.5 (pinned to `pnpm@10.22.0`). Build target is `chrome70`.
