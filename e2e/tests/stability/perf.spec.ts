@@ -15,18 +15,26 @@ import { editor } from '../helpers/selectors';
  *     are materially faster, but we test against the dev server here.
  *   - scrollIntoView + last paragraph visible: well under 1s.
  *
- * Budget = 60_000ms (= the per-test timeout in playwright.config). The
- * goal is to catch a 5-10× regression on this path, not to pin a number.
- * A future Phase-5 nightly job can tighten this against a production
- * build.
+ * Three timeouts are at play here — they intentionally differ; don't try
+ * to "consolidate" them:
+ *   - playwright.config `timeout: 30_000` — the default for every other
+ *     spec. setContent(10k) alone routinely takes 15-25s on the Vite dev
+ *     server, so the suite default is too tight for this spec.
+ *   - `test.setTimeout(120_000)` below — the ceiling for the whole test
+ *     body (setContent + scroll + assertions). Wide enough to ride out
+ *     CI variance and still surface a runaway regression as a timeout.
+ *   - `expect(result.ms).toBeLessThan(60_000)` further down — the actual
+ *     setContent perf budget. This is the assertion that catches a 5-10×
+ *     regression on the render path. A future Phase-5 nightly job can
+ *     tighten this against a production bundle.
  *
  * Tagged @perf so a future Phase-2 CI config can `--grep-invert "@perf"`
  * for the PR-time runs and keep this in a nightly schedule.
  */
 test.describe('stability / perf smoke @perf', () => {
-    // The setContent of 10k paragraphs alone routinely takes 15-25s on the
-    // Vite dev server, which exceeds the default 30s suite timeout. Bump
-    // the per-test timeout for this spec only.
+    // Per-spec ceiling: 4× the assertion budget below, so an actual
+    // regression surfaces via the expect (with a useful message), not a
+    // Playwright timeout (with a stack trace).
     test.setTimeout(120_000);
 
     test('setContent with 10k paragraphs finishes within the budget and scroll is reachable', async ({ page }) => {
