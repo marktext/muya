@@ -25,8 +25,8 @@ jobs:
             - name: Setup Node.js
               uses: ./.github/actions/setup-node
 
-            - name: 🌐 Install Playwright Chromium
-              run: pnpm --filter muya-e2e exec playwright install --with-deps chromium
+            - name: 🌐 Install Playwright browsers (chromium + firefox + webkit)
+              run: pnpm --filter muya-e2e exec playwright install --with-deps chromium firefox webkit
 
             - name: 🎭 Run Playwright tests
               run: pnpm e2e

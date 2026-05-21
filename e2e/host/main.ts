@@ -25,12 +25,20 @@ import {
 import './style.css';
 
 // Intl.Segmenter polyfill — required on Firefox; harmless on Chromium.
-// eslint-disable-next-line no-restricted-syntax -- forced cast: `Intl` is augmented globally in types.d.ts to declare `Segmenter`, but TS still types `globalThis.Intl` as `{}` for the runtime side. We narrow via a private alias rather than poking the global namespace from the polyfill site.
-const intlNs = Intl as unknown as { Segmenter?: typeof Intl.Segmenter };
-if (!intlNs.Segmenter) {
+// The DOM lib types `Intl` as a const namespace, so a structural cast is
+// unavoidable for the existence check + assignment. Pull the unsafe
+// boundary into one tightly-scoped helper so the rest of host/main.ts
+// stays clean.
+async function ensureIntlSegmenter(): Promise<void> {
+    interface ISegmenterHolder { Segmenter?: typeof Intl.Segmenter }
+    // eslint-disable-next-line no-restricted-syntax -- structural widening over the const Intl namespace; alternative is augmenting global Intl which leaks polyfill semantics into every consumer
+    const holder = Intl as unknown as ISegmenterHolder;
+    if (holder.Segmenter)
+        return;
     const polyfill = await import('intl-segmenter-polyfill/dist/bundled');
-    intlNs.Segmenter = await polyfill.createIntlSegmenterPolyfill() as typeof Intl.Segmenter;
+    holder.Segmenter = await polyfill.createIntlSegmenterPolyfill() as typeof Intl.Segmenter;
 }
+await ensureIntlSegmenter();
 
 // Deterministic mocks: specs assert these exact URLs / delays.
 const PICKED_IMAGE_URL = 'https://example.test/picked-image.png';

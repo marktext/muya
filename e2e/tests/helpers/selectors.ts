@@ -53,6 +53,7 @@ export const floats = {
     inlineFormatToolbar: '.mu-format-picker',
     quickInsert: '.mu-quick-insert',
     paragraphFrontButton: '.mu-front-button-wrapper',
+    paragraphFrontButtonInner: '.mu-front-button',
     paragraphFrontMenu: '.mu-front-menu',
     emojiPicker: '.mu-emoji-picker',
     linkTools: '.mu-link-tools',
@@ -62,6 +63,12 @@ export const floats = {
     tableColumnTools: '.mu-table-column-tools',
     tableRowColumMenu: '.mu-table-bar-tools',
     tableDragBar: '.mu-table-drag-bar',
+    // ImageResizeBar creates a `.mu-transformer` container and appends
+    // `.bar.left` / `.bar.right` handles on click. These are not registered
+    // through baseFloat (they're a bespoke `transformer` plugin) — keep
+    // them under floats for spec discoverability.
+    imageTransformer: '.mu-transformer',
+    imageTransformerHandle: '.mu-transformer .bar',
     footnoteTool: '.mu-footnote-tool',
     previewToolBar: '.mu-preview-tools',
 } as const;
