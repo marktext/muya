@@ -1,15 +1,19 @@
 /* eslint-disable antfu/no-top-level-await */
-import type { IMuyaOptions, TState } from '@muyajs/core';
+import type { ILocale, IMuyaOptions, TState } from '@muyajs/core';
 import {
     CodeBlockLanguageSelector,
+    de,
     EmojiSelector,
     en,
+    es,
     FootnoteTool,
+    fr,
     ImageEditTool,
     ImageResizeBar,
     ImageToolBar,
     InlineFormatToolbar,
     ja,
+    ko,
     LinkTools,
     MarkdownToHtml,
     Muya,
@@ -17,10 +21,12 @@ import {
     ParagraphFrontMenu,
     ParagraphQuickInsertMenu,
     PreviewToolBar,
+    pt,
     TableColumnToolbar,
     TableDragBar,
     TableRowColumMenu,
-    zh,
+    zhCN,
+    zhTW,
 } from '@muyajs/core';
 import './style.css';
 
@@ -130,14 +136,23 @@ window.__e2e = {
 // Toolbar wiring (mirrors the buttons declared in index.html).
 const $ = <T extends HTMLElement>(id: string): T => document.querySelector<T>(id)!;
 
+// Keys MUST match the `value` attributes in #language-select (e2e/host/index.html).
+const LOCALES: Record<string, ILocale> = {
+    'en': en,
+    'zh-CN': zhCN,
+    'zh-TW': zhTW,
+    'ja': ja,
+    'ko': ko,
+    'es': es,
+    'fr': fr,
+    'de': de,
+    'pt': pt,
+};
+
 $<HTMLSelectElement>('#language-select').addEventListener('change', (event) => {
-    const lang = (event.target as HTMLSelectElement).value;
-    if (lang === 'en')
-        muya.locale(en);
-    else if (lang === 'ja')
-        muya.locale(ja);
-    else if (lang === 'zh')
-        muya.locale(zh);
+    const locale = LOCALES[(event.target as HTMLSelectElement).value];
+    if (locale)
+        muya.locale(locale);
 });
 
 $<HTMLButtonElement>('#undo').addEventListener('click', () => muya.undo());

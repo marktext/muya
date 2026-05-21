@@ -74,8 +74,8 @@ export const ja = {
         'Inline Image': '行内画像',
         'Remove Image': '画像を削除する',
         // ImageSelector
-        'Image src placeholder': '图片链接',
-        'Confirm Text': '确定',
+        'Image src placeholder': '画像のURL',
+        'Confirm Text': 'OK',
         // preview block
         'Loading...': 'ロード中...',
         'Invalid Diagram Code': 'グラフのレンダリングが失敗しました',
