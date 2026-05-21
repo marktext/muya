@@ -1,4 +1,4 @@
-import type { Token, Tokens } from 'marked';
+import type { Token } from 'marked';
 import type { IMathToken } from './extensions/math';
 import type { Heading, ILexOption } from './types';
 
@@ -33,11 +33,16 @@ function walkTokens(options: ILexOption) {
         }
 
         if (isMathToken(token) && math && isGitlabCompatibilityEnabled) {
+            // Transform the marked code-block token in place into the
+            // multiplemath token shape that downstream consumers expect.
+            // After the assignment the old `lang`/`codeBlockStyle` fields no
+            // longer belong on the value, so strip them via a structural view.
             token.type = 'multiplemath';
             token.mathStyle = 'gitlab';
             token.displayMode = true;
-            delete (token as unknown as Tokens.Code).lang;
-            delete (token as unknown as Tokens.Code).codeBlockStyle;
+            const codeFields = token as IMathToken & Partial<{ lang: unknown; codeBlockStyle: unknown }>;
+            delete codeFields.lang;
+            delete codeFields.codeBlockStyle;
         }
     };
 }

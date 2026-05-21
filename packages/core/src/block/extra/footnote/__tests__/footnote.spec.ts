@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import Footnote from '..';
 import { MarkdownToState } from '../../../../state/markdownToState';
 import ExportMarkdown from '../../../../state/stateToMarkdown';
+import { isFootnoteBlockState } from '../../../../state/types';
 import { registerBlocks } from '../../../index';
 import { ScrollPage } from '../../../scrollPage';
 
@@ -129,14 +130,12 @@ describe('footnote block — markdown round-trip via state', () => {
             frontMatter: false,
         }).generate(md);
 
-        const footnote = (states as Array<{ name: string }>).find(
-            s => s.name === 'footnote',
-        ) as IFootnoteBlockState | undefined;
+        const footnote = states.find(isFootnoteBlockState);
 
         expect(footnote, 'footnote state should be present').toBeDefined();
         expect(footnote!.meta.identifier).toBe('n');
         expect(footnote!.children.length).toBeGreaterThan(0);
         // The first child of the footnote must be a list, not the next paragraph.
-        expect((footnote!.children[0] as { name: string }).name).toBe('bullet-list');
+        expect(footnote!.children[0].name).toBe('bullet-list');
     });
 });

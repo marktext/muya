@@ -172,8 +172,7 @@ export default class ExportMarkdown {
 
                     // Start a new list without separation due changing the bullet or ordered list delimiter starts a new list.
                     const bulletMarkerOrDelimiter
-                        = (meta as IOrderListState['meta']).delimiter
-                            || (meta as IBulletListState['meta']).marker;
+                        = 'delimiter' in meta ? meta.delimiter : meta.marker;
 
                     if (lastListBullet && lastListBullet !== bulletMarkerOrDelimiter)
                         insertNewLine = false;

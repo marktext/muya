@@ -1,14 +1,8 @@
 import type Content from '../block/base/content';
 import type Parent from '../block/base/parent';
+import type TreeNode from '../block/base/treeNode';
 import type { Muya } from '../muya';
-import type {
-    IBlockQuoteState,
-    IBulletListState,
-    IOrderListState,
-    IParagraphState,
-    ITaskListState,
-    TState,
-} from '../state/types';
+import type { TState } from '../state/types';
 import type { Nullable } from '../types';
 import { fromEvent, merge } from 'rxjs';
 import CodeBlockContent from '../block/content/codeBlockContent';
@@ -18,7 +12,8 @@ import emptyStates from '../config/emptyStates';
 import HtmlToMarkdown from '../state/htmlToMarkdown';
 import { MarkdownToState } from '../state/markdownToState';
 import StateToMarkdown from '../state/stateToMarkdown';
-import { deepClone } from '../utils';
+import { isAnyListState, isParagraphState } from '../state/types';
+import { deepClone, isClipboardEvent, isKeyboardEvent } from '../utils';
 import { getClipBoardHtml } from '../utils/marked';
 import { getCopyTextType, isStandaloneTableHtml, normalizePastedHTML } from '../utils/paste';
 import { mergePasteIntoHeading } from './mergePasteIntoHeading';
@@ -49,19 +44,23 @@ class Clipboard {
         const { domNode } = this.muya;
 
         const copyCutHandler = (event: Event) => {
+            if (!isClipboardEvent(event))
+                return;
             event.preventDefault();
             event.stopPropagation();
 
             const isCut = event.type === 'cut';
 
-            this.copyHandler(event as ClipboardEvent);
+            this.copyHandler(event);
 
             if (isCut)
                 this.cutHandler();
         };
 
         const keydownHandler = (event: Event) => {
-            const { key, metaKey } = event as KeyboardEvent;
+            if (!isKeyboardEvent(event))
+                return;
+            const { key, metaKey } = event;
 
             const { isSelectionInSameBlock } = this.selection.getSelection() ?? {};
             if (isSelectionInSameBlock)
@@ -86,7 +85,8 @@ class Clipboard {
         };
 
         const pasteHandler = (event: Event) => {
-            this.pasteHandler(event as ClipboardEvent);
+            if (isClipboardEvent(event))
+                this.pasteHandler(event);
         };
 
         merge(fromEvent(domNode, 'copy'), fromEvent(domNode, 'cut'))
@@ -148,7 +148,7 @@ class Clipboard {
             return { html, text };
         }
         // Handle select multiple blocks.
-        const copyState = [];
+        const copyState: TState[] = [];
         const anchorOutMostBlock = anchorBlock.outMostBlock!;
         const focusOutMostBlock = focusBlock.outMostBlock!;
         const anchorOutMostBlockOffset
@@ -204,18 +204,38 @@ class Clipboard {
                 const offset = (outBlock as Parent).offset(listItem!);
                 // outBlock is a list parent at runtime; getState() returns a
                 // bullet/order/task-list state whose `children` is an
-                // IListItemState/ITaskListItemState array. The intermediate
-                // `name`/`meta`/`children` extraction is loosely typed so we
-                // can spread it back into a copyState entry without
-                // re-deriving the discriminated union here.
-                const listState = (outBlock as Parent).getState() as IBulletListState | IOrderListState | ITaskListState;
-                copyState.push({
-                    name: listState.name,
-                    meta: listState.meta,
-                    children: listState.children.filter((_, index) =>
-                        position === 'start' ? index >= offset : index <= offset,
-                    ),
-                } as TState);
+                // IListItemState/ITaskListItemState array. Narrow via the
+                // discriminated-union guard before slicing.
+                const listState = (outBlock as Parent).getState();
+                if (isAnyListState(listState)) {
+                    if (listState.name === 'task-list') {
+                        copyState.push({
+                            name: 'task-list',
+                            meta: listState.meta,
+                            children: listState.children.filter((_, index) =>
+                                position === 'start' ? index >= offset : index <= offset,
+                            ),
+                        });
+                    }
+                    else if (listState.name === 'order-list') {
+                        copyState.push({
+                            name: 'order-list',
+                            meta: listState.meta,
+                            children: listState.children.filter((_, index) =>
+                                position === 'start' ? index >= offset : index <= offset,
+                            ),
+                        });
+                    }
+                    else {
+                        copyState.push({
+                            name: 'bullet-list',
+                            meta: listState.meta,
+                            children: listState.children.filter((_, index) =>
+                                position === 'start' ? index >= offset : index <= offset,
+                            ),
+                        });
+                    }
+                }
             }
             else {
                 if (position === 'start' && startOffset < startBlock.text.length) {
@@ -255,14 +275,30 @@ class Clipboard {
                 );
                 const minOffset = Math.min(anchorOffset, focusOffset);
                 const maxOffset = Math.max(anchorOffset, focusOffset);
-                const listState = (anchorOutMostBlock as Parent).getState() as IBulletListState | IOrderListState | ITaskListState;
-                copyState.push({
-                    name: listState.name,
-                    meta: listState.meta,
-                    children: listState.children.filter((_, index) =>
-                        index >= minOffset && index <= maxOffset,
-                    ),
-                } as TState);
+                const listState = (anchorOutMostBlock as Parent).getState();
+                if (isAnyListState(listState)) {
+                    if (listState.name === 'task-list') {
+                        copyState.push({
+                            name: 'task-list',
+                            meta: listState.meta,
+                            children: listState.children.filter((_, index) => index >= minOffset && index <= maxOffset),
+                        });
+                    }
+                    else if (listState.name === 'order-list') {
+                        copyState.push({
+                            name: 'order-list',
+                            meta: listState.meta,
+                            children: listState.children.filter((_, index) => index >= minOffset && index <= maxOffset),
+                        });
+                    }
+                    else {
+                        copyState.push({
+                            name: 'bullet-list',
+                            meta: listState.meta,
+                            children: listState.children.filter((_, index) => index >= minOffset && index <= maxOffset),
+                        });
+                    }
+                }
             }
         }
         else {
@@ -394,9 +430,7 @@ class Clipboard {
                         = outBlock.blockName === 'block-quote'
                             ? deepClone(emptyStates['block-quote'])
                             : deepClone(emptyStates.paragraph);
-                    const newBlock = ScrollPage.loadBlock(
-                        (state as IBlockQuoteState | IParagraphState).name,
-                    ).create(this.muya, state);
+                    const newBlock = ScrollPage.loadBlock(state.name).create(this.muya, state);
                     outBlock.replaceWith(newBlock);
                     cursorBlock = newBlock.firstContentInDescendant();
                     cursorOffset = 0;
@@ -458,9 +492,7 @@ class Clipboard {
             // Handle anchor and focus in same list\quote block
             if (anchorOutMostBlock?.blockName === 'block-quote') {
                 const state = deepClone(emptyStates['block-quote']);
-                const newQuoteBlock = ScrollPage.loadBlock(
-                    (state as IBlockQuoteState).name,
-                ).create(this.muya, state);
+                const newQuoteBlock = ScrollPage.loadBlock(state.name).create(this.muya, state);
                 anchorOutMostBlock.replaceWith(newQuoteBlock);
                 cursorBlock = newQuoteBlock.firstContentInDescendant();
                 cursorOffset = 0;
@@ -647,11 +679,10 @@ class Clipboard {
                 }
 
                 // Remove empty paragraph when paste.
-                if (
-                    originWrapperBlock?.blockName === 'paragraph'
-                    && (originWrapperBlock.getState() as IParagraphState).text === ''
-                ) {
-                    originWrapperBlock.remove();
+                if (originWrapperBlock?.blockName === 'paragraph') {
+                    const originState = originWrapperBlock.getState();
+                    if (isParagraphState(originState) && originState.text === '')
+                        originWrapperBlock.remove();
                 }
 
                 const cursorBlock = wrapperBlock?.firstContentInDescendant();
@@ -683,11 +714,12 @@ class Clipboard {
                     // The attachments list of html-block / math-block /
                     // diagram blocks always opens with the render preview
                     // node, which exposes an `update(text)` method. The
-                    // LinkedList itself is typed loosely (TreeNode), hence
-                    // the narrow structural cast here.
-                    (anchorBlock.outContainer.attachments.head as unknown as { update: (text: string) => void }).update(
-                        anchorBlock.text,
-                    );
+                    // LinkedList itself is typed loosely; narrow via a
+                    // structural shape check before calling.
+                    const head = anchorBlock.outContainer.attachments.head;
+                    const updater = head as TreeNode & { update?: (text: string) => void };
+                    if (typeof updater.update === 'function')
+                        updater.update(anchorBlock.text);
                 }
             }
         }

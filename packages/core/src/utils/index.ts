@@ -92,6 +92,11 @@ export function throttle<TArgs extends unknown[], TReturn>(
     const later = () => {
         previous = Date.now();
         timeout = null;
+        // `[]` is assignable to every concrete TArgs at runtime — the throttled
+        // call site always supplies real args; the empty array only flows in
+        // when there's nothing pending. TS rejects the single-cast form for an
+        // unconstrained `TArgs extends unknown[]`; double-cast at the boundary.
+        // eslint-disable-next-line no-restricted-syntax
         result = func.apply(context, pendingArgs ?? ([] as unknown as TArgs));
         if (!timeout) {
             context = null;
@@ -347,4 +352,24 @@ export function isInputEvent(event: Event): event is InputEvent {
 // narrowing Note type to Element.
 export function isElement(node: Node): node is Element {
     return node.nodeType === Node.ELEMENT_NODE;
+}
+
+export function isClipboardEvent(event: Event): event is ClipboardEvent {
+    return 'clipboardData' in event;
+}
+
+export function isHTMLElement(value: unknown): value is HTMLElement {
+    return value instanceof HTMLElement;
+}
+
+export function isHTMLInputElement(value: unknown): value is HTMLInputElement {
+    return value instanceof HTMLInputElement;
+}
+
+export function isHTMLTextAreaElement(value: unknown): value is HTMLTextAreaElement {
+    return value instanceof HTMLTextAreaElement;
+}
+
+export function isHTMLAnchorElement(value: unknown): value is HTMLAnchorElement {
+    return value instanceof HTMLAnchorElement;
 }

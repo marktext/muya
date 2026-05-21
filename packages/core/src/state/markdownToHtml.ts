@@ -1,7 +1,7 @@
 import type { Muya } from '../muya';
 import exportStyle from '../assets/styles/exportStyle.css?inline';
 import { EXPORT_DOMPURIFY_CONFIG } from '../config';
-import { sanitize, unescapeHTML } from '../utils';
+import { isHTMLElement, sanitize, unescapeHTML } from '../utils';
 import loadRenderer from '../utils/diagram';
 
 import { getHighlightHtml } from '../utils/marked';
@@ -16,7 +16,9 @@ export class MarkdownToHtml {
             'code.language-mermaid',
         );
         for (const code of codes) {
-            const preEle: HTMLElement = code.parentNode as HTMLElement;
+            const preEle = code.parentNode;
+            if (!isHTMLElement(preEle))
+                continue;
             const mermaidContainer = document.createElement('div');
             mermaidContainer.innerHTML = sanitize(
                 unescapeHTML(code.innerHTML),
@@ -59,9 +61,11 @@ export class MarkdownToHtml {
             })();
             const render = await loadRenderer(functionType);
             const preParent = code.parentNode;
+            if (!isHTMLElement(preParent))
+                continue;
             const diagramContainer = document.createElement('div');
             diagramContainer.classList.add(functionType);
-            (preParent as HTMLElement).replaceWith(diagramContainer);
+            preParent.replaceWith(diagramContainer);
             const options = {};
             if (functionType === 'vega-lite') {
                 Object.assign(options, {

@@ -2,6 +2,7 @@ import type { VNode } from 'snabbdom';
 import type { Emoji as EmojiType } from '../../config/emojis';
 import type { Muya } from '../../index';
 
+import { query } from '../../utils/dom';
 import { h, patch } from '../../utils/snabbdom';
 import BaseScrollFloat from '../baseScrollFloat';
 import Emoji from './emoji';
@@ -46,7 +47,8 @@ export class EmojiSelector extends BaseScrollFloat {
         if (this.renderArray.length > 0) {
             this.activeItem = this.renderArray[0];
             const activeEle = this.getItemElement(this.activeItem);
-            this.activeEleScrollIntoView(activeEle);
+            if (activeEle)
+                this.activeEleScrollIntoView(activeEle);
         }
     }
 
@@ -115,7 +117,7 @@ export class EmojiSelector extends BaseScrollFloat {
     getItemElement(item: EmojiType) {
         const label = item.aliases[0];
 
-        return this.floatBox!.querySelector(`[data-label="${label}"]`) as HTMLElement;
+        return query<HTMLElement>(`[data-label="${label}"]`, this.floatBox!);
     }
 
     override destroy() {

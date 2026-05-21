@@ -4,7 +4,8 @@ import type { Muya } from '../../index';
 import type { ImageToken } from '../../inlineRenderer/types';
 import type { IBaseOptions } from '../types';
 import { EVENT_KEYS, isWin, URL_REG } from '../../config';
-import { getUniqueId, isKeyboardEvent } from '../../utils';
+import { getUniqueId, isHTMLInputElement, isKeyboardEvent } from '../../utils';
+import { query } from '../../utils/dom';
 
 import { getImageInfo, getImageSrc } from '../../utils/image';
 import { h, patch } from '../../utils/snabbdom';
@@ -142,7 +143,7 @@ export class ImageEditTool extends BaseFloat {
      * Focus and select the src input element
      */
     private _focusSrcInput() {
-        const input = this.container?.querySelector('input.src') as HTMLInputElement | null;
+        const input = this.container ? query<HTMLInputElement>('input.src', this.container) : null;
         if (input) {
             input.focus();
             input.select();
@@ -154,8 +155,9 @@ export class ImageEditTool extends BaseFloat {
      * @param event - Input event
      */
     private _handleSrcInput(event: Event) {
-        const value = (event.target as HTMLInputElement).value;
-        this._state.src = value;
+        if (!isHTMLInputElement(event.target))
+            return;
+        this._state.src = event.target.value;
     }
 
     /**
@@ -245,9 +247,10 @@ export class ImageEditTool extends BaseFloat {
         }
 
         // Find and update the image element
-        const imageWrapper = this.muya.domNode.querySelector(
+        const imageWrapper = query<HTMLElement>(
             `span[data-id=${loadingId}]`,
-        ) as HTMLElement | null;
+            this.muya.domNode,
+        );
 
         if (imageWrapper) {
             const imageInfo = getImageInfo(imageWrapper);

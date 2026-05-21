@@ -1,5 +1,6 @@
 import type { Muya } from '../../../muya';
-import type { IBulletListState, IListItemState } from '../../../state/types';
+import type { IBulletListState } from '../../../state/types';
+import type ListItem from '../listItem';
 import { mixins } from '../../../utils';
 import { LinkedList } from '../../base/linkedList/linkedList';
 import Parent from '../../base/parent';
@@ -51,9 +52,7 @@ class BulletList extends Parent {
         const state: IBulletListState = {
             name: 'bullet-list',
             meta: { ...this.meta },
-            children: this.children.map(child =>
-                (child as Parent).getState(),
-            ) as IListItemState[],
+            children: this.children.map(child => (child as ListItem).getState()),
         };
 
         return state;

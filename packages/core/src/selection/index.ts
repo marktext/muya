@@ -7,7 +7,7 @@ import type { ImageToken } from '../inlineRenderer/types';
 import type { Muya } from '../muya';
 import type { ICursor, INodeOffset, ISelection } from './types';
 import { BLOCK_DOM_PROPERTY, CLASS_NAMES } from '../config';
-import { isElement, isKeyboardEvent, isMouseEvent } from '../utils';
+import { isElement, isHTMLElement, isKeyboardEvent, isMouseEvent } from '../utils';
 import { getImageInfo } from '../utils/image';
 import {
     compareParagraphsOrder,
@@ -201,8 +201,8 @@ class Selection {
 
         this.setSelection(cursor);
         const activeEle = this.doc.activeElement;
-        if (activeEle && activeEle.classList.contains('mu-content'))
-            (activeEle as HTMLElement).blur();
+        if (isHTMLElement(activeEle) && activeEle.classList.contains('mu-content'))
+            activeEle.blur();
     }
 
     /**
@@ -475,12 +475,12 @@ class Selection {
 
         const handleClick = (event: Event) => {
             const { target } = event;
-            const imageWrapper = (target as HTMLElement)?.closest(
-                `.${CLASS_NAMES.MU_INLINE_IMAGE}`,
-            );
+            if (!isHTMLElement(target))
+                return;
+            const imageWrapper = target.closest<HTMLElement>(`.${CLASS_NAMES.MU_INLINE_IMAGE}`);
             this.selectedImage = null;
             if (imageWrapper)
-                return this._handleClickInlineImage(event, imageWrapper as HTMLElement);
+                return this._handleClickInlineImage(event, imageWrapper);
         };
 
         const handleKeydown = (event: Event) => {
@@ -519,10 +519,12 @@ class Selection {
         const { eventCenter } = this.muya;
         const imageInfo = getImageInfo(imageWrapper);
         const { target } = event;
-        const deleteContainer = (target as HTMLElement).closest(
-            '.mu-image-icon-close',
-        );
-        const contentDom = findContentDOM(target as Node);
+        if (!(target instanceof Node))
+            return;
+        const deleteContainer = isHTMLElement(target)
+            ? target.closest('.mu-image-icon-close')
+            : null;
+        const contentDom = findContentDOM(target);
 
         if (!contentDom)
             return;
@@ -536,7 +538,7 @@ class Selection {
         }
 
         // Handle image click, to select the current image
-        if ((target as HTMLElement)?.tagName === 'IMG') {
+        if (isHTMLElement(target) && target.tagName === 'IMG') {
             // Handle show image toolbar
             const rect = imageWrapper
                 .querySelector(`.${CLASS_NAMES.MU_IMAGE_CONTAINER}`)
@@ -668,16 +670,18 @@ class Selection {
             : scrollPage?.queryBlock(focusPath);
 
         // getNodeAndOffset expects a DOM Node. The fallback branch can hand
-        // back a Parent/Content block (from scrollPage.queryBlock), which
-        // historically reached this code path under an `as any` cast. Keep
-        // the existing runtime behavior via a single narrow cast — fixing
-        // the underlying contract is out of scope for this PR.
+        // back a Parent/Content block (from scrollPage.queryBlock); narrow to
+        // an actual Node here. Fixing the underlying contract (so queryBlock
+        // is never reached with a block) is out of scope for this PR — early
+        // return preserves the existing not-found behaviour.
+        if (!(anchorParagraph instanceof Node) || !(focusParagraph instanceof Node))
+            return;
         const { node: anchorNode, offset: anchorOffset } = getNodeAndOffset(
-            anchorParagraph as unknown as Node,
+            anchorParagraph,
             anchor.offset,
         );
         const { node: focusNode, offset: focusOffset } = getNodeAndOffset(
-            focusParagraph as unknown as Node,
+            focusParagraph,
             focus.offset,
         );
 

@@ -1,4 +1,3 @@
-import type { ReferenceElement } from '@floating-ui/dom';
 import type { VNode } from 'snabbdom';
 import type Parent from '../../block/base/parent';
 import type { Muya } from '../../index';
@@ -412,7 +411,7 @@ export class ParagraphFrontButton {
         }
 
         const updatePosition = () => {
-            computePosition(domNode! as Element | ReferenceElement, floatBox, {
+            computePosition(domNode!, floatBox, {
                 placement,
                 middleware: [
                     offset({
@@ -432,7 +431,7 @@ export class ParagraphFrontButton {
         };
 
         updatePosition();
-        this._cleanup = autoUpdate(domNode! as Element | ReferenceElement, floatBox, updatePosition);
+        this._cleanup = autoUpdate(domNode!, floatBox, updatePosition);
 
         this._status = true;
         eventCenter.emit('muya-float-button', this, true);

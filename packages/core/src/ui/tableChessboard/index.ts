@@ -2,6 +2,7 @@ import type { ReferenceElement } from '@floating-ui/dom';
 import type { VNode } from 'snabbdom';
 import type { Muya } from '../../index';
 import { EVENT_KEYS } from '../../config';
+import { isHTMLElement, isHTMLInputElement } from '../../utils';
 import { h, patch } from '../../utils/snabbdom';
 
 import BaseFloat from '../baseFloat';
@@ -85,9 +86,10 @@ class TablePicker extends BaseFloat {
                         },
                         on: {
                             mouseenter: (event: MouseEvent) => {
-                                const target = event.target as HTMLElement;
-                                const r = target.getAttribute('data-row');
-                                const c = target.getAttribute('data-column');
+                                if (!isHTMLElement(event.target))
+                                    return;
+                                const r = event.target.getAttribute('data-row');
+                                const c = event.target.getAttribute('data-column');
                                 this._select = { row: Number(r), column: Number(c) };
                                 this.render();
                             },
@@ -151,7 +153,7 @@ class TablePicker extends BaseFloat {
 
     keyupHandler(event: KeyboardEvent, type: 'row' | 'column') {
         let number = +this._select![type];
-        const value = +(event.target as HTMLInputElement).value;
+        const value = isHTMLInputElement(event.target) ? +event.target.value : Number.NaN;
         if (event.key === EVENT_KEYS.ArrowUp)
             number++;
         else if (event.key === EVENT_KEYS.ArrowDown)

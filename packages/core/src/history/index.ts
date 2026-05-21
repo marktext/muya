@@ -1,9 +1,10 @@
-import type { Doc, JSONOpList } from 'ot-json1';
+import type { JSONOpList } from 'ot-json1';
 import type { Muya } from '../muya';
 import type { ISelection } from '../selection/types';
 import type { TState } from '../state/types';
 import type { Nullable } from '../types';
 import * as json1 from 'ot-json1';
+import { asDoc } from '../state';
 
 interface IOptions {
     delay: number;
@@ -116,7 +117,7 @@ class History {
 
         let selection = this.getLastSelection();
         this._stack.redo = [];
-        let undoOperation = json1.type.invertWithDoc(op, doc as unknown as Doc);
+        let undoOperation = json1.type.invertWithDoc(op, asDoc(doc));
 
         const timestamp = Date.now();
         if (

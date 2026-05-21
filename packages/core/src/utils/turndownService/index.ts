@@ -1,7 +1,7 @@
 import type { Filter, Node } from 'turndown';
 import * as turndownPluginGfm from 'joplin-turndown-plugin-gfm';
 import TurndownService from 'turndown';
-import { identity } from '../../utils';
+import { identity, isHTMLElement, isHTMLInputElement } from '../../utils';
 
 const DEFAULT_KEEPS: Filter = ['u', 'mark', 'ruby', 'rt', 'sub', 'sup'];
 
@@ -51,12 +51,13 @@ export function usePluginsAddRules(turndownService: TurndownService) {
     turndownService.addRule('taskListItems', {
         filter(node) {
             return (
-                (node as HTMLInputElement).type === 'checkbox'
+                isHTMLInputElement(node)
+                && node.type === 'checkbox'
                 && node.parentNode?.nodeName === 'P'
             );
         },
         replacement(_content, node) {
-            return `${(node as HTMLInputElement).checked ? '[x]' : '[ ]'} `;
+            return `${isHTMLInputElement(node) && node.checked ? '[x]' : '[ ]'} `;
         },
     });
 
@@ -87,8 +88,8 @@ export function usePluginsAddRules(turndownService: TurndownService) {
                 .replace(/\n/g, '\n  '); // indent
 
             let prefix = `${options.bulletListMarker} `;
-            const parent = node.parentNode as HTMLElement;
-            if (parent?.nodeName === 'OL') {
+            const parent = node.parentNode;
+            if (isHTMLElement(parent) && parent.nodeName === 'OL') {
                 const start = parent.getAttribute('start');
                 const index = Array.prototype.indexOf.call(parent.children, node);
                 prefix = `${start ? Number(start) + index : index + 1}. `;

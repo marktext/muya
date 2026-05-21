@@ -150,6 +150,7 @@ class Renderer {
     // the need for an `(this as any)[name]` escape hatch when the name comes
     // from a runtime string.
     dispatch(name: string, opts: ISyntaxRenderOptions): VNode[] {
+        // eslint-disable-next-line no-restricted-syntax
         const map = this as unknown as Record<string, TInlineRenderFn>;
         return map[name](opts);
     }

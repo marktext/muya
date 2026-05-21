@@ -6,6 +6,7 @@ import type {
 import Fuse from 'fuse.js';
 import ParagraphContent from '../../block/content/paragraphContent';
 import { deepClone } from '../../utils';
+import { query } from '../../utils/dom';
 import { h, patch } from '../../utils/snabbdom';
 import BaseScrollFloat from '../baseScrollFloat';
 import {
@@ -34,8 +35,8 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
     public oldVNode: VNode | null = null;
     public block: ParagraphContent | null = null;
     public override activeItem: IQuickInsertMenuItem['children'][number] | null = null;
+    public override renderArray: IQuickInsertMenuItem['children'] = [];
     private _renderData: IQuickInsertMenuItem[] = [];
-    // private renderArray: QuickInsertMenuItem["children"][number] = [];
 
     constructor(muya: Muya) {
         const name = 'mu-quick-insert';
@@ -55,10 +56,10 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
 
         this.renderArray = data.flatMap(d => d.children);
         if (this.renderArray.length > 0) {
-            this.activeItem = this
-                .renderArray[0] as IQuickInsertMenuItem['children'][number];
-            const activeEle = this.getItemElement(this.activeItem) as HTMLElement;
-            this.activeEleScrollIntoView(activeEle);
+            this.activeItem = this.renderArray[0];
+            const activeEle = this.getItemElement(this.activeItem);
+            if (activeEle)
+                this.activeEleScrollIntoView(activeEle);
         }
     }
 
@@ -240,8 +241,6 @@ export class ParagraphQuickInsertMenu extends BaseScrollFloat {
     getItemElement(item: IQuickInsertMenuItem['children'][number]) {
         const { label } = item;
 
-        return this.scrollElement!.querySelector(
-            `[data-label="${label}"]`,
-        ) as HTMLElement;
+        return query<HTMLElement>(`[data-label="${label}"]`, this.scrollElement!);
     }
 }

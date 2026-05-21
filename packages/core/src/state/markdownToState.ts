@@ -333,7 +333,7 @@ export class MarkdownToState {
 
                     state = listState;
                     parentList[0].push(state);
-                    parentList.unshift(state.children as TState[]);
+                    parentList.unshift(state.children);
                     tokens.unshift({ type: 'block-end', tokenType: 'list' });
                     tokens.unshift(...(token.items as TBlockToken[]));
                     break;

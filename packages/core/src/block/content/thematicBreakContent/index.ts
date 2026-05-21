@@ -1,5 +1,6 @@
 import type { Muya } from '../../../muya';
 import type { ICursor } from '../../../selection/types';
+import { isKeyboardEvent } from '../../../utils';
 import Format from '../../base/format';
 import { ScrollPage } from '../../scrollPage';
 
@@ -45,10 +46,10 @@ class ThematicBreakContent extends Format {
             const thematicBreak = this.parent;
             thematicBreak!.parent!.insertBefore(emptyParagraph, thematicBreak);
         }
-        else {
+        else if (isKeyboardEvent(event)) {
             const offset = text.length;
             this.setCursor(offset, offset);
-            super.enterHandler(event as KeyboardEvent);
+            super.enterHandler(event);
         }
     }
 
