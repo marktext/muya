@@ -37,17 +37,7 @@ test.describe('stability / perf smoke @perf', () => {
     // Playwright timeout (with a stack trace).
     test.setTimeout(120_000);
 
-    test('setContent with 10k paragraphs finishes within the budget and scroll is reachable', async ({ page, browserName }) => {
-        // Short-term skip on webkit + firefox: the 60s budget was calibrated
-        // against chromium (~20s observed) before the cross-browser matrix
-        // landed. WebKit on ubuntu-latest against the Vite dev server
-        // consistently runs 108-120s; firefox 62-68s. Both blow the budget
-        // every run, with retries pushing the suite past the 15min job cap.
-        // Until the @perf job moves to a nightly schedule against a
-        // production bundle (see file header), keep the regression guard
-        // on chromium only.
-        test.skip(browserName !== 'chromium', 'perf budget calibrated against chromium only');
-
+    test('setContent with 10k paragraphs finishes within the budget and scroll is reachable', async ({ page }) => {
         // 10k short paragraphs joined with the blank-line separator marked
         // requires for distinct paragraph nodes. Building the string from
         // inside page.evaluate avoids transferring a multi-MB payload
