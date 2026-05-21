@@ -84,7 +84,7 @@
         "@types/turndown": "^5.0.4",
         "@vitest/coverage-istanbul": "^4.1.6",
         "commonmark-spec": "^0.31.2",
-        "happy-dom": "^15.11.7",
+        "happy-dom": "^20.8.9",
         "typescript": "^6.0.3",
         "vite": "^8.0.13",
         "vitest": "^4.1.6"
