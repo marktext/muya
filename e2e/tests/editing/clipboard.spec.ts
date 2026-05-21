@@ -1,75 +1,47 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '../fixtures/muya';
 import { getMarkdown } from '../helpers/api';
+import { metaKey } from '../helpers/keyboard';
 import { editor } from '../helpers/selectors';
 
 /**
- * Real-HTML clipboard paste, driven via a synthetic `ClipboardEvent`
- * whose `clipboardData` is a populated `DataTransfer`. Chromium honours
- * `new ClipboardEvent('paste', { clipboardData })` — the constructed
- * event reaches the editor's paste listener with the supplied
- * clipboardData. Firefox silently nulls `clipboardData` on synthetic
- * ClipboardEvents (bug 1456493, still open), and WebKit denies
- * cross-origin clipboard reads in headless mode; both engines are
- * therefore skipped at the describe level and tracked in BACKLOG
- * Phase 3 (real paste via CDP / keyboard-driven Cmd+V).
+ * Real-HTML clipboard paste, driven via `navigator.clipboard.write()`
+ * with `ClipboardItem` + a real OS-level paste keystroke. This is the
+ * only approach that works on bundled Chromium-for-Testing (which CI
+ * uses): synthetic `new ClipboardEvent('paste', { clipboardData: dt })`
+ * leaves `event.clipboardData === null` on CfT (and Chrome's spec-
+ * compliant path), so pasteHandler bails early. The earlier
+ * `dispatchEvent` approach passed locally (where Playwright was set
+ * to use the system Chrome stable channel — lenient about synthetic
+ * ClipboardEvent) but failed on CI.
  *
- * Why dispatch + DataTransfer instead of `keyboard.press('Cmd+V')`?
- * On headless Chromium the OS clipboard is empty and the keystroke
- * fires a paste with `clipboardData: null`. Synthetic dispatch keeps
- * the test self-contained — the editor sees the same paste-handler
- * code path that real users hit (no fork inside `pasteHandler`).
+ * The grantPermissions + clipboard.write + keyboard paste path is
+ * spec-compliant and exercises the same code path real users hit.
+ *
+ * Firefox + WebKit are skipped per-test:
+ *   - Firefox: `ClipboardItem` is gated behind a pref, and
+ *     `clipboard.write({'text/html': ...})` is not universally
+ *     available in headless.
+ *   - WebKit: clipboard-read/write permissions can't be granted in
+ *     Playwright's headless WebKit yet (Playwright issue #13037).
+ *
+ * Both engines tracked in BACKLOG Phase 3 (cross-engine clipboard).
  */
-async function pasteHtml(page: Page, html: string, text = ''): Promise<void> {
-    await page.evaluate(({ html, text }) => {
-        const dt = new DataTransfer();
-        dt.setData('text/html', html);
-        if (text)
-            dt.setData('text/plain', text);
-        const muyaDomNode = window.muya!.domNode;
-        const evt = new ClipboardEvent('paste', {
-            bubbles: true,
-            cancelable: true,
-            clipboardData: dt,
-        });
-        muyaDomNode.dispatchEvent(evt);
-    }, { html, text });
-}
-
-async function pastePlain(page: Page, text: string): Promise<void> {
-    await page.evaluate((text) => {
-        const dt = new DataTransfer();
-        dt.setData('text/plain', text);
-        const muyaDomNode = window.muya!.domNode;
-        const evt = new ClipboardEvent('paste', {
-            bubbles: true,
-            cancelable: true,
-            clipboardData: dt,
-        });
-        muyaDomNode.dispatchEvent(evt);
-    }, text);
-}
 
 test.describe('clipboard paste', () => {
-    // Restrict synthetic-DataTransfer paste tests to Chromium. The
-    // "wired" sanity test runs on every engine — see the
-    // `test.skip(...)` inside it.
+    // Per-context permission grant: required for navigator.clipboard.write
+    // to succeed without a user-gesture prompt.
+    test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
+
     test('clipboard module is wired (sanity-check via internal handle)', async ({ page }) => {
         await page.evaluate(() => window.muya!.setContent(''));
-        // The clipboard module attaches a `paste` listener to the editor
-        // domNode at init; assert the module is present and the editor is
-        // ready to receive real paste events.
         const wired = await page.evaluate(() => !!window.muya!.editor.clipboard);
         expect(wired).toBe(true);
         await expect(page.locator(editor.container)).toBeVisible();
     });
 
     test('pasting <b>foo</b> converts to **foo**', async ({ browserName, page }) => {
-        test.skip(browserName !== 'chromium', 'Synthetic ClipboardEvent.clipboardData unsupported on Firefox/WebKit — BACKLOG Phase 3.');
-        await page.evaluate(() => window.muya!.setContent(''));
-        await page.locator(editor.paragraph).first().click();
-        await pasteHtml(page, '<b>foo</b>', 'foo');
-
+        test.skip(browserName !== 'chromium', 'ClipboardItem text/html unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
+        await pasteClipboard(page, '<b>foo</b>', 'foo');
         await expect.poll(async () => getMarkdown(page), {
             timeout: 5_000,
             intervals: [50, 100, 250, 500],
@@ -77,11 +49,8 @@ test.describe('clipboard paste', () => {
     });
 
     test('pasting <a href> converts to markdown link', async ({ browserName, page }) => {
-        test.skip(browserName !== 'chromium', 'Synthetic ClipboardEvent.clipboardData unsupported on Firefox/WebKit — BACKLOG Phase 3.');
-        await page.evaluate(() => window.muya!.setContent(''));
-        await page.locator(editor.paragraph).first().click();
-        await pasteHtml(page, '<a href="https://example.test/">click here</a>', 'click here');
-
+        test.skip(browserName !== 'chromium', 'ClipboardItem text/html unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
+        await pasteClipboard(page, '<a href="https://example.test/">click here</a>', 'click here');
         await expect.poll(async () => getMarkdown(page), {
             timeout: 5_000,
             intervals: [50, 100, 250, 500],
@@ -89,38 +58,85 @@ test.describe('clipboard paste', () => {
     });
 
     test('pasting a basic <table> converts to a GFM table', async ({ browserName, page }) => {
-        test.skip(browserName !== 'chromium', 'Synthetic ClipboardEvent.clipboardData unsupported on Firefox/WebKit — BACKLOG Phase 3.');
-        await page.evaluate(() => window.muya!.setContent(''));
-        await page.locator(editor.paragraph).first().click();
+        test.skip(browserName !== 'chromium', 'ClipboardItem text/html unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
         const html = '<table><thead><tr><th>h1</th><th>h2</th></tr></thead>'
             + '<tbody><tr><td>r1c1</td><td>r1c2</td></tr></tbody></table>';
-        await pasteHtml(page, html, 'h1\th2\nr1c1\tr1c2');
-
+        await pasteClipboard(page, html, 'h1\th2\nr1c1\tr1c2');
         await expect.poll(async () => getMarkdown(page), {
             timeout: 5_000,
             intervals: [50, 100, 250, 500],
         }).toMatch(/\|\s*h1\s*\|\s*h2\s*\|/);
 
         const md = await getMarkdown(page);
-        // GFM separator row + body row.
         expect(md).toMatch(/\|\s*-+\s*\|\s*-+\s*\|/);
         expect(md).toMatch(/\|\s*r1c1\s*\|\s*r1c2\s*\|/);
     });
 
     test('pasting plain text without HTML falls back to text insertion', async ({ browserName, page }) => {
-        test.skip(browserName !== 'chromium', 'Synthetic ClipboardEvent.clipboardData unsupported on Firefox/WebKit — BACKLOG Phase 3.');
-        await page.evaluate(() => window.muya!.setContent(''));
-        await page.locator(editor.paragraph).first().click();
-        await pastePlain(page, 'just plain text');
-
+        test.skip(browserName !== 'chromium', 'ClipboardItem unreliable on Firefox/WebKit headless — BACKLOG Phase 3.');
+        await pastePlainClipboard(page, 'just plain text');
         await expect.poll(async () => getMarkdown(page), {
             timeout: 5_000,
             intervals: [50, 100, 250, 500],
         }).toContain('just plain text');
 
-        // Plain-text paste does NOT introduce markdown delimiters — the
-        // body is plain prose, no `**`, no `[…](…)`, no `|`.
         const md = await getMarkdown(page);
         expect(md).not.toMatch(/[*_`|[\]]/);
     });
 });
+
+/**
+ * Write HTML+text to the real OS clipboard, focus the editor, fire a
+ * real paste keystroke. The keystroke dispatches a trusted `paste`
+ * event whose `clipboardData` is populated (unlike a synthetic
+ * `new ClipboardEvent('paste', { clipboardData })`, which leaves
+ * `clipboardData === null` on Chromium-for-Testing).
+ */
+async function pasteClipboard(
+    page: Parameters<Parameters<typeof test>[1]>[0]['page'],
+    html: string,
+    text: string,
+): Promise<void> {
+    await page.evaluate(() => window.muya!.setContent(''));
+
+    await page.evaluate(async ({ html, text }) => {
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                'text/html': new Blob([html], { type: 'text/html' }),
+                'text/plain': new Blob([text], { type: 'text/plain' }),
+            }),
+        ]);
+    }, { html, text });
+
+    // Focus via muya's API + DOM focus, so the trusted paste keystroke
+    // lands inside the editor's contenteditable.
+    await page.evaluate(() => {
+        window.muya!.focus();
+        window.muya!.domNode.focus();
+    });
+    await page.keyboard.press(`${metaKey()}+v`);
+}
+
+/**
+ * Same as pasteClipboard but writes only `text/plain`.
+ */
+async function pastePlainClipboard(
+    page: Parameters<Parameters<typeof test>[1]>[0]['page'],
+    text: string,
+): Promise<void> {
+    await page.evaluate(() => window.muya!.setContent(''));
+
+    await page.evaluate(async (text) => {
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                'text/plain': new Blob([text], { type: 'text/plain' }),
+            }),
+        ]);
+    }, text);
+
+    await page.evaluate(() => {
+        window.muya!.focus();
+        window.muya!.domNode.focus();
+    });
+    await page.keyboard.press(`${metaKey()}+v`);
+}
