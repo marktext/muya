@@ -4,7 +4,7 @@
 | --- | --- | --- | --- | --- |
 | 1 | P0 smoke + key interaction skeleton (infra) | 28 (1 fixme) | ~3-4 min | ✅ landed |
 | 2 | Cross-browser matrix + drag/IME | +20 → 48 | +4-6 min | ⏳ pending |
-| 3 | Render depth + remaining blocks + security | +25 → 73 | +2-3 min | ⏳ pending |
+| 3 | Render depth + remaining blocks + security | +23 → 78 (1 fixme) | +2-3 min | ✅ landed |
 | 4 | Stability / performance / a11y guardrails | +25 → 98 | +3-5 min | ⏳ pending |
 
 Phase 1 baseline (PR landing snapshot):
@@ -53,24 +53,27 @@ Unlocks Firefox + WebKit, and the input/drag flows that don't survive cross-engi
 
 ## Phase 3 — Render depth + remaining blocks + security
 
+Landed: 23 new tests across `tests/diagrams/`, `tests/blocks/`, `tests/security/`.
+Local runtime ~+2s on top of Phase 1 baseline.
+
 ### Diagrams
 
-- [ ] **Vega-Lite.** Inject a Vega-Lite spec via `setContent` → wait for `.mu-diagram-preview svg` → count mark elements (e.g. circle / rect) to verify the chart actually rendered.
-- [ ] **PlantUML.** `@startuml…@enduml`. Plantuml-encoder forwards to a public service; either mock the network call (`page.route`) or allow real network in this spec only.
+- [x] **Vega-Lite.** Inject a Vega-Lite spec via `setContent` → wait for `.mu-diagram-preview svg` → count `path|rect` mark elements to verify the chart actually rendered. (`tests/diagrams/vega-lite.spec.ts`, 2 tests)
+- [x] **PlantUML.** `@startuml…@enduml` round-trips through `setContent` + `getMarkdown`. `plantuml.com/**` is mocked via `page.route` for hermeticity; the spec asserts the encoded URL shape and `getMarkdown` preserves source. (`tests/diagrams/plantuml.spec.ts`, 2 tests)
 
 ### Remaining block types
 
-- [ ] **Frontmatter (yaml / toml / json `;;;` / json `{}`).** Setext / setContent each style → assert getMarkdown round-trips delimiter style.
-- [ ] **HTML inline formats.** `<u>`, `<mark>`, `<sup>`, `<sub>`, `<ruby>` display and edit; cursor placement after wrapping a selection.
-- [ ] **ReferenceLink / ReferenceImage round-trip.** `[label][ref]` + `[ref]: url "title"` — direct regression coverage for PR-16.
-- [ ] **Footnote.** Multiple references to one definition, deletion-cleanup of orphan definitions.
+- [x] **Frontmatter (yaml / toml / json `;;;` / json `{}`).** All four delimiter styles round-trip through `setContent` + `getMarkdown`. (`tests/blocks/frontmatter.spec.ts`, 4 tests)
+- [x] **HTML inline formats.** `<u>`, `<mark>`, `<sup>`, `<sub>` each round-trip via the generic `htmlTag` renderer; `<ruby>` is split out because it routes through the dedicated `htmlRuby` renderer (mounts `span.mu-ruby` not `*.mu-raw-html`). (`tests/blocks/html-inline.spec.ts`, 5 tests)
+- [x] **ReferenceLink / ReferenceImage round-trip.** Direct PR-16 regression coverage including case-insensitive label resolution. Reference images mock `example.test/**` to make `loadImage` resolve. (`tests/blocks/reference-link-image.spec.ts`, 4 tests)
+- [x] **Footnote.** Multiple `[^a]` refs sharing a definition, definition appearing before vs after the first ref, and the deliberate "no auto-cleanup of orphan defs" current contract. (`tests/blocks/footnote-scenarios.spec.ts`, 3 tests)
 
 ### Sanitize / XSS
 
-- [ ] Inject `<script>window.__pwned=1</script>` via setContent → assert `window.__pwned` never set.
-- [ ] Inject `<a href="javascript:alert(1)">x</a>` → assert anchor stripped or href neutralised.
-- [ ] Inject `<img src=x onerror="window.__pwned=1">` → assert onerror dropped.
-- [ ] Static export via `new MarkdownToHtml(md).generate()` against same payloads → assert sanitized HTML output.
+- [x] Inject `<script>(window).__pwned = true</script>` via setContent → assert `window.__pwned` never set. Canary declared on `Window` in `e2e/types.d.ts`.
+- [x] Inject `<a href="javascript:alert(1)">x</a>` → assert anchor's rendered `href` is either dropped or no longer contains `javascript:`.
+- [x] Inject `<img src=x onerror="…">` → assert `onerror` attribute is stripped + canary not set.
+- [ ] Static export via `new MarkdownToHtml(md).generate()` against same payloads → assert sanitized HTML output. **Deferred to Phase 4** — current host doesn't expose `MarkdownToHtml` on `window`, and reaching for `page.evaluate(() => new (await import('@muyajs/core')).MarkdownToHtml(...))` would require new host plumbing. Phase 4 can wire it onto `window.__e2e` and assert the static path.
 
 ---
 
