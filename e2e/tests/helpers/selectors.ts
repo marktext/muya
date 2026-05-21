@@ -39,6 +39,7 @@ export const editor = {
 export const floats = {
     inlineFormatToolbar: '.mu-format-picker',
     quickInsert: '.mu-quick-insert',
+    paragraphFrontButton: '.mu-front-button-wrapper',
     paragraphFrontMenu: '.mu-front-menu',
     emojiPicker: '.mu-emoji-picker',
     linkTools: '.mu-link-tools',

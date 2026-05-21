@@ -8,13 +8,29 @@ test.describe('paragraph front button + menu', () => {
         await expect(page.locator(floats.paragraphFrontMenu)).toHaveCount(1);
     });
 
-    test('the paragraph receives a front button on hover', async ({ page }) => {
+    test('front-button wrapper is mounted by the plugin', async ({ page }) => {
+        // ParagraphFrontButton.init() appends a `.mu-front-button-wrapper` div
+        // to document.body at construction. Whether or not it's positioned
+        // over a paragraph depends on hover state — but the wrapper itself
+        // must exist as soon as muya.init() completes.
+        await expect(page.locator(floats.paragraphFrontButton)).toHaveCount(1);
+    });
+
+    test('hovering a paragraph positions the front button over it', async ({ page }) => {
         await page.evaluate(() => window.muya!.setContent('a paragraph'));
         const para = page.locator(editor.paragraph).first();
+        const wrapper = page.locator(floats.paragraphFrontButton);
+
         await para.hover();
-        // The plugin appends a `.mu-paragraph-front-button` class somewhere on
-        // or around the active block. Just sanity-check we can hover without
-        // throwing — exact position of the button DOM is brittle.
-        await expect(para).toBeVisible();
+        // After hover, the plugin assigns a non-zero size to the wrapper
+        // (init() sets width/height from the inner container via
+        // ResizeObserver). A zero-sized wrapper means the plugin never picked
+        // up the paragraph.
+        await expect.poll(async () => {
+            return wrapper.evaluate((el) => {
+                const r = el.getBoundingClientRect();
+                return r.width > 0 && r.height > 0;
+            });
+        }, { timeout: 3_000 }).toBe(true);
     });
 });

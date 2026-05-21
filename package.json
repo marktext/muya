@@ -43,6 +43,11 @@
         "e2e:headed": "pnpm --filter muya-e2e e2e:headed",
         "e2e:install": "pnpm --filter muya-e2e e2e:install"
     },
+    "pnpm": {
+        "overrides": {
+            "happy-dom": "^15.11.7"
+        }
+    },
     "devDependencies": {
         "@antfu/eslint-config": "^9.0.0",
         "@laynezh/vite-plugin-lib-assets": "2.1.3",
