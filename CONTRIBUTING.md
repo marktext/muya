@@ -18,7 +18,7 @@ Muya is a web-based Markdown editor engine extracted from [MarkText](https://git
 
 ## Code of conduct
 
-Be kind, assume good intent, and keep discussions on-topic. Personal attacks, harassment, and discriminatory language are not welcome. Reports about violations can be sent to the maintainers via a GitHub DM or by opening a confidential issue.
+Be kind, assume good intent, and keep discussions on-topic. Personal attacks, harassment, and discriminatory language are not welcome. If you witness or experience a violation, you can report it through [GitHub's abuse reporting flow](https://github.com/contact/report-abuse) or by emailing the maintainer listed under `author` in [`package.json`](./package.json).
 
 ## Ways to contribute
 
@@ -80,7 +80,7 @@ Run from the repo root — Turbo fans tasks out across packages.
 | `pnpm dev` | Boot the examples Vite dev server (`turbo dev:demo`). |
 | `pnpm build` | `tsc && vite build` in `packages/core`. Emits `lib/{es,umd,cjs}` and `lib/types`. |
 | `pnpm test` | Vitest unit tests (`--passWithNoTests`). |
-| `pnpm coverage` | Vitest with V8 coverage. |
+| `pnpm coverage` | Vitest with Istanbul coverage (`@vitest/coverage-istanbul`). |
 | `pnpm lint` / `pnpm lint:fix` | ESLint (antfu base) over `packages/`. |
 | `pnpm lint:types` | `tsc --noEmit` per package. |
 | `pnpm lint:css` | Stylelint over all CSS. |
@@ -160,13 +160,13 @@ Scope is optional but encouraged for `packages/core/` work (`core`, `inline`, `s
 - Base branch is `master` (not `main`).
 - Use a Conventional-Commit-style title (it becomes the squash commit subject).
 - Describe the **why** in the body, not just the **what** — the diff already shows the what. Link related issues with `Closes #123` / `Refs #123`.
-- Pre-commit, `lint-staged` runs `eslint --fix` on staged `*.ts` and `stylelint --fix` on staged `*.{html,css}`. If a hook fails, fix the issue and create a new commit — **don't bypass with `--no-verify`** unless a maintainer asks you to.
+- Pre-commit, `lint-staged` runs `eslint --fix` on staged `*.ts` and `stylelint --fix` on staged `*.css` (see `.lintstagedrc`). If a hook fails, fix the issue and create a new commit — **don't bypass with `--no-verify`** unless a maintainer asks you to.
 
 Maintainers will review and may ask for changes. PRs are merged via **squash merge** to keep `master` linear; your branch commits don't need to be individually clean.
 
 ## Testing
 
-- **Unit tests** live next to their source in `packages/core/src/**/__tests__/` or `*.test.ts`, run with Vitest under `happy-dom`. New parser logic, state transforms, and pure helpers should ship with unit coverage.
+- **Unit tests** live next to their source in `packages/core/src/**/__tests__/` or `*.test.ts`, run with Vitest. Vitest has no global `environment` set — tests run under the default Node environment by default, and DOM-dependent tests opt into happy-dom with a `// @vitest-environment happy-dom` directive at the top of the file. New parser logic, state transforms, and pure helpers should ship with unit coverage.
 - **Conformance fixtures.** `pnpm --filter @muyajs/core test:spec` runs the CommonMark 0.31 and GFM 0.29-gfm fixture suites against `renderToStaticHTML(..., { sanitize: false })`. The expected-failures list is locked — making a failing fixture pass requires removing it from the list in the same PR.
 - **E2E tests.** Playwright suite in `e2e/`. Real browser, real contenteditable. Use this for behaviors that depend on selection, IME, clipboard, or floating UI positioning — anything `happy-dom` can't fake. See `e2e/README.md` for the helper API and `e2e/BACKLOG.md` for what's still uncovered.
 
