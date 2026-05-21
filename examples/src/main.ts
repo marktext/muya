@@ -168,6 +168,12 @@ function rebuildEditor() {
 
 const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 
+function wireSidebarToggle() {
+    $<HTMLButtonElement>('#sidebar-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-collapsed');
+    });
+}
+
 function wireLocale() {
     const sel = $<HTMLSelectElement>('#language-select');
     sel.value = currentLocale;
@@ -298,6 +304,7 @@ function wireOptions() {
 
 // ---------- Boot ----------
 
+wireSidebarToggle();
 wireLocale();
 wireHistorySelection();
 wireFindReplace();
